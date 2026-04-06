@@ -1,10 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
+  // Admin only
+  if (!session?.user) redirect("/login?callbackUrl=/admin");
+  if ((session.user as any).role !== "admin") redirect("/");
+
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
       {/* Admin header bar */}
@@ -22,6 +30,12 @@ export default function AdminLayout({
               <Link href="/admin" className="hover:text-white transition">
                 Boards
               </Link>
+              <Link href="/admin/live" className="hover:text-white transition">
+                Live
+              </Link>
+              <Link href="/leaderboard" className="hover:text-white transition">
+                Leaderboard
+              </Link>
               <Link href="/" className="hover:text-white transition">
                 View Site
               </Link>
@@ -29,9 +43,11 @@ export default function AdminLayout({
           </div>
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-[var(--lions-blue)] flex items-center justify-center text-white text-xs font-bold">
-              D
+              {session.user.name?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase() || "D"}
             </div>
-            <span className="text-sm text-white/80">Dan</span>
+            <span className="text-sm text-white/80">
+              {session.user.name || session.user.email}
+            </span>
           </div>
         </div>
       </header>

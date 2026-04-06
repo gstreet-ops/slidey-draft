@@ -8,7 +8,9 @@ import {
   boolean,
   jsonb,
   uniqueIndex,
+  primaryKey,
 } from "drizzle-orm/pg-core";
+import type { AdapterAccountType } from "next-auth/adapters";
 
 // ── Enums ──────────────────────────────────────────
 export const userRoleEnum = pgEnum("user_role", ["admin", "user"]);
@@ -23,12 +25,79 @@ export const boardStatusEnum = pgEnum("board_status", [
 // ── Users ──────────────────────────────────────────
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
+  name: text("name"),
   email: text("email").notNull().unique(),
+  emailVerified: timestamp("email_verified"),
+  image: text("image"),
   role: userRoleEnum("role").notNull().default("user"),
-  avatarUrl: text("avatar_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// ── Auth.js tables ─────────────────────────────────
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccountType>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => [
+    primaryKey({ columns: [account.provider, account.providerAccountId] }),
+  ]
+);
+
+export const sessions = pgTable("sessions", {
+  sessionToken: text("session_token").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires").notNull(),
+});
+
+export const verificationTokens = pgTable(
+  "verification_tokens",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires").notNull(),
+  },
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
+);
+
+// ── Groups ─────────────────────────────────────────
+export const groups = pgTable("groups", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  inviteCode: text("invite_code").notNull().unique(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const groupMembers = pgTable(
+  "group_members",
+  {
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.groupId, table.userId] })]
+);
 
 // ── Teams ──────────────────────────────────────────
 export const teams = pgTable("teams", {
