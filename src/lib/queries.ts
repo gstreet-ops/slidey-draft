@@ -11,6 +11,7 @@ import {
   groupMembers,
   actualResults,
   scores,
+  pickScores,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -79,6 +80,7 @@ export async function getBoardWithPicks(boardId: string) {
       teamName: teams.name,
       teamAbbreviation: teams.abbreviation,
       teamPrimaryColor: teams.primaryColor,
+      autoFilled: picks.autoFilled,
     })
     .from(picks)
     .innerJoin(players, eq(picks.playerId, players.id))
@@ -238,59 +240,70 @@ export async function getActualResults(season: number) {
     .orderBy(asc(actualResults.pickNumber));
 }
 
-// ── Leaderboard ────────────────────────────────────
-export async function getLeaderboard(season: number) {
-  // Get all published boards with their total scores
-  const boardScores = await db
+// ── Leaderboard (new scores table) ────────────────
+export async function getLeaderboard(season: number, groupMemberIds?: string[]) {
+  const rows = await db
     .select({
       boardId: scores.boardId,
-      totalPoints: sql<number>`COALESCE(SUM(${scores.pointsAwarded}), 0)`.as("total_points"),
-      exactMatches: sql<number>`COALESCE(SUM(CASE WHEN ${scores.exactMatch} THEN 1 ELSE 0 END), 0)`.as("exact_matches"),
-      playerCorrects: sql<number>`COALESCE(SUM(CASE WHEN ${scores.playerCorrect} THEN 1 ELSE 0 END), 0)`.as("player_corrects"),
+      totalScore: scores.totalScore,
+      correctExact: scores.correctExact,
+      correctPlayer: scores.correctPlayer,
+      accuracyPct: scores.accuracyPct,
+      previousRank: scores.previousRank,
+      boardTitle: draftBoards.title,
+      boardStatus: draftBoards.status,
+      boardSeason: draftBoards.season,
+      createdBy: draftBoards.createdBy,
+      userName: users.name,
+      userEmail: users.email,
+      userRole: users.role,
+      userId: users.id,
     })
     .from(scores)
-    .groupBy(scores.boardId);
+    .innerJoin(draftBoards, eq(scores.boardId, draftBoards.id))
+    .leftJoin(users, eq(scores.userId, users.id))
+    .where(eq(draftBoards.season, season))
+    .orderBy(desc(scores.totalScore));
 
-  if (boardScores.length === 0) return [];
-
-  // Enrich with board + user info
-  const enriched = await Promise.all(
-    boardScores.map(async (bs) => {
-      const [board] = await db
-        .select({
-          id: draftBoards.id,
-          title: draftBoards.title,
-          createdBy: draftBoards.createdBy,
-          season: draftBoards.season,
-          status: draftBoards.status,
-        })
-        .from(draftBoards)
-        .where(eq(draftBoards.id, bs.boardId));
-
-      if (!board || board.season !== season || board.status !== "published") return null;
-
-      let user = null;
-      if (board.createdBy) {
-        const [u] = await db
-          .select({ name: users.name, email: users.email, role: users.role })
-          .from(users)
-          .where(eq(users.id, board.createdBy));
-        user = u || null;
-      }
-
-      return {
-        boardId: bs.boardId,
-        boardTitle: board.title,
-        totalPoints: Number(bs.totalPoints),
-        exactMatches: Number(bs.exactMatches),
-        playerCorrects: Number(bs.playerCorrects),
-        userName: user?.name || user?.email || "Anonymous",
-        userRole: user?.role || "user",
-      };
-    })
+  let filtered = rows.filter(
+    (r) => r.boardStatus === "published" || r.boardStatus === "locked"
   );
 
-  return enriched
-    .filter((e): e is NonNullable<typeof e> => e !== null)
-    .sort((a, b) => b.totalPoints - a.totalPoints);
+  if (groupMemberIds) {
+    filtered = filtered.filter(
+      (r) => r.createdBy && groupMemberIds.includes(r.createdBy)
+    );
+  }
+
+  return filtered.map((r, index) => ({
+    boardId: r.boardId,
+    boardTitle: r.boardTitle,
+    totalScore: r.totalScore,
+    correctExact: r.correctExact,
+    correctPlayer: r.correctPlayer,
+    accuracyPct: r.accuracyPct,
+    previousRank: r.previousRank,
+    currentRank: index + 1,
+    userName: r.userName || r.userEmail || "Anonymous",
+    userRole: r.userRole || "user",
+    userId: r.userId,
+  }));
+}
+
+// ── Pick Scores for a board ───────────────────────
+export async function getPickScoresForBoard(boardId: string) {
+  return db
+    .select({
+      pickNumber: pickScores.pickNumber,
+      pointsAwarded: pickScores.pointsAwarded,
+      matchType: pickScores.matchType,
+      actualPlayerId: pickScores.actualPlayerId,
+      actualPlayerName: players.name,
+      actualPlayerPosition: players.position,
+      actualPlayerSchool: players.school,
+    })
+    .from(pickScores)
+    .leftJoin(players, eq(pickScores.actualPlayerId, players.id))
+    .where(eq(pickScores.boardId, boardId))
+    .orderBy(asc(pickScores.pickNumber));
 }
