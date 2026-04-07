@@ -6,6 +6,7 @@ import {
   getGroupMembers,
   getBoardsForGroup,
   getUserById,
+  getLeaderboard,
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,9 @@ export default async function GroupPage({ params }: { params: Params }) {
 
   const members = await getGroupMembers(id);
   const boards = await getBoardsForGroup(id, 2026);
+  const season = 2026;
+  const memberIds = members.map((m: any) => m.userId);
+  const groupLeaderboard = await getLeaderboard(season, memberIds);
   const creator = await getUserById(group.createdBy);
 
   // Separate Dan's boards (admin) from others
@@ -157,6 +161,42 @@ export default async function GroupPage({ params }: { params: Params }) {
             ))}
           </div>
         </div>
+
+        {groupLeaderboard.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-white tracking-wide mb-4" style={{ fontFamily: "var(--font-display)" }}>
+              GROUP LEADERBOARD
+            </h2>
+            <div className="space-y-2">
+              {groupLeaderboard.map((entry: any) => {
+                const isAdmin = entry.userRole === "admin";
+                return (
+                  <Link
+                    key={entry.boardId}
+                    href={`/picks/${entry.boardId}`}
+                    className={`flex items-center gap-3 rounded-lg border px-4 py-3 transition hover:border-white/20 ${
+                      isAdmin
+                        ? "border-[var(--lions-blue)]/30 bg-[#0076B6]/10"
+                        : "border-white/10 bg-white/5"
+                    }`}
+                  >
+                    <span className="w-8 text-center text-sm font-bold text-white/60">
+                      {entry.currentRank}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-semibold text-white">{entry.userName}</span>
+                    </div>
+                    <span className="text-lg font-bold text-white">{entry.totalScore}</span>
+                    <span className="text-xs text-white/40">pts</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <Link href="/leaderboard" className="mt-3 block text-center text-xs text-[var(--lions-blue)] hover:underline">
+              View Full Leaderboard
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
