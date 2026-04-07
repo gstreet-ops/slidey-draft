@@ -8,7 +8,12 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const matched = await fetchAndStoreBpaRankings(2026);
+  try {
+    const matched = await fetchAndStoreBpaRankings(2026);
 
-  return NextResponse.json({ success: true, matchedPlayers: matched });
+    return NextResponse.json({ success: true, matchedPlayers: matched });
+  } catch (err) {
+    console.error("[Admin Seed BPA] Error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

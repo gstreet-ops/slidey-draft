@@ -14,33 +14,38 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const { pickNumber, playerId, teamId } = body;
+  try {
+    const body = await req.json();
+    const { pickNumber, playerId, teamId } = body;
 
-  if (!pickNumber || !playerId || !teamId) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
-
-  const [result] = await db
-    .insert(actualResults)
-    .values({
-      season: SEASON,
-      pickNumber,
-      playerId,
-      teamId,
-      announcedAt: new Date(),
-    })
-    .onConflictDoNothing()
-    .returning();
-
-  if (result) {
-    const locked = await isDraftLocked();
-    if (!locked) {
-      await setConfig("draft_locked", "true");
-      await autoFillAllBoards(SEASON);
+    if (!pickNumber || !playerId || !teamId) {
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
-    await scoreAllBoards(SEASON);
-  }
 
-  return NextResponse.json({ success: true, result });
+    const [result] = await db
+      .insert(actualResults)
+      .values({
+        season: SEASON,
+        pickNumber,
+        playerId,
+        teamId,
+        announcedAt: new Date(),
+      })
+      .onConflictDoNothing()
+      .returning();
+
+    if (result) {
+      const locked = await isDraftLocked();
+      if (!locked) {
+        await setConfig("draft_locked", "true");
+        await autoFillAllBoards(SEASON);
+      }
+      await scoreAllBoards(SEASON);
+    }
+
+    return NextResponse.json({ success: true, result });
+  } catch (err) {
+    console.error("[Admin Result] Error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

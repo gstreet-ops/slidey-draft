@@ -31,6 +31,8 @@ export async function scoreBoard(boardId: string, results: ActualResult[]) {
     .where(eq(picks.boardId, boardId))
     .orderBy(asc(picks.pickNumber));
 
+  if (boardPicks.length === 0) return;
+
   // Map: actual playerId → actual pickNumber
   const actualByPlayer = new Map<string, number>();
   for (const r of results) {

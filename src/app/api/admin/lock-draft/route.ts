@@ -9,8 +9,13 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await setConfig("draft_locked", "true");
-  const filled = await autoFillAllBoards(2026);
+  try {
+    await setConfig("draft_locked", "true");
+    const filled = await autoFillAllBoards(2026);
 
-  return NextResponse.json({ success: true, locked: true, boardsAutoFilled: filled });
+    return NextResponse.json({ success: true, locked: true, boardsAutoFilled: filled });
+  } catch (err) {
+    console.error("[Admin Lock Draft] Error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

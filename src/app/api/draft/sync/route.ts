@@ -55,6 +55,7 @@ export async function POST() {
     const teamByPick = new Map(order.map((o) => [o.pickNumber, o.teamId]));
 
     let newPicks = 0;
+    let unmatched = 0;
     for (const pick of espnPicks) {
       if (existingPicks.has(pick.pickNumber)) continue;
 
@@ -65,12 +66,14 @@ export async function POST() {
 
       if (!player) {
         console.warn(`[Sync] No match for: ${pick.athleteName} (${pick.athletePosition})`);
+        unmatched++;
         continue;
       }
 
       const teamId = teamByPick.get(pick.pickNumber);
       if (!teamId) {
         console.warn(`[Sync] No team for pick #${pick.pickNumber}`);
+        unmatched++;
         continue;
       }
 
@@ -100,9 +103,17 @@ export async function POST() {
       .from(actualResults)
       .where(eq(actualResults.season, SEASON));
 
+    // Set sync status: partial if some picks matched but some didn't, otherwise success
+    if (newPicks > 0 && unmatched > 0) {
+      await setConfig("last_sync_status", "partial");
+    } else {
+      await setConfig("last_sync_status", "success");
+    }
+
     return NextResponse.json({ newPicks, totalPicks: total.length });
   } catch (err) {
     console.error("[Sync] Error:", err);
+    await setConfig("last_sync_status", "failed");
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });
   }
 }
