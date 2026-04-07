@@ -38,7 +38,7 @@ export default async function Home() {
                 <Link href="/my-board" className="text-white/60 hover:text-white transition">
                   My Board
                 </Link>
-                {(session.user as any).role === "admin" && (
+                {session.user.role === "admin" && (
                   <Link href="/admin" className="text-white/60 hover:text-white transition">
                     Studio
                   </Link>

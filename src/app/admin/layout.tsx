@@ -11,7 +11,7 @@ export default async function AdminLayout({
 
   // Admin only
   if (!session?.user) redirect("/login?callbackUrl=/admin");
-  if ((session.user as any).role !== "admin") redirect("/");
+  if (session.user.role !== "admin") redirect("/");
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">

@@ -74,7 +74,7 @@ export default async function DashboardPage() {
             <Link href="/picks" className="hover:text-white transition">All Picks</Link>
             <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
             <Link href="/my-board" className="hover:text-white transition">My Board</Link>
-            {(session.user as any).role === "admin" && (
+            {session.user.role === "admin" && (
               <Link href="/admin" className="hover:text-white transition">Studio</Link>
             )}
           </nav>

@@ -5,7 +5,7 @@ import { autoFillAllBoards } from "@/lib/bpa";
 
 export async function POST() {
   const session = await auth();
-  if (!session?.user?.id || (session.user as any).role !== "admin") {
+  if (!session?.user?.id || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

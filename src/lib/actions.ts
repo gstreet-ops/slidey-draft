@@ -98,7 +98,7 @@ export async function publishBoard(boardId: string) {
 // ── Create a group (admin only) ────────────────────
 export async function createGroup(formData: FormData) {
   const session = await auth();
-  if (!session?.user?.id || (session.user as any).role !== "admin") {
+  if (!session?.user?.id || session.user.role !== "admin") {
     throw new Error("Admin only");
   }
 
@@ -133,7 +133,7 @@ export async function enterActualResult(
   teamId: string
 ) {
   const session = await auth();
-  if (!session?.user?.id || (session.user as any).role !== "admin") {
+  if (!session?.user?.id || session.user.role !== "admin") {
     throw new Error("Admin only");
   }
 
@@ -162,7 +162,7 @@ export async function enterActualResult(
 // ── Undo last actual result (admin only) ───────────
 export async function undoLastResult(season: number) {
   const session = await auth();
-  if (!session?.user?.id || (session.user as any).role !== "admin") {
+  if (!session?.user?.id || session.user.role !== "admin") {
     throw new Error("Admin only");
   }
 

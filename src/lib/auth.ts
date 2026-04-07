@@ -36,7 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const dbUser = await db.query.users.findFirst({
           where: (u, { eq }) => eq(u.id, user.id),
         });
-        (session.user as any).role = dbUser?.role || "user";
+        session.user.role = dbUser?.role || "user";
       }
       return session;
     },
