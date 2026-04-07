@@ -29,6 +29,12 @@ export default async function Home() {
             </Link>
             {session?.user ? (
               <>
+                <Link href="/dashboard" className="text-white/60 hover:text-white transition">
+                  Dashboard
+                </Link>
+                <Link href="/live" className="text-white/60 hover:text-white transition">
+                  Live
+                </Link>
                 <Link href="/my-board" className="text-white/60 hover:text-white transition">
                   My Board
                 </Link>

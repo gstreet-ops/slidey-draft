@@ -38,6 +38,7 @@ type Props = {
   draftOrder: DraftSlot[];
   existingPicks: ExistingPick[];
   availablePlayers: Player[];
+  readOnly?: boolean;
 };
 
 export function PickBuilder({
@@ -46,6 +47,7 @@ export function PickBuilder({
   draftOrder,
   existingPicks,
   availablePlayers,
+  readOnly = false,
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -98,7 +100,7 @@ export function PickBuilder({
                   ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
                   : "border-white/10 bg-white/5 hover:border-white/20"
               }`}
-              onClick={() => !pick && setActiveSlot(isActive ? null : slot.pickNumber)}
+              onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
             >
               {/* Pick number */}
               <div
@@ -139,7 +141,7 @@ export function PickBuilder({
               </div>
 
               {/* Remove button */}
-              {pick && (
+              {pick && !readOnly && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -155,7 +157,7 @@ export function PickBuilder({
         })}
 
         {/* Publish button */}
-        {boardStatus === "draft" && existingPicks.length > 0 && (
+        {!readOnly && boardStatus === "draft" && existingPicks.length > 0 && (
           <button
             onClick={handlePublish}
             disabled={isPending}
@@ -167,7 +169,7 @@ export function PickBuilder({
       </div>
 
       {/* Player pool sidebar */}
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
+      {!readOnly && (<div className="rounded-xl border border-white/10 bg-white/5 p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
         <h2
           className="mb-3 text-lg font-bold text-white tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
@@ -216,7 +218,7 @@ export function PickBuilder({
             </p>
           )}
         </div>
-      </div>
+      </div>)}
     </div>
   );
 }

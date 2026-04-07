@@ -4,6 +4,7 @@ import { getUserBoard, getDraftOrder, getPlayers, getBoardWithPicks } from "@/li
 import { createUserBoard } from "@/lib/actions";
 import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
+import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export default async function MyBoardPage() {
   if (!session?.user?.id) redirect("/login");
 
   const season = 2026;
+  const locked = await isDraftLocked();
   let board = await getUserBoard(session.user.id, season);
 
   // Auto-create board if none exists
@@ -61,6 +63,17 @@ export default async function MyBoardPage() {
         </div>
       </header>
 
+      {locked && (
+        <div className="bg-[var(--lions-blue)]/20 border-b border-[var(--lions-blue)]/30 px-6 py-3 text-center">
+          <p className="text-sm font-medium text-[var(--lions-blue)]">
+            Mock drafts are locked — the draft is live!{" "}
+            <Link href="/live" className="underline hover:text-white transition">
+              Watch in the War Room →
+            </Link>
+          </p>
+        </div>
+      )}
+
       <main className="mx-auto max-w-7xl px-6 py-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -92,6 +105,7 @@ export default async function MyBoardPage() {
             draftOrder={draftOrder}
             existingPicks={boardData.picks}
             availablePlayers={availablePlayers}
+            readOnly={locked}
           />
         </div>
       </main>
