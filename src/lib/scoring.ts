@@ -1,110 +1,195 @@
 import { db } from "@/db";
-import { eq, and, asc } from "drizzle-orm";
-import { draftBoards, picks, scores } from "@/db/schema";
+import { eq, and, asc, desc } from "drizzle-orm";
+import { draftBoards, picks, scores, pickScores, actualResults } from "@/db/schema";
+
+type ActualResult = {
+  pickNumber: number;
+  playerId: string;
+  teamId: string;
+};
 
 /**
- * Score ALL published boards against a single actual result.
+ * Score a single board against actual results.
  *
  * Scoring rules:
- *   exact_match  — predicted correct player at correct pick number → 10 pts
- *   within 3     — player predicted somewhere within ±3 picks      →  5 pts
- *   farther      — player predicted but more than 3 picks away     →  2 pts
- *   not predicted — player not on the board at all                 →  0 pts
+ *   Exact match (correct player at correct pick): 10 pts
+ *   Right player, within 5 picks:                  5 pts
+ *   Right player, 6+ picks off:                    3 pts
+ *   Player not drafted in Round 1:                  0 pts
+ *
+ * Idempotent — recalculates from scratch each run.
  */
-export async function scoreAllBoards(
-  season: number,
-  actualPickNumber: number,
-  actualPlayerId: string,
-  actualTeamId: string
-) {
-  // Get all published boards for this season
-  const boards = await db
-    .select({ id: draftBoards.id })
-    .from(draftBoards)
-    .where(
-      and(
-        eq(draftBoards.season, season),
-        eq(draftBoards.status, "published")
-      )
-    );
+export async function scoreBoard(boardId: string, results: ActualResult[]) {
+  if (results.length === 0) return;
 
-  for (const board of boards) {
-    await scoreBoardForPick(
-      board.id,
-      actualPickNumber,
-      actualPlayerId,
-      actualTeamId
-    );
-  }
-}
-
-async function scoreBoardForPick(
-  boardId: string,
-  actualPickNumber: number,
-  actualPlayerId: string,
-  actualTeamId: string
-) {
-  // Get all picks for this board
   const boardPicks = await db
     .select({
       pickNumber: picks.pickNumber,
       playerId: picks.playerId,
-      teamId: picks.teamId,
     })
     .from(picks)
     .where(eq(picks.boardId, boardId))
     .orderBy(asc(picks.pickNumber));
 
-  // Find if this player was predicted anywhere on the board
-  const predictedPick = boardPicks.find((p) => p.playerId === actualPlayerId);
+  // Map: actual playerId → actual pickNumber
+  const actualByPlayer = new Map<string, number>();
+  for (const r of results) {
+    actualByPlayer.set(r.playerId, r.pickNumber);
+  }
 
-  let exactMatch = false;
-  let playerCorrect = false;
-  let teamCorrect = false;
-  let slotDelta: number | null = null;
-  let pointsAwarded = 0;
+  const actualPickNumbers = new Set(results.map((r) => r.pickNumber));
 
-  if (predictedPick) {
-    playerCorrect = true;
-    slotDelta = Math.abs(predictedPick.pickNumber - actualPickNumber);
+  let totalScore = 0;
+  let correctExact = 0;
+  let correctPlayer = 0;
+  const pickScoreRows: {
+    boardId: string;
+    pickNumber: number;
+    pointsAwarded: number;
+    matchType: string;
+    actualPlayerId: string | null;
+  }[] = [];
 
-    if (predictedPick.pickNumber === actualPickNumber) {
-      // Exact match: correct player at correct slot
-      exactMatch = true;
-      pointsAwarded = 10;
-    } else if (slotDelta <= 3) {
-      // Within 3 picks
-      pointsAwarded = 5;
-    } else {
-      // Farther away
-      pointsAwarded = 2;
+  for (const pick of boardPicks) {
+    if (!actualPickNumbers.has(pick.pickNumber)) continue;
+
+    const actualForSlot = results.find((r) => r.pickNumber === pick.pickNumber);
+    const actualPlayerId = actualForSlot?.playerId ?? null;
+
+    const actualPickForPlayer = actualByPlayer.get(pick.playerId);
+
+    let points = 0;
+    let matchType = "miss";
+
+    if (actualPickForPlayer !== undefined) {
+      const delta = Math.abs(pick.pickNumber - actualPickForPlayer);
+      if (delta === 0) {
+        points = 10;
+        matchType = "exact";
+        correctExact++;
+      } else if (delta <= 5) {
+        points = 5;
+        matchType = "close";
+      } else {
+        points = 3;
+        matchType = "far";
+      }
+      correctPlayer++;
     }
+
+    totalScore += points;
+    pickScoreRows.push({
+      boardId,
+      pickNumber: pick.pickNumber,
+      pointsAwarded: points,
+      matchType,
+      actualPlayerId,
+    });
   }
 
-  // Check if the team at this pick number was predicted correctly
-  const pickAtSlot = boardPicks.find((p) => p.pickNumber === actualPickNumber);
-  if (pickAtSlot && pickAtSlot.teamId === actualTeamId) {
-    teamCorrect = true;
+  // Delete existing pick_scores for this board, then insert
+  for (const row of pickScoreRows) {
+    await db
+      .delete(pickScores)
+      .where(and(eq(pickScores.boardId, boardId), eq(pickScores.pickNumber, row.pickNumber)));
   }
-
-  // Delete any existing score for this board+pick combo, then insert
-  await db
-    .delete(scores)
-    .where(
-      and(
-        eq(scores.boardId, boardId),
-        eq(scores.pickNumber, actualPickNumber)
-      )
+  if (pickScoreRows.length > 0) {
+    await db.insert(pickScores).values(
+      pickScoreRows.map((r) => ({
+        boardId: r.boardId,
+        pickNumber: r.pickNumber,
+        pointsAwarded: r.pointsAwarded,
+        matchType: r.matchType,
+        actualPlayerId: r.actualPlayerId,
+      }))
     );
+  }
 
-  await db.insert(scores).values({
-    boardId,
-    pickNumber: actualPickNumber,
-    exactMatch,
-    playerCorrect,
-    teamCorrect,
-    positionCorrect: false, // could be extended later
-    slotDelta,
-    pointsAwarded,
+  const scoredCount = pickScoreRows.length;
+  const accuracyPct = scoredCount > 0 ? (correctPlayer / scoredCount) * 100 : 0;
+
+  const [board] = await db
+    .select({ createdBy: draftBoards.createdBy })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+
+  const existing = await db
+    .select({ id: scores.id })
+    .from(scores)
+    .where(eq(scores.boardId, boardId));
+
+  if (existing.length > 0) {
+    await db
+      .update(scores)
+      .set({
+        totalScore,
+        correctExact,
+        correctPlayer,
+        accuracyPct,
+        updatedAt: new Date(),
+      })
+      .where(eq(scores.boardId, boardId));
+  } else {
+    await db.insert(scores).values({
+      boardId,
+      userId: board?.createdBy ?? null,
+      totalScore,
+      correctExact,
+      correctPlayer,
+      accuracyPct,
+    });
+  }
+}
+
+/**
+ * Score all published/locked boards for a season.
+ * Preserves previous_rank for trending arrows before recalculating.
+ */
+export async function scoreAllBoards(season: number) {
+  // 1. Get current rankings to preserve as previous_rank
+  const currentScores = await db
+    .select({ boardId: scores.boardId, totalScore: scores.totalScore })
+    .from(scores)
+    .orderBy(desc(scores.totalScore));
+
+  const currentRankMap = new Map<string, number>();
+  currentScores.forEach((s, i) => {
+    currentRankMap.set(s.boardId, i + 1);
   });
+
+  // 2. Store previous_rank
+  for (const [boardId, rank] of currentRankMap) {
+    await db
+      .update(scores)
+      .set({ previousRank: rank })
+      .where(eq(scores.boardId, boardId));
+  }
+
+  // 3. Get actual results
+  const results = await db
+    .select({
+      pickNumber: actualResults.pickNumber,
+      playerId: actualResults.playerId,
+      teamId: actualResults.teamId,
+    })
+    .from(actualResults)
+    .where(eq(actualResults.season, season))
+    .orderBy(asc(actualResults.pickNumber));
+
+  if (results.length === 0) return;
+
+  // 4. Get all published/locked boards
+  const allBoards = await db
+    .select({ id: draftBoards.id, status: draftBoards.status })
+    .from(draftBoards)
+    .where(eq(draftBoards.season, season));
+
+  const eligibleBoards = allBoards.filter(
+    (b) => b.status === "published" || b.status === "locked"
+  );
+
+  // 5. Score each board
+  for (const board of eligibleBoards) {
+    await scoreBoard(board.id, results);
+  }
 }

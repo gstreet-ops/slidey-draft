@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { eq, and, desc } from "drizzle-orm";
-import { draftBoards, picks, groups, groupMembers, actualResults, scores } from "@/db/schema";
+import { draftBoards, picks, groups, groupMembers, actualResults } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { scoreAllBoards } from "@/lib/scoring";
@@ -151,7 +151,7 @@ export async function enterActualResult(
 
   if (result) {
     // Auto-score all published boards
-    await scoreAllBoards(season, pickNumber, playerId, teamId);
+    await scoreAllBoards(season);
   }
 
   revalidatePath("/admin/live");
@@ -166,7 +166,6 @@ export async function undoLastResult(season: number) {
     throw new Error("Admin only");
   }
 
-  // Find the most recent result
   const [last] = await db
     .select()
     .from(actualResults)
@@ -176,14 +175,12 @@ export async function undoLastResult(season: number) {
 
   if (!last) return null;
 
-  // Delete scores for this pick across all boards
-  await db.delete(scores).where(eq(scores.pickNumber, last.pickNumber));
-
-  // Delete the actual result
   await db.delete(actualResults).where(eq(actualResults.id, last.id));
+  await scoreAllBoards(season);
 
   revalidatePath("/admin/live");
   revalidatePath("/leaderboard");
+  revalidatePath("/live");
   return last;
 }
 
