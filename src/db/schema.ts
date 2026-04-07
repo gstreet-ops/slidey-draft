@@ -4,6 +4,7 @@ import {
   uuid,
   text,
   integer,
+  real,
   timestamp,
   boolean,
   jsonb,
@@ -169,6 +170,7 @@ export const picks = pgTable(
       .references(() => teams.id),
     analysis: text("analysis"),
     confidence: integer("confidence"),
+    autoFilled: boolean("auto_filled").default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
@@ -192,24 +194,62 @@ export const actualResults = pgTable(
     tradedUp: boolean("traded_up").default(false),
     tradeDetails: jsonb("trade_details"),
     announcedAt: timestamp("announced_at"),
+    espnAthleteId: text("espn_athlete_id"),
   },
   (table) => [
     uniqueIndex("actual_season_pick_idx").on(table.season, table.pickNumber),
   ]
 );
 
-// ── Scores (Phase 3 — how accurate was each pick) ─
+// ── Scores (board-level summary) ──────────────────
 export const scores = pgTable("scores", {
   id: uuid("id").primaryKey().defaultRandom(),
   boardId: uuid("board_id")
     .notNull()
-    .references(() => draftBoards.id, { onDelete: "cascade" }),
-  pickNumber: integer("pick_number").notNull(),
-  exactMatch: boolean("exact_match").default(false),
-  playerCorrect: boolean("player_correct").default(false),
-  teamCorrect: boolean("team_correct").default(false),
-  positionCorrect: boolean("position_correct").default(false),
-  slotDelta: integer("slot_delta"),
-  pointsAwarded: integer("points_awarded").default(0),
-  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+    .references(() => draftBoards.id, { onDelete: "cascade" })
+    .unique(),
+  userId: uuid("user_id").references(() => users.id),
+  totalScore: integer("total_score").notNull().default(0),
+  correctExact: integer("correct_exact").notNull().default(0),
+  correctPlayer: integer("correct_player").notNull().default(0),
+  accuracyPct: real("accuracy_pct").default(0),
+  previousRank: integer("previous_rank"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ── Pick Scores (per-pick scoring breakdown) ──────
+export const pickScores = pgTable(
+  "pick_scores",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => draftBoards.id, { onDelete: "cascade" }),
+    pickNumber: integer("pick_number").notNull(),
+    pointsAwarded: integer("points_awarded").notNull().default(0),
+    matchType: text("match_type").notNull(), // 'exact', 'close', 'far', 'miss'
+    actualPlayerId: uuid("actual_player_id").references(() => players.id),
+    scoredAt: timestamp("scored_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("pick_scores_board_pick_idx").on(table.boardId, table.pickNumber),
+  ]
+);
+
+// ── BPA Rankings ──────────────────────────────────
+export const bpaRankings = pgTable("bpa_rankings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  playerId: uuid("player_id")
+    .notNull()
+    .references(() => players.id),
+  espnAthleteId: text("espn_athlete_id"),
+  rank: integer("rank").notNull(),
+  fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
+});
+
+// ── App Config ────────────────────────────────────
+export const appConfig = pgTable("app_config", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
