@@ -1,21 +1,9 @@
 import { neon } from "@neondatabase/serverless";
-import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
-let _db: NeonHttpDatabase<typeof schema> | null = null;
+// Use a dummy URL at build time so neon() returns a valid (unused) client.
+// At runtime, DATABASE_URL is always set via Vercel env vars.
+const sql = neon(process.env.DATABASE_URL || "postgresql://build:build@localhost/build");
 
-export function getDb() {
-  if (!_db) {
-    const sql = neon(process.env.DATABASE_URL!);
-    _db = drizzle(sql, { schema });
-  }
-  return _db;
-}
-
-// Proxy that lazily initializes the connection on first property access
-// This allows `import { db } from "@/db"` to work without breaking at import time
-export const db = new Proxy({} as NeonHttpDatabase<typeof schema>, {
-  get(_target, prop, receiver) {
-    return Reflect.get(getDb(), prop, receiver);
-  },
-});
+export const db = drizzle(sql, { schema });
