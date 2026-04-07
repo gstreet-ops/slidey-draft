@@ -85,6 +85,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     endpoints: ["/api/draft/sync"],
     interval: 30_000,
     enabled: true,
+    method: "POST",
   });
 
   const { data: boardData } = useLiveUpdates<{ picks: BoardPick[]; scores: PickScore[] } | null>({

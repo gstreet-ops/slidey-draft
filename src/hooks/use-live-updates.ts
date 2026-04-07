@@ -9,6 +9,7 @@ export interface LiveUpdateConfig {
   interval?: number;
   /** Whether polling is active */
   enabled?: boolean;
+  method?: "GET" | "POST";
 }
 
 export interface LiveUpdateResult<T> {
@@ -28,7 +29,7 @@ export interface LiveUpdateResult<T> {
 export function useLiveUpdates<T = any>(
   config: LiveUpdateConfig
 ): LiveUpdateResult<T> {
-  const { endpoints, interval = 30_000, enabled = true } = config;
+  const { endpoints, interval = 30_000, enabled = true, method } = config;
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -41,7 +42,7 @@ export function useLiveUpdates<T = any>(
     try {
       const results = await Promise.all(
         endpoints.map(async (url) => {
-          const res = await fetch(url, { cache: "no-store" });
+          const res = await fetch(url, { cache: "no-store", method: method || "GET" });
           if (!res.ok) throw new Error(`${res.status} from ${url}`);
           return res.json();
         })

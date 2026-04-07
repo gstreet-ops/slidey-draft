@@ -10,7 +10,7 @@ import { autoFillAllBoards } from "@/lib/bpa";
 const SEASON = 2026;
 const RATE_LIMIT_MS = 10_000;
 
-export async function GET() {
+export async function POST() {
   try {
     // Rate limit
     const lastSync = await getConfig("last_sync_at");
