@@ -76,13 +76,21 @@ async function resolveRef(url: string): Promise<any | null> {
   return espnFetch(url);
 }
 
+async function batchResolveRefs(urls: string[], concurrency = 5): Promise<(any | null)[]> {
+  const results: (any | null)[] = new Array(urls.length).fill(null);
+  for (let i = 0; i < urls.length; i += concurrency) {
+    const batch = urls.slice(i, i + concurrency);
+    const batchResults = await Promise.all(batch.map(url => resolveRef(url)));
+    batchResults.forEach((r, j) => { results[i + j] = r; });
+  }
+  return results;
+}
+
 export async function fetchDraftPicks(season: number, round: number = 1): Promise<EspnPick[]> {
-  // ESPN structure: /draft/rounds returns items[], items[0] is Round 1 with inline picks[]
   const url = `${ESPN_BASE}/${season}/draft/rounds`;
   const data = await espnFetch<{ items?: any[] }>(url);
   if (!data?.items) return [];
 
-  // Resolve the round ref (items are $ref links to round objects)
   const roundIndex = round - 1;
   const roundItem = data.items[roundIndex];
   if (!roundItem) return [];
@@ -90,45 +98,37 @@ export async function fetchDraftPicks(season: number, round: number = 1): Promis
   const roundData = roundItem.$ref ? await resolveRef(roundItem.$ref) : roundItem;
   if (!roundData?.picks) return [];
 
+  // Filter to made selections with athlete refs
+  const madePicks = roundData.picks.filter(
+    (p: any) => p.status?.name === "SELECTION_MADE" && p.athlete?.$ref
+  );
+
+  if (madePicks.length === 0) return [];
+
+  // Batch resolve all athlete refs
+  const athleteRefs = madePicks.map((p: any) => p.athlete.$ref);
+  const athletes = await batchResolveRefs(athleteRefs);
+
   const picks: EspnPick[] = [];
-  for (const pickData of roundData.picks) {
-    try {
-      const pickNumber = pickData.pick ?? pickData.overall;
-      if (!pickNumber) continue;
+  for (let i = 0; i < madePicks.length; i++) {
+    const pickData = madePicks[i];
+    const athlete = athletes[i];
 
-      // Only process picks where a selection has been made
-      if (pickData.status?.name !== "SELECTION_MADE") continue;
-      if (!pickData.athlete?.$ref) continue;
+    const pickNumber = pickData.pick ?? pickData.overall;
+    if (!pickNumber || !athlete) continue;
 
-      let athleteName = "";
-      let athletePosition = "";
-      let athleteSchool = "";
-      let espnAthleteId = "";
+    const athleteName = athlete.fullName || athlete.displayName || `${athlete.firstName} ${athlete.lastName}` || "";
+    if (!athleteName) continue;
 
-      // Resolve athlete $ref to get details
-      const athlete = await resolveRef(pickData.athlete.$ref);
-      if (athlete) {
-        athleteName = athlete.fullName || athlete.displayName || `${athlete.firstName} ${athlete.lastName}` || "";
-        athletePosition = athlete.position?.abbreviation || "";
-        athleteSchool = athlete.college?.name || athlete.college?.shortName || "";
-        espnAthleteId = String(athlete.id || "");
-      }
-
-      if (!athleteName) continue;
-
-      picks.push({
-        pickNumber,
-        teamRef: pickData.team?.$ref || "",
-        athleteRef: pickData.athlete?.$ref || "",
-        athleteName,
-        athletePosition,
-        athleteSchool,
-        espnAthleteId,
-      });
-    } catch (err) {
-      console.error(`[ESPN API] Error parsing pick item:`, err);
-      continue;
-    }
+    picks.push({
+      pickNumber,
+      teamRef: pickData.team?.$ref || "",
+      athleteRef: pickData.athlete?.$ref || "",
+      athleteName,
+      athletePosition: athlete.position?.abbreviation || "",
+      athleteSchool: athlete.college?.name || athlete.college?.shortName || "",
+      espnAthleteId: String(athlete.id || ""),
+    });
   }
 
   return picks;
