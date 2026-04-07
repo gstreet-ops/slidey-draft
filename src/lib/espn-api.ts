@@ -48,36 +48,41 @@ async function resolveRef(url: string): Promise<any | null> {
 }
 
 export async function fetchDraftPicks(season: number, round: number = 1): Promise<EspnPick[]> {
-  const url = `${ESPN_BASE}/${season}/draft/rounds/${round}/picks?limit=50`;
-  const data = await espnFetch<{ items?: any[]; count?: number }>(url);
+  // ESPN structure: /draft/rounds returns items[], items[0] is Round 1 with inline picks[]
+  const url = `${ESPN_BASE}/${season}/draft/rounds`;
+  const data = await espnFetch<{ items?: any[] }>(url);
   if (!data?.items) return [];
 
-  const picks: EspnPick[] = [];
-  for (const item of data.items) {
-    try {
-      const pickData = item.$ref ? await resolveRef(item.$ref) : item;
-      if (!pickData) continue;
+  // Resolve the round ref (items are $ref links to round objects)
+  const roundIndex = round - 1;
+  const roundItem = data.items[roundIndex];
+  if (!roundItem) return [];
 
+  const roundData = roundItem.$ref ? await resolveRef(roundItem.$ref) : roundItem;
+  if (!roundData?.picks) return [];
+
+  const picks: EspnPick[] = [];
+  for (const pickData of roundData.picks) {
+    try {
       const pickNumber = pickData.pick ?? pickData.overall;
       if (!pickNumber) continue;
+
+      // Only process picks where a selection has been made
+      if (pickData.status?.name !== "SELECTION_MADE") continue;
+      if (!pickData.athlete?.$ref) continue;
 
       let athleteName = "";
       let athletePosition = "";
       let athleteSchool = "";
       let espnAthleteId = "";
 
-      if (pickData.athlete?.$ref) {
-        const athlete = await resolveRef(pickData.athlete.$ref);
-        if (athlete) {
-          athleteName = athlete.fullName || athlete.displayName || "";
-          athletePosition = athlete.position?.abbreviation || "";
-          athleteSchool = athlete.college?.name || athlete.college?.shortName || "";
-          espnAthleteId = String(athlete.id || "");
-        }
-      } else if (pickData.athlete) {
-        athleteName = pickData.athlete.fullName || pickData.athlete.displayName || "";
-        athletePosition = pickData.athlete.position?.abbreviation || "";
-        espnAthleteId = String(pickData.athlete.id || "");
+      // Resolve athlete $ref to get details
+      const athlete = await resolveRef(pickData.athlete.$ref);
+      if (athlete) {
+        athleteName = athlete.fullName || athlete.displayName || `${athlete.firstName} ${athlete.lastName}` || "";
+        athletePosition = athlete.position?.abbreviation || "";
+        athleteSchool = athlete.college?.name || athlete.college?.shortName || "";
+        espnAthleteId = String(athlete.id || "");
       }
 
       if (!athleteName) continue;
