@@ -118,7 +118,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         {/* LEFT: Actual Picks Feed */}
         <div className="order-3 lg:order-1">
           <h2 className="text-lg font-bold text-white tracking-wide mb-4" style={{ fontFamily: "var(--font-display)" }}>ACTUAL PICKS</h2>
-          <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
+          <div className="space-y-2 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
             {results.length === 0 ? (
               <p className="text-white/30 text-sm py-8 text-center">Waiting for Round 1 to begin...</p>
             ) : (
@@ -154,7 +154,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
               <p className="text-white/40">You don&apos;t have a mock draft to score.</p>
             </div>
           ) : (
-            <div className="space-y-1.5 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
+            <div className="space-y-1.5 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
               {draftOrder.map((slot) => {
                 const pick = pickMap.get(slot.pickNumber);
                 const score = scoreMap.get(slot.pickNumber);
@@ -187,7 +187,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                     </div>
                     <div className="w-10 shrink-0 text-right">
                       {matchType && (
-                        <span className={`text-xs font-bold ${matchType === "exact" ? "text-green-400" : matchType === "close" ? "text-yellow-400" : matchType === "far" ? "text-orange-400" : "text-red-400"}`}>
+                        <span className={`text-xs font-bold whitespace-nowrap ${matchType === "exact" ? "text-green-400" : matchType === "close" ? "text-yellow-400" : matchType === "far" ? "text-orange-400" : "text-red-400"}`}>
                           {MATCH_LABELS[matchType]}
                         </span>
                       )}
@@ -205,7 +205,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>LEADERBOARD</h2>
             <span className="text-xs text-white/40">{picksScored} of 32 picks in</span>
           </div>
-          <div className="space-y-1.5 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
+          <div className="space-y-1.5 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
             {leaderboard.length === 0 ? (
               <p className="text-white/30 text-sm py-8 text-center">Scores will appear as picks come in</p>
             ) : (

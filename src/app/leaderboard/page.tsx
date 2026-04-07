@@ -54,7 +54,7 @@ export default async function LeaderboardPage() {
               const accuracyDisplay = entry.accuracyPct?.toFixed(1) || "0.0";
 
               return (
-                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex items-center gap-4 rounded-xl border px-5 py-4 transition hover:border-white/20 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
+                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-4 rounded-xl border px-5 py-4 transition hover:border-white/20 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
                   <div className="flex flex-col items-center w-10 shrink-0">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-500/20 text-yellow-400" : rank === 2 ? "bg-gray-400/20 text-gray-300" : rank === 3 ? "bg-orange-500/20 text-orange-400" : "bg-white/5 text-white/40"}`}>
                       {allDone && rank === 1 ? "🏆" : rank}
@@ -75,7 +75,7 @@ export default async function LeaderboardPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-2xl font-bold text-white">{entry.totalScore}<span className="text-sm font-normal text-white/40 ml-1">pts</span></div>
-                    <div className="flex gap-3 text-xs text-white/40">
+                    <div className="flex flex-wrap gap-3 text-xs text-white/40">
                       <span>{entry.correctExact} exact</span>
                       <span>{entry.correctPlayer} correct</span>
                       <span>{accuracyDisplay}%</span>

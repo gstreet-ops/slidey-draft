@@ -101,7 +101,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           {!userBoard && (
-            <Link href="/my-board" className="rounded-lg bg-[var(--gtown-highlight)] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition">
+            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--gtown-highlight)] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition text-center">
               Create Your Mock Draft
             </Link>
           )}
