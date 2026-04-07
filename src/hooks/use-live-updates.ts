@@ -1,0 +1,85 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+
+export interface LiveUpdateConfig {
+  /** API endpoints to poll */
+  endpoints: string[];
+  /** Polling interval in ms (default 30000) */
+  interval?: number;
+  /** Whether polling is active */
+  enabled?: boolean;
+}
+
+export interface LiveUpdateResult<T> {
+  data: T | null;
+  isLoading: boolean;
+  error: Error | null;
+  lastUpdated: Date | null;
+  /** Force an immediate refresh */
+  refresh: () => void;
+}
+
+/**
+ * Transport-agnostic live data hook.
+ * Currently uses polling via setInterval + fetch.
+ * Interface designed so internals can swap to SSE/WebSocket later.
+ */
+export function useLiveUpdates<T = any>(
+  config: LiveUpdateConfig
+): LiveUpdateResult<T> {
+  const { endpoints, interval = 30_000, enabled = true } = config;
+  const [data, setData] = useState<T | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const mountedRef = useRef(true);
+
+  const fetchAll = useCallback(async () => {
+    if (!enabled || endpoints.length === 0) return;
+
+    try {
+      const results = await Promise.all(
+        endpoints.map(async (url) => {
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`${res.status} from ${url}`);
+          return res.json();
+        })
+      );
+
+      if (!mountedRef.current) return;
+
+      const value = endpoints.length === 1 ? results[0] : results;
+      setData(value as T);
+      setError(null);
+      setLastUpdated(new Date());
+    } catch (err) {
+      if (!mountedRef.current) return;
+      setError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      if (mountedRef.current) setIsLoading(false);
+    }
+  }, [endpoints.join(","), enabled]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Initial fetch
+    fetchAll();
+
+    // Set up polling
+    const id = setInterval(fetchAll, interval);
+
+    return () => {
+      mountedRef.current = false;
+      clearInterval(id);
+    };
+  }, [fetchAll, interval, enabled]);
+
+  return { data, isLoading, error, lastUpdated, refresh: fetchAll };
+}
