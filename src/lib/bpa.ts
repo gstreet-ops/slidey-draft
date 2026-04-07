@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { eq, asc } from "drizzle-orm";
 import { bpaRankings, picks, players, draftBoards, draftOrder } from "@/db/schema";
-import { fetchDraftAthletes, normalizePlayerName } from "@/lib/espn-api";
+import { fetchDraftAthletes, normalizePlayerName, positionMatches } from "@/lib/espn-api";
 
 /**
  * Fetch ESPN BPA rankings and store in bpa_rankings table.
@@ -13,19 +13,15 @@ export async function fetchAndStoreBpaRankings(season: number): Promise<number> 
 
   const ourPlayers = await db.select().from(players);
 
-  const playerLookup = new Map<string, typeof ourPlayers[number]>();
-  for (const p of ourPlayers) {
-    const key = `${normalizePlayerName(p.name)}|${p.position.toLowerCase()}`;
-    playerLookup.set(key, p);
-  }
-
   // Clear existing rankings
   await db.delete(bpaRankings);
 
   let matched = 0;
   for (const athlete of athletes) {
-    const key = `${normalizePlayerName(athlete.fullName)}|${athlete.position.toLowerCase()}`;
-    const player = playerLookup.get(key);
+    const player = ourPlayers.find(p =>
+      normalizePlayerName(p.name) === normalizePlayerName(athlete.fullName) &&
+      positionMatches(athlete.position, p.position)
+    );
 
     if (player) {
       await db.insert(bpaRankings).values({

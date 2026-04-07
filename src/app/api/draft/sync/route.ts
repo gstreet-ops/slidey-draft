@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { eq, asc } from "drizzle-orm";
 import { actualResults, players, draftOrder } from "@/db/schema";
-import { fetchDraftPicks, normalizePlayerName } from "@/lib/espn-api";
+import { fetchDraftPicks, normalizePlayerName, positionMatches } from "@/lib/espn-api";
 import { scoreAllBoards } from "@/lib/scoring";
 import { getConfig, setConfig, isDraftLocked } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
@@ -41,11 +41,6 @@ export async function POST() {
     }
 
     const ourPlayers = await db.select().from(players);
-    const playerLookup = new Map<string, typeof ourPlayers[number]>();
-    for (const p of ourPlayers) {
-      const key = `${normalizePlayerName(p.name)}|${p.position.toLowerCase()}`;
-      playerLookup.set(key, p);
-    }
 
     const existing = await db
       .select({ pickNumber: actualResults.pickNumber })
@@ -63,8 +58,10 @@ export async function POST() {
     for (const pick of espnPicks) {
       if (existingPicks.has(pick.pickNumber)) continue;
 
-      const key = `${normalizePlayerName(pick.athleteName)}|${pick.athletePosition.toLowerCase()}`;
-      const player = playerLookup.get(key);
+      const player = ourPlayers.find(p =>
+        normalizePlayerName(p.name) === normalizePlayerName(pick.athleteName) &&
+        positionMatches(pick.athletePosition, p.position)
+      );
 
       if (!player) {
         console.warn(`[Sync] No match for: ${pick.athleteName} (${pick.athletePosition})`);

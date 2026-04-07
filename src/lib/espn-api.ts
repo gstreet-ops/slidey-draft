@@ -43,6 +43,35 @@ export function normalizePlayerName(name: string): string {
     .trim();
 }
 
+const POSITION_ALIASES: Record<string, string[]> = {
+  "cb": ["cb", "db"],
+  "db": ["db", "cb"],
+  "edge": ["edge", "de", "olb"],
+  "de": ["de", "edge"],
+  "olb": ["olb", "edge", "lb"],
+  "ot": ["ot", "t", "ol"],
+  "t": ["t", "ot", "ol"],
+  "og": ["og", "g", "ol"],
+  "g": ["g", "og", "ol"],
+  "ol": ["ol", "ot", "og", "t", "g"],
+  "dt": ["dt", "dl", "nt"],
+  "dl": ["dl", "dt"],
+  "nt": ["nt", "dt", "dl"],
+  "s": ["s", "fs", "ss", "db"],
+  "fs": ["fs", "s", "db"],
+  "ss": ["ss", "s", "db"],
+  "ilb": ["ilb", "lb", "mlb"],
+  "mlb": ["mlb", "lb", "ilb"],
+  "lb": ["lb", "ilb", "mlb", "olb"],
+};
+
+export function positionMatches(espnPos: string, ourPos: string): boolean {
+  const e = espnPos.toLowerCase();
+  const o = ourPos.toLowerCase();
+  if (e === o) return true;
+  return POSITION_ALIASES[e]?.includes(o) || POSITION_ALIASES[o]?.includes(e) || false;
+}
+
 async function resolveRef(url: string): Promise<any | null> {
   return espnFetch(url);
 }
