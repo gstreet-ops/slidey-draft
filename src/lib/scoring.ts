@@ -70,11 +70,12 @@ export async function scoreBoard(boardId: string, results: ActualResult[]) {
       } else if (delta <= 5) {
         points = 5;
         matchType = "close";
+        correctPlayer++;
       } else {
         points = 3;
         matchType = "far";
+        correctPlayer++;
       }
-      correctPlayer++;
     }
 
     totalScore += points;
@@ -106,7 +107,7 @@ export async function scoreBoard(boardId: string, results: ActualResult[]) {
   }
 
   const scoredCount = pickScoreRows.length;
-  const accuracyPct = scoredCount > 0 ? (correctPlayer / scoredCount) * 100 : 0;
+  const accuracyPct = scoredCount > 0 ? ((correctExact + correctPlayer) / scoredCount) * 100 : 0;
 
   const [board] = await db
     .select({ createdBy: draftBoards.createdBy })
