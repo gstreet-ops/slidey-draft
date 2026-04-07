@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getBoards } from "@/lib/queries";
 import { auth } from "@/lib/auth";
+import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,7 @@ export default async function Home() {
   const boards = await getBoards(2026);
   const published = boards.filter((b) => b.status === "published");
   const session = await auth();
+  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
@@ -35,6 +37,11 @@ export default async function Home() {
                 <Link href="/live" className="text-white/60 hover:text-white transition">
                   Live
                 </Link>
+                {locked && (
+                  <Link href="/live" className="text-white/60 hover:text-white transition">
+                    War Room
+                  </Link>
+                )}
                 <Link href="/my-board" className="text-white/60 hover:text-white transition">
                   My Board
                 </Link>
@@ -70,7 +77,14 @@ export default async function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            {session?.user ? (
+            {locked ? (
+              <Link
+                href="/live"
+                className="rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+              >
+                Watch Live
+              </Link>
+            ) : session?.user ? (
               <Link
                 href="/my-board"
                 className="rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"

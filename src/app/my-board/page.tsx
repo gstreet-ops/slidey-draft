@@ -5,6 +5,7 @@ import { createUserBoard } from "@/lib/actions";
 import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
+import { DraftLockedBanner } from "@/components/draft-locked-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -63,16 +64,7 @@ export default async function MyBoardPage() {
         </div>
       </header>
 
-      {locked && (
-        <div className="bg-[var(--lions-blue)]/20 border-b border-[var(--lions-blue)]/30 px-6 py-3 text-center">
-          <p className="text-sm font-medium text-[var(--lions-blue)]">
-            Mock drafts are locked — the draft is live!{" "}
-            <Link href="/live" className="underline hover:text-white transition">
-              Watch in the War Room →
-            </Link>
-          </p>
-        </div>
-      )}
+      {locked && <DraftLockedBanner />}
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         <div className="space-y-6">
