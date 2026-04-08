@@ -40,7 +40,7 @@ export function ProspectHoverCard({ prospect, children, onTap }: Props) {
   const [show, setShow] = useState(false);
   const [position, setPosition] = useState<"above" | "below">("below");
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
