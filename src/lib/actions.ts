@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { eq, and, desc, asc, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import {
   draftBoards,
   picks,
@@ -32,7 +32,13 @@ import {
 
 // ── Create a new mock draft board ──────────────────
 export async function createBoard(formData: FormData) {
-  const title = formData.get("title") as string;
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  const title = (formData.get("title") as string)?.trim();
+  if (!title || title.length > 200) throw new Error("Title is required (max 200 chars)");
   const season = Number(formData.get("season") || 2026);
 
   const [board] = await db
@@ -78,6 +84,18 @@ export async function makePick(
   teamId: string,
   analysis?: string
 ) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [board] = await db
+    .select({ createdBy: draftBoards.createdBy })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+  if (!board) throw new Error("Board not found");
+  if (board.createdBy !== session.user.id && session.user.role !== "admin") {
+    throw new Error("Not authorized");
+  }
+
   const [pick] = await db
     .insert(picks)
     .values({
@@ -99,6 +117,18 @@ export async function makePick(
 
 // ── Remove a pick ──────────────────────────────────
 export async function removePick(pickId: string, boardId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [board] = await db
+    .select({ createdBy: draftBoards.createdBy })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+  if (!board) throw new Error("Board not found");
+  if (board.createdBy !== session.user.id && session.user.role !== "admin") {
+    throw new Error("Not authorized");
+  }
+
   await db.delete(picks).where(eq(picks.id, pickId));
   revalidatePath(`/admin/board/${boardId}`);
   revalidatePath(`/my-board`);
@@ -107,6 +137,18 @@ export async function removePick(pickId: string, boardId: string) {
 
 // ── Publish a board ────────────────────────────────
 export async function publishBoard(boardId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [board] = await db
+    .select({ createdBy: draftBoards.createdBy })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+  if (!board) throw new Error("Board not found");
+  if (board.createdBy !== session.user.id && session.user.role !== "admin") {
+    throw new Error("Not authorized");
+  }
+
   await db
     .update(draftBoards)
     .set({ status: "published", publishedAt: new Date() })
@@ -125,9 +167,12 @@ export async function createGroup(formData: FormData) {
     throw new Error("Admin only");
   }
 
-  const name = formData.get("name") as string;
-  // Generate a short invite code
-  const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const name = (formData.get("name") as string)?.trim();
+  if (!name || name.length > 100) throw new Error("Group name is required (max 100 chars)");
+  // Generate a short invite code using crypto
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  const inviteCode = Array.from(bytes, (b) => chars[b % chars.length]).join("");
 
   const [group] = await db
     .insert(groups)
@@ -176,7 +221,7 @@ export async function enterActualResult(
     // Auto-score all published boards (global leaderboard)
     await scoreAllBoards(season);
     // Score live predictions and recalculate pool standings
-    await scoreLivePredictions(pickNumber, playerId, season);
+    await scoreLivePredictions(pickNumber, playerId);
     await recalculateAllPools();
   }
 

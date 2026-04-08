@@ -81,7 +81,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     enabled: true,
   });
 
-  const { data: syncData, lastUpdated } = useLiveUpdates<{ totalPicks: number }>({
+  const { lastUpdated } = useLiveUpdates<{ totalPicks: number }>({
     endpoints: ["/api/draft/sync"],
     interval: 30_000,
     enabled: true,

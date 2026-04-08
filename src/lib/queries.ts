@@ -18,8 +18,6 @@ import {
   poolStandings,
   appInvites,
   livePredictions,
-  liveScores,
-  mockScores,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 

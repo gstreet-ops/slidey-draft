@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import {
   getPoolById,
@@ -132,7 +133,7 @@ export default async function PoolDashboardPage({
                     <div key={m.userId} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
                       <div className="flex items-center gap-3">
                         {m.userImage && (
-                          <img src={m.userImage} alt="" className="w-6 h-6 rounded-full" />
+                          <Image src={m.userImage} alt="" width={24} height={24} className="rounded-full" />
                         )}
                         <span className="text-white text-sm">{m.userName || m.userEmail}</span>
                         {m.role !== "member" && (

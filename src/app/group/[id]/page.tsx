@@ -22,7 +22,7 @@ export default async function GroupPage({ params }: { params: Params }) {
   const members = await getGroupMembers(id);
   const boards = await getBoardsForGroup(id, 2026);
   const season = 2026;
-  const memberIds = members.map((m: any) => m.userId);
+  const memberIds = members.map((m) => m.userId);
   const groupLeaderboard = await getLeaderboard(season, memberIds);
   const creator = await getUserById(group.createdBy);
 
@@ -168,7 +168,7 @@ export default async function GroupPage({ params }: { params: Params }) {
               GROUP LEADERBOARD
             </h2>
             <div className="space-y-2">
-              {groupLeaderboard.map((entry: any) => {
+              {groupLeaderboard.map((entry) => {
                 const isAdmin = entry.userRole === "admin";
                 return (
                   <Link

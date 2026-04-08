@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { eq, asc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { actualResults, players, draftOrder } from "@/db/schema";
 import { fetchDraftPicks, normalizePlayerName, positionMatches } from "@/lib/espn-api";
 import { scoreAllBoards } from "@/lib/scoring";

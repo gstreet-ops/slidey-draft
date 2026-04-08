@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { eq, and, asc, desc, sql } from "drizzle-orm";
+import { eq, and, asc, desc, sql, inArray } from "drizzle-orm";
 import {
   pools,
   poolMembers,
@@ -12,13 +12,7 @@ import {
   actualResults,
   players,
 } from "@/db/schema";
-import { getPoolSettings, type PoolSettings } from "@/lib/pool-helpers";
-
-type ActualResult = {
-  pickNumber: number;
-  playerId: string;
-  teamId: string;
-};
+import { getPoolSettings } from "@/lib/pool-helpers";
 
 /**
  * Score a mock draft board using the tiered model for a specific pool.
@@ -30,6 +24,12 @@ export async function scoreMockDraft(
 ): Promise<{ total: number; breakdown: unknown[] }> {
   const [pool] = await db.select().from(pools).where(eq(pools.id, poolId));
   if (!pool) return { total: 0, breakdown: [] };
+
+  const [board] = await db
+    .select({ season: draftBoards.season })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+  if (!board) return { total: 0, breakdown: [] };
 
   const settings = getPoolSettings(pool.settings);
   if (!settings.mockDraftBonus) return { total: 0, breakdown: [] };
@@ -59,21 +59,23 @@ export async function scoreMockDraft(
       teamId: actualResults.teamId,
     })
     .from(actualResults)
-    .where(eq(actualResults.season, 2026))
+    .where(eq(actualResults.season, board.season))
     .orderBy(asc(actualResults.pickNumber));
 
   const filteredResults = results.filter((r) => r.pickNumber <= maxPick);
   if (filteredResults.length === 0) return { total: 0, breakdown: [] };
 
-  // Get actual player positions
-  const actualPlayerPositions = new Map<string, string>();
-  for (const r of filteredResults) {
-    const [player] = await db
-      .select({ position: players.position })
-      .from(players)
-      .where(eq(players.id, r.playerId));
-    if (player) actualPlayerPositions.set(r.playerId, player.position);
-  }
+  // Batch fetch actual player positions (avoids N+1)
+  const actualPlayerIds = [...new Set(filteredResults.map((r) => r.playerId))];
+  const actualPlayerRows = actualPlayerIds.length > 0
+    ? await db
+        .select({ id: players.id, position: players.position })
+        .from(players)
+        .where(inArray(players.id, actualPlayerIds))
+    : [];
+  const actualPlayerPositions = new Map<string, string>(
+    actualPlayerRows.map((p) => [p.id, p.position])
+  );
 
   // Map: actual playerId → actual pickNumber
   const actualByPlayer = new Map<string, number>();
@@ -154,8 +156,7 @@ export async function scoreMockDraft(
  */
 export async function scoreLivePredictions(
   pickNumber: number,
-  actualPlayerId: string,
-  season: number
+  actualPlayerId: string
 ) {
   // Get all pools with live predictions enabled
   const allPools = await db.select().from(pools);
@@ -184,7 +185,7 @@ export async function scoreLivePredictions(
 
       // Upsert live score (idempotent)
       const existing = await db
-        .select()
+        .select({ id: liveScores.id })
         .from(liveScores)
         .where(
           and(
@@ -202,6 +203,11 @@ export async function scoreLivePredictions(
           pointsAwarded,
           correct,
         });
+      } else {
+        await db
+          .update(liveScores)
+          .set({ pointsAwarded, correct, scoredAt: new Date() })
+          .where(eq(liveScores.id, existing[0].id));
       }
     }
   }
@@ -347,7 +353,7 @@ export async function scorePoolMockDrafts(poolId: string) {
       .where(
         and(
           eq(draftBoards.createdBy, member.userId),
-          eq(draftBoards.season, 2026)
+          eq(draftBoards.status, "published")
         )
       )
       .orderBy(desc(draftBoards.publishedAt))

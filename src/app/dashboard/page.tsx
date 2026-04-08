@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { getBoards, getUserBoard, getActualResults } from "@/lib/queries";
+import { getBoards, getUserBoard } from "@/lib/queries";
 import { isDraftLocked } from "@/lib/config";
 import { db } from "@/db";
 import { eq, asc } from "drizzle-orm";

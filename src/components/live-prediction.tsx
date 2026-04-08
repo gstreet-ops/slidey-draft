@@ -48,7 +48,6 @@ export function LivePredictionWidget({
 
   // Determine draft state
   const nextPickNumber = actualResults.length + 1;
-  const latestResult = actualResults[actualResults.length - 1];
 
   // Drafted player IDs
   const draftedPlayerIds = useMemo(

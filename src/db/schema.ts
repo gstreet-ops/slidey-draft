@@ -9,6 +9,7 @@ import {
   boolean,
   jsonb,
   uniqueIndex,
+  index,
   primaryKey,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -254,15 +255,21 @@ export const pickScores = pgTable(
 );
 
 // ── BPA Rankings ──────────────────────────────────
-export const bpaRankings = pgTable("bpa_rankings", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  playerId: uuid("player_id")
-    .notNull()
-    .references(() => players.id),
-  espnAthleteId: text("espn_athlete_id"),
-  rank: integer("rank").notNull(),
-  fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
-});
+export const bpaRankings = pgTable(
+  "bpa_rankings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    playerId: uuid("player_id")
+      .notNull()
+      .references(() => players.id),
+    espnAthleteId: text("espn_athlete_id"),
+    rank: integer("rank").notNull(),
+    fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("bpa_rankings_player_idx").on(table.playerId),
+  ]
+);
 
 // ── App Config ────────────────────────────────────
 export const appConfig = pgTable("app_config", {
@@ -359,36 +366,48 @@ export const livePredictions = pgTable(
 );
 
 // ── Live Scores ───────────────────────────────────
-export const liveScores = pgTable("live_scores", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  poolId: uuid("pool_id")
-    .notNull()
-    .references(() => pools.id, { onDelete: "cascade" }),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  pickNumber: integer("pick_number").notNull(),
-  pointsAwarded: integer("points_awarded").notNull(),
-  correct: boolean("correct").notNull(),
-  scoredAt: timestamp("scored_at").defaultNow().notNull(),
-});
+export const liveScores = pgTable(
+  "live_scores",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    pickNumber: integer("pick_number").notNull(),
+    pointsAwarded: integer("points_awarded").notNull(),
+    correct: boolean("correct").notNull(),
+    scoredAt: timestamp("scored_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("live_scores_pool_user_idx").on(table.poolId, table.userId),
+  ]
+);
 
 // ── Mock Scores (per-pool tiered mock bonus) ──────
-export const mockScores = pgTable("mock_scores", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  poolId: uuid("pool_id")
-    .notNull()
-    .references(() => pools.id, { onDelete: "cascade" }),
-  boardId: uuid("board_id")
-    .notNull()
-    .references(() => draftBoards.id, { onDelete: "cascade" }),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  totalMockBonus: integer("total_mock_bonus").notNull().default(0),
-  perPickBreakdown: jsonb("per_pick_breakdown"),
-  scoredAt: timestamp("scored_at").defaultNow().notNull(),
-});
+export const mockScores = pgTable(
+  "mock_scores",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    boardId: uuid("board_id")
+      .notNull()
+      .references(() => draftBoards.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    totalMockBonus: integer("total_mock_bonus").notNull().default(0),
+    perPickBreakdown: jsonb("per_pick_breakdown"),
+    scoredAt: timestamp("scored_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("mock_scores_pool_user_idx").on(table.poolId, table.userId),
+  ]
+);
 
 // ── Pool Standings (combined leaderboard) ─────────
 export const poolStandings = pgTable(

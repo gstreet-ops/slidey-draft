@@ -75,7 +75,8 @@ export async function autoFillBPA(boardId: string): Promise<number> {
 
   let filled = 0;
 
-  for (let pickNumber = 1; pickNumber <= 32; pickNumber++) {
+  const maxPick = order.length > 0 ? Math.max(...order.map((o) => o.pickNumber)) : 32;
+  for (let pickNumber = 1; pickNumber <= maxPick; pickNumber++) {
     if (pickedNumbers.has(pickNumber)) continue;
 
     const teamId = teamByPick.get(pickNumber);
