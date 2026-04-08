@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { promoteToAdmin, demoteToMember, removePoolMember, transferCommissioner } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 
@@ -56,7 +57,7 @@ export function MemberManagement({
           <div key={m.userId} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
             <div className="flex items-center gap-3">
               {m.userImage && (
-                <img src={m.userImage} alt="" className="w-7 h-7 rounded-full" />
+                <Image src={m.userImage} alt="" width={28} height={28} className="rounded-full" />
               )}
               <span className="text-white text-sm">{m.userName || m.userEmail}</span>
               <span className={`text-xs px-1.5 py-0.5 rounded ${

@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
-import { users, poolMembers, appInvites, pools } from "@/db/schema";
+import { poolMembers, appInvites, pools } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 // ── Auth helpers ──────────────────────────────────
@@ -48,11 +48,8 @@ export async function canManagePool(
 const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars
 
 function generateCode(length: number): string {
-  let code = "";
-  for (let i = 0; i < length; i++) {
-    code += CHARS[Math.floor(Math.random() * CHARS.length)];
-  }
-  return code;
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  return Array.from(bytes, (b) => CHARS[b % CHARS.length]).join("");
 }
 
 export async function generateAppInviteCode(): Promise<string> {

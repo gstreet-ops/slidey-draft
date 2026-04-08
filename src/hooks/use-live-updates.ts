@@ -26,7 +26,7 @@ export interface LiveUpdateResult<T> {
  * Currently uses polling via setInterval + fetch.
  * Interface designed so internals can swap to SSE/WebSocket later.
  */
-export function useLiveUpdates<T = any>(
+export function useLiveUpdates<T = unknown>(
   config: LiveUpdateConfig
 ): LiveUpdateResult<T> {
   const { endpoints, interval = 30_000, enabled = true, method } = config;
@@ -35,6 +35,9 @@ export function useLiveUpdates<T = any>(
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const mountedRef = useRef(true);
+  const endpointsKey = endpoints.join(",");
+  const methodRef = useRef(method);
+  methodRef.current = method;
 
   const fetchAll = useCallback(async () => {
     if (!enabled || endpoints.length === 0) return;
@@ -42,7 +45,7 @@ export function useLiveUpdates<T = any>(
     try {
       const results = await Promise.all(
         endpoints.map(async (url) => {
-          const res = await fetch(url, { cache: "no-store", method: method || "GET" });
+          const res = await fetch(url, { cache: "no-store", method: methodRef.current || "GET" });
           if (!res.ok) throw new Error(`${res.status} from ${url}`);
           return res.json();
         })
@@ -60,7 +63,8 @@ export function useLiveUpdates<T = any>(
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
-  }, [endpoints.join(","), enabled]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- endpointsKey is a stable derived key for endpoints
+  }, [endpointsKey, enabled]);
 
   useEffect(() => {
     mountedRef.current = true;

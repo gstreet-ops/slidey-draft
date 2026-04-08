@@ -19,6 +19,34 @@ export type EspnAthlete = {
   rank: number;
 };
 
+// ── ESPN API response types ──────────────────────
+interface EspnRef {
+  $ref?: string;
+}
+
+interface EspnPickData {
+  pick?: number;
+  overall?: number;
+  status?: { name: string };
+  athlete?: EspnRef;
+  team?: EspnRef;
+}
+
+interface EspnAthleteData {
+  id?: string | number;
+  fullName?: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
+  position?: { abbreviation?: string };
+  college?: { name?: string; shortName?: string };
+  rank?: number;
+}
+
+interface EspnRoundData {
+  picks?: EspnPickData[];
+}
+
 async function espnFetch<T>(url: string): Promise<T | null> {
   try {
     const controller = new AbortController();
@@ -72,12 +100,12 @@ export function positionMatches(espnPos: string, ourPos: string): boolean {
   return POSITION_ALIASES[e]?.includes(o) || POSITION_ALIASES[o]?.includes(e) || false;
 }
 
-async function resolveRef(url: string): Promise<any | null> {
-  return espnFetch(url);
+async function resolveRef(url: string): Promise<Record<string, unknown> | null> {
+  return espnFetch<Record<string, unknown>>(url);
 }
 
-async function batchResolveRefs(urls: string[], concurrency = 5): Promise<(any | null)[]> {
-  const results: (any | null)[] = new Array(urls.length).fill(null);
+async function batchResolveRefs(urls: string[], concurrency = 5): Promise<(Record<string, unknown> | null)[]> {
+  const results: (Record<string, unknown> | null)[] = new Array(urls.length).fill(null);
   for (let i = 0; i < urls.length; i += concurrency) {
     const batch = urls.slice(i, i + concurrency);
     const batchResults = await Promise.all(batch.map(url => resolveRef(url)));
@@ -88,31 +116,31 @@ async function batchResolveRefs(urls: string[], concurrency = 5): Promise<(any |
 
 export async function fetchDraftPicks(season: number, round: number = 1): Promise<EspnPick[]> {
   const url = `${ESPN_BASE}/${season}/draft/rounds`;
-  const data = await espnFetch<{ items?: any[] }>(url);
+  const data = await espnFetch<{ items?: EspnRef[] }>(url);
   if (!data?.items) return [];
 
   const roundIndex = round - 1;
   const roundItem = data.items[roundIndex];
   if (!roundItem) return [];
 
-  const roundData = roundItem.$ref ? await resolveRef(roundItem.$ref) : roundItem;
+  const roundData = (roundItem.$ref ? await resolveRef(roundItem.$ref) : roundItem) as EspnRoundData | null;
   if (!roundData?.picks) return [];
 
   // Filter to made selections with athlete refs
   const madePicks = roundData.picks.filter(
-    (p: any) => p.status?.name === "SELECTION_MADE" && p.athlete?.$ref
+    (p) => p.status?.name === "SELECTION_MADE" && p.athlete?.$ref
   );
 
   if (madePicks.length === 0) return [];
 
   // Batch resolve all athlete refs
-  const athleteRefs = madePicks.map((p: any) => p.athlete.$ref);
+  const athleteRefs = madePicks.map((p) => p.athlete!.$ref!);
   const athletes = await batchResolveRefs(athleteRefs);
 
-  const picks: EspnPick[] = [];
+  const espnPicks: EspnPick[] = [];
   for (let i = 0; i < madePicks.length; i++) {
     const pickData = madePicks[i];
-    const athlete = athletes[i];
+    const athlete = athletes[i] as EspnAthleteData | null;
 
     const pickNumber = pickData.pick ?? pickData.overall;
     if (!pickNumber || !athlete) continue;
@@ -120,7 +148,7 @@ export async function fetchDraftPicks(season: number, round: number = 1): Promis
     const athleteName = athlete.fullName || athlete.displayName || `${athlete.firstName} ${athlete.lastName}` || "";
     if (!athleteName) continue;
 
-    picks.push({
+    espnPicks.push({
       pickNumber,
       teamRef: pickData.team?.$ref || "",
       athleteRef: pickData.athlete?.$ref || "",
@@ -131,29 +159,28 @@ export async function fetchDraftPicks(season: number, round: number = 1): Promis
     });
   }
 
-  return picks;
+  return espnPicks;
 }
 
 export async function fetchDraftAthletes(season: number, limit: number = 100): Promise<EspnAthlete[]> {
   const url = `${ESPN_BASE}/${season}/draft/athletes?limit=${limit}`;
-  const data = await espnFetch<{ items?: any[] }>(url);
+  const data = await espnFetch<{ items?: (EspnRef & EspnAthleteData)[] }>(url);
   if (!data?.items) return [];
 
   const athletes: EspnAthlete[] = [];
-  let rankCounter = 0;
 
-  for (const item of data.items) {
+  for (let i = 0; i < data.items.length; i++) {
+    const item = data.items[i];
     try {
-      const athleteData = item.$ref ? await resolveRef(item.$ref) : item;
+      const athleteData = (item.$ref ? await resolveRef(item.$ref) : item) as EspnAthleteData | null;
       if (!athleteData) continue;
 
-      rankCounter++;
       athletes.push({
         id: String(athleteData.id || ""),
         fullName: athleteData.fullName || athleteData.displayName || "",
         position: athleteData.position?.abbreviation || "",
         school: athleteData.college?.name || athleteData.college?.shortName || "",
-        rank: athleteData.rank ?? rankCounter,
+        rank: athleteData.rank ?? (i + 1),
       });
     } catch (err) {
       console.error(`[ESPN API] Error parsing athlete item:`, err);

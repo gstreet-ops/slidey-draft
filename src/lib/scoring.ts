@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { eq, and, asc, desc } from "drizzle-orm";
+import { eq, and, asc, desc, inArray } from "drizzle-orm";
 import { draftBoards, picks, scores, pickScores, actualResults } from "@/db/schema";
 
 type ActualResult = {
@@ -91,10 +91,11 @@ export async function scoreBoard(boardId: string, results: ActualResult[]) {
   }
 
   // Delete existing pick_scores for this board, then insert
-  for (const row of pickScoreRows) {
+  if (pickScoreRows.length > 0) {
+    const pickNumbers = pickScoreRows.map((r) => r.pickNumber);
     await db
       .delete(pickScores)
-      .where(and(eq(pickScores.boardId, boardId), eq(pickScores.pickNumber, row.pickNumber)));
+      .where(and(eq(pickScores.boardId, boardId), inArray(pickScores.pickNumber, pickNumbers)));
   }
   if (pickScoreRows.length > 0) {
     await db.insert(pickScores).values(
