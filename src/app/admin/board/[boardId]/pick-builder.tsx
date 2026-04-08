@@ -246,12 +246,13 @@ export function PickBuilder({
                   e.stopPropagation();
                   setDrawerPlayer(player);
                 }}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/40 hover:text-white transition"
+                className="flex h-9 shrink-0 items-center gap-1 rounded-lg border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 px-2.5 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition"
                 title="View scouting report"
               >
-                <svg width="20" height="20" viewBox="0 0 14 14" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
                   <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
                 </svg>
+                <span className="text-[10px] font-semibold hidden sm:inline">Scout</span>
               </button>
             </div>
           );
@@ -408,17 +409,53 @@ export function PickBuilder({
                   )}
                 </div>
 
-                {/* Remove button */}
-                {pick && !readOnly && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemovePick(pick.id);
-                    }}
-                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition"
-                  >
-                    ✕
-                  </button>
+                {/* Scout + Remove buttons */}
+                {pick && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDrawerPlayer({
+                          id: pick.playerId,
+                          name: pick.playerName,
+                          position: pick.playerPosition,
+                          school: pick.playerSchool,
+                          rank: pick.playerRank,
+                          imageUrl: pick.playerImageUrl,
+                          notes: pick.playerNotes,
+                          height: pick.playerHeight,
+                          weight: pick.playerWeight,
+                          grade: pick.playerGrade,
+                          positionRank: pick.playerPositionRank,
+                          fortyTime: pick.playerFortyTime,
+                          vertical: pick.playerVertical,
+                          benchPress: pick.playerBenchPress,
+                          broadJump: pick.playerBroadJump,
+                          threeConeDrill: pick.playerThreeConeDrill,
+                          shuttle: pick.playerShuttle,
+                          nflComparison: pick.playerNflComparison,
+                        });
+                      }}
+                      className="flex h-8 items-center gap-1 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-2 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/25 hover:text-white transition"
+                      title="View scouting report"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                        <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
+                      </svg>
+                      <span className="text-[10px] font-semibold">Scout</span>
+                    </button>
+                    {!readOnly && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemovePick(pick.id);
+                        }}
+                        className="flex h-8 w-8 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             );
