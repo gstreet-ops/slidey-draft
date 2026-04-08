@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PlayerAvatar } from "./player-avatar";
+import { ProspectHoverCard } from "./prospect-hover-card";
 import { extractTraitTags } from "@/lib/trait-tags";
 
 type Pick = {

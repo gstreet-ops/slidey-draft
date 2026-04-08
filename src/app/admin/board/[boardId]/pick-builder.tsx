@@ -5,6 +5,7 @@ import Image from "next/image";
 import { makePick, removePick, publishBoard } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { ProspectDetailDrawer } from "@/components/prospect-detail-drawer";
+import { ProspectHoverCard } from "@/components/prospect-hover-card";
 import { extractTraitTags } from "@/lib/trait-tags";
 
 type DraftSlot = {
@@ -221,9 +222,14 @@ export function PickBuilder({
                 <PlayerAvatar player={player} size={32} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-white truncate">
-                      {player.name}
-                    </span>
+                    <ProspectHoverCard
+                      prospect={player}
+                      onTap={() => setDrawerPlayer(player)}
+                    >
+                      <span className="text-sm font-semibold text-white truncate cursor-pointer underline decoration-white/20 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition">
+                        {player.name}
+                      </span>
+                    </ProspectHoverCard>
                     <span className="text-xs text-[var(--lions-blue)] shrink-0">
                       {player.position}
                     </span>
@@ -358,34 +364,51 @@ export function PickBuilder({
                   </div>
                   {pick ? (
                     <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDrawerPlayer({
-                            id: pick.playerId,
-                            name: pick.playerName,
-                            position: pick.playerPosition,
-                            school: pick.playerSchool,
-                            rank: pick.playerRank,
-                            imageUrl: pick.playerImageUrl,
-                            notes: pick.playerNotes,
-                            height: pick.playerHeight,
-                            weight: pick.playerWeight,
-                            grade: pick.playerGrade,
-                            positionRank: pick.playerPositionRank,
-                            fortyTime: pick.playerFortyTime,
-                            vertical: pick.playerVertical,
-                            benchPress: pick.playerBenchPress,
-                            broadJump: pick.playerBroadJump,
-                            threeConeDrill: pick.playerThreeConeDrill,
-                            shuttle: pick.playerShuttle,
-                            nflComparison: pick.playerNflComparison,
-                          });
+                      <ProspectHoverCard
+                        prospect={{
+                          name: pick.playerName,
+                          position: pick.playerPosition,
+                          school: pick.playerSchool,
+                          rank: pick.playerRank,
+                          imageUrl: pick.playerImageUrl,
+                          notes: pick.playerNotes,
+                          height: pick.playerHeight,
+                          weight: pick.playerWeight,
+                          grade: pick.playerGrade,
+                          positionRank: pick.playerPositionRank,
+                          fortyTime: pick.playerFortyTime,
+                          vertical: pick.playerVertical,
+                          benchPress: pick.playerBenchPress,
+                          broadJump: pick.playerBroadJump,
+                          threeConeDrill: pick.playerThreeConeDrill,
+                          shuttle: pick.playerShuttle,
+                          nflComparison: pick.playerNflComparison,
                         }}
-                        className="text-xs font-semibold text-white hover:text-[var(--lions-blue)] transition sm:text-sm"
+                        onTap={() => setDrawerPlayer({
+                          id: pick.playerId,
+                          name: pick.playerName,
+                          position: pick.playerPosition,
+                          school: pick.playerSchool,
+                          rank: pick.playerRank,
+                          imageUrl: pick.playerImageUrl,
+                          notes: pick.playerNotes,
+                          height: pick.playerHeight,
+                          weight: pick.playerWeight,
+                          grade: pick.playerGrade,
+                          positionRank: pick.playerPositionRank,
+                          fortyTime: pick.playerFortyTime,
+                          vertical: pick.playerVertical,
+                          benchPress: pick.playerBenchPress,
+                          broadJump: pick.playerBroadJump,
+                          threeConeDrill: pick.playerThreeConeDrill,
+                          shuttle: pick.playerShuttle,
+                          nflComparison: pick.playerNflComparison,
+                        })}
                       >
-                        {pick.playerName}
-                      </button>
+                        <span className="text-xs font-semibold text-white hover:text-[var(--lions-blue)] transition cursor-pointer sm:text-sm underline decoration-white/20 underline-offset-2 hover:decoration-[var(--lions-blue)]">
+                          {pick.playerName}
+                        </span>
+                      </ProspectHoverCard>
                       <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
                         {pick.playerPosition}
                       </span>
