@@ -154,7 +154,7 @@ export function PickBuilder({
         </div>
       ) : (
         <h2
-          className="mb-3 text-lg font-bold text-white tracking-wide"
+          className="mb-3 text-sm font-bold text-white tracking-widest sm:text-lg"
           style={{ fontFamily: "var(--font-display)" }}
         >
           PROSPECT POOL
@@ -162,17 +162,17 @@ export function PickBuilder({
       )}
       <input
         type="text"
-        placeholder="Search name, position, school..."
+        placeholder="Search prospects..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+        className="mb-2 w-full rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-xs text-white placeholder:text-white/50 focus:border-[var(--lions-blue)] focus:outline-none sm:px-3 sm:py-2 sm:text-sm"
       />
-      <div className="mb-3 flex gap-1 flex-wrap overflow-x-auto scrollbar-none">
+      <div className="mb-2 flex gap-0.5 flex-wrap overflow-x-auto scrollbar-none sm:mb-3 sm:gap-1">
         {positions.map((pos) => (
           <button
             key={pos}
             onClick={() => setPosFilter(pos)}
-            className={`shrink-0 px-2 py-1 rounded text-xs font-semibold transition ${
+            className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold transition sm:px-2 sm:py-1 sm:text-xs ${
               posFilter === pos
                 ? "bg-[var(--lions-blue)] text-white"
                 : "bg-white/5 text-white/40 hover:text-white/60"
@@ -498,7 +498,7 @@ export function PickBuilder({
 
         {/* Prospect pool sidebar — always visible */}
         {!readOnly && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-2 sm:p-4 max-h-[calc(100vh-100px)] overflow-y-auto lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)]">
+          <div className="rounded-xl border border-white/20 bg-[var(--gtown-navy)] p-2 sm:p-4 max-h-[calc(100vh-100px)] overflow-y-auto lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)] shadow-lg">
             {prospectPoolContent}
           </div>
         )}
