@@ -3,6 +3,7 @@ import { getBoards, getPoolsForUser } from "@/lib/queries";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
+import { HomeNav } from "@/components/home-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -16,75 +17,39 @@ export default async function Home() {
     ? await getPoolsForUser(session.user.id)
     : [];
 
+  // Build nav links
+  const navLinks = [
+    { href: "/picks", label: "All Picks" },
+    { href: "/leaderboard", label: "Leaderboard" },
+  ];
+  if (session?.user) {
+    navLinks.push({ href: "/dashboard", label: "Dashboard" });
+    if (session.user.status === "active") navLinks.push({ href: "/pools", label: "Pools" });
+    navLinks.push({ href: "/live", label: "Live" });
+    if (locked) navLinks.push({ href: "/live", label: "War Room" });
+    navLinks.push({ href: "/my-board", label: "My Board" });
+    if (session.user.role === "admin") navLinks.push({ href: "/admin", label: "Studio" });
+  } else {
+    navLinks.push({ href: "/login", label: "Sign In" });
+  }
+
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      {/* Nav */}
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <span
-            className="text-2xl font-bold text-white tracking-wider"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
-          </span>
-          <nav className="flex gap-4 text-sm">
-            <Link href="/picks" className="text-white/60 hover:text-white transition">
-              All Picks
-            </Link>
-            <Link href="/leaderboard" className="text-white/60 hover:text-white transition">
-              Leaderboard
-            </Link>
-            {session?.user ? (
-              <>
-                <Link href="/dashboard" className="text-white/60 hover:text-white transition">
-                  Dashboard
-                </Link>
-                {session.user.status === "active" && (
-                  <Link href="/pools" className="text-white/60 hover:text-white transition">
-                    Pools
-                  </Link>
-                )}
-                <Link href="/live" className="text-white/60 hover:text-white transition">
-                  Live
-                </Link>
-                {locked && (
-                  <Link href="/live" className="text-white/60 hover:text-white transition">
-                    War Room
-                  </Link>
-                )}
-                <Link href="/my-board" className="text-white/60 hover:text-white transition">
-                  My Board
-                </Link>
-                {session.user.role === "admin" && (
-                  <Link href="/admin" className="text-white/60 hover:text-white transition">
-                    Studio
-                  </Link>
-                )}
-              </>
-            ) : (
-              <Link href="/login" className="text-white/60 hover:text-white transition">
-                Sign In
-              </Link>
-            )}
-          </nav>
-        </div>
-      </header>
+      <HomeNav links={navLinks} />
 
-      {/* Spectator banner */}
       {isSpectator && <SpectatorBanner />}
 
-      {/* Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center sm:px-6">
         <div className="space-y-6 max-w-2xl">
           <h1
-            className="text-6xl font-bold text-white tracking-wider leading-tight"
+            className="text-5xl font-bold text-white tracking-wider leading-tight sm:text-6xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
             SLIDEY
             <br />
             <span className="text-[var(--lions-blue)]">DRAFT</span>
           </h1>
-          <p className="text-lg text-white/60 max-w-md mx-auto">
+          <p className="text-base text-white/60 max-w-md mx-auto sm:text-lg">
             2026 NFL Mock Draft predictions. Make your picks, compete with friends,
             and see who knows football best.
           </p>
@@ -93,28 +58,28 @@ export default async function Home() {
             {locked ? (
               <Link
                 href="/live"
-                className="rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+                className="w-full rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition sm:w-auto"
               >
                 Watch Live
               </Link>
             ) : session?.user ? (
               <Link
                 href="/my-board"
-                className="rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+                className="w-full rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition sm:w-auto"
               >
                 Make Your Picks
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+                className="w-full rounded-lg bg-[var(--gtown-highlight)] px-8 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition sm:w-auto"
               >
                 Sign In &amp; Make Your Picks
               </Link>
             )}
             <Link
               href="/picks"
-              className="rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white/70 hover:border-white/40 hover:text-white transition"
+              className="w-full rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white/70 hover:border-white/40 hover:text-white transition sm:w-auto"
             >
               View Mock Drafts
               {published.length > 0 && (
@@ -127,9 +92,8 @@ export default async function Home() {
         </div>
       </main>
 
-      {/* Your Pools section */}
       {session?.user && session.user.status === "active" && (
-        <section className="border-t border-white/10 px-6 py-10">
+        <section className="border-t border-white/10 px-4 py-10 sm:px-6">
           <div className="mx-auto max-w-3xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-white">Your Pools</h2>
@@ -174,10 +138,9 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Footer */}
       <footer className="border-t border-white/10 py-6 text-center text-xs text-white/30">
         <p>
-          Built with 🦁 by{" "}
+          Built with {"\uD83E\uDD81"} by{" "}
           <a
             href="https://globestreet.com"
             className="text-[var(--lions-blue)] hover:underline"

@@ -6,6 +6,7 @@ import { isDraftLocked } from "@/lib/config";
 import { db } from "@/db";
 import { eq, asc } from "drizzle-orm";
 import { users, picks, players, teams } from "@/db/schema";
+import { MobileNav } from "@/components/mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -65,26 +66,24 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+      <MobileNav
+        links={[
+          { href: "/picks", label: "All Picks" },
+          { href: "/leaderboard", label: "Leaderboard" },
+          { href: "/my-board", label: "My Board" },
+          ...(session.user.role === "admin" ? [{ href: "/admin", label: "Studio" }] : []),
+        ]}
+        logo={
+          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
             SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
           </Link>
-          <nav className="flex gap-4 text-sm text-white/60">
-            <Link href="/picks" className="hover:text-white transition">All Picks</Link>
-            <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
-            <Link href="/my-board" className="hover:text-white transition">My Board</Link>
-            {session.user.role === "admin" && (
-              <Link href="/admin" className="hover:text-white transition">Studio</Link>
-            )}
-          </nav>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Summary bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-6 py-4">
-          <div className="flex gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex flex-wrap gap-4 sm:gap-6">
             <div>
               <p className="text-xs text-white/40 uppercase tracking-wider">Published Mocks</p>
               <p className="text-2xl font-bold text-white">{published.length}</p>

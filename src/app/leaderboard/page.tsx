@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLeaderboard, getActualResults } from "@/lib/queries";
 import { auth } from "@/lib/auth";
+import { MobileNav } from "@/components/mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -11,26 +12,26 @@ export default async function LeaderboardPage() {
   const results = await getActualResults(season);
   const allDone = results.length >= 32;
 
+  const navLinks = [
+    { href: "/picks", label: "All Picks" },
+    { href: "/live", label: "War Room" },
+    session?.user
+      ? { href: "/my-board", label: "My Board" }
+      : { href: "/login", label: "Sign In" },
+  ];
+
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+      <MobileNav
+        links={navLinks}
+        logo={
+          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
             SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
           </Link>
-          <nav className="flex gap-4 text-sm text-white/60">
-            <Link href="/picks" className="hover:text-white transition">All Picks</Link>
-            <Link href="/live" className="hover:text-white transition">War Room</Link>
-            {session?.user ? (
-              <Link href="/my-board" className="hover:text-white transition">My Board</Link>
-            ) : (
-              <Link href="/login" className="hover:text-white transition">Sign In</Link>
-            )}
-          </nav>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         {allDone && (
           <div className="mb-6 rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-6 py-4 text-center">
             <p className="text-lg font-bold text-yellow-400">Final Results — All 32 Picks Scored</p>
@@ -54,7 +55,7 @@ export default async function LeaderboardPage() {
               const accuracyDisplay = entry.accuracyPct?.toFixed(1) || "0.0";
 
               return (
-                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-4 rounded-xl border px-5 py-4 transition hover:border-white/20 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
+                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-3 rounded-xl border px-3 py-3 transition hover:border-white/20 sm:gap-4 sm:px-5 sm:py-4 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
                   <div className="flex flex-col items-center w-10 shrink-0">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-500/20 text-yellow-400" : rank === 2 ? "bg-gray-400/20 text-gray-300" : rank === 3 ? "bg-orange-500/20 text-orange-400" : "bg-white/5 text-white/40"}`}>
                       {allDone && rank === 1 ? "🏆" : rank}

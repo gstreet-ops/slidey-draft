@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users } from "@/db/schema";
+import { MobileNav } from "@/components/mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -30,31 +31,22 @@ export default async function PicksPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      {/* Header */}
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link
-            href="/"
-            className="text-2xl font-bold text-white tracking-wider"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+      <MobileNav
+        links={[
+          { href: "/leaderboard", label: "Leaderboard" },
+          { href: "/live", label: "Live" },
+          session?.user
+            ? { href: "/my-board", label: "My Board" }
+            : { href: "/login", label: "Sign In" },
+        ]}
+        logo={
+          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
             SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
           </Link>
-          <nav className="flex gap-4 text-sm text-white/60">
-            {session?.user ? (
-              <Link href="/my-board" className="hover:text-white transition">
-                My Board
-              </Link>
-            ) : (
-              <Link href="/login" className="hover:text-white transition">
-                Sign In
-              </Link>
-            )}
-          </nav>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
           className="text-4xl font-bold text-white tracking-wide text-center"
           style={{ fontFamily: "var(--font-display)" }}

@@ -6,6 +6,7 @@ import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
+import { MobileNav } from "@/components/mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,6 @@ export default async function MyBoardPage() {
   const locked = await isDraftLocked();
   let board = await getUserBoard(session.user.id, season);
 
-  // Auto-create board if none exists
   if (!board) {
     board = await createUserBoard(season);
   }
@@ -31,52 +31,52 @@ export default async function MyBoardPage() {
   const pickedPlayerIds = new Set(boardData.picks.map((p) => p.playerId));
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
 
+  const navLinks = [
+    { href: "/picks", label: "All Picks" },
+    { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/pools", label: "Pools" },
+    { href: "/live", label: "Live" },
+    { href: "/", label: "Home" },
+  ];
+
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      {/* Header */}
-      <header className="border-b border-white/10 bg-black/20">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-wide text-white"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              SLIDEY<span className="text-[var(--gtown-highlight)]">.COM</span> DRAFT
-            </Link>
-            <nav className="flex gap-4 text-sm text-white/60">
-              <Link href="/picks" className="hover:text-white transition">
-                All Picks
-              </Link>
-              <Link href="/" className="hover:text-white transition">
-                Home
-              </Link>
-            </nav>
-          </div>
+      <MobileNav
+        links={navLinks}
+        logo={
+          <Link
+            href="/"
+            className="text-lg font-bold tracking-wide text-white sm:text-xl"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            SLIDEY<span className="text-[var(--gtown-highlight)]">.COM</span> DRAFT
+          </Link>
+        }
+        trailing={
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-[var(--gtown-highlight)] flex items-center justify-center text-white text-xs font-bold">
               {(session.user.name || session.user.email)?.[0]?.toUpperCase() || "?"}
             </div>
-            <span className="text-sm text-white/80">
+            <span className="text-sm text-white/80 hidden sm:inline">
               {session.user.name || session.user.email}
             </span>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {locked && <DraftLockedBanner />}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="space-y-6">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className="text-3xl font-bold text-white tracking-wide"
+                className="text-2xl font-bold text-white tracking-wide sm:text-3xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 YOUR MOCK DRAFT
               </h1>
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-xs text-white/50 sm:text-sm">
                 {season} &middot; {boardData.picks.length}/32 picks made
               </p>
             </div>

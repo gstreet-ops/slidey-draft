@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import { makePick, removePick, publishBoard } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { ProspectDetailDrawer } from "@/components/prospect-detail-drawer";
+import { extractTraitTags } from "@/lib/trait-tags";
 
 type DraftSlot = {
   id: string;
@@ -24,10 +26,15 @@ type ExistingPick = {
   playerPosition: string;
   playerSchool: string;
   playerImageUrl: string | null;
+  playerNotes: string | null;
+  playerHeight: string | null;
+  playerWeight: number | null;
+  playerRank: number | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
   teamLogoUrl: string | null;
+  analysis: string | null;
 };
 
 type Player = {
@@ -37,6 +44,9 @@ type Player = {
   school: string;
   rank: number | null;
   imageUrl: string | null;
+  notes: string | null;
+  height: string | null;
+  weight: number | null;
 };
 
 type Props = {
@@ -60,12 +70,12 @@ export function PickBuilder({
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState<string>("ALL");
   const [isPending, startTransition] = useTransition();
-
   const [localPickedIds, setLocalPickedIds] = useState<Set<string>>(new Set());
+  const [analysisText, setAnalysisText] = useState("");
+  const [drawerPlayer, setDrawerPlayer] = useState<Player | null>(null);
 
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
-  // Combine server-side picked IDs with locally tracked picks to prevent duplicates
   const allPickedIds = new Set([
     ...existingPicks.map((p) => p.playerId),
     ...localPickedIds,
@@ -85,10 +95,12 @@ export function PickBuilder({
 
   function handleMakePick(playerId: string, slot: DraftSlot) {
     setLocalPickedIds((prev) => new Set([...prev, playerId]));
+    const analysis = analysisText.trim() || undefined;
     startTransition(async () => {
-      await makePick(boardId, slot.pickNumber, playerId, slot.teamId);
+      await makePick(boardId, slot.pickNumber, playerId, slot.teamId, analysis);
       setActiveSlot(null);
       setSearch("");
+      setAnalysisText("");
     });
   }
 
@@ -104,157 +116,66 @@ export function PickBuilder({
     });
   }
 
-  return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-      {/* Draft board column */}
-      <div className="space-y-2">
-        {draftOrder.map((slot) => {
-          const pick = pickMap.get(slot.pickNumber);
-          const isActive = activeSlot === slot.pickNumber;
+  const showMobileSheet = activeSlot !== null && !readOnly;
 
-          return (
-            <div
-              key={slot.pickNumber}
-              className={`flex items-center gap-3 rounded-lg border px-4 py-3 transition cursor-pointer ${
-                pick
-                  ? "border-white/10 bg-white/5"
-                  : isActive
-                  ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
-                  : "border-white/10 bg-white/5 hover:border-white/20"
-              }`}
-              onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
-            >
-              {/* Pick number + team logo */}
-              <div className="flex shrink-0 items-center gap-2">
-                <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
-                  style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
-                >
-                  {slot.pickNumber}
-                </div>
-                {slot.teamLogoUrl && (
-                  <Image
-                    src={slot.teamLogoUrl}
-                    alt={slot.teamAbbreviation}
-                    width={28}
-                    height={28}
-                    className="shrink-0"
-                  />
-                )}
-              </div>
-
-              {/* Player headshot (when picked) */}
-              {pick && (
-                <PlayerAvatar
-                  player={{
-                    name: pick.playerName,
-                    imageUrl: pick.playerImageUrl,
-                    position: pick.playerPosition,
-                  }}
-                  size={36}
-                />
-              )}
-
-              {/* Team + pick info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-white/50">
-                    {slot.teamAbbreviation}
-                  </span>
-                  <span className="text-xs text-white/30">{slot.teamName}</span>
-                  {slot.note && (
-                    <span className="text-[10px] text-yellow-400/70">({slot.note})</span>
-                  )}
-                </div>
-                {pick ? (
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-sm font-semibold text-white">
-                      {pick.playerName}
-                    </span>
-                    <span className="text-xs text-[var(--lions-blue)]">
-                      {pick.playerPosition}
-                    </span>
-                    <span className="text-xs text-white/30">
-                      {pick.playerSchool}
-                    </span>
-                  </div>
-                ) : (
-                  <p className="text-xs text-white/30 mt-0.5">
-                    {isActive ? "Select a player \u2192" : "Click to pick"}
-                  </p>
-                )}
-              </div>
-
-              {/* Remove button */}
-              {pick && !readOnly && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemovePick(pick.id);
-                  }}
-                  className="shrink-0 rounded px-2 py-1 text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          );
-        })}
-
-        {/* Publish button */}
-        {!readOnly && boardStatus === "draft" && existingPicks.length > 0 && (
+  // Prospect pool content (shared between desktop sidebar and mobile bottom sheet)
+  const prospectPoolContent = (
+    <>
+      <h2
+        className="mb-3 text-lg font-bold text-white tracking-wide"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        PROSPECT POOL
+      </h2>
+      <input
+        type="text"
+        placeholder="Search name, position, school..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+      />
+      <div className="mb-3 flex gap-1 flex-wrap overflow-x-auto scrollbar-none">
+        {positions.map((pos) => (
           <button
-            onClick={handlePublish}
-            disabled={isPending}
-            className="mt-4 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-white hover:bg-green-500 transition disabled:opacity-50"
+            key={pos}
+            onClick={() => setPosFilter(pos)}
+            className={`shrink-0 px-2 py-1 rounded text-xs font-semibold transition ${
+              posFilter === pos
+                ? "bg-[var(--lions-blue)] text-white"
+                : "bg-white/5 text-white/40 hover:text-white/60"
+            }`}
           >
-            {isPending ? "Publishing..." : `Publish Board (${existingPicks.length}/32 picks)`}
+            {pos}
           </button>
-        )}
+        ))}
       </div>
 
-      {/* Player pool sidebar */}
-      {!readOnly && (<div className="rounded-xl border border-white/10 bg-white/5 p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
-        <h2
-          className="mb-3 text-lg font-bold text-white tracking-wide"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          PROSPECT POOL
-        </h2>
-        <input
-          type="text"
-          placeholder="Search name, position, school..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
-        />
-        <div className="mb-3 flex gap-1 flex-wrap">
-          {positions.map((pos) => (
-            <button
-              key={pos}
-              onClick={() => setPosFilter(pos)}
-              className={`px-2 py-1 rounded text-xs font-semibold transition ${
-                posFilter === pos
-                  ? "bg-[var(--lions-blue)] text-white"
-                  : "bg-white/5 text-white/40 hover:text-white/60"
-              }`}
-            >
-              {pos}
-            </button>
-          ))}
+      {/* Analysis text area */}
+      {activeSlot && !readOnly && (
+        <div className="mb-3">
+          <textarea
+            placeholder="Why this pick? (optional analysis)"
+            value={analysisText}
+            onChange={(e) => setAnalysisText(e.target.value)}
+            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
+            rows={2}
+          />
         </div>
-        <div className="space-y-1">
-          {filteredPlayers.map((player) => {
-            const slot = activeSlot
-              ? draftOrder.find((s) => s.pickNumber === activeSlot)
-              : null;
+      )}
 
-            return (
+      <div className="space-y-1">
+        {filteredPlayers.map((player) => {
+          const slot = activeSlot
+            ? draftOrder.find((s) => s.pickNumber === activeSlot)
+            : null;
+          const tags = extractTraitTags(player.notes, 2);
+
+          return (
+            <div key={player.id} className="flex items-center gap-1">
               <button
-                key={player.id}
                 disabled={!activeSlot || isPending}
                 onClick={() => slot && handleMakePick(player.id, slot)}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition ${
+                className={`flex flex-1 items-center gap-2.5 rounded-lg px-3 py-2 text-left transition min-h-[44px] ${
                   activeSlot
                     ? "hover:bg-[var(--lions-blue)]/10 cursor-pointer"
                     : "opacity-50 cursor-not-allowed"
@@ -265,29 +186,216 @@ export function PickBuilder({
                     #{player.rank}
                   </span>
                 )}
-                <PlayerAvatar
-                  player={player}
-                  size={32}
-                />
-                <span className="text-sm font-semibold text-white">
-                  {player.name}
-                </span>
-                <span className="text-xs text-[var(--lions-blue)]">
-                  {player.position}
-                </span>
-                <span className="ml-auto text-xs text-white/30">
+                <PlayerAvatar player={player} size={32} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold text-white truncate">
+                      {player.name}
+                    </span>
+                    <span className="text-xs text-[var(--lions-blue)] shrink-0">
+                      {player.position}
+                    </span>
+                  </div>
+                  {player.notes && (
+                    <p className="text-[11px] text-white/30 truncate">
+                      {player.notes.slice(0, 60)}{player.notes.length > 60 ? "..." : ""}
+                    </p>
+                  )}
+                  {tags.length > 0 && (
+                    <div className="flex gap-1 mt-0.5">
+                      {tags.map((t) => (
+                        <span key={t.label} className={`rounded-full px-1.5 py-0 text-[9px] font-semibold ${t.color}`}>{t.label}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <span className="ml-auto text-xs text-white/30 shrink-0 hidden sm:block">
                   {player.school}
                 </span>
               </button>
+              {/* Info button for drawer */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDrawerPlayer(player);
+                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/30 hover:bg-white/10 hover:text-white transition"
+                title="View scouting report"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                  <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
+                </svg>
+              </button>
+            </div>
+          );
+        })}
+        {filteredPlayers.length === 0 && (
+          <p className="py-4 text-center text-sm text-white/30">
+            No players match your search
+          </p>
+        )}
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+        {/* Draft board column */}
+        <div className="space-y-2">
+          {draftOrder.map((slot) => {
+            const pick = pickMap.get(slot.pickNumber);
+            const isActive = activeSlot === slot.pickNumber;
+
+            return (
+              <div
+                key={slot.pickNumber}
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 transition cursor-pointer sm:gap-3 sm:px-4 sm:py-3 ${
+                  pick
+                    ? "border-white/10 bg-white/5"
+                    : isActive
+                    ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
+                    : "border-white/10 bg-white/5 hover:border-white/20"
+                }`}
+                onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
+              >
+                {/* Pick number + team logo */}
+                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white sm:h-10 sm:w-10 sm:text-sm"
+                    style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
+                  >
+                    {slot.pickNumber}
+                  </div>
+                  {slot.teamLogoUrl && (
+                    <Image
+                      src={slot.teamLogoUrl}
+                      alt={slot.teamAbbreviation}
+                      width={24}
+                      height={24}
+                      className="shrink-0 hidden sm:block"
+                    />
+                  )}
+                </div>
+
+                {/* Player headshot (when picked) */}
+                {pick && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDrawerPlayer({
+                        id: pick.playerId,
+                        name: pick.playerName,
+                        position: pick.playerPosition,
+                        school: pick.playerSchool,
+                        rank: pick.playerRank,
+                        imageUrl: pick.playerImageUrl,
+                        notes: pick.playerNotes,
+                        height: pick.playerHeight,
+                        weight: pick.playerWeight,
+                      });
+                    }}
+                    className="shrink-0"
+                  >
+                    <PlayerAvatar
+                      player={{
+                        name: pick.playerName,
+                        imageUrl: pick.playerImageUrl,
+                        position: pick.playerPosition,
+                      }}
+                      size={36}
+                    />
+                  </button>
+                )}
+
+                {/* Team + pick info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="text-[10px] font-semibold text-white/50 sm:text-xs">
+                      {slot.teamAbbreviation}
+                    </span>
+                    <span className="text-[10px] text-white/30 hidden sm:inline sm:text-xs">{slot.teamName}</span>
+                    {slot.note && (
+                      <span className="text-[9px] text-yellow-400/70 sm:text-[10px]">({slot.note})</span>
+                    )}
+                  </div>
+                  {pick ? (
+                    <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
+                      <span className="text-xs font-semibold text-white sm:text-sm">
+                        {pick.playerName}
+                      </span>
+                      <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
+                        {pick.playerPosition}
+                      </span>
+                      <span className="text-[10px] text-white/30 hidden sm:inline sm:text-xs">
+                        {pick.playerSchool}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-white/30 mt-0.5 sm:text-xs">
+                      {isActive ? "Select a player \u2192" : "Click to pick"}
+                    </p>
+                  )}
+                </div>
+
+                {/* Remove button */}
+                {pick && !readOnly && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemovePick(pick.id);
+                    }}
+                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             );
           })}
-          {filteredPlayers.length === 0 && (
-            <p className="py-4 text-center text-sm text-white/30">
-              No players match your search
-            </p>
+
+          {/* Publish button */}
+          {!readOnly && boardStatus === "draft" && existingPicks.length > 0 && (
+            <button
+              onClick={handlePublish}
+              disabled={isPending}
+              className="mt-4 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-white hover:bg-green-500 transition disabled:opacity-50"
+            >
+              {isPending ? "Publishing..." : `Publish Board (${existingPicks.length}/32 picks)`}
+            </button>
           )}
         </div>
-      </div>)}
-    </div>
+
+        {/* Desktop prospect pool sidebar */}
+        {!readOnly && (
+          <div className="hidden rounded-xl border border-white/10 bg-white/5 p-4 lg:sticky lg:top-4 lg:block lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
+            {prospectPoolContent}
+          </div>
+        )}
+      </div>
+
+      {/* Mobile bottom sheet */}
+      {showMobileSheet && (
+        <div className="fixed inset-x-0 bottom-0 z-30 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/40"
+            onClick={() => setActiveSlot(null)}
+          />
+          {/* Sheet */}
+          <div className="relative max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-white/10 bg-[var(--gtown-navy)] p-4 shadow-2xl">
+            {/* Drag handle */}
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
+            {prospectPoolContent}
+          </div>
+        </div>
+      )}
+
+      {/* Prospect detail drawer */}
+      <ProspectDetailDrawer
+        prospect={drawerPlayer}
+        onClose={() => setDrawerPlayer(null)}
+      />
+    </>
   );
 }

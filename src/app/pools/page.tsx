@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getPoolsForUser } from "@/lib/queries";
 import { JoinPoolForm } from "./join-pool-form";
+import { MobileNav } from "@/components/mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +16,21 @@ export default async function PoolsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+      <MobileNav
+        links={[
+          { href: "/", label: "Home" },
+          { href: "/my-board", label: "My Board" },
+          { href: "/leaderboard", label: "Leaderboard" },
+          { href: "/live", label: "Live" },
+        ]}
+        logo={
+          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
             SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
           </Link>
-          <nav className="flex gap-4 text-sm">
-            <Link href="/" className="text-white/60 hover:text-white transition">Home</Link>
-            <Link href="/pools" className="text-white font-semibold">Pools</Link>
-          </nav>
-        </div>
-      </header>
+        }
+      />
 
-      <main className="mx-auto max-w-5xl px-6 py-10 space-y-8">
+      <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Your Pools</h1>
           <Link
