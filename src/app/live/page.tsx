@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getUserBoard, getActualResults, getDraftOrder } from "@/lib/queries";
+import { getUserBoard, getActualResults, getDraftOrder, getPoolsForUser, getPlayers } from "@/lib/queries";
 import { isDraftLocked } from "@/lib/config";
 import { WarRoom } from "./war-room";
+import { LivePredictionWidget } from "@/components/live-prediction";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +18,16 @@ export default async function LivePage() {
   const draftOrder = await getDraftOrder(season);
   const userId = session?.user?.id || null;
   const results = await getActualResults(season);
+  const allPlayers = await getPlayers();
 
   let userBoardId: string | null = null;
+  let userPools: { poolId: string; poolName: string }[] = [];
   if (userId) {
     const board = await getUserBoard(userId, season);
     userBoardId = board?.id || null;
+    if (session?.user?.status === "active") {
+      userPools = await getPoolsForUser(userId);
+    }
   }
 
   return (
@@ -43,6 +49,23 @@ export default async function LivePage() {
           </div>
         </div>
       </header>
+
+      {/* Live Prediction Widget for pool members */}
+      {userPools.length > 0 && (
+        <div className="mx-auto max-w-[1400px] px-4 pt-4">
+          <LivePredictionWidget
+            poolId={userPools[0].poolId}
+            poolName={userPools[0].poolName}
+            allPlayers={allPlayers}
+            actualResults={results}
+            draftOrder={draftOrder.map((d) => ({
+              pickNumber: d.pickNumber,
+              teamName: d.teamName,
+              teamAbbreviation: d.teamAbbreviation,
+            }))}
+          />
+        </div>
+      )}
 
       <WarRoom
         userId={userId}

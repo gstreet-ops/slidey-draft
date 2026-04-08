@@ -15,12 +15,27 @@ import type { AdapterAccountType } from "next-auth/adapters";
 
 // ── Enums ──────────────────────────────────────────
 export const userRoleEnum = pgEnum("user_role", ["admin", "user"]);
+export const userStatusEnum = pgEnum("user_status", [
+  "spectator",
+  "active",
+  "suspended",
+]);
 export const boardTypeEnum = pgEnum("board_type", ["mock", "actual"]);
 export const boardStatusEnum = pgEnum("board_status", [
   "draft",
   "published",
   "locked",
   "final",
+]);
+export const poolStatusEnum = pgEnum("pool_status", [
+  "open",
+  "locked",
+  "completed",
+]);
+export const poolMemberRoleEnum = pgEnum("pool_member_role", [
+  "commissioner",
+  "admin",
+  "member",
 ]);
 
 // ── Users ──────────────────────────────────────────
@@ -30,7 +45,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified"),
   image: text("image"),
-  role: userRoleEnum("role").notNull().default("user"),
+  role: userRoleEnum("role").default("user"),
+  status: userStatusEnum("status").notNull().default("spectator"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -253,3 +269,147 @@ export const appConfig = pgTable("app_config", {
   value: text("value").notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// ── App Invites ───────────────────────────────────
+export const appInvites = pgTable("app_invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id),
+  claimedBy: uuid("claimed_by").references(() => users.id),
+  claimedAt: timestamp("claimed_at"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Pools ─────────────────────────────────────────
+export const pools = pgTable("pools", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  commissionerId: uuid("commissioner_id")
+    .notNull()
+    .references(() => users.id),
+  inviteCode: text("invite_code").notNull().unique(),
+  status: poolStatusEnum("status").notNull().default("open"),
+  settings: jsonb("settings").notNull().default("{}"),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ── Pool Members ──────────────────────────────────
+export const poolMembers = pgTable(
+  "pool_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: poolMemberRoleEnum("role").notNull().default("member"),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("pool_member_idx").on(table.poolId, table.userId),
+  ]
+);
+
+// ── Pool Announcements ────────────────────────────
+export const poolAnnouncements = pgTable("pool_announcements", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id),
+  content: text("content").notNull(),
+  pinned: boolean("pinned").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Live Predictions ──────────────────────────────
+export const livePredictions = pgTable(
+  "live_predictions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    pickNumber: integer("pick_number").notNull(),
+    predictedPlayerId: uuid("predicted_player_id")
+      .notNull()
+      .references(() => players.id),
+    submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("live_pred_unique_idx").on(
+      table.poolId,
+      table.userId,
+      table.pickNumber
+    ),
+  ]
+);
+
+// ── Live Scores ───────────────────────────────────
+export const liveScores = pgTable("live_scores", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  pickNumber: integer("pick_number").notNull(),
+  pointsAwarded: integer("points_awarded").notNull(),
+  correct: boolean("correct").notNull(),
+  scoredAt: timestamp("scored_at").defaultNow().notNull(),
+});
+
+// ── Mock Scores (per-pool tiered mock bonus) ──────
+export const mockScores = pgTable("mock_scores", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  boardId: uuid("board_id")
+    .notNull()
+    .references(() => draftBoards.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  totalMockBonus: integer("total_mock_bonus").notNull().default(0),
+  perPickBreakdown: jsonb("per_pick_breakdown"),
+  scoredAt: timestamp("scored_at").defaultNow().notNull(),
+});
+
+// ── Pool Standings (combined leaderboard) ─────────
+export const poolStandings = pgTable(
+  "pool_standings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    mockBonus: integer("mock_bonus").notNull().default(0),
+    liveTotal: integer("live_total").notNull().default(0),
+    combinedScore: integer("combined_score").notNull().default(0),
+    rank: integer("rank"),
+    previousRank: integer("previous_rank"),
+    picksPredicted: integer("picks_predicted").notNull().default(0),
+    correctPredictions: integer("correct_predictions").notNull().default(0),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("pool_standings_idx").on(table.poolId, table.userId),
+  ]
+);

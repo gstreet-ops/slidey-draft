@@ -12,6 +12,14 @@ import {
   actualResults,
   scores,
   pickScores,
+  pools,
+  poolMembers,
+  poolAnnouncements,
+  poolStandings,
+  appInvites,
+  livePredictions,
+  liveScores,
+  mockScores,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -288,6 +296,183 @@ export async function getLeaderboard(season: number, groupMemberIds?: string[]) 
     userRole: r.userRole || "user",
     userId: r.userId,
   }));
+}
+
+// ═══════════════════════════════════════════════════
+// PHASE 3: Pools & Live Predictions
+// ═══════════════════════════════════════════════════
+
+// ── Pools ─────────────────────────────────────────
+export async function getPoolById(poolId: string) {
+  const [pool] = await db.select().from(pools).where(eq(pools.id, poolId));
+  return pool || null;
+}
+
+export async function getPoolByInviteCode(code: string) {
+  const [pool] = await db
+    .select()
+    .from(pools)
+    .where(eq(pools.inviteCode, code.toUpperCase().trim()));
+  return pool || null;
+}
+
+export async function getPoolsForUser(userId: string) {
+  return db
+    .select({
+      poolId: poolMembers.poolId,
+      role: poolMembers.role,
+      joinedAt: poolMembers.joinedAt,
+      poolName: pools.name,
+      poolStatus: pools.status,
+      inviteCode: pools.inviteCode,
+      description: pools.description,
+    })
+    .from(poolMembers)
+    .innerJoin(pools, eq(poolMembers.poolId, pools.id))
+    .where(eq(poolMembers.userId, userId))
+    .orderBy(desc(pools.createdAt));
+}
+
+export async function getPoolMembers(poolId: string) {
+  return db
+    .select({
+      id: poolMembers.id,
+      userId: poolMembers.userId,
+      role: poolMembers.role,
+      joinedAt: poolMembers.joinedAt,
+      userName: users.name,
+      userEmail: users.email,
+      userImage: users.image,
+    })
+    .from(poolMembers)
+    .innerJoin(users, eq(poolMembers.userId, users.id))
+    .where(eq(poolMembers.poolId, poolId))
+    .orderBy(asc(poolMembers.joinedAt));
+}
+
+export async function getPoolMemberCount(poolId: string) {
+  const rows = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(poolMembers)
+    .where(eq(poolMembers.poolId, poolId));
+  return rows[0]?.count ?? 0;
+}
+
+export async function isPoolMember(poolId: string, userId: string) {
+  const [row] = await db
+    .select()
+    .from(poolMembers)
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+  return !!row;
+}
+
+// ── Pool Announcements ────────────────────────────
+export async function getPoolAnnouncements(poolId: string) {
+  return db
+    .select({
+      id: poolAnnouncements.id,
+      content: poolAnnouncements.content,
+      pinned: poolAnnouncements.pinned,
+      createdAt: poolAnnouncements.createdAt,
+      authorName: users.name,
+      authorEmail: users.email,
+    })
+    .from(poolAnnouncements)
+    .innerJoin(users, eq(poolAnnouncements.authorId, users.id))
+    .where(eq(poolAnnouncements.poolId, poolId))
+    .orderBy(desc(poolAnnouncements.pinned), desc(poolAnnouncements.createdAt));
+}
+
+// ── Pool Standings ────────────────────────────────
+export async function getPoolStandings(poolId: string) {
+  return db
+    .select({
+      userId: poolStandings.userId,
+      mockBonus: poolStandings.mockBonus,
+      liveTotal: poolStandings.liveTotal,
+      combinedScore: poolStandings.combinedScore,
+      rank: poolStandings.rank,
+      previousRank: poolStandings.previousRank,
+      picksPredicted: poolStandings.picksPredicted,
+      correctPredictions: poolStandings.correctPredictions,
+      userName: users.name,
+      userEmail: users.email,
+      userImage: users.image,
+    })
+    .from(poolStandings)
+    .innerJoin(users, eq(poolStandings.userId, users.id))
+    .where(eq(poolStandings.poolId, poolId))
+    .orderBy(asc(poolStandings.rank));
+}
+
+// ── Live Predictions ──────────────────────────────
+export async function getUserPrediction(
+  poolId: string,
+  userId: string,
+  pickNumber: number
+) {
+  const [pred] = await db
+    .select({
+      id: livePredictions.id,
+      predictedPlayerId: livePredictions.predictedPlayerId,
+      submittedAt: livePredictions.submittedAt,
+      playerName: players.name,
+      playerPosition: players.position,
+      playerSchool: players.school,
+    })
+    .from(livePredictions)
+    .innerJoin(players, eq(livePredictions.predictedPlayerId, players.id))
+    .where(
+      and(
+        eq(livePredictions.poolId, poolId),
+        eq(livePredictions.userId, userId),
+        eq(livePredictions.pickNumber, pickNumber)
+      )
+    );
+  return pred || null;
+}
+
+export async function getAllPredictionsForPick(poolId: string, pickNumber: number) {
+  return db
+    .select({
+      userId: livePredictions.userId,
+      predictedPlayerId: livePredictions.predictedPlayerId,
+      submittedAt: livePredictions.submittedAt,
+      playerName: players.name,
+      playerPosition: players.position,
+      userName: users.name,
+      userEmail: users.email,
+    })
+    .from(livePredictions)
+    .innerJoin(players, eq(livePredictions.predictedPlayerId, players.id))
+    .innerJoin(users, eq(livePredictions.userId, users.id))
+    .where(
+      and(
+        eq(livePredictions.poolId, poolId),
+        eq(livePredictions.pickNumber, pickNumber)
+      )
+    );
+}
+
+// ── App Invites ───────────────────────────────────
+export async function getAllAppInvites() {
+  return db
+    .select({
+      id: appInvites.id,
+      code: appInvites.code,
+      createdAt: appInvites.createdAt,
+      claimedAt: appInvites.claimedAt,
+      creatorName: sql<string>`creator.name`,
+      creatorEmail: sql<string>`creator.email`,
+      claimerName: sql<string>`claimer.name`,
+      claimerEmail: sql<string>`claimer.email`,
+    })
+    .from(appInvites)
+    .leftJoin(sql`users as creator`, sql`creator.id = ${appInvites.createdBy}`)
+    .leftJoin(sql`users as claimer`, sql`claimer.id = ${appInvites.claimedBy}`)
+    .orderBy(desc(appInvites.createdAt));
 }
 
 // ── Pick Scores for a board ───────────────────────

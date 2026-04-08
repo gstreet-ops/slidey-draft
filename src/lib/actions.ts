@@ -1,11 +1,34 @@
 "use server";
 
 import { db } from "@/db";
-import { eq, and, desc } from "drizzle-orm";
-import { draftBoards, picks, groups, groupMembers, actualResults } from "@/db/schema";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
+import {
+  draftBoards,
+  picks,
+  groups,
+  groupMembers,
+  actualResults,
+  appInvites,
+  users,
+  pools,
+  poolMembers,
+  poolAnnouncements,
+} from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { scoreAllBoards } from "@/lib/scoring";
+import {
+  requireActiveUser,
+  generateAppInviteCode,
+  generatePoolInviteCode,
+  canManagePool,
+  getPoolRole,
+  DEFAULT_POOL_SETTINGS,
+} from "@/lib/pool-helpers";
+import {
+  scoreLivePredictions,
+  recalculateAllPools,
+} from "@/lib/pool-scoring";
 
 // ── Create a new mock draft board ──────────────────
 export async function createBoard(formData: FormData) {
@@ -150,12 +173,16 @@ export async function enterActualResult(
     .returning();
 
   if (result) {
-    // Auto-score all published boards
+    // Auto-score all published boards (global leaderboard)
     await scoreAllBoards(season);
+    // Score live predictions and recalculate pool standings
+    await scoreLivePredictions(pickNumber, playerId, season);
+    await recalculateAllPools();
   }
 
   revalidatePath("/admin/live");
   revalidatePath("/leaderboard");
+  revalidatePath("/pools");
   return result;
 }
 
@@ -198,4 +225,403 @@ export async function joinGroup(groupId: string) {
     .onConflictDoNothing();
 
   revalidatePath(`/group/${groupId}`);
+}
+
+// ═══════════════════════════════════════════════════
+// PHASE 3: App Invites
+// ═══════════════════════════════════════════════════
+
+// ── Generate an app invite code ───────────────────
+export async function generateInvite() {
+  const session = await requireActiveUser();
+  if (!session) throw new Error("Must be an active user to generate invites");
+
+  const code = await generateAppInviteCode();
+
+  const [invite] = await db
+    .insert(appInvites)
+    .values({
+      code,
+      createdBy: session.user.id,
+    })
+    .returning();
+
+  revalidatePath("/settings");
+  return invite;
+}
+
+// ── Bulk generate app invite codes (admin only) ───
+export async function bulkGenerateInvites(count: number) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+  if (count < 1 || count > 100) throw new Error("Count must be 1-100");
+
+  const codes: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const code = await generateAppInviteCode();
+    codes.push(code);
+  }
+
+  await db.insert(appInvites).values(
+    codes.map((code) => ({
+      code,
+      createdBy: session.user.id,
+    }))
+  );
+
+  revalidatePath("/admin");
+  return codes;
+}
+
+// ── Claim an app invite code ──────────────────────
+export async function claimInviteCode(code: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  if (session.user.status === "active") {
+    return { success: false, message: "You already have full access!" };
+  }
+
+  const [invite] = await db
+    .select()
+    .from(appInvites)
+    .where(eq(appInvites.code, code.toUpperCase().trim()));
+
+  if (!invite) {
+    return { success: false, message: "Invalid invite code." };
+  }
+  if (invite.claimedBy) {
+    return { success: false, message: "This invite code has already been used." };
+  }
+  if (invite.expiresAt && invite.expiresAt < new Date()) {
+    return { success: false, message: "This invite code has expired." };
+  }
+
+  // Claim the invite
+  await db
+    .update(appInvites)
+    .set({
+      claimedBy: session.user.id,
+      claimedAt: new Date(),
+    })
+    .where(eq(appInvites.id, invite.id));
+
+  // Upgrade user to active
+  await db
+    .update(users)
+    .set({ status: "active" })
+    .where(eq(users.id, session.user.id));
+
+  revalidatePath("/");
+  return { success: true, message: "Welcome! You now have full access." };
+}
+
+// ── Get invites created by user ───────────────────
+export async function getMyInvites() {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  return db
+    .select({
+      id: appInvites.id,
+      code: appInvites.code,
+      claimedBy: appInvites.claimedBy,
+      claimedAt: appInvites.claimedAt,
+      createdAt: appInvites.createdAt,
+      claimerName: users.name,
+      claimerEmail: users.email,
+    })
+    .from(appInvites)
+    .leftJoin(users, eq(appInvites.claimedBy, users.id))
+    .where(eq(appInvites.createdBy, session.user.id))
+    .orderBy(desc(appInvites.createdAt));
+}
+
+// ── Admin: manually activate a user ───────────────
+export async function activateUser(userId: string) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  await db
+    .update(users)
+    .set({ status: "active" })
+    .where(eq(users.id, userId));
+
+  revalidatePath("/admin");
+}
+
+// ═══════════════════════════════════════════════════
+// PHASE 3: Pools
+// ═══════════════════════════════════════════════════
+
+// ── Create a pool ─────────────────────────────────
+export async function createPool(formData: FormData) {
+  const session = await requireActiveUser();
+  if (!session) throw new Error("Must be an active user to create a pool");
+
+  const name = (formData.get("name") as string)?.trim();
+  const description = (formData.get("description") as string)?.trim() || null;
+  if (!name) throw new Error("Pool name is required");
+
+  const inviteCode = await generatePoolInviteCode();
+
+  const [pool] = await db
+    .insert(pools)
+    .values({
+      name,
+      description,
+      commissionerId: session.user.id,
+      inviteCode,
+      settings: DEFAULT_POOL_SETTINGS,
+    })
+    .returning();
+
+  // Add creator as commissioner member
+  await db.insert(poolMembers).values({
+    poolId: pool.id,
+    userId: session.user.id,
+    role: "commissioner",
+  });
+
+  revalidatePath("/pools");
+  return pool;
+}
+
+// ── Join a pool ───────────────────────────────────
+export async function joinPool(inviteCode: string) {
+  const session = await requireActiveUser();
+  if (!session) throw new Error("Must be an active user to join a pool");
+
+  const [pool] = await db
+    .select()
+    .from(pools)
+    .where(eq(pools.inviteCode, inviteCode.toUpperCase().trim()));
+
+  if (!pool) return { success: false, message: "Pool not found." };
+  if (pool.status === "locked" || pool.status === "completed") {
+    return { success: false, message: "This pool is no longer accepting members." };
+  }
+
+  // Check max members
+  const settings = pool.settings as Record<string, unknown>;
+  if (settings?.maxMembers) {
+    const memberCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(poolMembers)
+      .where(eq(poolMembers.poolId, pool.id));
+    if (memberCount[0].count >= (settings.maxMembers as number)) {
+      return { success: false, message: "This pool is full." };
+    }
+  }
+
+  // Check entry deadline
+  if (settings?.entryDeadline) {
+    const deadline = new Date(settings.entryDeadline as string);
+    if (new Date() > deadline) {
+      return { success: false, message: "The entry deadline has passed." };
+    }
+  }
+
+  await db
+    .insert(poolMembers)
+    .values({
+      poolId: pool.id,
+      userId: session.user.id,
+      role: "member",
+    })
+    .onConflictDoNothing();
+
+  revalidatePath(`/pools/${pool.id}`);
+  revalidatePath("/pools");
+  return { success: true, poolId: pool.id };
+}
+
+// ── Update pool settings ──────────────────────────
+export async function updatePoolSettings(
+  poolId: string,
+  updates: { name?: string; description?: string; settings?: Record<string, unknown> }
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const allowed = await canManagePool(session.user.id, poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  const setValues: Record<string, unknown> = { updatedAt: new Date() };
+  if (updates.name) setValues.name = updates.name;
+  if (updates.description !== undefined) setValues.description = updates.description;
+  if (updates.settings) setValues.settings = updates.settings;
+
+  await db.update(pools).set(setValues).where(eq(pools.id, poolId));
+
+  revalidatePath(`/pools/${poolId}`);
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Lock a pool ───────────────────────────────────
+export async function lockPool(poolId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const allowed = await canManagePool(session.user.id, poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  await db
+    .update(pools)
+    .set({ status: "locked", updatedAt: new Date() })
+    .where(eq(pools.id, poolId));
+
+  revalidatePath(`/pools/${poolId}`);
+}
+
+// ── Delete a pool (commissioner only) ─────────────
+export async function deletePool(poolId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner") throw new Error("Only the commissioner can delete a pool");
+
+  await db.delete(pools).where(eq(pools.id, poolId));
+  revalidatePath("/pools");
+}
+
+// ── Promote member to admin ───────────────────────
+export async function promoteToAdmin(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner") throw new Error("Only the commissioner can promote to admin");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "admin" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Demote admin to member ────────────────────────
+export async function demoteToMember(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner") throw new Error("Only the commissioner can demote admins");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "member" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Remove member from pool ───────────────────────
+export async function removePoolMember(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const myRole = await getPoolRole(session.user.id, poolId);
+  if (myRole !== "commissioner" && myRole !== "admin") {
+    throw new Error("Not authorized");
+  }
+
+  // Can't remove commissioner
+  const targetRole = await getPoolRole(userId, poolId);
+  if (targetRole === "commissioner") throw new Error("Cannot remove the commissioner");
+  // Admins can't remove other admins
+  if (myRole === "admin" && targetRole === "admin") {
+    throw new Error("Admins cannot remove other admins");
+  }
+
+  await db
+    .delete(poolMembers)
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Transfer commissioner ownership ───────────────
+export async function transferCommissioner(poolId: string, newCommissionerId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner") throw new Error("Only the commissioner can transfer ownership");
+
+  // Demote current commissioner to admin
+  await db
+    .update(poolMembers)
+    .set({ role: "admin" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, session.user.id))
+    );
+
+  // Promote new commissioner
+  await db
+    .update(poolMembers)
+    .set({ role: "commissioner" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, newCommissionerId))
+    );
+
+  // Update pool record
+  await db
+    .update(pools)
+    .set({ commissionerId: newCommissionerId, updatedAt: new Date() })
+    .where(eq(pools.id, poolId));
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Post announcement ─────────────────────────────
+export async function postAnnouncement(poolId: string, content: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const allowed = await canManagePool(session.user.id, poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  await db.insert(poolAnnouncements).values({
+    poolId,
+    authorId: session.user.id,
+    content: content.trim(),
+  });
+
+  revalidatePath(`/pools/${poolId}`);
+}
+
+// ── Pin/unpin announcement ────────────────────────
+export async function toggleAnnouncementPin(poolId: string, announcementId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const allowed = await canManagePool(session.user.id, poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  const [ann] = await db
+    .select({ pinned: poolAnnouncements.pinned })
+    .from(poolAnnouncements)
+    .where(eq(poolAnnouncements.id, announcementId));
+
+  if (ann) {
+    await db
+      .update(poolAnnouncements)
+      .set({ pinned: !ann.pinned })
+      .where(eq(poolAnnouncements.id, announcementId));
+  }
+
+  revalidatePath(`/pools/${poolId}`);
 }

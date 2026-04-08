@@ -1,0 +1,107 @@
+import { db } from "@/db";
+import { eq, and } from "drizzle-orm";
+import { users, poolMembers, appInvites, pools } from "@/db/schema";
+import { auth } from "@/lib/auth";
+
+// ── Auth helpers ──────────────────────────────────
+
+export async function requireAuth() {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+  return session;
+}
+
+export async function requireActiveUser() {
+  const session = await requireAuth();
+  if (!session) return null;
+  if (session.user.status !== "active") return null;
+  return session;
+}
+
+// ── Pool role helpers ─────────────────────────────
+
+export type PoolRole = "commissioner" | "admin" | "member" | null;
+
+export async function getPoolRole(
+  userId: string,
+  poolId: string
+): Promise<PoolRole> {
+  const [member] = await db
+    .select({ role: poolMembers.role })
+    .from(poolMembers)
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+  return (member?.role as PoolRole) ?? null;
+}
+
+export async function canManagePool(
+  userId: string,
+  poolId: string
+): Promise<boolean> {
+  const role = await getPoolRole(userId, poolId);
+  return role === "commissioner" || role === "admin";
+}
+
+// ── Code generation ───────────────────────────────
+
+const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars
+
+function generateCode(length: number): string {
+  let code = "";
+  for (let i = 0; i < length; i++) {
+    code += CHARS[Math.floor(Math.random() * CHARS.length)];
+  }
+  return code;
+}
+
+export async function generateAppInviteCode(): Promise<string> {
+  for (let i = 0; i < 10; i++) {
+    const code = generateCode(8);
+    const [existing] = await db
+      .select({ id: appInvites.id })
+      .from(appInvites)
+      .where(eq(appInvites.code, code));
+    if (!existing) return code;
+  }
+  throw new Error("Failed to generate unique invite code");
+}
+
+export async function generatePoolInviteCode(): Promise<string> {
+  for (let i = 0; i < 10; i++) {
+    const code = generateCode(6);
+    const [existing] = await db
+      .select({ id: pools.id })
+      .from(pools)
+      .where(eq(pools.inviteCode, code));
+    if (!existing) return code;
+  }
+  throw new Error("Failed to generate unique pool invite code");
+}
+
+// ── Default pool settings ─────────────────────────
+
+export const DEFAULT_POOL_SETTINGS = {
+  rounds: [1],
+  mockDraftBonus: true,
+  livePredictions: true,
+  entryDeadline: null,
+  maxMembers: null,
+  mockPointValues: {
+    playerCalled: 3,
+    rangeClose: 2,
+    rangeFar: 1,
+    exactSlot: 5,
+    positionMatch: 1,
+  },
+  livePointValues: {
+    correctPlayer: 10,
+  },
+};
+
+export type PoolSettings = typeof DEFAULT_POOL_SETTINGS;
+
+export function getPoolSettings(raw: unknown): PoolSettings {
+  if (!raw || typeof raw !== "object") return { ...DEFAULT_POOL_SETTINGS };
+  return { ...DEFAULT_POOL_SETTINGS, ...(raw as Record<string, unknown>) } as PoolSettings;
+}
