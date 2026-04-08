@@ -26,10 +26,10 @@ export default async function Home() {
   const topRanked = leaderboard.slice(0, 5);
 
   // Get featured picks from the first published board
-  let featuredPicks: Awaited<ReturnType<typeof getBoardWithPicks>>["picks"] = [];
+  let featuredPicks: NonNullable<Awaited<ReturnType<typeof getBoardWithPicks>>>["picks"] = [];
   if (published.length > 0) {
     const board = await getBoardWithPicks(published[0].id);
-    featuredPicks = board.picks.slice(0, 6);
+    if (board) featuredPicks = board.picks.slice(0, 6);
   }
 
   // Build nav links
