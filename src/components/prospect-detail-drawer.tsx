@@ -13,12 +13,28 @@ type Prospect = {
   weight?: number | null;
   imageUrl?: string | null;
   notes?: string | null;
+  grade?: number | null;
+  positionRank?: number | null;
+  fortyTime?: number | null;
+  vertical?: number | null;
+  benchPress?: number | null;
+  broadJump?: number | null;
+  threeConeDrill?: number | null;
+  shuttle?: number | null;
+  nflComparison?: string | null;
 };
 
 type Props = {
   prospect: Prospect | null;
   onClose: () => void;
 };
+
+function gradeColor(grade: number): string {
+  if (grade >= 90) return "text-green-600 bg-green-50 border-green-200";
+  if (grade >= 80) return "text-blue-600 bg-blue-50 border-blue-200";
+  if (grade >= 70) return "text-yellow-600 bg-yellow-50 border-yellow-200";
+  return "text-red-600 bg-red-50 border-red-200";
+}
 
 export function ProspectDetailDrawer({ prospect, onClose }: Props) {
   useEffect(() => {
@@ -30,7 +46,6 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
     return () => document.removeEventListener("keydown", handler);
   }, [prospect, onClose]);
 
-  // Prevent body scroll when drawer is open
   useEffect(() => {
     if (prospect) {
       document.body.style.overflow = "hidden";
@@ -42,6 +57,16 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
 
   const tags = extractTraitTags(prospect.notes ?? null);
 
+  const measurables: { label: string; value: string }[] = [];
+  if (prospect.fortyTime) measurables.push({ label: "40-YD", value: `${prospect.fortyTime}s` });
+  if (prospect.vertical) measurables.push({ label: "VERTICAL", value: `${prospect.vertical}"` });
+  if (prospect.benchPress) measurables.push({ label: "BENCH", value: `${prospect.benchPress} reps` });
+  if (prospect.broadJump) measurables.push({ label: "BROAD", value: `${prospect.broadJump}"` });
+  if (prospect.threeConeDrill) measurables.push({ label: "3-CONE", value: `${prospect.threeConeDrill}s` });
+  if (prospect.shuttle) measurables.push({ label: "SHUTTLE", value: `${prospect.shuttle}s` });
+  if (prospect.height) measurables.push({ label: "HEIGHT", value: prospect.height });
+  if (prospect.weight) measurables.push({ label: "WEIGHT", value: `${prospect.weight} lbs` });
+
   return (
     <>
       {/* Backdrop */}
@@ -50,62 +75,104 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
         onClick={onClose}
       />
 
-      {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md overflow-y-auto bg-[var(--gtown-navy)] border-l border-white/10 shadow-2xl md:max-w-[400px]">
+      {/* Drawer — light theme */}
+      <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white shadow-2xl md:max-w-[420px]">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 hover:text-white transition"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
         >
-          ✕
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M3 3l10 10M13 3L3 13" />
+          </svg>
         </button>
 
-        <div className="p-6 pt-8">
-          {/* Header */}
-          <div className="flex flex-col items-center text-center">
-            <PlayerAvatar player={prospect} size={120} />
-
-            {prospect.rank && (
-              <span className="mt-4 inline-flex items-center rounded-full bg-[var(--lions-blue)]/20 px-3 py-1 text-sm font-bold text-[var(--lions-blue)]">
-                #{prospect.rank} Big Board
-              </span>
-            )}
-
+        {/* Header row */}
+        <div className="flex items-start gap-4 border-b border-gray-200 bg-gray-50 p-5 pt-6">
+          <PlayerAvatar player={prospect} size={80} />
+          <div className="flex-1 min-w-0 pt-1">
             <h2
-              className="mt-3 text-2xl font-bold text-white tracking-wide"
+              className="text-xl font-bold text-gray-900 tracking-wide leading-tight"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {prospect.name.toUpperCase()}
             </h2>
-
-            <span className="mt-1 inline-block rounded-full bg-[var(--lions-blue)]/20 px-3 py-1 text-sm font-semibold text-[var(--lions-blue)]">
-              {prospect.position}
-            </span>
-
-            <p className="mt-1 text-sm text-white/50">{prospect.school}</p>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="inline-block rounded-full bg-[var(--lions-blue)] px-2.5 py-0.5 text-xs font-bold text-white">
+                {prospect.position}
+              </span>
+              <span className="text-sm text-gray-500">{prospect.school}</span>
+            </div>
+            {prospect.nflComparison && (
+              <p className="mt-1.5 text-xs text-gray-400">
+                NFL Comp: <span className="font-semibold text-gray-600">{prospect.nflComparison}</span>
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* Measurables */}
-          {(prospect.height || prospect.weight) && (
-            <div className="mt-6 flex justify-center gap-6 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-              {prospect.height && (
-                <div className="text-center">
-                  <p className="text-[10px] uppercase tracking-wider text-white/40">Height</p>
-                  <p className="text-sm font-semibold text-white">{prospect.height}</p>
-                </div>
-              )}
-              {prospect.weight && (
-                <div className="text-center">
-                  <p className="text-[10px] uppercase tracking-wider text-white/40">Weight</p>
-                  <p className="text-sm font-semibold text-white">{prospect.weight} lbs</p>
-                </div>
-              )}
+        {/* Stats bar */}
+        {(prospect.positionRank || prospect.rank || prospect.grade) && (
+          <div className="flex border-b border-gray-200">
+            {prospect.positionRank && (
+              <div className="flex-1 border-r border-gray-200 px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-gray-900">{prospect.positionRank}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">POS RK</p>
+              </div>
+            )}
+            {prospect.rank && (
+              <div className="flex-1 border-r border-gray-200 px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-gray-900">{prospect.rank}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">OVR RK</p>
+              </div>
+            )}
+            {prospect.grade && (
+              <div className="flex-1 px-4 py-3 text-center">
+                <p className={`inline-flex items-center justify-center rounded-lg border px-3 py-0.5 text-2xl font-bold ${gradeColor(prospect.grade)}`}>
+                  {prospect.grade}
+                </p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-0.5">GRADE</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="p-5 space-y-5">
+          {/* Combine Measurables grid */}
+          {measurables.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                Combine Measurables
+              </h3>
+              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200 sm:grid-cols-4">
+                {measurables.map((m, i) => (
+                  <div
+                    key={m.label}
+                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+                  >
+                    <p className="text-sm font-bold text-gray-900">{m.value}</p>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">{m.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Scouting Report */}
+          {prospect.notes && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                Scouting Report
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-600">
+                {prospect.notes}
+              </p>
             </div>
           )}
 
           {/* Trait Tags */}
           {tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               {tags.map((tag) => (
                 <span
                   key={tag.label}
@@ -114,18 +181,6 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                   {tag.label}
                 </span>
               ))}
-            </div>
-          )}
-
-          {/* Scouting Report */}
-          {prospect.notes && (
-            <div className="mt-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
-                Scouting Report
-              </h3>
-              <p className="text-sm leading-relaxed text-white/70">
-                {prospect.notes}
-              </p>
             </div>
           )}
         </div>

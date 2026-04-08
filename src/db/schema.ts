@@ -140,6 +140,15 @@ export const players = pgTable("players", {
   imageUrl: text("image_url"),
   notes: text("notes"),
   rank: integer("rank"),
+  grade: integer("grade"),
+  positionRank: integer("position_rank"),
+  fortyTime: real("forty_time"),
+  vertical: real("vertical"),
+  benchPress: integer("bench_press"),
+  broadJump: integer("broad_jump"),
+  threeConeDrill: real("three_cone_drill"),
+  shuttle: real("shuttle"),
+  nflComparison: text("nfl_comparison"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

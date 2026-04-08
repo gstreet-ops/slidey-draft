@@ -30,6 +30,15 @@ type ExistingPick = {
   playerHeight: string | null;
   playerWeight: number | null;
   playerRank: number | null;
+  playerGrade: number | null;
+  playerPositionRank: number | null;
+  playerFortyTime: number | null;
+  playerVertical: number | null;
+  playerBenchPress: number | null;
+  playerBroadJump: number | null;
+  playerThreeConeDrill: number | null;
+  playerShuttle: number | null;
+  playerNflComparison: string | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
@@ -47,6 +56,15 @@ type Player = {
   notes: string | null;
   height: string | null;
   weight: number | null;
+  grade: number | null;
+  positionRank: number | null;
+  fortyTime: number | null;
+  vertical: number | null;
+  benchPress: number | null;
+  broadJump: number | null;
+  threeConeDrill: number | null;
+  shuttle: number | null;
+  nflComparison: string | null;
 };
 
 type Props = {
@@ -196,11 +214,6 @@ export function PickBuilder({
                       {player.position}
                     </span>
                   </div>
-                  {player.notes && (
-                    <p className="text-[11px] text-white/30 truncate">
-                      {player.notes.slice(0, 60)}{player.notes.length > 60 ? "..." : ""}
-                    </p>
-                  )}
                   {tags.length > 0 && (
                     <div className="flex gap-1 mt-0.5">
                       {tags.map((t) => (
@@ -293,6 +306,15 @@ export function PickBuilder({
                         notes: pick.playerNotes,
                         height: pick.playerHeight,
                         weight: pick.playerWeight,
+                        grade: pick.playerGrade,
+                        positionRank: pick.playerPositionRank,
+                        fortyTime: pick.playerFortyTime,
+                        vertical: pick.playerVertical,
+                        benchPress: pick.playerBenchPress,
+                        broadJump: pick.playerBroadJump,
+                        threeConeDrill: pick.playerThreeConeDrill,
+                        shuttle: pick.playerShuttle,
+                        nflComparison: pick.playerNflComparison,
                       });
                     }}
                     className="shrink-0"

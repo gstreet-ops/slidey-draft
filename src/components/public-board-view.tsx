@@ -16,6 +16,15 @@ type PickData = {
   playerHeight: string | null;
   playerWeight: number | null;
   playerRank: number | null;
+  playerGrade: number | null;
+  playerPositionRank: number | null;
+  playerFortyTime: number | null;
+  playerVertical: number | null;
+  playerBenchPress: number | null;
+  playerBroadJump: number | null;
+  playerThreeConeDrill: number | null;
+  playerShuttle: number | null;
+  playerNflComparison: string | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
@@ -86,6 +95,15 @@ export function PublicBoardView({
                 weight: selectedProspect.playerWeight,
                 imageUrl: selectedProspect.playerImageUrl,
                 notes: selectedProspect.playerNotes,
+                grade: selectedProspect.playerGrade,
+                positionRank: selectedProspect.playerPositionRank,
+                fortyTime: selectedProspect.playerFortyTime,
+                vertical: selectedProspect.playerVertical,
+                benchPress: selectedProspect.playerBenchPress,
+                broadJump: selectedProspect.playerBroadJump,
+                threeConeDrill: selectedProspect.playerThreeConeDrill,
+                shuttle: selectedProspect.playerShuttle,
+                nflComparison: selectedProspect.playerNflComparison,
               }
             : null
         }
