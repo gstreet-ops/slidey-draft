@@ -131,7 +131,7 @@ export default async function Home() {
             {topProspects.map((p) => (
               <div key={p.id} className="group relative rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center transition hover:border-[var(--lions-blue)]/40 hover:bg-white/[0.07] sm:p-4">
                 <div className="mx-auto mb-2 h-14 w-14 overflow-hidden rounded-full border-2 border-white/10 sm:h-16 sm:w-16">
-                  <PlayerAvatar imageUrl={p.imageUrl} playerName={p.name} size={64} />
+                  <PlayerAvatar player={{ name: p.name, imageUrl: p.imageUrl, position: p.position }} size={64} />
                 </div>
                 <p className="text-xs font-bold text-white truncate sm:text-sm">{p.name}</p>
                 <p className="text-[10px] text-white/40 sm:text-xs">{p.position} &middot; {p.school}</p>
@@ -166,7 +166,7 @@ export default async function Home() {
                   </div>
                   <div className="mx-auto mb-2 h-12 w-12 overflow-hidden rounded-full border-2 sm:h-14 sm:w-14"
                     style={{ borderColor: pick.teamPrimaryColor || "rgba(255,255,255,0.1)" }}>
-                    <PlayerAvatar imageUrl={pick.playerImageUrl ?? null} playerName={pick.playerName ?? "TBD"} size={56} />
+                    <PlayerAvatar player={{ name: pick.playerName ?? "TBD", imageUrl: pick.playerImageUrl, position: pick.playerPosition ?? "" }} size={56} />
                   </div>
                   <p className="text-xs font-bold text-white truncate">{pick.playerName ?? "TBD"}</p>
                   <p className="text-[10px] text-white/40">{pick.playerPosition}</p>
