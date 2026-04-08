@@ -204,18 +204,18 @@ export function PickBuilder({
           const tags = extractTraitTags(player.notes, 2);
 
           return (
-            <div key={player.id} className="flex items-center gap-1">
+            <div key={player.id} className="flex items-center gap-1.5">
               <button
                 disabled={!activeSlot || isPending}
                 onClick={() => slot && handleMakePick(player.id, slot)}
-                className={`flex flex-1 items-center gap-2.5 rounded-lg px-3 py-2 text-left transition min-h-[44px] ${
+                className={`flex flex-1 items-center gap-2.5 rounded-xl bg-white px-3 py-2.5 text-left shadow-sm transition min-h-[44px] ${
                   activeSlot
-                    ? "hover:bg-[var(--lions-blue)]/10 cursor-pointer"
-                    : "opacity-50 cursor-not-allowed"
+                    ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
+                    : "opacity-60 cursor-not-allowed"
                 }`}
               >
                 {player.rank && (
-                  <span className="text-xs font-bold text-[var(--lions-blue)]/60 w-5 text-right shrink-0">
+                  <span className="text-xs font-bold text-gray-400 w-5 text-right shrink-0">
                     #{player.rank}
                   </span>
                 )}
@@ -226,7 +226,7 @@ export function PickBuilder({
                       prospect={player}
                       onTap={() => setDrawerPlayer(player)}
                     >
-                      <span className="text-sm font-semibold text-white truncate cursor-pointer underline decoration-white/20 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition">
+                      <span className="text-sm font-semibold text-gray-900 truncate cursor-pointer underline decoration-gray-300 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition">
                         {player.name}
                       </span>
                     </ProspectHoverCard>
@@ -242,7 +242,7 @@ export function PickBuilder({
                     </div>
                   )}
                 </div>
-                <span className="ml-auto text-xs text-white/30 shrink-0 hidden sm:block">
+                <span className="ml-auto text-xs text-gray-400 shrink-0 hidden sm:block">
                   {player.school}
                 </span>
               </button>
@@ -264,7 +264,7 @@ export function PickBuilder({
           );
         })}
         {filteredPlayers.length === 0 && (
-          <p className="py-4 text-center text-sm text-white/30">
+          <p className="py-4 text-center text-sm text-gray-400">
             No players match your search
           </p>
         )}
@@ -284,12 +284,12 @@ export function PickBuilder({
             return (
               <div
                 key={slot.pickNumber}
-                className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 transition cursor-pointer sm:gap-3 sm:px-4 sm:py-3 ${
+                className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 transition cursor-pointer shadow-sm sm:gap-3 sm:px-4 sm:py-3 ${
                   pick
-                    ? "border-white/10 bg-white/5"
+                    ? "border-gray-200 bg-white"
                     : isActive
-                    ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
-                    : "border-white/10 bg-white/5 hover:border-white/20"
+                    ? "border-[var(--lions-blue)] bg-white ring-2 ring-[var(--lions-blue)]/30"
+                    : "border-gray-200 bg-white hover:border-[var(--lions-blue)]/40"
                 }`}
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -354,12 +354,12 @@ export function PickBuilder({
                 {/* Team + pick info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-[10px] font-semibold text-white/50 sm:text-xs">
+                    <span className="text-[10px] font-semibold text-gray-500 sm:text-xs">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-[10px] text-white/30 hidden sm:inline sm:text-xs">{slot.teamName}</span>
+                    <span className="text-[10px] text-gray-400 hidden sm:inline sm:text-xs">{slot.teamName}</span>
                     {slot.note && (
-                      <span className="text-[9px] text-yellow-400/70 sm:text-[10px]">({slot.note})</span>
+                      <span className="text-[9px] text-amber-600/70 sm:text-[10px]">({slot.note})</span>
                     )}
                   </div>
                   {pick ? (
@@ -405,7 +405,7 @@ export function PickBuilder({
                           nflComparison: pick.playerNflComparison,
                         })}
                       >
-                        <span className="text-xs font-semibold text-white hover:text-[var(--lions-blue)] transition cursor-pointer sm:text-sm underline decoration-white/20 underline-offset-2 hover:decoration-[var(--lions-blue)]">
+                        <span className="text-xs font-semibold text-gray-900 hover:text-[var(--lions-blue)] transition cursor-pointer sm:text-sm underline decoration-gray-300 underline-offset-2 hover:decoration-[var(--lions-blue)]">
                           {pick.playerName}
                         </span>
                       </ProspectHoverCard>
@@ -421,12 +421,12 @@ export function PickBuilder({
                           {pick.playerGrade}
                         </span>
                       )}
-                      <span className="text-[10px] text-white/30 hidden sm:inline sm:text-xs">
+                      <span className="text-[10px] text-gray-400 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-[10px] text-white/30 mt-0.5 sm:text-xs">
+                    <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-gray-400"}`}>
                       {isActive ? "Select a player \u2192" : "Click to pick"}
                     </p>
                   )}
