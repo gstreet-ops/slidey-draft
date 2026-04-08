@@ -18,6 +18,7 @@ type Player = {
   name: string;
   position: string;
   school: string;
+  rank: number | null;
 };
 
 type ExistingResult = {
@@ -47,16 +48,20 @@ export function LiveResultsEntry({
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [posFilter, setPosFilter] = useState<string>("ALL");
   const [isPending, startTransition] = useTransition();
   const [lastConfirm, setLastConfirm] = useState<string | null>(null);
 
   const resultMap = new Map(existingResults.map((r) => [r.pickNumber, r]));
 
+  const positions = ["ALL", ...Array.from(new Set(availablePlayers.map((p) => p.position))).sort()];
+
   const filteredPlayers = availablePlayers.filter(
     (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.position.toLowerCase().includes(search.toLowerCase()) ||
-      p.school.toLowerCase().includes(search.toLowerCase())
+      (posFilter === "ALL" || p.position === posFilter) &&
+      (p.name.toLowerCase().includes(search.toLowerCase()) ||
+       p.position.toLowerCase().includes(search.toLowerCase()) ||
+       p.school.toLowerCase().includes(search.toLowerCase()))
   );
 
   // Find the next empty slot
@@ -146,6 +151,11 @@ export function LiveResultsEntry({
                   onClick={() => handleEnterResult(player.id, slot)}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[var(--lions-blue)]/10 transition active:bg-[var(--lions-blue)]/20"
                 >
+                  {player.rank && (
+                    <span className="text-xs font-bold text-[var(--lions-blue)]/60 w-5 text-right shrink-0">
+                      #{player.rank}
+                    </span>
+                  )}
                   <span className="text-sm font-semibold text-white">
                     {player.name}
                   </span>
@@ -240,8 +250,23 @@ export function LiveResultsEntry({
             placeholder="Search name, position, school..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-3 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
           />
+          <div className="mb-3 flex gap-1 flex-wrap">
+            {positions.map((pos) => (
+              <button
+                key={pos}
+                onClick={() => setPosFilter(pos)}
+                className={`px-2 py-1 rounded text-xs font-semibold transition ${
+                  posFilter === pos
+                    ? "bg-[var(--lions-blue)] text-white"
+                    : "bg-white/5 text-white/40 hover:text-white/60"
+                }`}
+              >
+                {pos}
+              </button>
+            ))}
+          </div>
           <div className="space-y-1">
             {filteredPlayers.map((player) => {
               const slot = activeSlot
@@ -259,6 +284,11 @@ export function LiveResultsEntry({
                       : "opacity-50 cursor-not-allowed"
                   }`}
                 >
+                  {player.rank && (
+                    <span className="text-xs font-bold text-[var(--lions-blue)]/60 w-5 text-right shrink-0">
+                      #{player.rank}
+                    </span>
+                  )}
                   <span className="text-sm font-semibold text-white">
                     {player.name}
                   </span>

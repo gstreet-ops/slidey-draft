@@ -8,6 +8,7 @@ type Player = {
   name: string;
   position: string;
   school: string;
+  rank: number | null;
 };
 
 type ActualResult = {
@@ -42,6 +43,7 @@ export function LivePredictionWidget({
   const [state, setState] = useState<PredictionState>({ type: "waiting_for_draft" });
   const [selectedPlayerId, setSelectedPlayerId] = useState("");
   const [search, setSearch] = useState("");
+  const [posFilter, setPosFilter] = useState("ALL");
   const [submitting, setSubmitting] = useState(false);
 
   // Determine draft state
@@ -60,19 +62,27 @@ export function LivePredictionWidget({
     [allPlayers, draftedPlayerIds]
   );
 
-  // Filtered by search
+  // Position list
+  const positions = useMemo(
+    () => ["ALL", ...Array.from(new Set(availablePlayers.map((p) => p.position))).sort()],
+    [availablePlayers]
+  );
+
+  // Filtered by search and position
   const filteredPlayers = useMemo(() => {
-    if (!search.trim()) return availablePlayers.slice(0, 20);
-    const q = search.toLowerCase();
-    return availablePlayers
-      .filter(
+    let list = availablePlayers;
+    if (posFilter !== "ALL") list = list.filter((p) => p.position === posFilter);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.position.toLowerCase().includes(q) ||
           p.school.toLowerCase().includes(q)
-      )
-      .slice(0, 20);
-  }, [availablePlayers, search]);
+      );
+    }
+    return list.slice(0, 20);
+  }, [availablePlayers, search, posFilter]);
 
   // Current team on the clock
   const currentTeam = draftOrder.find((d) => d.pickNumber === nextPickNumber);
@@ -205,19 +215,38 @@ export function LivePredictionWidget({
               className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
             />
 
+            <div className="flex gap-1 flex-wrap">
+              {positions.map((pos) => (
+                <button
+                  key={pos}
+                  onClick={() => setPosFilter(pos)}
+                  className={`px-2 py-1 rounded text-xs font-semibold transition ${
+                    posFilter === pos
+                      ? "bg-[var(--gtown-highlight)] text-white"
+                      : "bg-white/5 text-white/40 hover:text-white/60"
+                  }`}
+                >
+                  {pos}
+                </button>
+              ))}
+            </div>
+
             <div className="max-h-48 overflow-y-auto space-y-1">
               {filteredPlayers.map((p) => (
                 <button
                   key={p.id}
                   onClick={() => setSelectedPlayerId(p.id)}
-                  className={`w-full text-left px-4 py-2 rounded-lg text-sm transition ${
+                  className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
                     selectedPlayerId === p.id
                       ? "bg-[var(--gtown-highlight)] text-white"
                       : "bg-white/5 text-white/70 hover:bg-white/10"
                   }`}
                 >
+                  {p.rank && (
+                    <span className="text-xs font-bold opacity-60 w-5 text-right shrink-0">#{p.rank}</span>
+                  )}
                   <span className="font-semibold">{p.name}</span>
-                  <span className="text-white/40 ml-2">{p.position} &middot; {p.school}</span>
+                  <span className="text-white/40">{p.position} &middot; {p.school}</span>
                 </button>
               ))}
             </div>

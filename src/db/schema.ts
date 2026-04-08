@@ -138,6 +138,7 @@ export const players = pgTable("players", {
   weight: integer("weight"),
   imageUrl: text("image_url"),
   notes: text("notes"),
+  rank: integer("rank"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

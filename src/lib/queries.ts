@@ -35,7 +35,10 @@ export async function getTeamById(id: string) {
 
 // ── Players (prospects) ────────────────────────────
 export async function getPlayers() {
-  return db.select().from(players).orderBy(asc(players.name));
+  return db
+    .select()
+    .from(players)
+    .orderBy(sql`${players.rank} ASC NULLS LAST`, asc(players.name));
 }
 
 // ── Draft Order ────────────────────────────────────
