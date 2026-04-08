@@ -130,12 +130,15 @@ export function PublicPickCard({
 
         {/* Right side: tags (desktop) + badge + chevron */}
         <div className="flex shrink-0 items-center gap-2 pr-1">
-          {/* Desktop trait tags */}
+          {/* Desktop trait tags — show max 2 to prevent overflow */}
           {tags.length > 0 && (
-            <div className="hidden gap-1 sm:flex max-w-[200px] flex-wrap justify-end">
-              {tags.map((t) => (
+            <div className="hidden gap-1 sm:flex items-center">
+              {tags.slice(0, 2).map((t) => (
                 <span key={t.label} className={`rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap ${t.color}`}>{t.label}</span>
               ))}
+              {tags.length > 2 && (
+                <span className="text-[10px] text-white/40">+{tags.length - 2}</span>
+              )}
             </div>
           )}
           {badge && <span className={`text-base font-bold sm:text-lg ${badge.color}`}>{badge.text}</span>}
