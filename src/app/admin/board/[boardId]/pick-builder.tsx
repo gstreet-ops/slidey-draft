@@ -498,7 +498,7 @@ export function PickBuilder({
 
         {/* Desktop prospect pool sidebar */}
         {!readOnly && (
-          <div className="hidden rounded-xl border border-white/10 bg-white/5 p-4 lg:sticky lg:top-4 lg:block lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4 max-h-[60vh] overflow-y-auto lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)]">
             {prospectPoolContent}
           </div>
         )}
