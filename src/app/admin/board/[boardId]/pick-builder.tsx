@@ -208,7 +208,7 @@ export function PickBuilder({
               <button
                 disabled={!activeSlot || isPending}
                 onClick={() => slot && handleMakePick(player.id, slot)}
-                className={`flex flex-1 items-center gap-2.5 rounded-xl bg-white px-3 py-2.5 text-left shadow-sm transition min-h-[44px] ${
+                className={`flex flex-1 items-center gap-1.5 rounded-lg bg-white px-2 py-1.5 text-left shadow-sm transition min-h-[36px] sm:gap-2.5 sm:rounded-xl sm:px-3 sm:py-2.5 sm:min-h-[44px] ${
                   activeSlot
                     ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
                     : "opacity-60 cursor-not-allowed"
@@ -226,7 +226,7 @@ export function PickBuilder({
                       prospect={player}
                       onTap={() => setDrawerPlayer(player)}
                     >
-                      <span className="text-sm font-semibold text-gray-900 truncate cursor-pointer underline decoration-gray-300 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition">
+                      <span className="text-xs font-semibold text-gray-900 truncate cursor-pointer underline decoration-gray-300 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition sm:text-sm">
                         {player.name}
                       </span>
                     </ProspectHoverCard>
@@ -235,7 +235,7 @@ export function PickBuilder({
                     </span>
                   </div>
                   {tags.length > 0 && (
-                    <div className="flex gap-1 mt-0.5">
+                    <div className="hidden gap-1 mt-0.5 sm:flex">
                       {tags.map((t) => (
                         <span key={t.label} className={`rounded-full px-1.5 py-0 text-[9px] font-semibold ${t.color}`}>{t.label}</span>
                       ))}
@@ -252,7 +252,7 @@ export function PickBuilder({
                   e.stopPropagation();
                   setDrawerPlayer(player);
                 }}
-                className="flex h-9 shrink-0 items-center gap-1 rounded-lg border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 px-2.5 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition"
+                className="flex h-7 shrink-0 items-center gap-1 rounded-md border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 px-1.5 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition sm:h-9 sm:rounded-lg sm:px-2.5"
                 title="View scouting report"
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
@@ -274,9 +274,9 @@ export function PickBuilder({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-[1.1fr_1fr] gap-2 sm:grid-cols-[1.2fr_1fr] sm:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
         {/* Draft board column */}
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
           {draftOrder.map((slot) => {
             const pick = pickMap.get(slot.pickNumber);
             const isActive = activeSlot === slot.pickNumber;
@@ -284,7 +284,7 @@ export function PickBuilder({
             return (
               <div
                 key={slot.pickNumber}
-                className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 transition cursor-pointer shadow-sm sm:gap-3 sm:px-4 sm:py-3 ${
+                className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 transition cursor-pointer shadow-sm sm:gap-3 sm:rounded-xl sm:px-4 sm:py-3 ${
                   pick
                     ? "border-gray-200 bg-white"
                     : isActive
@@ -294,9 +294,9 @@ export function PickBuilder({
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
                 {/* Pick number + team logo */}
-                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                   <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white sm:h-10 sm:w-10 sm:text-sm"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white sm:h-10 sm:w-10 sm:rounded-lg sm:text-sm"
                     style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
                   >
                     {slot.pickNumber}
@@ -496,9 +496,9 @@ export function PickBuilder({
           )}
         </div>
 
-        {/* Desktop prospect pool sidebar */}
+        {/* Prospect pool sidebar — always visible */}
         {!readOnly && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4 max-h-[60vh] overflow-y-auto lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)]">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-2 sm:p-4 max-h-[calc(100vh-100px)] overflow-y-auto lg:sticky lg:top-4 lg:max-h-[calc(100vh-120px)]">
             {prospectPoolContent}
           </div>
         )}
