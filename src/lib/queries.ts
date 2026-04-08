@@ -51,6 +51,7 @@ export async function getDraftOrder(season: number) {
       teamName: teams.name,
       teamAbbreviation: teams.abbreviation,
       teamPrimaryColor: teams.primaryColor,
+      teamLogoUrl: teams.logoUrl,
     })
     .from(draftOrder)
     .innerJoin(teams, eq(draftOrder.teamId, teams.id))
@@ -86,9 +87,11 @@ export async function getBoardWithPicks(boardId: string) {
       playerName: players.name,
       playerPosition: players.position,
       playerSchool: players.school,
+      playerImageUrl: players.imageUrl,
       teamName: teams.name,
       teamAbbreviation: teams.abbreviation,
       teamPrimaryColor: teams.primaryColor,
+      teamLogoUrl: teams.logoUrl,
       autoFilled: picks.autoFilled,
     })
     .from(picks)

@@ -96,6 +96,16 @@ export async function makePick(
     throw new Error("Not authorized");
   }
 
+  // Check if player is already picked on this board
+  const [existing] = await db
+    .select({ pickNumber: picks.pickNumber })
+    .from(picks)
+    .where(and(eq(picks.boardId, boardId), eq(picks.playerId, playerId)));
+
+  if (existing) {
+    throw new Error(`Player already selected at pick #${existing.pickNumber}`);
+  }
+
   const [pick] = await db
     .insert(picks)
     .values({

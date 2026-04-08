@@ -193,6 +193,7 @@ export const picks = pgTable(
   },
   (table) => [
     uniqueIndex("board_pick_idx").on(table.boardId, table.pickNumber),
+    uniqueIndex("board_player_idx").on(table.boardId, table.playerId),
   ]
 );
 

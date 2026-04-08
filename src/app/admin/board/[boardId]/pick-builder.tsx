@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { makePick, removePick, publishBoard } from "@/lib/actions";
+import { PlayerAvatar } from "@/components/player-avatar";
 
 type DraftSlot = {
   id: string;
@@ -10,6 +12,7 @@ type DraftSlot = {
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
+  teamLogoUrl: string | null;
   note: string | null;
 };
 
@@ -20,9 +23,11 @@ type ExistingPick = {
   playerName: string;
   playerPosition: string;
   playerSchool: string;
+  playerImageUrl: string | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
+  teamLogoUrl: string | null;
 };
 
 type Player = {
@@ -31,6 +36,7 @@ type Player = {
   position: string;
   school: string;
   rank: number | null;
+  imageUrl: string | null;
 };
 
 type Props = {
@@ -55,11 +61,21 @@ export function PickBuilder({
   const [posFilter, setPosFilter] = useState<string>("ALL");
   const [isPending, startTransition] = useTransition();
 
+  const [localPickedIds, setLocalPickedIds] = useState<Set<string>>(new Set());
+
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
-  const positions = ["ALL", ...Array.from(new Set(availablePlayers.map((p) => p.position))).sort()];
+  // Combine server-side picked IDs with locally tracked picks to prevent duplicates
+  const allPickedIds = new Set([
+    ...existingPicks.map((p) => p.playerId),
+    ...localPickedIds,
+  ]);
 
-  const filteredPlayers = availablePlayers.filter(
+  const realAvailable = availablePlayers.filter((p) => !allPickedIds.has(p.id));
+
+  const positions = ["ALL", ...Array.from(new Set(realAvailable.map((p) => p.position))).sort()];
+
+  const filteredPlayers = realAvailable.filter(
     (p) =>
       (posFilter === "ALL" || p.position === posFilter) &&
       (p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,6 +84,7 @@ export function PickBuilder({
   );
 
   function handleMakePick(playerId: string, slot: DraftSlot) {
+    setLocalPickedIds((prev) => new Set([...prev, playerId]));
     startTransition(async () => {
       await makePick(boardId, slot.pickNumber, playerId, slot.teamId);
       setActiveSlot(null);
@@ -107,13 +124,36 @@ export function PickBuilder({
               }`}
               onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
             >
-              {/* Pick number */}
-              <div
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
-                style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
-              >
-                {slot.pickNumber}
+              {/* Pick number + team logo */}
+              <div className="flex shrink-0 items-center gap-2">
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
+                  style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
+                >
+                  {slot.pickNumber}
+                </div>
+                {slot.teamLogoUrl && (
+                  <Image
+                    src={slot.teamLogoUrl}
+                    alt={slot.teamAbbreviation}
+                    width={28}
+                    height={28}
+                    className="shrink-0"
+                  />
+                )}
               </div>
+
+              {/* Player headshot (when picked) */}
+              {pick && (
+                <PlayerAvatar
+                  player={{
+                    name: pick.playerName,
+                    imageUrl: pick.playerImageUrl,
+                    position: pick.playerPosition,
+                  }}
+                  size={36}
+                />
+              )}
 
               {/* Team + pick info */}
               <div className="flex-1 min-w-0">
@@ -140,7 +180,7 @@ export function PickBuilder({
                   </div>
                 ) : (
                   <p className="text-xs text-white/30 mt-0.5">
-                    {isActive ? "Select a player →" : "Click to pick"}
+                    {isActive ? "Select a player \u2192" : "Click to pick"}
                   </p>
                 )}
               </div>
@@ -225,6 +265,10 @@ export function PickBuilder({
                     #{player.rank}
                   </span>
                 )}
+                <PlayerAvatar
+                  player={player}
+                  size={32}
+                />
                 <span className="text-sm font-semibold text-white">
                   {player.name}
                 </span>
