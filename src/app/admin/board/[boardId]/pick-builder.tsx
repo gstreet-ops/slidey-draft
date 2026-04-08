@@ -139,12 +139,26 @@ export function PickBuilder({
   // Prospect pool content (shared between desktop sidebar and mobile bottom sheet)
   const prospectPoolContent = (
     <>
-      <h2
-        className="mb-3 text-lg font-bold text-white tracking-wide"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        PROSPECT POOL
-      </h2>
+      {activeSlot ? (
+        <div className="mb-3">
+          <h2
+            className="text-lg font-bold text-white tracking-wide"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            PROSPECT POOL
+          </h2>
+          <p className="text-xs text-[var(--lions-blue)]">
+            Select a player for Pick #{activeSlot} &mdash; {draftOrder.find((s) => s.pickNumber === activeSlot)?.teamName}
+          </p>
+        </div>
+      ) : (
+        <h2
+          className="mb-3 text-lg font-bold text-white tracking-wide"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          PROSPECT POOL
+        </h2>
+      )}
       <input
         type="text"
         placeholder="Search name, position, school..."
@@ -232,10 +246,10 @@ export function PickBuilder({
                   e.stopPropagation();
                   setDrawerPlayer(player);
                 }}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/30 hover:bg-white/10 hover:text-white transition"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/40 hover:text-white transition"
                 title="View scouting report"
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <svg width="20" height="20" viewBox="0 0 14 14" fill="currentColor">
                   <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
                 </svg>
               </button>
@@ -343,12 +357,46 @@ export function PickBuilder({
                   </div>
                   {pick ? (
                     <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
-                      <span className="text-xs font-semibold text-white sm:text-sm">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDrawerPlayer({
+                            id: pick.playerId,
+                            name: pick.playerName,
+                            position: pick.playerPosition,
+                            school: pick.playerSchool,
+                            rank: pick.playerRank,
+                            imageUrl: pick.playerImageUrl,
+                            notes: pick.playerNotes,
+                            height: pick.playerHeight,
+                            weight: pick.playerWeight,
+                            grade: pick.playerGrade,
+                            positionRank: pick.playerPositionRank,
+                            fortyTime: pick.playerFortyTime,
+                            vertical: pick.playerVertical,
+                            benchPress: pick.playerBenchPress,
+                            broadJump: pick.playerBroadJump,
+                            threeConeDrill: pick.playerThreeConeDrill,
+                            shuttle: pick.playerShuttle,
+                            nflComparison: pick.playerNflComparison,
+                          });
+                        }}
+                        className="text-xs font-semibold text-white hover:text-[var(--lions-blue)] transition sm:text-sm"
+                      >
                         {pick.playerName}
-                      </span>
+                      </button>
                       <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
                         {pick.playerPosition}
                       </span>
+                      {pick.playerGrade && (
+                        <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold sm:h-6 sm:w-6 sm:text-[10px] ${
+                          pick.playerGrade >= 90 ? "bg-green-500/20 text-green-400"
+                          : pick.playerGrade >= 80 ? "bg-blue-500/20 text-blue-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                        }`}>
+                          {pick.playerGrade}
+                        </span>
+                      )}
                       <span className="text-[10px] text-white/30 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
