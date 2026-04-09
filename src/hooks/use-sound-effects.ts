@@ -5,11 +5,11 @@ import { useState, useCallback, useRef, useEffect } from "react";
 type SoundName = "pick-announced" | "exact-match" | "tick" | "miss" | "rank-up";
 
 const SOUND_FILES: Record<SoundName, string> = {
-  "pick-announced": "/sounds/pick-announced.mp3",
-  "exact-match": "/sounds/exact-match.mp3",
-  "tick": "/sounds/tick.mp3",
-  "miss": "/sounds/miss.mp3",
-  "rank-up": "/sounds/rank-up.mp3",
+  "pick-announced": "/sounds/pick-announced.wav",
+  "exact-match": "/sounds/exact-match.wav",
+  "tick": "/sounds/tick.wav",
+  "miss": "/sounds/miss.wav",
+  "rank-up": "/sounds/rank-up.wav",
 };
 
 const STORAGE_KEY = "slidey-sound-enabled";
