@@ -8,7 +8,7 @@ import {
 } from "@/db/schema";
 import { eq, asc, and, sql, isNotNull, inArray, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { ACTUAL_DRAFT_ORDER } from "@/db/seed-simulation";
+import { ACTUAL_DRAFT_ORDER } from "@/db/simulation-config";
 
 const SEASON = 2026;
 

@@ -35,14 +35,8 @@ const STRATEGIES: Record<string, number[]> = {
   "mostly-consensus": [0,1,8,3,4,2,6,7,5,9,10,15,12,13,14,11,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
 };
 
-// The "actual" draft order — consensus with a few surprises
-// Prospect rank indices: swap #5/#8 and #4/#7 to create drama
-export const ACTUAL_DRAFT_ORDER = [
-  0, 1, 2, 3, 7, 5, 6, 4, 8, 9,
-  10,11,12,13,14,15,16,17,18,19,
-  20,21,22,23,24,25,26,27,28,29,
-  30,31,
-];
+// Re-export for backwards compat
+export { ACTUAL_DRAFT_ORDER } from "./simulation-config";
 
 async function cleanup() {
   console.log("Cleaning up simulation data...");
