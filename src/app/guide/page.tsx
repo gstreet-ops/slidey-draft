@@ -62,8 +62,7 @@ export default async function GuidePage() {
           ))}
         </nav>
 
-        {/* Content card — white background */}
-        <div className="mt-8 rounded-2xl bg-white shadow-xl p-6 sm:p-10 space-y-12 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-gray-600">
+        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-white [&_section]:shadow-md [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-gray-600">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
