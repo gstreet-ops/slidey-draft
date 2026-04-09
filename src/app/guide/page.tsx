@@ -62,7 +62,7 @@ export default async function GuidePage() {
           ))}
         </nav>
 
-        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-white [&_section]:shadow-md [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-gray-600">
+        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-gray-900/60 [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
@@ -91,7 +91,7 @@ export default async function GuidePage() {
 
             <SubHeading>Researching Prospects</SubHeading>
             <p>
-              Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)] text-white text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
+              Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
             </p>
 
             <SubHeading>Pick Analysis</SubHeading>
@@ -130,7 +130,7 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are two ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft) and <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft).
+              There are two ways to earn points: your <span className="text-white font-semibold">mock draft</span> (submitted before the draft) and <span className="text-white font-semibold">live predictions</span> (made in real-time during the draft).
             </p>
 
             {/* Mock Draft Scoring Card */}
@@ -224,9 +224,9 @@ export default async function GuidePage() {
             <p>
               Pool standings combine two scores:
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-gray-600">
-              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Mock Draft Bonus</span> — points from your published mock draft (tiered scoring above)</span></li>
-              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Live Prediction Total</span> — points from correct real-time picks during the draft</span></li>
+            <ul className="mt-2 space-y-1 text-sm text-white/60">
+              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Mock Draft Bonus</span> — points from your published mock draft (tiered scoring above)</span></li>
+              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Live Prediction Total</span> — points from correct real-time picks during the draft</span></li>
             </ul>
             <p className="mt-2">
               The combined score determines your pool rank. Rankings update live as the draft progresses.
@@ -242,19 +242,19 @@ export default async function GuidePage() {
 
             <StepList>
               <Step n={1}>
-                <span className="text-gray-900 font-semibold">Boards lock</span> — you can no longer edit your mock draft
+                <span className="text-white font-semibold">Boards lock</span> — you can no longer edit your mock draft
               </Step>
               <Step n={2}>
-                <span className="text-gray-900 font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
+                <span className="text-white font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
               </Step>
               <Step n={3}>
-                <span className="text-gray-900 font-semibold">Live predictions</span> — if you are in a pool, you can predict each pick before it is announced for bonus points
+                <span className="text-white font-semibold">Live predictions</span> — if you are in a pool, you can predict each pick before it is announced for bonus points
               </Step>
               <Step n={4}>
-                <span className="text-gray-900 font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
+                <span className="text-white font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
               </Step>
               <Step n={5}>
-                <span className="text-gray-900 font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
+                <span className="text-white font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
               </Step>
             </StepList>
 
@@ -262,10 +262,10 @@ export default async function GuidePage() {
             <p>
               The War Room (<InlineLink href="/live">/live</InlineLink>) is a three-panel view:
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-gray-600">
-              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Actual Picks</span> — real-time feed of announced draft picks</span></li>
-              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Your Board</span> — your mock draft with running score, showing matches and misses</span></li>
-              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Leaderboard</span> — live rankings with trending arrows showing who is climbing or falling</span></li>
+            <ul className="mt-2 space-y-1 text-sm text-white/60">
+              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Actual Picks</span> — real-time feed of announced draft picks</span></li>
+              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Your Board</span> — your mock draft with running score, showing matches and misses</span></li>
+              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Leaderboard</span> — live rankings with trending arrows showing who is climbing or falling</span></li>
             </ul>
           </section>
 
@@ -338,7 +338,7 @@ export default async function GuidePage() {
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-xl font-bold text-gray-900 tracking-wide sm:text-2xl"
+      className="text-xl font-bold text-white tracking-wide sm:text-2xl"
       style={{ fontFamily: "var(--font-display)" }}
     >
       {children}
@@ -360,7 +360,7 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">
         {n}
       </span>
-      <p className="text-sm text-gray-600 pt-0.5">{children}</p>
+      <p className="text-sm text-white/60 pt-0.5">{children}</p>
     </div>
   );
 }
@@ -379,9 +379,9 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-      <p className="text-sm font-semibold text-gray-900">{title}</p>
-      <p className="mt-0.5 text-xs text-gray-500">{desc}</p>
+    <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+      <p className="text-sm font-semibold text-white">{title}</p>
+      <p className="mt-0.5 text-xs text-white/50">{desc}</p>
     </div>
   );
 }
@@ -416,9 +416,9 @@ function ScoreRow({ type, label, desc, pts }: { type: string; label: string; des
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-4">
-      <p className="text-sm font-semibold text-gray-900">{q}</p>
-      <p className="mt-1.5 text-sm text-gray-500">{children}</p>
+    <div className="mt-4 rounded-lg border border-white/10 bg-white/5 px-4 py-4">
+      <p className="text-sm font-semibold text-white">{q}</p>
+      <p className="mt-1.5 text-sm text-white/50">{children}</p>
     </div>
   );
 }
