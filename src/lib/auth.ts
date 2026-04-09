@@ -37,7 +37,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: (u, { eq }) => eq(u.id, user.id),
         });
         session.user.role = dbUser?.role || "user";
-        session.user.status = dbUser?.status || "spectator";
+        session.user.status = dbUser?.status || "active";
       }
       return session;
     },

@@ -47,7 +47,7 @@ export const users = pgTable("users", {
   emailVerified: timestamp("email_verified"),
   image: text("image"),
   role: userRoleEnum("role").default("user"),
-  status: userStatusEnum("status").notNull().default("spectator"),
+  status: userStatusEnum("status").notNull().default("active"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
