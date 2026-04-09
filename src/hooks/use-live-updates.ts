@@ -17,6 +17,7 @@ export interface LiveUpdateResult<T> {
   isLoading: boolean;
   error: Error | null;
   lastUpdated: Date | null;
+  failCount: number;
   /** Force an immediate refresh */
   refresh: () => void;
 }
@@ -34,6 +35,7 @@ export function useLiveUpdates<T = unknown>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [failCount, setFailCount] = useState(0);
   const mountedRef = useRef(true);
   const endpointsKey = endpoints.join(",");
   const methodRef = useRef(method);
@@ -56,10 +58,12 @@ export function useLiveUpdates<T = unknown>(
       const value = endpoints.length === 1 ? results[0] : results;
       setData(value as T);
       setError(null);
+      setFailCount(0);
       setLastUpdated(new Date());
     } catch (err) {
       if (!mountedRef.current) return;
       setError(err instanceof Error ? err : new Error(String(err)));
+      setFailCount((prev) => prev + 1);
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
@@ -86,5 +90,5 @@ export function useLiveUpdates<T = unknown>(
     };
   }, [fetchAll, interval, enabled]);
 
-  return { data, isLoading, error, lastUpdated, refresh: fetchAll };
+  return { data, isLoading, error, lastUpdated, failCount, refresh: fetchAll };
 }
