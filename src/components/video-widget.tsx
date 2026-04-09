@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Draggable from "react-draggable";
 import type { DraggableData, DraggableEvent } from "react-draggable";
 
@@ -11,10 +11,8 @@ interface VideoWidgetProps {
 
 type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
-const WIDTH = 280;
-const HEIGHT = 210;
-const PILL_WIDTH = 160;
-const PILL_HEIGHT = 40;
+const WIDTH = 320;
+const HEIGHT = 260;
 const MARGIN = 12;
 
 function getCornerPosition(corner: Corner): { x: number; y: number } {
@@ -53,17 +51,70 @@ function nearestCorner(x: number, y: number): Corner {
 export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
   const [minimized, setMinimized] = useState(false);
   const [closed, setClosed] = useState(false);
-  const [corner, setCorner] = useState<Corner>("bottom-right");
   const [snapping, setSnapping] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [jitsiLoaded, setJitsiLoaded] = useState(false);
   const nodeRef = useRef<HTMLDivElement>(null!);
+  const jitsiContainerRef = useRef<HTMLDivElement>(null!);
+  const jitsiApiRef = useRef<unknown>(null);
 
   const jitsiRoom = `ddc-pool-${poolId.slice(0, 8)}`;
-  const jitsiUrl = `https://meet.jit.si/${jitsiRoom}#config.startWithAudioMuted=true&config.startWithVideoMuted=false&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.TOOLBAR_BUTTONS=["microphone","camera","hangup"]`;
+
+  // Load Jitsi IFrame API script
+  useEffect(() => {
+    if (closed || minimized) return;
+    if (jitsiApiRef.current) return;
+
+    const script = document.createElement("script");
+    script.src = "https://meet.jit.si/external_api.js";
+    script.async = true;
+    script.onload = () => setJitsiLoaded(true);
+    document.head.appendChild(script);
+
+    return () => {
+      // Don't remove script — it's cached
+    };
+  }, [closed, minimized]);
+
+  // Initialize Jitsi when script loaded and container ready
+  useEffect(() => {
+    if (!jitsiLoaded || closed || minimized) return;
+    if (jitsiApiRef.current) return;
+    if (!jitsiContainerRef.current) return;
+
+    const JitsiMeetExternalAPI = (window as unknown as Record<string, unknown>).JitsiMeetExternalAPI as new (domain: string, options: Record<string, unknown>) => unknown;
+    if (!JitsiMeetExternalAPI) return;
+
+    const api = new JitsiMeetExternalAPI("meet.jit.si", {
+      roomName: jitsiRoom,
+      parentNode: jitsiContainerRef.current,
+      width: "100%",
+      height: 210,
+      configOverwrite: {
+        startWithAudioMuted: true,
+        startWithVideoMuted: false,
+        prejoinPageEnabled: false,
+      },
+      interfaceConfigOverwrite: {
+        SHOW_JITSI_WATERMARK: false,
+        SHOW_BRAND_WATERMARK: false,
+        TOOLBAR_BUTTONS: ["microphone", "camera", "hangup", "tileview"],
+        DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+      },
+    });
+
+    jitsiApiRef.current = api;
+
+    return () => {
+      if (jitsiApiRef.current) {
+        (jitsiApiRef.current as { dispose: () => void }).dispose();
+        jitsiApiRef.current = null;
+      }
+    };
+  }, [jitsiLoaded, closed, minimized, jitsiRoom]);
 
   const handleStop = useCallback((_e: DraggableEvent, data: DraggableData) => {
     const nearest = nearestCorner(data.x, data.y);
-    setCorner(nearest);
     setSnapping(true);
     setPosition(getCornerPosition(nearest));
     setTimeout(() => setSnapping(false), 300);
@@ -74,10 +125,18 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     setPosition({ x: data.x, y: data.y });
   }, []);
 
+  function handleClose() {
+    if (jitsiApiRef.current) {
+      (jitsiApiRef.current as { dispose: () => void }).dispose();
+      jitsiApiRef.current = null;
+    }
+    setClosed(true);
+  }
+
   if (closed) {
     return (
       <button
-        onClick={() => setClosed(false)}
+        onClick={() => { setClosed(false); setJitsiLoaded(false); }}
         className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--gtown-navy)] border border-white/20 px-4 py-2 text-white text-xs font-semibold hover:bg-white/10 transition shadow-lg"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -88,7 +147,6 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     );
   }
 
-  // Default position
   const pos = position || (typeof window !== "undefined" ? getCornerPosition("bottom-right") : { x: 0, y: 0 });
 
   if (minimized) {
@@ -140,7 +198,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
               </svg>
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); setClosed(true); }}
+              onClick={(e) => { e.stopPropagation(); handleClose(); }}
               className="p-1 text-white/50 hover:text-white transition"
               title="Close"
             >
@@ -151,13 +209,14 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
           </div>
         </div>
 
-        {/* Jitsi iframe */}
-        <iframe
-          src={jitsiUrl}
-          allow="camera; microphone; fullscreen; display-capture"
-          className="w-full bg-black"
-          style={{ height: HEIGHT, border: "none" }}
-        />
+        {/* Jitsi container */}
+        <div ref={jitsiContainerRef} className="bg-black" style={{ height: 210 }}>
+          {!jitsiLoaded && (
+            <div className="flex items-center justify-center h-full text-white/30 text-xs">
+              Loading video...
+            </div>
+          )}
+        </div>
       </div>
     </Draggable>
   );
