@@ -366,6 +366,22 @@ export function LivePredictionWidget({
               <p className="text-white/30 text-sm text-center animate-pulse">
                 Waiting for pick to be announced...
               </p>
+              <button
+                onClick={() => {
+                  setSelectedPlayerId("");
+                  setSearch("");
+                  const team = draftOrder.find(d => d.pickNumber === state.pickNumber);
+                  setState({
+                    type: "on_the_clock",
+                    pickNumber: state.pickNumber,
+                    teamName: team?.teamName || "",
+                    teamAbbreviation: team?.teamAbbreviation || "",
+                  });
+                }}
+                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/50 hover:text-white/80 hover:bg-white/10 transition"
+              >
+                Change Pick
+              </button>
             </div>
           )}
 

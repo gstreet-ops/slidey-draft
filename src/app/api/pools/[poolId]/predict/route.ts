@@ -56,7 +56,7 @@ export async function POST(
       return NextResponse.json({ error: "Pick already announced" }, { status: 400 });
     }
 
-    // Check if user already predicted this pick
+    // Check if user already predicted this pick — allow changing
     const [existing] = await db
       .select()
       .from(livePredictions)
@@ -67,19 +67,26 @@ export async function POST(
           eq(livePredictions.pickNumber, pickNumber)
         )
       );
-    if (existing) {
-      return NextResponse.json({ error: "Already predicted this pick" }, { status: 400 });
-    }
 
-    const [prediction] = await db
-      .insert(livePredictions)
-      .values({
-        poolId,
-        userId: session.user.id,
-        pickNumber,
-        predictedPlayerId: playerId,
-      })
-      .returning();
+    let prediction;
+    if (existing) {
+      // Update existing prediction
+      [prediction] = await db
+        .update(livePredictions)
+        .set({ predictedPlayerId: playerId, isAutoFilled: false, submittedAt: new Date() })
+        .where(eq(livePredictions.id, existing.id))
+        .returning();
+    } else {
+      [prediction] = await db
+        .insert(livePredictions)
+        .values({
+          poolId,
+          userId: session.user.id,
+          pickNumber,
+          predictedPlayerId: playerId,
+        })
+        .returning();
+    }
 
     return NextResponse.json({ prediction });
   } catch (error) {
