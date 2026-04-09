@@ -86,9 +86,14 @@ export default async function PoolLeaderboardPage({
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={isMe ? "text-[var(--gtown-highlight)] font-semibold" : "text-white"}>
-                          {s.userName || s.userEmail}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {s.teamLogoUrl && (
+                            <img src={s.teamLogoUrl} alt="" className="h-5 w-5 shrink-0 object-contain" />
+                          )}
+                          <span className={isMe ? "text-[var(--gtown-highlight)] font-semibold" : "text-white"}>
+                            {s.userName || s.userEmail}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right text-white/60">{s.mockBonus}</td>
                       <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>

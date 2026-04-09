@@ -32,6 +32,9 @@ type LeaderboardEntry = {
   userName: string;
   userRole: string;
   userId: string | null;
+  teamLogoUrl: string | null;
+  teamPrimaryColor: string | null;
+  teamAbbreviation: string | null;
 };
 
 type LeaderboardData = {
@@ -213,12 +216,17 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                 const isUser = entry.userId === userId;
                 const rankDelta = entry.previousRank ? entry.previousRank - entry.currentRank : 0;
                 return (
-                  <div key={entry.boardId} className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/10" : "border-white/10 bg-white/5"}`}>
-                    <span className="w-6 text-center text-sm font-bold text-white/60">{entry.currentRank}</span>
+                  <div
+                    key={entry.boardId}
+                    className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/10" : "border-white/10 bg-white/5"}`}
+                    style={entry.teamPrimaryColor ? { borderLeftWidth: 3, borderLeftColor: entry.teamPrimaryColor } : undefined}
+                  >
+                    <span className="w-5 text-center text-sm font-bold text-white/60">{entry.currentRank}</span>
+                    {entry.teamLogoUrl && (
+                      <img src={entry.teamLogoUrl} alt="" className="h-6 w-6 shrink-0 object-contain" />
+                    )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-semibold text-white truncate">{entry.userName}</span>
-                      </div>
+                      <span className="text-sm font-semibold text-white truncate block">{entry.userName}</span>
                       <p className="text-xs text-white/30">{entry.accuracyPct?.toFixed(1)}% accuracy</p>
                     </div>
                     <div className="text-right shrink-0">

@@ -228,7 +228,10 @@ export default async function PoolDashboardPage({
                     <div key={s.userId} className={`flex items-center justify-between text-sm py-1 ${
                       s.userId === session.user.id ? "text-[var(--gtown-highlight)]" : "text-white"
                     }`}>
-                      <span>#{s.rank} {s.userName || s.userEmail}</span>
+                      <span className="flex items-center gap-2">
+                        {s.teamLogoUrl && <img src={s.teamLogoUrl} alt="" className="h-4 w-4 shrink-0 object-contain" />}
+                        #{s.rank} {s.userName || s.userEmail}
+                      </span>
                       <span className="font-semibold">{s.combinedScore}</span>
                     </div>
                   ))}

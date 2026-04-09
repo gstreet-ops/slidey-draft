@@ -426,9 +426,13 @@ export async function getPoolStandings(poolId: string) {
       userName: users.name,
       userEmail: users.email,
       userImage: users.image,
+      teamLogoUrl: teams.logoUrl,
+      teamPrimaryColor: teams.primaryColor,
+      teamAbbreviation: teams.abbreviation,
     })
     .from(poolStandings)
     .innerJoin(users, eq(poolStandings.userId, users.id))
+    .leftJoin(teams, eq(users.favoriteTeamId, teams.id))
     .where(eq(poolStandings.poolId, poolId))
     .orderBy(asc(poolStandings.rank));
 }

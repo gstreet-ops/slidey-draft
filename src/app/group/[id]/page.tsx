@@ -137,6 +137,9 @@ export default async function GroupPage({ params }: { params: Params }) {
                     <span className="w-8 text-center text-sm font-bold text-white/60">
                       {entry.currentRank}
                     </span>
+                    {entry.teamLogoUrl && (
+                      <img src={entry.teamLogoUrl} alt="" className="h-6 w-6 shrink-0 object-contain" />
+                    )}
                     <div className="flex-1 min-w-0">
                       <span className="text-sm font-semibold text-white">{entry.userName}</span>
                     </div>
