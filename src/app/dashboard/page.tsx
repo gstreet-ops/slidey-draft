@@ -68,7 +68,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-[var(--gtown-navy)]">
       <MobileNav
         links={[
-          { href: "/picks", label: "All Picks" },
+          { href: "/picks", label: "Mock Drafts" },
           { href: "/leaderboard", label: "Leaderboard" },
           { href: "/my-board", label: "My Board" },
           ...(session.user.role === "admin" ? [{ href: "/admin", label: "Studio" }] : []),

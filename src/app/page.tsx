@@ -34,7 +34,7 @@ export default async function Home() {
 
   // Build nav links
   const navLinks = [
-    { href: "/picks", label: "All Picks" },
+    { href: "/picks", label: "Mock Drafts" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/guide", label: "How to Play" },
   ];

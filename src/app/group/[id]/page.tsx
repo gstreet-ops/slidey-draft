@@ -42,7 +42,7 @@ export default async function GroupPage({ params }: { params: Params }) {
           </Link>
           <nav className="flex gap-4 text-sm text-white/60">
             <Link href="/picks" className="hover:text-white transition">
-              All Picks
+              Mock Drafts
             </Link>
             {session?.user && (
               <Link href="/my-board" className="hover:text-white transition">

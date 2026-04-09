@@ -32,7 +32,7 @@ export default async function MyBoardPage() {
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
 
   const navLinks = [
-    { href: "/picks", label: "All Picks" },
+    { href: "/picks", label: "Mock Drafts" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/pools", label: "Pools" },
     { href: "/live", label: "Live" },

@@ -23,7 +23,7 @@ export default function LoginPage() {
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/picks" className="text-white/60 hover:text-white transition">
-              All Picks
+              Mock Drafts
             </Link>
             <Link href="/leaderboard" className="text-white/60 hover:text-white transition">
               Leaderboard

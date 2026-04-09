@@ -19,7 +19,7 @@ export default async function GuidePage() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/picks", label: "All Picks" },
+    { href: "/picks", label: "Mock Drafts" },
     { href: "/leaderboard", label: "Leaderboard" },
     ...(session?.user
       ? [{ href: "/my-board", label: "My Board" }]

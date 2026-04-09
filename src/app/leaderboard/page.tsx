@@ -13,7 +13,7 @@ export default async function LeaderboardPage() {
   const allDone = results.length >= 32;
 
   const navLinks = [
-    { href: "/picks", label: "All Picks" },
+    { href: "/picks", label: "Mock Drafts" },
     { href: "/live", label: "War Room" },
     session?.user
       ? { href: "/my-board", label: "My Board" }
