@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getLeaderboard, getActualResults } from "@/lib/queries";
 import { auth } from "@/lib/auth";
 import { MobileNav } from "@/components/mobile-nav";
@@ -54,7 +55,12 @@ export default async function LeaderboardPage() {
               const accuracyDisplay = entry.accuracyPct?.toFixed(1) || "0.0";
 
               return (
-                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-50 border-2 border-amber-300/50 hover:border-amber-400" : "bg-white hover:shadow-md"}`}>
+                <Link
+                  key={entry.boardId}
+                  href={`/picks/${entry.boardId}`}
+                  className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-50 border-2 border-amber-300/50 hover:border-amber-400" : "bg-white hover:shadow-md"}`}
+                  style={entry.teamPrimaryColor ? { borderLeft: `4px solid ${entry.teamPrimaryColor}` } : undefined}
+                >
                   <div className="flex flex-col items-center w-10 shrink-0">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-100 text-yellow-600" : rank === 2 ? "bg-gray-200 text-gray-500" : rank === 3 ? "bg-orange-100 text-orange-500" : "bg-gray-100 text-gray-400"}`}>
                       {allDone && rank === 1 ? "\uD83C\uDFC6" : rank}
@@ -65,10 +71,12 @@ export default async function LeaderboardPage() {
                       </span>
                     )}
                   </div>
+                  {entry.teamLogoUrl && (
+                    <Image src={entry.teamLogoUrl} alt={entry.teamAbbreviation || ""} width={32} height={32} className="shrink-0 object-contain" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-gray-900">{entry.userName}</span>
-
                       {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">You</span>}
                     </div>
                     <p className="text-sm text-gray-500 truncate">{entry.boardTitle}</p>

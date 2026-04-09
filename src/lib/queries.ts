@@ -283,10 +283,15 @@ export async function getLeaderboard(season: number, groupMemberIds?: string[]) 
       userEmail: users.email,
       userRole: users.role,
       userId: users.id,
+      teamLogoUrl: teams.logoUrl,
+      teamPrimaryColor: teams.primaryColor,
+      teamAbbreviation: teams.abbreviation,
+      teamName: teams.name,
     })
     .from(scores)
     .innerJoin(draftBoards, eq(scores.boardId, draftBoards.id))
     .leftJoin(users, eq(scores.userId, users.id))
+    .leftJoin(teams, eq(users.favoriteTeamId, teams.id))
     .where(eq(draftBoards.season, season))
     .orderBy(desc(scores.totalScore));
 
@@ -312,6 +317,10 @@ export async function getLeaderboard(season: number, groupMemberIds?: string[]) 
     userName: r.userName || r.userEmail || "Anonymous",
     userRole: r.userRole || "user",
     userId: r.userId,
+    teamLogoUrl: r.teamLogoUrl,
+    teamPrimaryColor: r.teamPrimaryColor,
+    teamAbbreviation: r.teamAbbreviation,
+    teamName: r.teamName,
   }));
 }
 
