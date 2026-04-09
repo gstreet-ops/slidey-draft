@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import Image from "next/image";
 import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks } from "@/lib/queries";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
@@ -159,7 +159,7 @@ export default async function Home() {
                 <div key={pick.id} className="rounded-xl border border-white/10 bg-white/[0.04] p-3 text-center transition hover:border-white/20">
                   <div className="mb-2 flex items-center justify-center gap-1.5">
                     {pick.teamLogoUrl && (
-                      <img src={pick.teamLogoUrl} alt="" className="h-5 w-5 object-contain" />
+                      <Image src={pick.teamLogoUrl} alt="" width={20} height={20} className="object-contain" />
                     )}
                     <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">Pick {pick.pickNumber}</span>
                   </div>

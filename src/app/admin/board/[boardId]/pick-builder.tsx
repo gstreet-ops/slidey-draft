@@ -223,6 +223,7 @@ export function PickBuilder({
   const [localPickedIds, setLocalPickedIds] = useState<Set<string>>(new Set());
   const [analysisText, setAnalysisText] = useState("");
   const [saveFlash, setSaveFlash] = useState(false);
+  const [pickError, setPickError] = useState<string | null>(null);
 
   // Inline expansion state — keyed by player ID
   const [expandedPickId, setExpandedPickId] = useState<string | null>(null);
@@ -254,13 +255,24 @@ export function PickBuilder({
 
   function handleMakePick(playerId: string, slot: DraftSlot) {
     setLocalPickedIds((prev) => new Set([...prev, playerId]));
+    setPickError(null);
     const analysis = analysisText.trim() || undefined;
     startTransition(async () => {
-      await makePick(boardId, slot.pickNumber, playerId, slot.teamId, analysis);
-      setActiveSlot(null);
-      setSearch("");
-      setAnalysisText("");
-      flashSaved();
+      try {
+        await makePick(boardId, slot.pickNumber, playerId, slot.teamId, analysis);
+        setActiveSlot(null);
+        setSearch("");
+        setAnalysisText("");
+        flashSaved();
+      } catch (err) {
+        setLocalPickedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(playerId);
+          return next;
+        });
+        setPickError(err instanceof Error ? err.message : "Failed to make pick");
+        setTimeout(() => setPickError(null), 4000);
+      }
     });
   }
 
@@ -311,6 +323,11 @@ export function PickBuilder({
   /* ── Prospect pool content (sidebar + mobile sheet) ──────── */
   const prospectPoolContent = (
     <>
+      {pickError && (
+        <div className="mb-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+          {pickError}
+        </div>
+      )}
       <div className="mb-2">
         <div className="flex items-center gap-2">
           <h2

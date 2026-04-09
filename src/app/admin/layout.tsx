@@ -24,7 +24,7 @@ export default async function AdminLayout({
               className="text-xl font-bold tracking-wide text-white"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              DAN&apos;S PICKS STUDIO
+              MOCK DRAFT STUDIO
             </Link>
             <nav className="flex gap-4 text-sm text-white/60">
               <Link href="/admin" className="hover:text-white transition">

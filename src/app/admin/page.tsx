@@ -40,7 +40,7 @@ export default async function AdminDashboard() {
             name="title"
             type="text"
             required
-            placeholder="e.g. Dan's Mock 1.0"
+            placeholder="e.g. Mock Draft 1.0"
             className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
           />
           <button
