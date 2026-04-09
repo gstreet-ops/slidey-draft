@@ -314,6 +314,9 @@ export const pools = pgTable("pools", {
   status: poolStatusEnum("status").notNull().default("open"),
   settings: jsonb("settings").notNull().default("{}"),
   description: text("description"),
+  logoUrl: text("logo_url"),
+  primaryColor: text("primary_color"),
+  secondaryColor: text("secondary_color"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
