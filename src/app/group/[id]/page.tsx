@@ -26,9 +26,7 @@ export default async function GroupPage({ params }: { params: Params }) {
   const groupLeaderboard = await getLeaderboard(season, memberIds);
   const creator = await getUserById(group.createdBy);
 
-  // Separate Dan's boards (admin) from others
-  const adminBoards = boards.filter((b) => b.userRole === "admin");
-  const playerBoards = boards.filter((b) => b.userRole !== "admin");
+  const allBoards = boards;
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
@@ -67,46 +65,18 @@ export default async function GroupPage({ params }: { params: Params }) {
           Created by {creator?.name || creator?.email || "Unknown"}
         </p>
 
-        {/* Dan's featured board */}
-        {adminBoards.length > 0 && (
-          <div className="mt-8">
-            {adminBoards.map((board) => (
+        {allBoards.length > 0 && (
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {allBoards.map((board) => (
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}
-                className="group block rounded-xl border-2 border-[var(--lions-blue)]/40 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5 p-6 hover:border-[var(--lions-blue)]/70 transition"
+                className="group rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition"
               >
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-[var(--lions-blue)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                    Featured Analyst
-                  </span>
-                </div>
-                <h2 className="mt-2 text-xl font-bold text-white group-hover:text-[var(--lions-blue)] transition">
-                  {board.title}
-                </h2>
-                <p className="mt-1 text-sm text-[var(--lions-silver)]">
-                  {board.userName || board.userEmail} &middot;
-                  Published{" "}
-                  {board.publishedAt?.toLocaleDateString()}
-                </p>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Player boards */}
-        {playerBoards.length > 0 && (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {playerBoards.map((board) => (
-              <Link
-                key={board.id}
-                href={`/picks/${board.id}`}
-                className="group rounded-xl border border-white/10 bg-white/5 p-6 hover:border-[var(--gtown-highlight)]/50 transition"
-              >
-                <h3 className="text-lg font-bold text-white group-hover:text-[var(--gtown-highlight)] transition">
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">
                   {board.title}
                 </h3>
-                <p className="mt-1 text-sm text-white/40">
+                <p className="mt-1 text-sm text-gray-500">
                   {board.userName || board.userEmail} &middot;
                   Published{" "}
                   {board.publishedAt?.toLocaleDateString()}
@@ -138,24 +108,13 @@ export default async function GroupPage({ params }: { params: Params }) {
                 key={m.userId}
                 className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3"
               >
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
-                    m.userRole === "admin"
-                      ? "bg-[var(--lions-blue)]"
-                      : "bg-[var(--gtown-highlight)]"
-                  }`}
-                >
+                <div className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold bg-[var(--gtown-highlight)]">
                   {(m.userName || m.userEmail)?.[0]?.toUpperCase() || "?"}
                 </div>
                 <div>
                   <span className="text-sm font-medium text-white">
                     {m.userName || m.userEmail}
                   </span>
-                  {m.userRole === "admin" && (
-                    <span className="ml-2 rounded-full bg-[var(--lions-blue)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--lions-blue)]">
-                      ADMIN
-                    </span>
-                  )}
                 </div>
               </div>
             ))}
@@ -169,16 +128,11 @@ export default async function GroupPage({ params }: { params: Params }) {
             </h2>
             <div className="space-y-2">
               {groupLeaderboard.map((entry) => {
-                const isAdmin = entry.userRole === "admin";
                 return (
                   <Link
                     key={entry.boardId}
                     href={`/picks/${entry.boardId}`}
-                    className={`flex items-center gap-3 rounded-lg border px-4 py-3 transition hover:border-white/20 ${
-                      isAdmin
-                        ? "border-[var(--lions-blue)]/30 bg-[#0076B6]/10"
-                        : "border-white/10 bg-white/5"
-                    }`}
+                    className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition hover:border-white/20"
                   >
                     <span className="w-8 text-center text-sm font-bold text-white/60">
                       {entry.currentRank}

@@ -25,9 +25,7 @@ export default async function PicksPage() {
     })
   );
 
-  // Separate admin boards (Dan's) from player boards
-  const adminBoards = enrichedBoards.filter((b) => b.creator?.role === "admin");
-  const playerBoards = enrichedBoards.filter((b) => b.creator?.role !== "admin");
+  const allBoards = enrichedBoards;
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
@@ -57,38 +55,9 @@ export default async function PicksPage() {
           2026 NFL Mock Draft Boards
         </p>
 
-        {/* Dan's featured boards */}
-        {adminBoards.length > 0 && (
-          <div className="mt-8 space-y-4">
-            {adminBoards.map((board) => (
-              <Link
-                key={board.id}
-                href={`/picks/${board.id}`}
-                className="group block rounded-xl border-2 border-[var(--lions-blue)]/30 bg-blue-50 p-6 shadow-sm hover:shadow-md hover:border-[var(--lions-blue)]/60 transition"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-[var(--lions-blue)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                    Featured Analyst
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {board.creator?.name || board.creator?.email}
-                  </span>
-                </div>
-                <h2 className="mt-2 text-xl font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">
-                  {board.title}
-                </h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  Published {board.publishedAt?.toLocaleDateString()}
-                </p>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Player boards */}
-        {playerBoards.length > 0 && (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {playerBoards.map((board) => (
+        {allBoards.length > 0 && (
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {allBoards.map((board) => (
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}

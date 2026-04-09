@@ -111,12 +111,10 @@ export default async function DashboardPage() {
           <div className="mt-8 overflow-x-auto">
             <div className="inline-flex gap-4" style={{ minWidth: sorted.length * 280 }}>
               {sorted.map((board) => {
-                const isAdmin = board.creator?.role === "admin";
                 const isUser = board.createdBy === session.user!.id;
                 return (
-                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-gradient-to-b from-[#0076B6]/10 to-transparent" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
+                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
                     <div className="flex items-center gap-2 mb-3">
-                      {isAdmin && <span className="rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">Featured</span>}
                       {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">You</span>}
                       <span className="text-sm font-bold text-white truncate">{board.creator?.name || board.creator?.email || "Anonymous"}</span>
                     </div>

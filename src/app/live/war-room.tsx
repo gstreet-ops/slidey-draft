@@ -210,16 +210,14 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
               <p className="text-white/30 text-sm py-8 text-center">Scores will appear as picks come in</p>
             ) : (
               leaderboard.map((entry) => {
-                const isAdmin = entry.userRole === "admin";
                 const isUser = entry.userId === userId;
                 const rankDelta = entry.previousRank ? entry.previousRank - entry.currentRank : 0;
                 return (
-                  <div key={entry.boardId} className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 ${isAdmin ? "border-[var(--lions-blue)]/30 bg-[#0076B6]/10" : isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/10" : "border-white/10 bg-white/5"}`}>
+                  <div key={entry.boardId} className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/10" : "border-white/10 bg-white/5"}`}>
                     <span className="w-6 text-center text-sm font-bold text-white/60">{entry.currentRank}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-semibold text-white truncate">{entry.userName}</span>
-                        {isAdmin && <span className="text-[8px] text-[var(--lions-blue)] font-bold uppercase">Dan</span>}
                       </div>
                       <p className="text-xs text-white/30">{entry.accuracyPct?.toFixed(1)}% accuracy</p>
                     </div>

@@ -48,14 +48,13 @@ export default async function LeaderboardPage() {
         ) : (
           <div className="mt-8 space-y-3">
             {leaderboard.map((entry) => {
-              const isAdmin = entry.userRole === "admin";
               const isUser = entry.userId === session?.user?.id;
               const rank = entry.currentRank;
               const rankDelta = entry.previousRank ? entry.previousRank - rank : 0;
               const accuracyDisplay = entry.accuracyPct?.toFixed(1) || "0.0";
 
               return (
-                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isAdmin ? "bg-blue-50 border-2 border-[var(--lions-blue)]/30 hover:border-[var(--lions-blue)]/50" : isUser ? "bg-amber-50 border-2 border-amber-300/50 hover:border-amber-400" : "bg-white hover:shadow-md"}`}>
+                <Link key={entry.boardId} href={`/picks/${entry.boardId}`} className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-50 border-2 border-amber-300/50 hover:border-amber-400" : "bg-white hover:shadow-md"}`}>
                   <div className="flex flex-col items-center w-10 shrink-0">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-100 text-yellow-600" : rank === 2 ? "bg-gray-200 text-gray-500" : rank === 3 ? "bg-orange-100 text-orange-500" : "bg-gray-100 text-gray-400"}`}>
                       {allDone && rank === 1 ? "\uD83C\uDFC6" : rank}
@@ -69,7 +68,7 @@ export default async function LeaderboardPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-gray-900">{entry.userName}</span>
-                      {isAdmin && <span className="rounded-full bg-[var(--lions-blue)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Featured Analyst</span>}
+
                       {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">You</span>}
                     </div>
                     <p className="text-sm text-gray-500 truncate">{entry.boardTitle}</p>
