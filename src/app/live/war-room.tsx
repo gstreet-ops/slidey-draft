@@ -7,6 +7,13 @@ import { PickAnnouncement } from "@/components/pick-announcement";
 import { ScoreCascade } from "@/components/score-cascade";
 import { ConnectionStatus } from "@/components/connection-status";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { OnTheClock } from "@/components/on-the-clock";
+
+type PickContextEntry = {
+  userName: string;
+  matchType: string | null;
+  pointsAwarded: number | null;
+};
 
 type DraftSlot = {
   id: string;
@@ -94,6 +101,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const { play } = useSoundEffects();
   const [announcement, setAnnouncement] = useState<ActualResult | null>(null);
   const [latestMatchType, setLatestMatchType] = useState<string | null>(null);
+  const [announcementContext, setAnnouncementContext] = useState<PickContextEntry[]>([]);
   const [animateScore, setAnimateScore] = useState(false);
   const [glowingRows, setGlowingRows] = useState<Map<string, "up" | "down" | "first">>(new Map());
   const prevResultCountRef = useRef(initialResults.length);
@@ -160,6 +168,12 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           } else if (matchType === "miss") {
             play("miss");
           }
+
+          // Fetch pick context (who had this player)
+          fetch(`/api/draft/pick-context?pickNumber=${newPick.pickNumber}&season=${season}`)
+            .then(r => r.json())
+            .then(data => setAnnouncementContext(data.context || []))
+            .catch(() => {});
         }, 1000);
       }
     }
@@ -346,6 +360,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     </div>
   );
 
+  const nextPickNumber = results.length + 1;
+  const nextSlot = draftOrder.find(s => s.pickNumber === nextPickNumber);
+
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6">
       {announcement && (
@@ -359,7 +376,21 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             teamAbbreviation={announcement.teamAbbreviation}
             teamPrimaryColor={announcement.teamPrimaryColor}
             matchType={latestMatchType}
-            onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); }}
+            context={announcementContext}
+            onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); setAnnouncementContext([]); }}
+          />
+        </div>
+      )}
+
+      {/* On The Clock */}
+      {!announcement && nextSlot && nextPickNumber <= 32 && (
+        <div className="mb-4">
+          <OnTheClock
+            pickNumber={nextSlot.pickNumber}
+            teamName={nextSlot.teamName}
+            teamAbbreviation={nextSlot.teamAbbreviation}
+            teamPrimaryColor={nextSlot.teamPrimaryColor}
+            teamLogoUrl={nextSlot.teamLogoUrl}
           />
         </div>
       )}
