@@ -37,7 +37,7 @@ export default async function LivePage() {
       <header className="border-b border-white/10 bg-black/20">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3">
           <Link href="/" className="text-xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-            SLIDEY<span className="text-[var(--slidey)]">.COM</span> DRAFT
+            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-xs">

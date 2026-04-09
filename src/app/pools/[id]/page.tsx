@@ -59,7 +59,7 @@ export default async function PoolDashboardPage({
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-            SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
+            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/pools" className="text-white/60 hover:text-white transition">Pools</Link>

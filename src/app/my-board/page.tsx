@@ -49,7 +49,7 @@ export default async function MyBoardPage() {
             className="text-lg font-bold tracking-wide text-white sm:text-xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            SLIDEY<span className="text-[var(--gtown-highlight)]">.COM</span> DRAFT
+            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
         }
         trailing={

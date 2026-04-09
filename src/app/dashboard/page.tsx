@@ -80,7 +80,7 @@ export default async function DashboardPage() {
         ]}
         logo={
           <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            SLIDEY<span className="text-[var(--slidey)]">.COM</span> DRAFT
+            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
         }
         trailing={

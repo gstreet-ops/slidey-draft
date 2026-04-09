@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Slidey Draft — NFL Mock Draft Predictions",
-  description: "Make your 2026 NFL Mock Draft picks and compete with friends",
+  title: "Draft Day Challenge — NFL Draft Predictions & Live Competition",
+  description: "Predict NFL Draft picks, compete live on draft night, and challenge your friends",
 };
 
 export default function RootLayout({

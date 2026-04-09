@@ -32,7 +32,7 @@ export default async function GuidePage() {
         links={navLinks}
         logo={
           <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
+            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
         }
       />
@@ -46,7 +46,7 @@ export default async function GuidePage() {
           HOW TO PLAY
         </h1>
         <p className="mt-2 text-sm text-white/50">
-          Everything you need to know about Slidey Draft.
+          Everything you need to know about Draft Day Challenge.
         </p>
 
         {/* Quick nav */}
@@ -67,7 +67,7 @@ export default async function GuidePage() {
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
             <p>
-              Slidey Draft is a mock draft competition for the 2026 NFL Draft. You build a 32-pick mock draft predicting which players will go to which teams, then compete against friends to see who can predict the real draft most accurately.
+              Draft Day Challenge is a live draft night competition for the 2026 NFL Draft. You build a 32-pick mock draft predicting which players will go to which teams, then compete against friends to see who can predict the real draft most accurately.
             </p>
             <StepList>
               <Step n={1}>Create your mock draft before the draft starts</Step>

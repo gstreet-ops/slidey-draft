@@ -80,7 +80,7 @@ const DRAFT_ORDER_2026 = [
 
 // ── Seed Function ──────────────────────────────────
 async function seed() {
-  console.log("🏈 Seeding Slidey Draft database...\n");
+  console.log("🏈 Seeding Draft Day Challenge database...\n");
 
   // 1. Insert teams
   console.log("  → Inserting 32 NFL teams...");

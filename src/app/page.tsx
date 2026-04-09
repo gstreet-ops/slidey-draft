@@ -65,7 +65,7 @@ export default async function Home() {
             className="text-5xl font-bold text-white tracking-wider leading-none sm:text-7xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            SLIDEY<br /><span className="text-[var(--lions-blue)]">DRAFT</span>
+            DRAFT DAY<br /><span className="text-[var(--slidey)]">CHALLENGE</span>
           </h1>
           <p className="text-sm text-white/50 max-w-sm mx-auto sm:text-base">
             Make your picks. Compete with friends. See who knows football best.
@@ -228,7 +228,7 @@ export default async function Home() {
       {/* ── FOOTER ── */}
       <footer className="mt-auto border-t border-white/10 px-4 py-6 text-center sm:px-6">
         <p className="text-xs text-white/25">
-          &copy; {new Date().getFullYear()} Slidey Draft &mdash; A GStreet Production
+          &copy; {new Date().getFullYear()} Draft Day Challenge &mdash; A GStreet Production
         </p>
       </footer>
     </div>
