@@ -148,26 +148,22 @@ export function PickBuilder({
   // Prospect pool content (shared between desktop sidebar and mobile bottom sheet)
   const prospectPoolContent = (
     <>
-      {activeSlot ? (
-        <div className="mb-3">
+      <div className="mb-2">
+        <div className="flex items-center gap-2">
           <h2
-            className="text-lg font-bold text-white tracking-wide"
+            className="text-sm font-bold text-white tracking-wide sm:text-lg"
             style={{ fontFamily: "var(--font-display)" }}
           >
             PROSPECT POOL
           </h2>
-          <p className="text-xs text-[var(--lions-blue)]">
-            Select a player for Pick #{activeSlot} &mdash; {draftOrder.find((s) => s.pickNumber === activeSlot)?.teamName}
-          </p>
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/40">BPA Order</span>
         </div>
-      ) : (
-        <h2
-          className="mb-3 text-sm font-bold text-white tracking-widest sm:text-lg"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          PROSPECT POOL
-        </h2>
-      )}
+        {activeSlot && (
+          <p className="text-xs text-[var(--lions-blue)] mt-0.5">
+            Select for Pick #{activeSlot} &mdash; {draftOrder.find((s) => s.pickNumber === activeSlot)?.teamName}
+          </p>
+        )}
+      </div>
       <input
         type="text"
         placeholder="Search prospects..."
@@ -216,7 +212,7 @@ export function PickBuilder({
               <button
                 disabled={!activeSlot || isPending}
                 onClick={() => slot && handleMakePick(player.id, slot)}
-                className={`flex flex-1 items-center gap-1.5 rounded-lg bg-white px-2 py-1.5 text-left shadow-sm transition min-h-[36px] sm:gap-2.5 sm:rounded-xl sm:px-3 sm:py-2.5 sm:min-h-[44px] ${
+                className={`flex flex-1 items-center gap-1.5 rounded-md bg-white px-1.5 py-1 text-left shadow-sm transition min-h-[30px] sm:gap-2 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
                   activeSlot
                     ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
                     : "opacity-60 cursor-not-allowed"
@@ -255,13 +251,12 @@ export function PickBuilder({
                   e.stopPropagation();
                   setDrawerPlayer(player);
                 }}
-                className="flex h-7 shrink-0 items-center gap-1 rounded-md border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 px-1.5 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition sm:h-9 sm:rounded-lg sm:px-2.5"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition sm:h-7 sm:w-7"
                 title="View scouting report"
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
                   <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
                 </svg>
-                <span className="text-[10px] font-semibold hidden sm:inline">Scout</span>
               </button>
             </div>
           );
@@ -279,7 +274,7 @@ export function PickBuilder({
     <>
       <div className="grid grid-cols-[1.1fr_1fr] gap-2 sm:grid-cols-[1.2fr_1fr] sm:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
         {/* Draft board column */}
-        <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
+        <div className="space-y-1 sm:space-y-1.5 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
           {/* Auto-save indicator */}
           <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-400">
@@ -294,7 +289,7 @@ export function PickBuilder({
             return (
               <div
                 key={slot.pickNumber}
-                className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 transition cursor-pointer shadow-sm sm:gap-3 sm:rounded-xl sm:px-4 sm:py-3 ${
+                className={`flex items-center gap-1.5 rounded-md border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:rounded-lg sm:px-3 sm:py-2 ${
                   pick
                     ? "border-gray-200 bg-white"
                     : isActive
@@ -306,7 +301,7 @@ export function PickBuilder({
                 {/* Pick number + team logo */}
                 <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                   <div
-                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white sm:h-10 sm:w-10 sm:rounded-lg sm:text-sm"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-[9px] font-bold text-white sm:h-8 sm:w-8 sm:rounded-md sm:text-xs"
                     style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}
                   >
                     {slot.pickNumber}
@@ -356,7 +351,7 @@ export function PickBuilder({
                         imageUrl: pick.playerImageUrl,
                         position: pick.playerPosition,
                       }}
-                      size={36}
+                      size={28}
                     />
                   </button>
                 )}
@@ -469,13 +464,12 @@ export function PickBuilder({
                           nflComparison: pick.playerNflComparison,
                         });
                       }}
-                      className="flex h-8 items-center gap-1 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-2 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/25 hover:text-white transition"
+                      className="flex h-6 w-6 items-center justify-center rounded-full border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/25 hover:text-white transition sm:h-7 sm:w-7"
                       title="View scouting report"
                     >
                       <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
                         <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
                       </svg>
-                      <span className="text-[10px] font-semibold">Scout</span>
                     </button>
                     {!readOnly && (
                       <button
@@ -483,7 +477,7 @@ export function PickBuilder({
                           e.stopPropagation();
                           handleRemovePick(pick.id);
                         }}
-                        className="flex h-8 w-8 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition"
+                        className="flex h-6 w-6 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition sm:h-7 sm:w-7"
                       >
                         ✕
                       </button>
