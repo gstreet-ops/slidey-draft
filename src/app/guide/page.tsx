@@ -38,7 +38,7 @@ export default async function GuidePage() {
       />
 
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        {/* Header */}
+        {/* Header — stays on dark bg */}
         <h1
           className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
@@ -62,7 +62,8 @@ export default async function GuidePage() {
           ))}
         </nav>
 
-        <div className="mt-10 space-y-14 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
+        {/* Content card — white background */}
+        <div className="mt-8 rounded-2xl bg-white shadow-xl p-6 sm:p-10 space-y-12 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-gray-600">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
@@ -91,7 +92,7 @@ export default async function GuidePage() {
 
             <SubHeading>Researching Prospects</SubHeading>
             <p>
-              Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
+              Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)] text-white text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
             </p>
 
             <SubHeading>Pick Analysis</SubHeading>
@@ -130,34 +131,34 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are two ways to earn points: your <span className="text-white font-semibold">mock draft</span> (submitted before the draft) and <span className="text-white font-semibold">live predictions</span> (made in real-time during the draft). Here is how each works.
+              There are two ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft) and <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft).
             </p>
 
             {/* Mock Draft Scoring Card */}
-            <div className="mt-8 rounded-xl border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/5 p-5 sm:p-6">
+            <div className="mt-8 rounded-xl border-2 border-[var(--lions-blue)]/30 bg-blue-50 p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">📋</span>
-                <h3 className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
                   MOCK DRAFT SCORING
                 </h3>
               </div>
-              <p className="text-xs text-white/50 mb-4">
+              <p className="text-xs text-gray-500 mb-4">
                 Your 32-pick mock draft is scored against the actual results after each real pick is announced.
               </p>
 
-              <p className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Global Leaderboard</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Global Leaderboard</p>
               <ScoreTable>
                 <ScoreRow type="exact" label="Exact Match" desc="Correct player at the correct pick number" pts={10} />
                 <ScoreRow type="close" label="Close" desc="Correct player, within 5 picks of actual slot" pts={5} />
                 <ScoreRow type="far" label="Far" desc="Correct player, 6+ picks off from actual slot" pts={3} />
                 <ScoreRow type="miss" label="Miss" desc="Player not drafted in Round 1, or wrong entirely" pts={0} />
               </ScoreTable>
-              <p className="mt-3 text-xs text-white/40">
-                Example: you predicted a player at pick #4 and he goes at pick #2 — that is 2 picks off, a "Close" match worth <span className="font-semibold text-yellow-400">+5</span>.
+              <p className="mt-3 text-xs text-gray-400">
+                Example: you predicted a player at pick #4 and he goes at pick #2 — that is 2 picks off, a "Close" match worth <span className="font-semibold text-yellow-600">+5</span>.
               </p>
 
-              <p className="text-xs font-bold uppercase tracking-wider text-white/40 mt-5 mb-2">Pool Mock Draft Bonus</p>
-              <p className="text-xs text-white/50 mb-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mt-5 mb-2">Pool Mock Draft Bonus</p>
+              <p className="text-xs text-gray-500 mb-2">
                 Pools use a tiered system that rewards you for getting the player right, even if the slot is off:
               </p>
               <ScoreTable>
@@ -170,39 +171,39 @@ export default async function GuidePage() {
             </div>
 
             {/* Live Prediction Scoring Card */}
-            <div className="mt-6 rounded-xl border border-green-500/30 bg-green-500/5 p-5 sm:p-6">
+            <div className="mt-6 rounded-xl border-2 border-green-300 bg-green-50 p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">⚡</span>
-                <h3 className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
                   LIVE PREDICTION SCORING
                 </h3>
               </div>
-              <p className="text-xs text-white/50 mb-4">
+              <p className="text-xs text-gray-500 mb-4">
                 During the real draft, pool members predict each pick before it is announced.
               </p>
-              <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 flex items-center gap-4">
-                <span className="text-2xl font-bold text-green-400">+10</span>
+              <div className="rounded-lg border border-green-200 bg-white px-4 py-3 flex items-center gap-4">
+                <span className="text-2xl font-bold text-green-600">+10</span>
                 <div>
-                  <p className="text-sm font-semibold text-white">Correct Prediction</p>
-                  <p className="text-xs text-white/40">You predicted the exact player selected for that pick</p>
+                  <p className="text-sm font-semibold text-gray-900">Correct Prediction</p>
+                  <p className="text-xs text-gray-500">You predicted the exact player selected for that pick</p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-white/40">
+              <p className="mt-3 text-xs text-gray-400">
                 Incorrect predictions earn 0 points. You get one prediction per pick — lock it in before the pick is announced.
               </p>
             </div>
 
             {/* Combined Score Summary */}
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-5 sm:p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-3">Your Pool Score</h3>
-              <div className="flex items-center gap-3 text-sm text-white/60">
-                <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
-                <span className="text-white/30">+</span>
-                <span className="rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-1.5 text-xs font-bold text-green-400">Live Predictions</span>
-                <span className="text-white/30">=</span>
-                <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white">Combined Score</span>
+            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">Your Pool Score</h3>
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-blue-50 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
+                <span className="text-gray-300 font-bold">+</span>
+                <span className="rounded-lg border border-green-300 bg-green-50 px-3 py-1.5 text-xs font-bold text-green-600">Live Predictions</span>
+                <span className="text-gray-300 font-bold">=</span>
+                <span className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-bold text-gray-900">Combined Score</span>
               </div>
-              <p className="mt-3 text-xs text-white/40">
+              <p className="mt-3 text-xs text-gray-400">
                 The combined score determines your pool ranking. Rankings update live as each pick is announced.
               </p>
             </div>
@@ -224,9 +225,9 @@ export default async function GuidePage() {
             <p>
               Pool standings combine two scores:
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-white/60">
-              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Mock Draft Bonus</span> — points from your published mock draft (tiered scoring above)</span></li>
-              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Live Prediction Total</span> — points from correct real-time picks during the draft</span></li>
+            <ul className="mt-2 space-y-1 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Mock Draft Bonus</span> — points from your published mock draft (tiered scoring above)</span></li>
+              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Live Prediction Total</span> — points from correct real-time picks during the draft</span></li>
             </ul>
             <p className="mt-2">
               The combined score determines your pool rank. Rankings update live as the draft progresses.
@@ -242,19 +243,19 @@ export default async function GuidePage() {
 
             <StepList>
               <Step n={1}>
-                <span className="text-white font-semibold">Boards lock</span> — you can no longer edit your mock draft
+                <span className="text-gray-900 font-semibold">Boards lock</span> — you can no longer edit your mock draft
               </Step>
               <Step n={2}>
-                <span className="text-white font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
+                <span className="text-gray-900 font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
               </Step>
               <Step n={3}>
-                <span className="text-white font-semibold">Live predictions</span> — if you are in a pool, you can predict each pick before it is announced for bonus points
+                <span className="text-gray-900 font-semibold">Live predictions</span> — if you are in a pool, you can predict each pick before it is announced for bonus points
               </Step>
               <Step n={4}>
-                <span className="text-white font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
+                <span className="text-gray-900 font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
               </Step>
               <Step n={5}>
-                <span className="text-white font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
+                <span className="text-gray-900 font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
               </Step>
             </StepList>
 
@@ -262,10 +263,10 @@ export default async function GuidePage() {
             <p>
               The War Room (<InlineLink href="/live">/live</InlineLink>) is a three-panel view:
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-white/60">
-              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Actual Picks</span> — real-time feed of announced draft picks</span></li>
-              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Your Board</span> — your mock draft with running score, showing matches and misses</span></li>
-              <li className="flex gap-2"><span className="text-white/30">&bull;</span><span><span className="text-white font-semibold">Leaderboard</span> — live rankings with trending arrows showing who is climbing or falling</span></li>
+            <ul className="mt-2 space-y-1 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Actual Picks</span> — real-time feed of announced draft picks</span></li>
+              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Your Board</span> — your mock draft with running score, showing matches and misses</span></li>
+              <li className="flex gap-2"><span className="text-gray-300">&bull;</span><span><span className="text-gray-900 font-semibold">Leaderboard</span> — live rankings with trending arrows showing who is climbing or falling</span></li>
             </ul>
           </section>
 
@@ -338,7 +339,7 @@ export default async function GuidePage() {
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-xl font-bold text-white tracking-wide sm:text-2xl"
+      className="text-xl font-bold text-gray-900 tracking-wide sm:text-2xl"
       style={{ fontFamily: "var(--font-display)" }}
     >
       {children}
@@ -360,7 +361,7 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">
         {n}
       </span>
-      <p className="text-sm text-white/60 pt-0.5">{children}</p>
+      <p className="text-sm text-gray-600 pt-0.5">{children}</p>
     </div>
   );
 }
@@ -379,36 +380,36 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-      <p className="text-sm font-semibold text-white">{title}</p>
-      <p className="mt-0.5 text-xs text-white/50">{desc}</p>
+    <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+      <p className="text-sm font-semibold text-gray-900">{title}</p>
+      <p className="mt-0.5 text-xs text-gray-500">{desc}</p>
     </div>
   );
 }
 
 function ScoreTable({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-3 overflow-hidden rounded-lg border border-white/10">
-      <div className="divide-y divide-white/10">{children}</div>
+    <div className="mt-3 overflow-hidden rounded-lg border border-gray-200">
+      <div className="divide-y divide-gray-100">{children}</div>
     </div>
   );
 }
 
 function ScoreRow({ type, label, desc, pts }: { type: string; label: string; desc: string; pts: number | string }) {
   const colors: Record<string, string> = {
-    exact: "text-green-400",
-    close: "text-yellow-400",
-    far: "text-orange-400",
-    miss: "text-red-400",
+    exact: "text-green-600",
+    close: "text-yellow-600",
+    far: "text-orange-500",
+    miss: "text-red-500",
   };
   return (
-    <div className="flex items-center gap-3 bg-white/5 px-4 py-3">
-      <span className={`text-lg font-bold w-12 text-center ${colors[type] || "text-white"}`}>
-        {typeof pts === "number" ? `+${pts}` : `+${pts}`}
+    <div className="flex items-center gap-3 bg-white px-4 py-3 even:bg-gray-50">
+      <span className={`text-lg font-bold w-12 text-center ${colors[type] || "text-gray-900"}`}>
+        +{pts}
       </span>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white">{label}</p>
-        <p className="text-xs text-white/40">{desc}</p>
+        <p className="text-sm font-semibold text-gray-900">{label}</p>
+        <p className="text-xs text-gray-500">{desc}</p>
       </div>
     </div>
   );
@@ -416,9 +417,9 @@ function ScoreRow({ type, label, desc, pts }: { type: string; label: string; des
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded-lg border border-white/10 bg-white/5 px-4 py-4">
-      <p className="text-sm font-semibold text-white">{q}</p>
-      <p className="mt-1.5 text-sm text-white/50">{children}</p>
+    <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-4">
+      <p className="text-sm font-semibold text-gray-900">{q}</p>
+      <p className="mt-1.5 text-sm text-gray-500">{children}</p>
     </div>
   );
 }
