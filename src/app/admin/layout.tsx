@@ -33,6 +33,9 @@ export default async function AdminLayout({
               <Link href="/admin/live" className="hover:text-white transition">
                 Live
               </Link>
+              <Link href="/admin/simulate" className="hover:text-white transition">
+                Simulate
+              </Link>
               <Link href="/leaderboard" className="hover:text-white transition">
                 Leaderboard
               </Link>
