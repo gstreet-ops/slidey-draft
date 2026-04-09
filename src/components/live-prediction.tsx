@@ -367,9 +367,12 @@ export function LivePredictionWidget({
                 Waiting for pick to be announced...
               </p>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setSelectedPlayerId("");
                   setSearch("");
+                  setPosFilter("ALL");
+                  setExpanded(true);
                   const team = draftOrder.find(d => d.pickNumber === state.pickNumber);
                   setState({
                     type: "on_the_clock",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 type Question = {
   id: string;
@@ -19,6 +19,8 @@ type Result = {
   pointsAwarded: number;
 };
 
+const TIMER_SECONDS = 15;
+
 export function TriviaCard({ poolId }: { poolId: string }) {
   const [question, setQuestion] = useState<Question | null>(null);
   const [result, setResult] = useState<Result | null>(null);
@@ -27,11 +29,41 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [triviaScore, setTriviaScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const questionRef = useRef<Question | null>(null);
+
+  const handleTimeout = useCallback(() => {
+    // Time's up — no points, show result as timeout
+    setResult({ correct: false, correctOption: "", pointsAwarded: 0 });
+    setSelected(null);
+  }, []);
+
+  // Start countdown when a new question loads
+  useEffect(() => {
+    if (!question || result) return;
+    questionRef.current = question;
+    setTimeLeft(TIMER_SECONDS);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          handleTimeout();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
+  }, [question, result, handleTimeout]);
 
   async function fetchQuestion() {
     setLoading(true);
     setResult(null);
     setSelected(null);
+    setTimeLeft(TIMER_SECONDS);
     const res = await fetch(`/api/pools/${poolId}/trivia`);
     const data = await res.json();
     if (data.noMoreQuestions) {
@@ -44,7 +76,8 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   }
 
   async function submitAnswer(option: string) {
-    if (!question || submitting) return;
+    if (!question || submitting || result) return;
+    clearInterval(timerRef.current);
     setSelected(option);
     setSubmitting(true);
 
@@ -68,7 +101,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Draft Trivia</h3>
-            <p className="text-xs text-white/30 mt-0.5">Test your NFL draft knowledge between picks</p>
+            <p className="text-xs text-white/30 mt-0.5">15 seconds per question — 5pts each</p>
           </div>
           <button
             onClick={fetchQuestion}
@@ -100,16 +133,37 @@ export function TriviaCard({ poolId }: { poolId: string }) {
     { key: "d", label: "D", text: question!.optionD },
   ];
 
+  const timerPct = (timeLeft / TIMER_SECONDS) * 100;
+  const timerColor = timeLeft <= 5 ? "bg-red-500" : timeLeft <= 10 ? "bg-yellow-500" : "bg-[var(--slidey)]";
+  const isTimedOut = result && !selected;
+
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-white/30 uppercase tracking-wider">
           {question!.category.replace("_", " ")} · {question!.difficulty}
         </span>
-        {triviaScore > 0 && (
-          <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
-        )}
+        <div className="flex items-center gap-2">
+          {triviaScore > 0 && (
+            <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
+          )}
+          {!result && (
+            <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-400" : "text-white/60"}`}>
+              {timeLeft}s
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* Timer bar */}
+      {!result && (
+        <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+          <div
+            className={`h-full ${timerColor} transition-all duration-1000 ease-linear`}
+            style={{ width: `${timerPct}%` }}
+          />
+        </div>
+      )}
 
       <p className="text-sm font-semibold text-white">{question!.question}</p>
 
@@ -132,7 +186,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
           return (
             <button
               key={opt.key}
-              onClick={() => !result && submitAnswer(opt.key)}
+              onClick={() => submitAnswer(opt.key)}
               disabled={!!result || submitting}
               className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition ${style}`}
             >
@@ -148,7 +202,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
           <span
             className={`text-sm font-bold ${result.correct ? "text-green-400" : "text-red-400"}`}
           >
-            {result.correct ? `Correct! +${result.pointsAwarded}pts` : "Wrong!"}
+            {isTimedOut ? "Time's up!" : result.correct ? `Correct! +${result.pointsAwarded}pts` : "Wrong!"}
           </span>
           <button
             onClick={fetchQuestion}
