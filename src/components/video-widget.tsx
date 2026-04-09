@@ -60,20 +60,25 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
 
   const jitsiRoom = `ddc-pool-${poolId.slice(0, 8)}`;
 
+  const [error, setError] = useState<string | null>(null);
+
   // Load Jitsi IFrame API script
   useEffect(() => {
     if (closed || minimized) return;
     if (jitsiApiRef.current) return;
 
+    // Check if already loaded
+    if ((window as unknown as Record<string, unknown>).JitsiMeetExternalAPI) {
+      setJitsiLoaded(true);
+      return;
+    }
+
     const script = document.createElement("script");
     script.src = "https://meet.jit.si/external_api.js";
     script.async = true;
     script.onload = () => setJitsiLoaded(true);
+    script.onerror = () => setError("Failed to load video chat");
     document.head.appendChild(script);
-
-    return () => {
-      // Don't remove script — it's cached
-    };
   }, [closed, minimized]);
 
   // Initialize Jitsi when script loaded and container ready
@@ -83,8 +88,12 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     if (!jitsiContainerRef.current) return;
 
     const JitsiMeetExternalAPI = (window as unknown as Record<string, unknown>).JitsiMeetExternalAPI as new (domain: string, options: Record<string, unknown>) => unknown;
-    if (!JitsiMeetExternalAPI) return;
+    if (!JitsiMeetExternalAPI) {
+      setError("Jitsi API not available");
+      return;
+    }
 
+    try {
     const api = new JitsiMeetExternalAPI("meet.jit.si", {
       roomName: jitsiRoom,
       parentNode: jitsiContainerRef.current,
@@ -104,6 +113,9 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     });
 
     jitsiApiRef.current = api;
+    } catch (err) {
+      setError("Failed to start video: " + (err instanceof Error ? err.message : String(err)));
+    }
 
     return () => {
       if (jitsiApiRef.current) {
@@ -211,11 +223,21 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
 
         {/* Jitsi container */}
         <div ref={jitsiContainerRef} className="bg-black" style={{ height: 210 }}>
-          {!jitsiLoaded && (
+          {error ? (
+            <div className="flex flex-col items-center justify-center h-full text-red-400 text-xs gap-2 px-4 text-center">
+              <p>{error}</p>
+              <button
+                onClick={() => { setError(null); setJitsiLoaded(false); }}
+                className="text-white/50 hover:text-white text-xs underline"
+              >
+                Retry
+              </button>
+            </div>
+          ) : !jitsiLoaded ? (
             <div className="flex items-center justify-center h-full text-white/30 text-xs">
               Loading video...
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </Draggable>
