@@ -40,8 +40,7 @@ export default async function Home() {
   if (session?.user) {
     navLinks.push({ href: "/dashboard", label: "Dashboard" });
     if (session.user.status === "active") navLinks.push({ href: "/pools", label: "Pools" });
-    navLinks.push({ href: "/live", label: "Live" });
-    if (locked) navLinks.push({ href: "/live", label: "War Room" });
+    navLinks.push({ href: "/live", label: locked ? "War Room" : "Live" });
     navLinks.push({ href: "/my-board", label: "My Board" });
     if (session.user.role === "admin") navLinks.push({ href: "/admin", label: "Studio" });
   } else {

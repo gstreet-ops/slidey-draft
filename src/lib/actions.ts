@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, asc, sql, isNull, notInArray } from "drizzle-orm";
 import {
   draftBoards,
   picks,
@@ -683,6 +683,7 @@ export async function toggleAnnouncementPin(poolId: string, announcementId: stri
   revalidatePath(`/pools/${poolId}`);
 }
 
+// ── Auto-fill remaining picks by player rank ────────
 export async function autoFillByRank(
   boardId: string,
   mode: "round" | "all",
@@ -691,30 +692,24 @@ export async function autoFillByRank(
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
+  // Get the board and verify ownership
   const [board] = await db
-    .select()
+    .select({ season: draftBoards.season, createdBy: draftBoards.createdBy })
     .from(draftBoards)
     .where(eq(draftBoards.id, boardId));
   if (!board) throw new Error("Board not found");
-
-  const order = await db
-    .select({
-      pickNumber: draftOrder.pickNumber,
-      teamId: draftOrder.teamId,
-    })
-    .from(draftOrder)
-    .where(eq(draftOrder.season, board.season))
-    .orderBy(draftOrder.pickNumber);
-
-  let slotsToFill = order;
-  if (mode === "round" && currentRound) {
-    const start = (currentRound - 1) * 32 + 1;
-    const end = currentRound * 32;
-    slotsToFill = order.filter(
-      (o) => o.pickNumber >= start && o.pickNumber <= end
-    );
+  if (board.createdBy !== session.user.id && session.user.role !== "admin") {
+    throw new Error("Not authorized");
   }
 
+  // Get draft order for this season
+  const slots = await db
+    .select()
+    .from(draftOrder)
+    .where(eq(draftOrder.season, board.season))
+    .orderBy(asc(draftOrder.pickNumber));
+
+  // Get existing picks for this board
   const existingPicks = await db
     .select({ pickNumber: picks.pickNumber, playerId: picks.playerId })
     .from(picks)
@@ -723,33 +718,46 @@ export async function autoFillByRank(
   const pickedNumbers = new Set(existingPicks.map((p) => p.pickNumber));
   const pickedPlayerIds = new Set(existingPicks.map((p) => p.playerId));
 
-  const allPlayers = await db
+  // Filter to empty slots based on mode
+  let emptySlots = slots.filter((s) => !pickedNumbers.has(s.pickNumber));
+  if (mode === "round" && currentRound) {
+    emptySlots = emptySlots.filter(
+      (s) =>
+        s.pickNumber > (currentRound - 1) * 32 &&
+        s.pickNumber <= currentRound * 32
+    );
+  }
+
+  if (emptySlots.length === 0) return 0;
+
+  // Get all ranked players sorted by rank
+  const rankedPlayers = await db
     .select({ id: players.id, rank: players.rank })
     .from(players)
-    .orderBy(sql`${players.rank} ASC NULLS LAST`);
+    .where(sql`${players.rank} IS NOT NULL`)
+    .orderBy(asc(players.rank));
 
-  let filled = 0;
-  for (const slot of slotsToFill) {
-    if (pickedNumbers.has(slot.pickNumber)) continue;
+  // Fill each empty slot with the next available ranked player
+  let filledCount = 0;
+  const usedPlayerIds = new Set(pickedPlayerIds);
 
-    const nextBest = allPlayers.find(
-      (p) => p.rank && !pickedPlayerIds.has(p.id)
-    );
-    if (!nextBest) break;
+  for (const slot of emptySlots) {
+    const nextPlayer = rankedPlayers.find((p) => !usedPlayerIds.has(p.id));
+    if (!nextPlayer) break;
 
     await db.insert(picks).values({
       boardId,
       pickNumber: slot.pickNumber,
-      playerId: nextBest.id,
+      playerId: nextPlayer.id,
       teamId: slot.teamId,
       autoFilled: true,
     });
 
-    pickedPlayerIds.add(nextBest.id);
-    pickedNumbers.add(slot.pickNumber);
-    filled++;
+    usedPlayerIds.add(nextPlayer.id);
+    filledCount++;
   }
 
   revalidatePath(`/admin/board/${boardId}`);
-  return filled;
+  revalidatePath(`/my-board`);
+  return filledCount;
 }
