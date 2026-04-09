@@ -156,7 +156,7 @@ export function PickBuilder({
           >
             PROSPECT POOL
           </h2>
-          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/40">BPA Order</span>
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/40">Next Best Prospect</span>
         </div>
         {activeSlot && (
           <p className="text-xs text-[var(--lions-blue)] mt-0.5">
@@ -205,60 +205,48 @@ export function PickBuilder({
           const slot = activeSlot
             ? draftOrder.find((s) => s.pickNumber === activeSlot)
             : null;
-          const tags = extractTraitTags(player.notes, 2);
-
           return (
-            <div key={player.id} className="flex items-center gap-1.5">
-              <button
-                disabled={!activeSlot || isPending}
-                onClick={() => slot && handleMakePick(player.id, slot)}
-                className={`flex flex-1 items-center gap-1.5 rounded-md bg-white px-1.5 py-1 text-left shadow-sm transition min-h-[30px] sm:gap-2 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
-                  activeSlot
-                    ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
-                    : "opacity-60 cursor-not-allowed"
-                }`}
-              >
-                {player.rank && (
-                  <span className="text-xs font-bold text-gray-400 w-5 text-right shrink-0">
-                    #{player.rank}
-                  </span>
-                )}
-                <PlayerAvatar player={player} size={32} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-gray-900 truncate sm:text-sm">
-                      {player.name}
-                    </span>
-                    <span className="text-xs text-[var(--lions-blue)] shrink-0">
-                      {player.position}
-                    </span>
-                  </div>
-                  {tags.length > 0 && (
-                    <div className="hidden gap-1 mt-0.5 sm:flex">
-                      {tags.map((t) => (
-                        <span key={t.label} className={`rounded-full px-1.5 py-0 text-[9px] font-semibold ${t.color}`}>{t.label}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <span className="ml-auto text-xs text-gray-400 shrink-0 hidden sm:block">
-                  {player.school}
+            <button
+              key={player.id}
+              disabled={!activeSlot || isPending}
+              onClick={() => slot && handleMakePick(player.id, slot)}
+              className={`flex items-center gap-1.5 rounded-md bg-white px-1.5 py-1 text-left shadow-sm transition min-h-[30px] sm:gap-2 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
+                activeSlot
+                  ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
+                  : "opacity-60 cursor-not-allowed"
+              }`}
+            >
+              {player.rank && (
+                <span className="text-xs font-bold text-gray-400 w-5 text-right shrink-0">
+                  #{player.rank}
                 </span>
-              </button>
-              {/* Info button for drawer */}
-              <button
+              )}
+              <PlayerAvatar player={player} size={28} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-gray-900 truncate sm:text-sm">
+                    {player.name}
+                  </span>
+                  <span className="text-xs text-[var(--lions-blue)] shrink-0">
+                    {player.position}
+                  </span>
+                </div>
+              </div>
+              <span
+                role="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   setDrawerPlayer(player);
                 }}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--lions-blue)]/40 bg-[var(--lions-blue)]/15 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/30 hover:text-white transition sm:h-7 sm:w-7"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-gray-300 hover:text-[var(--lions-blue)] transition sm:h-6 sm:w-6"
                 title="View scouting report"
               >
                 <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
                   <path d="M7 0a7 7 0 100 14A7 7 0 007 0zm.75 10.5h-1.5v-4h1.5v4zm0-5.5h-1.5V3.5h1.5V5z" />
                 </svg>
-              </button>
-            </div>
+              </span>
+            </button>
           );
         })}
         {filteredPlayers.length === 0 && (
