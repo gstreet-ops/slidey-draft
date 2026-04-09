@@ -24,7 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   session: {
     strategy: "database",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/login",
@@ -38,6 +38,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         session.user.role = dbUser?.role || "user";
         session.user.status = dbUser?.status || "active";
+
+        // Fetch favorite team
+        if (dbUser?.favoriteTeamId) {
+          const team = await db.query.teams.findFirst({
+            where: (t, { eq }) => eq(t.id, dbUser.favoriteTeamId!),
+          });
+          session.user.favoriteTeam = team
+            ? {
+                id: team.id,
+                name: team.name,
+                abbreviation: team.abbreviation,
+                primaryColor: team.primaryColor || "#4A7AB5",
+                secondaryColor: team.secondaryColor || "#000000",
+                logoUrl: team.logoUrl,
+              }
+            : null;
+        } else {
+          session.user.favoriteTeam = null;
+        }
       }
       return session;
     },
