@@ -335,7 +335,7 @@ export default async function GuidePage() {
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-lg bg-white px-5 py-4 shadow-sm">
-      <p className="text-sm font-bold text-gray-900">{title}</p>
+      <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
       <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{children}</p>
     </div>
   );
