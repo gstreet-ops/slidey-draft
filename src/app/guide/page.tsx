@@ -84,30 +84,27 @@ export default async function GuidePage() {
               Head to <InlineLink href="/my-board">My Board</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
             </p>
 
-            <SubHeading>Making Picks</SubHeading>
-            <p>
-              Click an empty slot on the draft board to activate it. The prospect pool panel will show available players — search by name, position, or school, and use the position filter tabs to narrow your options. Click a player to assign them to that slot.
-            </p>
+            <div className="mt-6 space-y-3">
+              <InfoCard title="Making Picks">
+                Click an empty slot on the draft board to activate it. The prospect pool panel will show available players — search by name, position, or school, and use the position filter tabs to narrow your options. Click a player to assign them to that slot.
+              </InfoCard>
 
-            <SubHeading>Researching Prospects</SubHeading>
-            <p>
-              Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
-            </p>
+              <InfoCard title="Researching Prospects">
+                Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
+              </InfoCard>
 
-            <SubHeading>Pick Analysis</SubHeading>
-            <p>
-              When a pick slot is active, you can optionally write your reasoning in the analysis box ("Why this pick?"). This shows on the public mock draft when your board is published — a chance to explain your thinking.
-            </p>
+              <InfoCard title="Pick Analysis">
+                When a pick slot is active, you can optionally write your reasoning in the analysis box (&quot;Why this pick?&quot;). This shows on the public mock draft when your board is published — a chance to explain your thinking.
+              </InfoCard>
 
-            <SubHeading>Auto-Fill</SubHeading>
-            <p>
-              If you want to fill remaining slots quickly, the auto-fill feature assigns the next best available prospect (by consensus rank) to each empty slot. Auto-filled picks are marked with a "BPA" tag.
-            </p>
+              <InfoCard title="Auto-Fill">
+                If you want to fill remaining slots quickly, the auto-fill feature assigns the next best available prospect (by consensus rank) to each empty slot. Auto-filled picks are marked with a &quot;BPA&quot; tag.
+              </InfoCard>
 
-            <SubHeading>Publishing</SubHeading>
-            <p>
-              Once you are happy with your picks, publish your board. Published boards are visible to everyone and will be scored when the real draft begins. You can edit picks until the draft locks.
-            </p>
+              <InfoCard title="Publishing">
+                Once you are happy with your picks, publish your board. Published boards are visible to everyone and will be scored when the real draft begins. You can edit picks until the draft locks.
+              </InfoCard>
+            </div>
           </section>
 
           {/* ── Prospects ── */}
@@ -334,6 +331,15 @@ export default async function GuidePage() {
 }
 
 // ── Reusable components ──
+
+function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-lg bg-white px-5 py-4 shadow-sm">
+      <p className="text-sm font-bold text-gray-900">{title}</p>
+      <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{children}</p>
+    </div>
+  );
+}
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
