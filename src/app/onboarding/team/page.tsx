@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { teams } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { TeamPicker } from "@/components/team-picker";
+import { SoundPreference } from "@/components/sound-preference";
 
 export const dynamic = "force-dynamic";
 
@@ -48,9 +49,13 @@ export default async function OnboardingTeamPage() {
           />
         </div>
 
+        <div className="mt-8 max-w-sm mx-auto">
+          <SoundPreference />
+        </div>
+
         <Link
           href="/dashboard"
-          className="mt-8 inline-block text-sm text-white/30 hover:text-white/50 transition"
+          className="mt-6 inline-block text-sm text-white/30 hover:text-white/50 transition"
         >
           Skip for now
         </Link>
