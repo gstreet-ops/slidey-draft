@@ -36,6 +36,7 @@ export default async function Home() {
   const navLinks = [
     { href: "/picks", label: "All Picks" },
     { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/guide", label: "How to Play" },
   ];
   if (session?.user) {
     navLinks.push({ href: "/dashboard", label: "Dashboard" });
