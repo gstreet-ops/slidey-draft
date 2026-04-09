@@ -92,6 +92,7 @@ export function PickBuilder({
   const [localPickedIds, setLocalPickedIds] = useState<Set<string>>(new Set());
   const [analysisText, setAnalysisText] = useState("");
   const [drawerPlayer, setDrawerPlayer] = useState<Player | null>(null);
+  const [saveFlash, setSaveFlash] = useState(false);
 
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
@@ -112,6 +113,11 @@ export function PickBuilder({
        p.school.toLowerCase().includes(search.toLowerCase()))
   );
 
+  function flashSaved() {
+    setSaveFlash(true);
+    setTimeout(() => setSaveFlash(false), 2000);
+  }
+
   function handleMakePick(playerId: string, slot: DraftSlot) {
     setLocalPickedIds((prev) => new Set([...prev, playerId]));
     const analysis = analysisText.trim() || undefined;
@@ -120,12 +126,14 @@ export function PickBuilder({
       setActiveSlot(null);
       setSearch("");
       setAnalysisText("");
+      flashSaved();
     });
   }
 
   function handleRemovePick(pickId: string) {
     startTransition(async () => {
       await removePick(pickId, boardId);
+      flashSaved();
     });
   }
 
@@ -222,14 +230,9 @@ export function PickBuilder({
                 <PlayerAvatar player={player} size={32} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <ProspectHoverCard
-                      prospect={player}
-                      onTap={() => setDrawerPlayer(player)}
-                    >
-                      <span className="text-xs font-semibold text-gray-900 truncate cursor-pointer underline decoration-gray-300 underline-offset-2 hover:text-[var(--lions-blue)] hover:decoration-[var(--lions-blue)] transition sm:text-sm">
-                        {player.name}
-                      </span>
-                    </ProspectHoverCard>
+                    <span className="text-xs font-semibold text-gray-900 truncate sm:text-sm">
+                      {player.name}
+                    </span>
                     <span className="text-xs text-[var(--lions-blue)] shrink-0">
                       {player.position}
                     </span>
@@ -277,6 +280,13 @@ export function PickBuilder({
       <div className="grid grid-cols-[1.1fr_1fr] gap-2 sm:grid-cols-[1.2fr_1fr] sm:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
         {/* Draft board column */}
         <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
+          {/* Auto-save indicator */}
+          <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-400">
+              <path d="M2 7l3.5 3.5L12 3" />
+            </svg>
+            <span className="text-green-400 font-medium">Saved</span>
+          </div>
           {draftOrder.map((slot) => {
             const pick = pickMap.get(slot.pickNumber);
             const isActive = activeSlot === slot.pickNumber;
