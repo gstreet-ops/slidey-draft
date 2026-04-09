@@ -2,6 +2,12 @@
 
 import { useEffect, useState, useRef } from "react";
 
+type PickContext = {
+  userName: string;
+  matchType: string | null;
+  pointsAwarded: number | null;
+};
+
 type Props = {
   pickNumber: number;
   playerName: string;
@@ -12,6 +18,7 @@ type Props = {
   teamPrimaryColor: string | null;
   teamLogoUrl?: string | null;
   matchType: string | null;
+  context?: PickContext[];
   onDismiss: () => void;
 };
 
@@ -32,6 +39,7 @@ export function PickAnnouncement({
   teamPrimaryColor,
   teamLogoUrl,
   matchType,
+  context,
   onDismiss,
 }: Props) {
   const [dismissing, setDismissing] = useState(false);
@@ -86,6 +94,22 @@ export function PickAnnouncement({
           </div>
         )}
       </div>
+
+      {/* Who had this pick */}
+      {context && context.length > 0 && (
+        <div className="relative z-10 px-6 pb-3 flex flex-wrap gap-2">
+          {context.filter(c => c.matchType === "exact").map((c, i) => (
+            <span key={i} className="text-xs bg-green-500/30 text-green-200 rounded-full px-2.5 py-0.5 font-semibold">
+              {c.userName} nailed it!
+            </span>
+          ))}
+          {context.filter(c => c.matchType === "close").map((c, i) => (
+            <span key={i} className="text-xs bg-yellow-500/20 text-yellow-200 rounded-full px-2.5 py-0.5">
+              {c.userName} had him close (+{c.pointsAwarded})
+            </span>
+          ))}
+        </div>
+      )}
 
       {matchType === "exact" && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
