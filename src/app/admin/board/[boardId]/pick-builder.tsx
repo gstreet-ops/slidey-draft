@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import { makePick, removePick, publishBoard } from "@/lib/actions";
+import { makePick, removePick, publishBoard, autoFillByRank } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { ProspectDetailDrawer } from "@/components/prospect-detail-drawer";
 import { ProspectHoverCard } from "@/components/prospect-hover-card";
@@ -140,6 +140,24 @@ export function PickBuilder({
   function handlePublish() {
     startTransition(async () => {
       await publishBoard(boardId);
+    });
+  }
+
+  // Determine current round (1-based) from first empty slot
+  const firstEmptyPick = draftOrder.find((s) => !pickMap.has(s.pickNumber));
+  const currentRound = firstEmptyPick ? Math.ceil(firstEmptyPick.pickNumber / 32) : 1;
+  const emptyInRound = draftOrder.filter(
+    (s) =>
+      !pickMap.has(s.pickNumber) &&
+      s.pickNumber > (currentRound - 1) * 32 &&
+      s.pickNumber <= currentRound * 32
+  ).length;
+  const totalEmpty = draftOrder.filter((s) => !pickMap.has(s.pickNumber)).length;
+
+  function handleAutoFill(mode: "round" | "all") {
+    startTransition(async () => {
+      await autoFillByRank(boardId, mode, currentRound);
+      flashSaved();
     });
   }
 
@@ -475,6 +493,28 @@ export function PickBuilder({
               </div>
             );
           })}
+
+          {/* Auto-fill buttons */}
+          {!readOnly && totalEmpty > 0 && (
+            <div className="mt-2 flex gap-2">
+              {emptyInRound > 0 && (
+                <button
+                  onClick={() => handleAutoFill("round")}
+                  disabled={isPending}
+                  className="flex-1 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 py-2 text-xs font-semibold text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/20 transition disabled:opacity-50"
+                >
+                  {isPending ? "Filling..." : `Auto-Fill Rd ${currentRound} (${emptyInRound})`}
+                </button>
+              )}
+              <button
+                onClick={() => handleAutoFill("all")}
+                disabled={isPending}
+                className="flex-1 rounded-lg border border-white/20 bg-white/5 py-2 text-xs font-semibold text-gray-400 hover:text-white hover:bg-white/10 transition disabled:opacity-50"
+              >
+                {isPending ? "Filling..." : `Auto-Fill All (${totalEmpty})`}
+              </button>
+            </div>
+          )}
 
           {/* Publish button */}
           {!readOnly && boardStatus === "draft" && existingPicks.length > 0 && (

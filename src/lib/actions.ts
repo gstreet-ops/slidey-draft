@@ -13,6 +13,8 @@ import {
   pools,
   poolMembers,
   poolAnnouncements,
+  draftOrder,
+  players,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -679,4 +681,75 @@ export async function toggleAnnouncementPin(poolId: string, announcementId: stri
   }
 
   revalidatePath(`/pools/${poolId}`);
+}
+
+export async function autoFillByRank(
+  boardId: string,
+  mode: "round" | "all",
+  currentRound?: number
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [board] = await db
+    .select()
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+  if (!board) throw new Error("Board not found");
+
+  const order = await db
+    .select({
+      pickNumber: draftOrder.pickNumber,
+      teamId: draftOrder.teamId,
+    })
+    .from(draftOrder)
+    .where(eq(draftOrder.season, board.season))
+    .orderBy(draftOrder.pickNumber);
+
+  let slotsToFill = order;
+  if (mode === "round" && currentRound) {
+    const start = (currentRound - 1) * 32 + 1;
+    const end = currentRound * 32;
+    slotsToFill = order.filter(
+      (o) => o.pickNumber >= start && o.pickNumber <= end
+    );
+  }
+
+  const existingPicks = await db
+    .select({ pickNumber: picks.pickNumber, playerId: picks.playerId })
+    .from(picks)
+    .where(eq(picks.boardId, boardId));
+
+  const pickedNumbers = new Set(existingPicks.map((p) => p.pickNumber));
+  const pickedPlayerIds = new Set(existingPicks.map((p) => p.playerId));
+
+  const allPlayers = await db
+    .select({ id: players.id, rank: players.rank })
+    .from(players)
+    .orderBy(sql`${players.rank} ASC NULLS LAST`);
+
+  let filled = 0;
+  for (const slot of slotsToFill) {
+    if (pickedNumbers.has(slot.pickNumber)) continue;
+
+    const nextBest = allPlayers.find(
+      (p) => p.rank && !pickedPlayerIds.has(p.id)
+    );
+    if (!nextBest) break;
+
+    await db.insert(picks).values({
+      boardId,
+      pickNumber: slot.pickNumber,
+      playerId: nextBest.id,
+      teamId: slot.teamId,
+      autoFilled: true,
+    });
+
+    pickedPlayerIds.add(nextBest.id);
+    pickedNumbers.add(slot.pickNumber);
+    filled++;
+  }
+
+  revalidatePath(`/admin/board/${boardId}`);
+  return filled;
 }
