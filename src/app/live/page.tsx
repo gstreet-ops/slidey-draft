@@ -6,6 +6,7 @@ import { WarRoom } from "./war-room";
 import { LivePredictionWidget } from "@/components/live-prediction";
 import { TriviaCard } from "@/components/trivia-card";
 import { SoundToggle } from "@/components/sound-toggle";
+import { VideoWidget } from "@/components/video-widget";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +85,10 @@ export default async function LivePage() {
         season={season}
         poolId={userPools.length > 0 ? userPools[0].poolId : null}
       />
+
+      {userPools.length > 0 && (
+        <VideoWidget poolId={userPools[0].poolId} poolName={userPools[0].poolName} />
+      )}
     </div>
   );
 }
