@@ -64,20 +64,20 @@ export default async function PicksPage() {
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}
-                className="group block rounded-xl border-2 border-[var(--lions-blue)]/30 bg-gradient-to-r from-[#0076B6]/10 to-[#B0B7BC]/5 p-6 hover:border-[var(--lions-blue)]/60 transition"
+                className="group block rounded-xl border-2 border-[var(--lions-blue)]/30 bg-blue-50 p-6 shadow-sm hover:shadow-md hover:border-[var(--lions-blue)]/60 transition"
               >
                 <div className="flex items-center gap-3">
                   <span className="rounded-full bg-[var(--lions-blue)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                     Featured Analyst
                   </span>
-                  <span className="text-xs text-[var(--lions-silver)]">
+                  <span className="text-xs text-gray-500">
                     {board.creator?.name || board.creator?.email}
                   </span>
                 </div>
-                <h2 className="mt-2 text-xl font-bold text-white group-hover:text-[var(--lions-blue)] transition">
+                <h2 className="mt-2 text-xl font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">
                   {board.title}
                 </h2>
-                <p className="mt-1 text-sm text-[var(--lions-silver)]">
+                <p className="mt-1 text-sm text-gray-500">
                   Published {board.publishedAt?.toLocaleDateString()}
                 </p>
               </Link>
@@ -92,12 +92,12 @@ export default async function PicksPage() {
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}
-                className="group rounded-xl border border-white/10 bg-white/5 p-6 hover:border-[var(--gtown-highlight)]/50 transition"
+                className="group rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition"
               >
-                <h2 className="text-xl font-bold text-white group-hover:text-[var(--gtown-highlight)] transition">
+                <h2 className="text-xl font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">
                   {board.title}
                 </h2>
-                <p className="mt-1 text-sm text-white/40">
+                <p className="mt-1 text-sm text-gray-500">
                   {board.creator?.name || board.creator?.email || "Anonymous"} &middot;
                   Published {board.publishedAt?.toLocaleDateString()}
                 </p>
@@ -107,8 +107,8 @@ export default async function PicksPage() {
         )}
 
         {published.length === 0 && (
-          <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-12 text-center">
-            <p className="text-white/40 text-lg">No published boards yet. Check back soon.</p>
+          <div className="mt-12 rounded-xl bg-white/10 p-12 text-center">
+            <p className="text-white/50 text-lg">No published boards yet. Check back soon.</p>
           </div>
         )}
       </div>

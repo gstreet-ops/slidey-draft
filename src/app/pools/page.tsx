@@ -46,7 +46,7 @@ export default async function PoolsPage() {
 
         {/* Pool list */}
         {pools.length === 0 ? (
-          <div className="rounded-xl bg-white/5 border border-white/10 p-12 text-center space-y-4">
+          <div className="rounded-xl bg-white/10 p-12 text-center space-y-4">
             <p className="text-white/60">You haven&apos;t joined any pools yet.</p>
             <p className="text-white/40 text-sm">Create a pool or join one with an invite code.</p>
           </div>
@@ -56,26 +56,26 @@ export default async function PoolsPage() {
               <Link
                 key={pool.poolId}
                 href={`/pools/${pool.poolId}`}
-                className="rounded-xl bg-white/5 border border-white/10 p-6 hover:border-white/20 transition space-y-3"
+                className="rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">{pool.poolName}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{pool.poolName}</h3>
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
+                    className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                       pool.poolStatus === "open"
-                        ? "bg-green-500/20 text-green-400"
+                        ? "bg-green-100 text-green-700"
                         : pool.poolStatus === "locked"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-white/10 text-white/50"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-100 text-gray-500"
                     }`}
                   >
                     {pool.poolStatus}
                   </span>
                 </div>
                 {pool.description && (
-                  <p className="text-sm text-white/40 line-clamp-2">{pool.description}</p>
+                  <p className="text-sm text-gray-500 line-clamp-2">{pool.description}</p>
                 )}
-                <div className="flex items-center gap-3 text-xs text-white/40">
+                <div className="flex items-center gap-3 text-xs text-gray-400">
                   <span className="capitalize">{pool.role}</span>
                 </div>
               </Link>

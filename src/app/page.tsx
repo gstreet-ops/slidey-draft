@@ -215,9 +215,9 @@ export default async function Home() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
               {userPools.map((pool) => (
-                <Link key={pool.poolId} href={`/pools/${pool.poolId}`} className="group rounded-xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-[var(--lions-blue)]/40 hover:bg-white/[0.07]">
-                  <p className="text-sm font-bold text-white group-hover:text-[var(--lions-blue)] transition">{pool.poolName}</p>
-                  {pool.description && <p className="mt-1 text-xs text-white/40">{pool.description}</p>}
+                <Link key={pool.poolId} href={`/pools/${pool.poolId}`} className="group rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md">
+                  <p className="text-sm font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">{pool.poolName}</p>
+                  {pool.description && <p className="mt-1 text-xs text-gray-500">{pool.description}</p>}
                 </Link>
               ))}
             </div>
