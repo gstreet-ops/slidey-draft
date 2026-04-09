@@ -17,11 +17,20 @@ export function SimulationControls({ initialState }: { initialState: SimState })
     setState(s);
   }
 
+  const [error, setError] = useState<string | null>(null);
+
   async function handleNextPick() {
     setRunning(true);
-    const result = await simulateNextPick();
-    if (!result.done) {
-      setLastPick(`#${result.pickNumber}: ${result.playerName}`);
+    setError(null);
+    try {
+      const result = await simulateNextPick();
+      if (result.error) {
+        setError(result.error);
+      } else if (!result.done) {
+        setLastPick(`#${result.pickNumber}: ${result.playerName}`);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
     }
     await refresh();
     setRunning(false);
@@ -30,12 +39,22 @@ export function SimulationControls({ initialState }: { initialState: SimState })
   async function handleAutoRun() {
     setRunning(true);
     stopRef.current = false;
+    setError(null);
 
     let current = state.picksAnnounced;
     while (current < state.totalPicks && !stopRef.current) {
-      const result = await simulateNextPick();
-      if (result.done) break;
-      setLastPick(`#${result.pickNumber}: ${result.playerName}`);
+      try {
+        const result = await simulateNextPick();
+        if (result.error) {
+          setError(result.error);
+          break;
+        }
+        if (result.done) break;
+        setLastPick(`#${result.pickNumber}: ${result.playerName}`);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+        break;
+      }
       await refresh();
       current++;
       if (current < state.totalPicks && !stopRef.current) {
@@ -78,6 +97,11 @@ export function SimulationControls({ initialState }: { initialState: SimState })
             style={{ width: `${progress}%` }}
           />
         </div>
+        {error && (
+          <div className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            Error: {error}
+          </div>
+        )}
         {lastPick && (
           <p className="mt-2 text-sm text-green-400">
             Last announced: {lastPick}
