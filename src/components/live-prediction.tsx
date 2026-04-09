@@ -23,8 +23,8 @@ type ActualResult = {
 type PredictionState =
   | { type: "waiting_for_draft" }
   | { type: "on_the_clock"; pickNumber: number; teamName: string; teamAbbreviation: string }
-  | { type: "submitted"; pickNumber: number; playerName: string; playerPosition: string; playerSchool: string }
-  | { type: "result"; pickNumber: number; correct: boolean; actualPlayer: string; predictedPlayer: string; points: number; correctCount: number; totalPredictions: number }
+  | { type: "submitted"; pickNumber: number; playerName: string; playerPosition: string; playerSchool: string; isAutoFilled?: boolean }
+  | { type: "result"; pickNumber: number; correct: boolean; actualPlayer: string; predictedPlayer: string; points: number; correctCount: number; totalPredictions: number; isAutoFilled?: boolean }
   | { type: "missed"; pickNumber: number; actualPlayer: string; teamName: string };
 
 export function LivePredictionWidget({
@@ -45,6 +45,7 @@ export function LivePredictionWidget({
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("ALL");
   const [submitting, setSubmitting] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   // Determine draft state
   const nextPickNumber = actualResults.length + 1;
@@ -89,7 +90,7 @@ export function LivePredictionWidget({
   // Poll for prediction state
   const { data: predictionData } = useLiveUpdates<{
     announced: boolean;
-    myPrediction: { playerName: string; playerPosition: string; playerSchool: string } | null;
+    myPrediction: { playerName: string; playerPosition: string; playerSchool: string; isAutoFilled?: boolean } | null;
     predictions: { correct: boolean; pointsAwarded: number; userName: string; playerName: string }[];
     correctCount?: number;
     totalPredictions?: number;
@@ -99,6 +100,11 @@ export function LivePredictionWidget({
     interval: 5000,
   });
 
+  // Auto-expand picker when pick window opens
+  useEffect(() => {
+    if (state.type === "on_the_clock") setExpanded(true);
+  }, [state.type]);
+
   useEffect(() => {
     if (actualResults.length === 0) {
       setState({ type: "waiting_for_draft" });
@@ -106,21 +112,21 @@ export function LivePredictionWidget({
     }
 
     if (predictionData?.announced) {
-      // Find the actual player
       const result = actualResults.find((r) => r.pickNumber === nextPickNumber - 1);
       if (result) {
-        const myPred = predictionData.predictions.find(() => true); // Already filtered by API
-        if (predictionData.myPrediction || myPred) {
+        const myPrediction = predictionData.myPrediction;
+        if (myPrediction) {
           const correct = predictionData.predictions.some((p) => p.correct);
           setState({
             type: "result",
             pickNumber: nextPickNumber - 1,
             correct,
             actualPlayer: result.playerName,
-            predictedPlayer: predictionData.myPrediction?.playerName || "",
+            predictedPlayer: myPrediction.playerName,
             points: correct ? (predictionData.predictions.find((p) => p.correct)?.pointsAwarded ?? 0) : 0,
             correctCount: predictionData.correctCount ?? 0,
             totalPredictions: predictionData.totalPredictions ?? 0,
+            isAutoFilled: myPrediction.isAutoFilled,
           });
         } else {
           setState({
@@ -141,6 +147,7 @@ export function LivePredictionWidget({
         playerName: predictionData.myPrediction.playerName,
         playerPosition: predictionData.myPrediction.playerPosition,
         playerSchool: predictionData.myPrediction.playerSchool,
+        isAutoFilled: predictionData.myPrediction.isAutoFilled,
       });
       return;
     }
@@ -172,144 +179,233 @@ export function LivePredictionWidget({
           playerName: player?.name || "",
           playerPosition: player?.position || "",
           playerSchool: player?.school || "",
+          isAutoFilled: false,
         });
         setSelectedPlayerId("");
         setSearch("");
+        setExpanded(false);
       }
     } finally {
       setSubmitting(false);
     }
   }
 
+  // Status line shown when collapsed
+  function statusLine() {
+    switch (state.type) {
+      case "waiting_for_draft":
+        return <span className="text-white/40">Draft not started</span>;
+      case "on_the_clock":
+        return (
+          <span className="text-yellow-400 font-semibold">
+            Pick #{state.pickNumber} — {state.teamName} on the clock
+          </span>
+        );
+      case "submitted":
+        return (
+          <span className="text-green-400 font-semibold">
+            {state.isAutoFilled ? "Auto-filled: " : "Locked in: "}
+            {state.playerName}
+          </span>
+        );
+      case "result":
+        return (
+          <span className={state.correct ? "text-green-400 font-semibold" : "text-white/50"}>
+            Pick #{state.pickNumber}:{" "}
+            {state.correct ? `+${state.points}pts — Correct!` : `+0pts — Missed (${state.actualPlayer})`}
+          </span>
+        );
+      case "missed":
+        return (
+          <span className="text-white/40">
+            Pick #{state.pickNumber}: Missed — {state.actualPlayer}
+          </span>
+        );
+    }
+  }
+
+  const canCollapse = state.type !== "on_the_clock";
+
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">
-          Live Prediction
-        </h3>
-        <span className="text-xs text-white/30">{poolName}</span>
-      </div>
+    <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+      {/* Header bar — always visible */}
+      <button
+        onClick={() => canCollapse && setExpanded((v) => !v)}
+        className={`w-full flex items-center justify-between px-5 py-3 ${canCollapse ? "cursor-pointer hover:bg-white/5" : "cursor-default"} transition`}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-xs font-semibold text-white/40 uppercase tracking-wider shrink-0">
+            Prediction
+          </span>
+          <span className="text-sm truncate">{statusLine()}</span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          <span className="text-xs text-white/20">{poolName}</span>
+          {canCollapse && (
+            <svg
+              className={`w-4 h-4 text-white/30 transition-transform ${expanded ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          )}
+        </div>
+      </button>
 
-      {state.type === "waiting_for_draft" && (
-        <p className="text-white/40 text-sm">
-          The draft hasn&apos;t started yet. Predictions will open when Pick #1 goes on the clock.
-        </p>
-      )}
-
-      {state.type === "on_the_clock" && (
-        <div className="space-y-4">
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
-            <p className="text-yellow-400 font-bold text-lg">
-              {state.teamName} is on the clock — Pick #{state.pickNumber}
+      {/* Expanded body */}
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4 border-t border-white/10 pt-4">
+          {state.type === "waiting_for_draft" && (
+            <p className="text-white/40 text-sm">
+              The draft hasn&apos;t started yet. Predictions open when Pick #1 goes on the clock.
             </p>
-          </div>
+          )}
 
-          {/* Player search */}
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, position, or school..."
-              className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
-            />
+          {state.type === "on_the_clock" && (
+            <div className="space-y-4">
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-center">
+                <p className="text-yellow-400 font-bold">
+                  Pick #{state.pickNumber} — {state.teamName} is on the clock
+                </p>
+                <p className="text-yellow-400/50 text-xs mt-0.5">
+                  Submit before the pick is announced to earn points
+                </p>
+              </div>
 
-            <div className="flex gap-1 flex-wrap">
-              {positions.map((pos) => (
-                <button
-                  key={pos}
-                  onClick={() => setPosFilter(pos)}
-                  className={`px-2 py-1 rounded text-xs font-semibold transition ${
-                    posFilter === pos
-                      ? "bg-[var(--gtown-highlight)] text-white"
-                      : "bg-white/5 text-white/40 hover:text-white/60"
-                  }`}
-                >
-                  {pos}
-                </button>
-              ))}
-            </div>
+              {/* Player search */}
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by name, position, or school..."
+                  className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
+                />
 
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {filteredPlayers.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setSelectedPlayerId(p.id)}
-                  className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
-                    selectedPlayerId === p.id
-                      ? "bg-[var(--gtown-highlight)] text-white"
-                      : "bg-white/5 text-white/70 hover:bg-white/10"
-                  }`}
-                >
-                  {p.rank && (
-                    <span className="text-xs font-bold opacity-60 w-5 text-right shrink-0">#{p.rank}</span>
-                  )}
-                  <span className="font-semibold">{p.name}</span>
-                  <span className="text-white/40">{p.position} &middot; {p.school}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+                <div className="flex gap-1 flex-wrap">
+                  {positions.map((pos) => (
+                    <button
+                      key={pos}
+                      onClick={() => setPosFilter(pos)}
+                      className={`px-2 py-1 rounded text-xs font-semibold transition ${
+                        posFilter === pos
+                          ? "bg-[var(--gtown-highlight)] text-white"
+                          : "bg-white/5 text-white/40 hover:text-white/60"
+                      }`}
+                    >
+                      {pos}
+                    </button>
+                  ))}
+                </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedPlayerId || submitting}
-            className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
-          >
-            {submitting ? "Locking In..." : "Lock In Prediction"}
-          </button>
-          <p className="text-xs text-white/30 text-center">
-            Your prediction locks when the pick is announced
-          </p>
-        </div>
-      )}
+                <div className="max-h-44 overflow-y-auto space-y-1">
+                  {filteredPlayers.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setSelectedPlayerId(p.id)}
+                      className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
+                        selectedPlayerId === p.id
+                          ? "bg-[var(--gtown-highlight)] text-white"
+                          : "bg-white/5 text-white/70 hover:bg-white/10"
+                      }`}
+                    >
+                      {p.rank && (
+                        <span className="text-xs font-bold opacity-60 w-5 text-right shrink-0">
+                          #{p.rank}
+                        </span>
+                      )}
+                      <span className="font-semibold">{p.name}</span>
+                      <span className="text-white/40">
+                        {p.position} &middot; {p.school}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-      {state.type === "submitted" && (
-        <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-green-400 text-lg">&#10003;</span>
-            <span className="text-white font-semibold">You predicted:</span>
-          </div>
-          <p className="text-white text-lg font-bold">{state.playerName}</p>
-          <p className="text-white/40 text-sm">
-            {state.playerPosition} &middot; {state.playerSchool}
-          </p>
-          <p className="text-white/30 text-sm animate-pulse">
-            Waiting for pick to be announced...
-          </p>
-        </div>
-      )}
-
-      {state.type === "result" && (
-        <div className="text-center space-y-3">
-          {state.correct ? (
-            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-              <p className="text-green-400 font-bold text-lg">
-                You nailed it! {state.actualPlayer} +{state.points} points
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <p className="text-white/60">
-                Actual pick: <span className="text-white font-semibold">{state.actualPlayer}</span>
-              </p>
-              <p className="text-white/40 text-sm">
-                You predicted: {state.predictedPlayer}
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedPlayerId || submitting}
+                className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+              >
+                {submitting ? "Locking In..." : "Lock In Prediction"}
+              </button>
+              <p className="text-xs text-white/30 text-center">
+                10 pts for correct &middot; 0 pts for wrong &middot; auto-filled with BPA if no pick
               </p>
             </div>
           )}
-          <p className="text-white/30 text-xs">
-            {state.correctCount} of {state.totalPredictions} members predicted correctly
-          </p>
-        </div>
-      )}
 
-      {state.type === "missed" && (
-        <div className="text-center space-y-2">
-          <p className="text-white/60 text-sm">
-            Pick #{state.pickNumber}: <span className="text-white">{state.actualPlayer}</span> to {state.teamName}.
-          </p>
-          <p className="text-white/30 text-xs">You didn&apos;t submit a prediction.</p>
+          {state.type === "submitted" && (
+            <div className="space-y-3">
+              {state.isAutoFilled ? (
+                <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-1">
+                    Auto-filled (BPA)
+                  </p>
+                  <p className="text-white/70 font-semibold">{state.playerName}</p>
+                  <p className="text-white/30 text-xs mt-0.5">
+                    {state.playerPosition} &middot; {state.playerSchool}
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-green-400 text-lg">&#10003;</span>
+                    <span className="text-white font-semibold">Locked in:</span>
+                  </div>
+                  <p className="text-white text-lg font-bold">{state.playerName}</p>
+                  <p className="text-white/40 text-sm">
+                    {state.playerPosition} &middot; {state.playerSchool}
+                  </p>
+                </div>
+              )}
+              <p className="text-white/30 text-sm text-center animate-pulse">
+                Waiting for pick to be announced...
+              </p>
+            </div>
+          )}
+
+          {state.type === "result" && (
+            <div className="space-y-3">
+              {state.correct ? (
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
+                  <p className="text-green-400 font-bold text-lg">
+                    Correct! +{state.points} pts
+                  </p>
+                  <p className="text-green-400/70 text-sm mt-1">{state.actualPlayer}</p>
+                </div>
+              ) : (
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center space-y-1">
+                  <p className="text-white/50 text-sm">
+                    Actual pick:{" "}
+                    <span className="text-white font-semibold">{state.actualPlayer}</span>
+                  </p>
+                  <p className="text-white/30 text-xs">
+                    {state.isAutoFilled ? "Auto-filled: " : "You predicted: "}
+                    {state.predictedPlayer}
+                  </p>
+                  <p className="text-white/20 text-xs">+0 pts</p>
+                </div>
+              )}
+              <p className="text-white/30 text-xs text-center">
+                {state.correctCount} of {state.totalPredictions} members correct
+              </p>
+            </div>
+          )}
+
+          {state.type === "missed" && (
+            <div className="text-center space-y-2">
+              <p className="text-white/60 text-sm">
+                Pick #{state.pickNumber}:{" "}
+                <span className="text-white">{state.actualPlayer}</span> to {state.teamName}
+              </p>
+              <p className="text-white/30 text-xs">Window closed — no prediction submitted.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
