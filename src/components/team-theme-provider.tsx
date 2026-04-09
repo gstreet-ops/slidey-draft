@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  const team = session?.user?.favoriteTeam;
+  const team = (session?.user as { favoriteTeam?: { primaryColor: string; secondaryColor: string } })?.favoriteTeam;
 
   useEffect(() => {
     const root = document.documentElement;
