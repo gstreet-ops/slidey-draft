@@ -365,6 +365,7 @@ export const livePredictions = pgTable(
     predictedPlayerId: uuid("predicted_player_id")
       .notNull()
       .references(() => players.id),
+    isAutoFilled: boolean("is_auto_filled").default(false),
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   },
   (table) => [
@@ -433,6 +434,7 @@ export const poolStandings = pgTable(
       .references(() => users.id),
     mockBonus: integer("mock_bonus").notNull().default(0),
     liveTotal: integer("live_total").notNull().default(0),
+    triviaTotal: integer("trivia_total").notNull().default(0),
     combinedScore: integer("combined_score").notNull().default(0),
     rank: integer("rank"),
     previousRank: integer("previous_rank"),
@@ -442,5 +444,75 @@ export const poolStandings = pgTable(
   },
   (table) => [
     uniqueIndex("pool_standings_idx").on(table.poolId, table.userId),
+  ]
+);
+
+// ── Trivia Questions ─────────────────────────────
+export const triviaQuestions = pgTable("trivia_questions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  question: text("question").notNull(),
+  optionA: text("option_a").notNull(),
+  optionB: text("option_b").notNull(),
+  optionC: text("option_c").notNull(),
+  optionD: text("option_d").notNull(),
+  correctOption: text("correct_option").notNull(), // 'a', 'b', 'c', 'd'
+  category: text("category").notNull(), // 'draft_history', 'combine', 'trades', etc.
+  difficulty: text("difficulty").notNull().default("medium"),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Trivia Responses ─────────────────────────────
+export const triviaResponses = pgTable(
+  "trivia_responses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    questionId: uuid("question_id")
+      .notNull()
+      .references(() => triviaQuestions.id),
+    selectedOption: text("selected_option").notNull(),
+    isCorrect: boolean("is_correct").notNull(),
+    pointsAwarded: integer("points_awarded").notNull().default(0),
+    submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("trivia_response_unique_idx").on(
+      table.poolId,
+      table.userId,
+      table.questionId
+    ),
+  ]
+);
+
+// ── Pool Teams ───────────────────────────────────
+export const poolTeams = pgTable("pool_teams", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  colorHex: text("color_hex").notNull().default("#4A7AB5"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Pool Team Members ────────────────────────────
+export const poolTeamMembers = pgTable(
+  "pool_team_members",
+  {
+    poolTeamId: uuid("pool_team_id")
+      .notNull()
+      .references(() => poolTeams.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.poolTeamId, table.userId] }),
   ]
 );
