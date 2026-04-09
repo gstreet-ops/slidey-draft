@@ -35,7 +35,7 @@ export function PickAnnouncement({
   onDismiss,
 }: Props) {
   const [dismissing, setDismissing] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     timerRef.current = setTimeout(() => {
