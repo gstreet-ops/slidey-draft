@@ -62,42 +62,32 @@ export function TeamLeaderboard({ poolId, standings }: Props) {
   const maxScore = ranked[0]?.totalScore ?? 1;
 
   if (loading) {
-    return <div className="text-center py-8 text-gray-400 text-sm">Loading team standings…</div>;
+    return <div className="text-center py-4 text-white/30 text-sm">Loading teams…</div>;
   }
 
-  if (ranked.length === 0) {
-    return (
-      <div className="text-center py-10 text-gray-400 text-sm">
-        No teams have been created yet.
-      </div>
-    );
-  }
+  if (ranked.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
+      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">Team Standings</h3>
       {ranked.map((team) => (
         <div
           key={team.id}
-          className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+          className="rounded-lg border border-white/10 bg-white/5 overflow-hidden"
         >
-          <div className="flex items-center gap-4 px-4 py-3">
-            {/* Rank */}
-            <div className="w-7 text-center font-bold text-gray-400 text-sm">
-              #{team.rank}
-            </div>
-
-            {/* Color dot + name */}
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: team.colorHex }} />
-              <span className="font-semibold text-gray-800 truncate">{team.name}</span>
-            </div>
-
-            {/* Score */}
-            <div className="font-bold text-gray-900 tabular-nums">{team.totalScore}</div>
+          <div className="flex items-center gap-3 px-3 py-2.5">
+            <span className="w-5 text-center text-sm font-bold text-white/60">
+              {team.rank}
+            </span>
+            <div
+              className="w-3 h-3 rounded-full shrink-0"
+              style={{ backgroundColor: team.colorHex }}
+            />
+            <span className="font-semibold text-white truncate flex-1">{team.name}</span>
+            <span className="text-lg font-bold text-white">{team.totalScore}</span>
           </div>
 
-          {/* Score bar */}
-          <div className="h-1 bg-gray-100">
+          <div className="h-1 bg-white/5">
             <div
               className="h-full transition-all duration-500"
               style={{
@@ -107,18 +97,17 @@ export function TeamLeaderboard({ poolId, standings }: Props) {
             />
           </div>
 
-          {/* Members */}
           {team.members.length > 0 && (
-            <div className="px-4 py-2 flex flex-wrap gap-1.5">
+            <div className="px-3 py-2 flex flex-wrap gap-1.5">
               {team.members.map((m) => {
                 const score = scoreMap.get(m.userId) ?? 0;
                 return (
                   <span
                     key={m.userId}
-                    className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                    className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60"
                   >
-                    <span>{m.userName}</span>
-                    <span className="font-semibold text-gray-800">{score}</span>
+                    {m.userName}
+                    <span className="font-bold text-white/80">{score}</span>
                   </span>
                 );
               })}

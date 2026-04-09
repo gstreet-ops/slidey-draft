@@ -82,6 +82,7 @@ export default async function LivePage() {
         initialResults={results}
         draftOrder={draftOrder}
         season={season}
+        poolId={userPools.length > 0 ? userPools[0].poolId : null}
       />
     </div>
   );

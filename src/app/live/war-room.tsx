@@ -8,6 +8,7 @@ import { ScoreCascade } from "@/components/score-cascade";
 import { ConnectionStatus } from "@/components/connection-status";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { OnTheClock } from "@/components/on-the-clock";
+import { TeamLeaderboard } from "@/components/team-leaderboard";
 
 type PickContextEntry = {
   userName: string;
@@ -75,6 +76,7 @@ type Props = {
   initialResults: ActualResult[];
   draftOrder: DraftSlot[];
   season: number;
+  poolId: string | null;
 };
 
 const MATCH_COLORS: Record<string, string> = {
@@ -97,7 +99,7 @@ const MOBILE_TABS = [
   { id: "leaderboard", label: "Leaderboard" },
 ];
 
-export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season }: Props) {
+export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId }: Props) {
   const { play } = useSoundEffects();
   const [announcement, setAnnouncement] = useState<ActualResult | null>(null);
   const [latestMatchType, setLatestMatchType] = useState<string | null>(null);
@@ -362,6 +364,15 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       <div className="mt-2">
         <ConnectionStatus lastUpdated={lastUpdated} failCount={maxFailCount} onRefresh={handleRefresh} />
       </div>
+
+      {poolId && (
+        <div className="mt-4">
+          <TeamLeaderboard
+            poolId={poolId}
+            standings={leaderboard.map((e) => ({ userId: e.userId || "", combinedScore: e.totalScore }))}
+          />
+        </div>
+      )}
     </div>
   );
 
