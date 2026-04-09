@@ -7,6 +7,7 @@ import {
   mockScores,
   liveScores,
   livePredictions,
+  triviaResponses,
   draftBoards,
   picks,
   actualResults,
@@ -214,6 +215,26 @@ export async function scoreLivePredictions(
 }
 
 /**
+ * Sum triviaResponses.pointsAwarded per user for a given pool.
+ */
+async function getTriviaScores(poolId: string): Promise<Map<string, number>> {
+  const rows = await db
+    .select({
+      userId: triviaResponses.userId,
+      total: sql<number>`COALESCE(SUM(${triviaResponses.pointsAwarded}), 0)`,
+    })
+    .from(triviaResponses)
+    .where(eq(triviaResponses.poolId, poolId))
+    .groupBy(triviaResponses.userId);
+
+  const map = new Map<string, number>();
+  for (const row of rows) {
+    map.set(row.userId, Number(row.total));
+  }
+  return map;
+}
+
+/**
  * Recalculate pool standings for a specific pool.
  */
 export async function recalculatePoolStandings(poolId: string) {
@@ -234,10 +255,13 @@ export async function recalculatePoolStandings(poolId: string) {
     if (s.rank) prevRankMap.set(s.userId, s.rank);
   }
 
+  const triviaMap = await getTriviaScores(poolId);
+
   const standingsData: {
     userId: string;
     mockBonus: number;
     liveTotal: number;
+    triviaTotal: number;
     combinedScore: number;
     picksPredicted: number;
     correctPredictions: number;
@@ -271,12 +295,14 @@ export async function recalculatePoolStandings(poolId: string) {
     const liveTotal = Number(liveRows[0]?.total || 0);
     const picksPredicted = Number(liveRows[0]?.predicted || 0);
     const correctPredictions = Number(liveRows[0]?.correct || 0);
+    const triviaTotal = triviaMap.get(member.userId) ?? 0;
 
     standingsData.push({
       userId: member.userId,
       mockBonus,
       liveTotal,
-      combinedScore: mockBonus + liveTotal,
+      triviaTotal,
+      combinedScore: mockBonus + liveTotal + triviaTotal,
       picksPredicted,
       correctPredictions,
     });
@@ -307,6 +333,7 @@ export async function recalculatePoolStandings(poolId: string) {
         .set({
           mockBonus: s.mockBonus,
           liveTotal: s.liveTotal,
+          triviaTotal: s.triviaTotal,
           combinedScore: s.combinedScore,
           rank,
           previousRank,
@@ -326,6 +353,7 @@ export async function recalculatePoolStandings(poolId: string) {
         userId: s.userId,
         mockBonus: s.mockBonus,
         liveTotal: s.liveTotal,
+        triviaTotal: s.triviaTotal,
         combinedScore: s.combinedScore,
         rank,
         previousRank,

@@ -4,6 +4,7 @@ import { getUserBoard, getActualResults, getDraftOrder, getPoolsForUser, getPlay
 import { isDraftLocked } from "@/lib/config";
 import { WarRoom } from "./war-room";
 import { LivePredictionWidget } from "@/components/live-prediction";
+import { TriviaCard } from "@/components/trivia-card";
 import { SoundToggle } from "@/components/sound-toggle";
 import Link from "next/link";
 
@@ -66,6 +67,12 @@ export default async function LivePage() {
               teamAbbreviation: d.teamAbbreviation,
             }))}
           />
+        </div>
+      )}
+
+      {userPools.length > 0 && (
+        <div className="mx-auto max-w-[1400px] px-4 pt-2">
+          <TriviaCard poolId={userPools[0].poolId} />
         </div>
       )}
 
