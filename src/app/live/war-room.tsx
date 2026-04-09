@@ -252,7 +252,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const boardColumn = (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>YOUR MOCK VS ACTUAL</h2>
+        <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>YOUR PICKS VS ACTUAL</h2>
         {userPicks.length > 0 && (
           <ScoreCascade
             targetScore={runningTotal}
@@ -281,10 +281,11 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                    style={result && slot.pickNumber === results.length ? { animation: "fade-in 0.5s ease-out" } : undefined}>
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded text-xs font-bold text-white" style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}>{slot.pickNumber}</div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-bold text-[var(--slidey)]/70 uppercase tracking-widest mb-0.5">You</p>
                   {pick ? (
-                    <p className={`text-sm text-white/80 truncate ${pick.autoFilled ? "italic" : ""}`}>
+                    <p className={`text-sm text-white truncate ${pick.autoFilled ? "italic" : ""}`}>
                       {pick.playerName}
-                      <span className="text-xs text-white/40 ml-1">{pick.playerPosition}</span>
+                      <span className="text-xs text-white/50 ml-1">{pick.playerPosition}</span>
                       {pick.autoFilled && <span className="ml-1 text-[9px] text-yellow-400/70 font-medium">BPA</span>}
                     </p>
                   ) : (
@@ -292,10 +293,11 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                   )}
                 </div>
                 <div className="flex-1 min-w-0 text-right">
+                  <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-0.5">Actual</p>
                   {result ? (
-                    <p className="text-sm text-white/80 truncate">
+                    <p className="text-sm text-white/60 truncate">
                       {result.playerName}
-                      <span className="text-xs text-white/40 ml-1">{result.playerPosition}</span>
+                      <span className="text-xs text-white/30 ml-1">{result.playerPosition}</span>
                     </p>
                   ) : (
                     <p className="text-xs text-white/20">pending</p>
@@ -318,6 +320,14 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
   const leaderboardColumn = (
     <div>
+      {poolId && (
+        <div className="mb-4">
+          <TeamLeaderboard
+            poolId={poolId}
+            standings={leaderboard.map((e) => ({ userId: e.userId || "", combinedScore: e.totalScore }))}
+          />
+        </div>
+      )}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>LEADERBOARD</h2>
         <span className="text-xs text-white/40">{picksScored} of 32 picks in</span>
@@ -364,15 +374,6 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       <div className="mt-2">
         <ConnectionStatus lastUpdated={lastUpdated} failCount={maxFailCount} onRefresh={handleRefresh} />
       </div>
-
-      {poolId && (
-        <div className="mt-4">
-          <TeamLeaderboard
-            poolId={poolId}
-            standings={leaderboard.map((e) => ({ userId: e.userId || "", combinedScore: e.totalScore }))}
-          />
-        </div>
-      )}
     </div>
   );
 
