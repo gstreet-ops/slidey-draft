@@ -48,6 +48,7 @@ export const users = pgTable("users", {
   image: text("image"),
   role: userRoleEnum("role").default("user"),
   status: userStatusEnum("status").notNull().default("active"),
+  favoriteTeamId: uuid("favorite_team_id").references(() => teams.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
