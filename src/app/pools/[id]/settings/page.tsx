@@ -6,6 +6,7 @@ import { canManagePool, getPoolRole, getPoolSettings } from "@/lib/pool-helpers"
 import { PoolSettingsForm } from "./settings-form";
 import { MemberManagement } from "./member-management";
 import { PoolThemeSettings } from "@/components/pool-theme-settings";
+import { PoolTeamManager } from "@/components/pool-team-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,19 @@ export default async function PoolSettingsPage({
               poolId={poolId}
               currentPrimary={pool.primaryColor}
               currentSecondary={pool.secondaryColor}
+            />
+          </section>
+        )}
+
+        {myRole === "commissioner" && (
+          <section>
+            <h2 className="text-xl font-bold text-white mb-4">Teams</h2>
+            <PoolTeamManager
+              poolId={poolId}
+              poolMembers={members.map((m) => ({
+                userId: m.userId,
+                userName: m.userName || m.userEmail || "Unknown",
+              }))}
             />
           </section>
         )}
