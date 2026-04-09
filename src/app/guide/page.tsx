@@ -386,8 +386,8 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="rounded-lg bg-white px-4 py-3 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900">{title}</p>
-      <p className="mt-0.5 text-xs text-gray-500">{desc}</p>
+      <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
+      <p className="mt-0.5 text-xs text-gray-600">{desc}</p>
     </div>
   );
 }
