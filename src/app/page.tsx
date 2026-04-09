@@ -43,10 +43,13 @@ export default async function Home() {
     if (session.user.status === "active") navLinks.push({ href: "/pools", label: "Pools" });
     navLinks.push({ href: "/live", label: locked ? "War Room" : "Live" });
     navLinks.push({ href: "/my-board", label: "My Board" });
+    navLinks.push({ href: "/guide/user", label: "How to Play" });
     if (session.user.role === "admin") navLinks.push({ href: "/admin", label: "Studio" });
   } else {
+    navLinks.push({ href: "/guide/user", label: "How to Play" });
     navLinks.push({ href: "/login", label: "Sign In" });
   }
+
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">

@@ -65,8 +65,12 @@ export default async function PoolDashboardPage({
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/pools" className="text-white/60 hover:text-white transition">Pools</Link>
+            <Link href="/guide/user" className="text-white/60 hover:text-white transition">How to Play</Link>
             {canManage && (
-              <Link href={`/pools/${poolId}/settings`} className="text-white/60 hover:text-white transition">Settings</Link>
+              <>
+                <Link href="/guide/commissioner" className="text-white/60 hover:text-white transition">Commissioner Guide</Link>
+                <Link href={`/pools/${poolId}/settings`} className="text-white/60 hover:text-white transition">Settings</Link>
+              </>
             )}
           </nav>
         </div>

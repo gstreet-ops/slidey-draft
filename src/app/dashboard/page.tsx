@@ -75,6 +75,7 @@ export default async function DashboardPage() {
           { href: "/picks", label: "Mock Drafts" },
           { href: "/leaderboard", label: "Leaderboard" },
           { href: "/my-board", label: "My Board" },
+          { href: "/guide/user", label: "How to Play" },
           { href: "/settings", label: "Settings" },
           ...(session.user.role === "admin" ? [{ href: "/admin", label: "Studio" }] : []),
         ]}
