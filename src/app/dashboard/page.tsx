@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { getBoards, getUserBoard } from "@/lib/queries";
 import { isDraftLocked } from "@/lib/config";
@@ -13,6 +14,9 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
+
+  // Onboarding: pick a team first
+  if (!session.user.favoriteTeam) redirect("/onboarding/team");
 
   const locked = await isDraftLocked();
   if (locked) redirect("/live");
@@ -71,12 +75,33 @@ export default async function DashboardPage() {
           { href: "/picks", label: "Mock Drafts" },
           { href: "/leaderboard", label: "Leaderboard" },
           { href: "/my-board", label: "My Board" },
+          { href: "/settings", label: "Settings" },
           ...(session.user.role === "admin" ? [{ href: "/admin", label: "Studio" }] : []),
         ]}
         logo={
           <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            SLIDEY<span className="text-[var(--lions-blue)]">.COM</span> DRAFT
+            SLIDEY<span className="text-[var(--slidey)]">.COM</span> DRAFT
           </Link>
+        }
+        trailing={
+          session.user.favoriteTeam?.logoUrl ? (
+            <Link href="/settings">
+              <Image
+                src={session.user.favoriteTeam.logoUrl}
+                alt={session.user.favoriteTeam.name}
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
+            </Link>
+          ) : (
+            <Link
+              href="/settings"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--slidey)] text-xs font-bold text-white"
+            >
+              {session.user.name?.[0]?.toUpperCase() || "?"}
+            </Link>
+          )
         }
       />
 
@@ -96,7 +121,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-xs text-white/40 uppercase tracking-wider">Days Until Draft</p>
-              <p className="text-2xl font-bold text-[var(--lions-blue)]">{daysUntilDraft}</p>
+              <p className="text-2xl font-bold text-[var(--slidey)]">{daysUntilDraft}</p>
             </div>
           </div>
           {!userBoard && (
@@ -137,7 +162,7 @@ export default async function DashboardPage() {
                         );
                       })}
                     </div>
-                    <Link href={`/picks/${board.id}`} className="mt-3 block text-center text-xs text-[var(--lions-blue)] hover:underline">View Full Board</Link>
+                    <Link href={`/picks/${board.id}`} className="mt-3 block text-center text-xs text-[var(--slidey)] hover:underline">View Full Board</Link>
                   </div>
                 );
               })}
