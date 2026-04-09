@@ -22,6 +22,7 @@ type Prospect = {
   threeConeDrill?: number | null;
   shuttle?: number | null;
   nflComparison?: string | null;
+  schoolLogoUrl?: string | null;
 };
 
 type Props = {
@@ -101,6 +102,9 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               <span className="inline-block rounded-full bg-[var(--lions-blue)] px-2.5 py-0.5 text-xs font-bold text-white">
                 {prospect.position}
               </span>
+              {prospect.schoolLogoUrl && (
+                <img src={prospect.schoolLogoUrl} alt="" className="h-5 w-5 object-contain" />
+              )}
               <span className="text-sm text-gray-500">{prospect.school}</span>
             </div>
             {prospect.nflComparison && (

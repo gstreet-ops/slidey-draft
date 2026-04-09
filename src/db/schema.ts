@@ -150,6 +150,7 @@ export const players = pgTable("players", {
   threeConeDrill: real("three_cone_drill"),
   shuttle: real("shuttle"),
   nflComparison: text("nfl_comparison"),
+  schoolLogoUrl: text("school_logo_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

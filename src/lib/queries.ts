@@ -101,6 +101,7 @@ export async function getBoardWithPicks(boardId: string) {
       playerThreeConeDrill: players.threeConeDrill,
       playerShuttle: players.shuttle,
       playerNflComparison: players.nflComparison,
+      playerSchoolLogoUrl: players.schoolLogoUrl,
       teamName: teams.name,
       teamAbbreviation: teams.abbreviation,
       teamPrimaryColor: teams.primaryColor,

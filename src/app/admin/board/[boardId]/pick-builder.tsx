@@ -37,6 +37,7 @@ type ExistingPick = {
   playerThreeConeDrill: number | null;
   playerShuttle: number | null;
   playerNflComparison: string | null;
+  playerSchoolLogoUrl: string | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
@@ -63,6 +64,7 @@ type Player = {
   threeConeDrill: number | null;
   shuttle: number | null;
   nflComparison: string | null;
+  schoolLogoUrl: string | null;
 };
 
 type Props = {
@@ -203,6 +205,7 @@ function pickToPlayer(pick: ExistingPick): Player {
     threeConeDrill: pick.playerThreeConeDrill,
     shuttle: pick.playerShuttle,
     nflComparison: pick.playerNflComparison,
+    schoolLogoUrl: pick.playerSchoolLogoUrl,
   };
 }
 

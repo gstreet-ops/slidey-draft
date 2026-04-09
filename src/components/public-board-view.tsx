@@ -25,6 +25,7 @@ type PickData = {
   playerThreeConeDrill: number | null;
   playerShuttle: number | null;
   playerNflComparison: string | null;
+  playerSchoolLogoUrl: string | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
@@ -104,6 +105,7 @@ export function PublicBoardView({
                 threeConeDrill: selectedProspect.playerThreeConeDrill,
                 shuttle: selectedProspect.playerShuttle,
                 nflComparison: selectedProspect.playerNflComparison,
+                schoolLogoUrl: selectedProspect.playerSchoolLogoUrl,
               }
             : null
         }
