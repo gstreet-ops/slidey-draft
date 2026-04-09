@@ -6,10 +6,10 @@ export const dynamic = "force-dynamic";
 
 const sections = [
   { id: "overview", label: "Overview" },
-  { id: "mock-draft", label: "Your Mock Draft" },
-  { id: "prospects", label: "Scouting Prospects" },
-  { id: "scoring", label: "Scoring System" },
-  { id: "pools", label: "Pools & Competitions" },
+  { id: "mock-draft", label: "Making Picks" },
+  { id: "prospects", label: "Scouting" },
+  { id: "scoring", label: "Scoring" },
+  { id: "pools", label: "Pools" },
   { id: "draft-day", label: "Draft Day" },
   { id: "faq", label: "FAQ" },
 ];
@@ -62,7 +62,7 @@ export default async function GuidePage() {
           ))}
         </nav>
 
-        <div className="mt-10 space-y-14">
+        <div className="mt-10 space-y-14 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
@@ -130,36 +130,82 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              When the real NFL Draft happens, your mock draft is scored against the actual results. Points are awarded for each pick based on how close your prediction was.
+              There are two ways to earn points: your <span className="text-white font-semibold">mock draft</span> (submitted before the draft) and <span className="text-white font-semibold">live predictions</span> (made in real-time during the draft). Here is how each works.
             </p>
 
-            <SubHeading>Global Leaderboard Scoring</SubHeading>
-            <p>Your mock draft is scored pick-by-pick:</p>
-            <ScoreTable>
-              <ScoreRow type="exact" label="Exact Match" desc="Correct player at the correct pick number" pts={10} />
-              <ScoreRow type="close" label="Close" desc="Correct player, within 5 picks of actual slot" pts={5} />
-              <ScoreRow type="far" label="Far" desc="Correct player, 6+ picks off from actual slot" pts={3} />
-              <ScoreRow type="miss" label="Miss" desc="Player not drafted in Round 1, or wrong entirely" pts={0} />
-            </ScoreTable>
-            <p className="mt-3">
-              For example: if you predicted Travis Hunter at pick #4 and he actually goes at pick #2, that is 2 picks off — a "Close" match worth <span className="font-semibold text-yellow-400">5 points</span>.
-            </p>
+            {/* Mock Draft Scoring Card */}
+            <div className="mt-8 rounded-xl border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/5 p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">📋</span>
+                <h3 className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+                  MOCK DRAFT SCORING
+                </h3>
+              </div>
+              <p className="text-xs text-white/50 mb-4">
+                Your 32-pick mock draft is scored against the actual results after each real pick is announced.
+              </p>
 
-            <SubHeading>Pool Scoring (Tiered System)</SubHeading>
-            <p>
-              Pools use a more detailed tiered scoring system for mock drafts:
-            </p>
-            <ScoreTable>
-              <ScoreRow type="exact" label="Exact Slot" desc="Correct player at the correct pick" pts={5} />
-              <ScoreRow type="close" label="Player Called + Close" desc="Player drafted, within 3 picks" pts={"3 + 2"} />
-              <ScoreRow type="far" label="Player Called + Far" desc="Player drafted, within 4-7 picks" pts={"3 + 1"} />
-              <ScoreRow type="miss" label="Position Match" desc="Wrong player but correct position for that slot" pts={1} />
-            </ScoreTable>
+              <p className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">Global Leaderboard</p>
+              <ScoreTable>
+                <ScoreRow type="exact" label="Exact Match" desc="Correct player at the correct pick number" pts={10} />
+                <ScoreRow type="close" label="Close" desc="Correct player, within 5 picks of actual slot" pts={5} />
+                <ScoreRow type="far" label="Far" desc="Correct player, 6+ picks off from actual slot" pts={3} />
+                <ScoreRow type="miss" label="Miss" desc="Player not drafted in Round 1, or wrong entirely" pts={0} />
+              </ScoreTable>
+              <p className="mt-3 text-xs text-white/40">
+                Example: you predicted a player at pick #4 and he goes at pick #2 — that is 2 picks off, a "Close" match worth <span className="font-semibold text-yellow-400">+5</span>.
+              </p>
 
-            <SubHeading>Live Prediction Scoring</SubHeading>
-            <p>
-              During the draft, pool members can predict each pick in real-time before it is announced. Correct live predictions earn <span className="font-semibold text-green-400">10 points</span> each. Your pool score is the sum of your mock draft bonus + live prediction points.
-            </p>
+              <p className="text-xs font-bold uppercase tracking-wider text-white/40 mt-5 mb-2">Pool Mock Draft Bonus</p>
+              <p className="text-xs text-white/50 mb-2">
+                Pools use a tiered system that rewards you for getting the player right, even if the slot is off:
+              </p>
+              <ScoreTable>
+                <ScoreRow type="exact" label="Exact Slot" desc="Correct player at the correct pick" pts={10} />
+                <ScoreRow type="close" label="Player Called + Close Range" desc="Player was drafted, and you had them within 3 picks" pts={5} />
+                <ScoreRow type="far" label="Player Called + Far Range" desc="Player was drafted, and you had them within 4-7 picks" pts={4} />
+                <ScoreRow type="miss" label="Player Called (any slot)" desc="You predicted a player who was actually drafted in Round 1" pts={3} />
+                <ScoreRow type="miss" label="Position Match" desc="Wrong player, but you predicted the correct position for that slot" pts={1} />
+              </ScoreTable>
+            </div>
+
+            {/* Live Prediction Scoring Card */}
+            <div className="mt-6 rounded-xl border border-green-500/30 bg-green-500/5 p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">⚡</span>
+                <h3 className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+                  LIVE PREDICTION SCORING
+                </h3>
+              </div>
+              <p className="text-xs text-white/50 mb-4">
+                During the real draft, pool members predict each pick before it is announced.
+              </p>
+              <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 flex items-center gap-4">
+                <span className="text-2xl font-bold text-green-400">+10</span>
+                <div>
+                  <p className="text-sm font-semibold text-white">Correct Prediction</p>
+                  <p className="text-xs text-white/40">You predicted the exact player selected for that pick</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-white/40">
+                Incorrect predictions earn 0 points. You get one prediction per pick — lock it in before the pick is announced.
+              </p>
+            </div>
+
+            {/* Combined Score Summary */}
+            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-5 sm:p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-3">Your Pool Score</h3>
+              <div className="flex items-center gap-3 text-sm text-white/60">
+                <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
+                <span className="text-white/30">+</span>
+                <span className="rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-1.5 text-xs font-bold text-green-400">Live Predictions</span>
+                <span className="text-white/30">=</span>
+                <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white">Combined Score</span>
+              </div>
+              <p className="mt-3 text-xs text-white/40">
+                The combined score determines your pool ranking. Rankings update live as each pick is announced.
+              </p>
+            </div>
           </section>
 
           {/* ── Pools ── */}
@@ -301,7 +347,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="mt-6 text-sm font-bold uppercase tracking-wider text-[var(--lions-blue)]">{children}</h3>;
+  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--lions-blue)]">{children}</h3>;
 }
 
 function StepList({ children }: { children: React.ReactNode }) {
