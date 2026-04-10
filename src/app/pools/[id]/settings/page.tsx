@@ -7,6 +7,7 @@ import { PoolSettingsForm } from "./settings-form";
 import { MemberManagement } from "./member-management";
 import { PoolThemeSettings } from "@/components/pool-theme-settings";
 import { PoolTeamManager } from "@/components/pool-team-manager";
+import { PoolLockControl } from "@/components/pool-lock-control";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,10 @@ export default async function PoolSettingsPage({
 
       <main className="mx-auto max-w-3xl px-6 py-10 space-y-10">
         <h1 className="text-3xl font-bold text-white">Pool Settings</h1>
+
+        {myRole === "commissioner" && (
+          <PoolLockControl poolId={poolId} status={pool.status} />
+        )}
 
         <PoolSettingsForm
           poolId={poolId}
