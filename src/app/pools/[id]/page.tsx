@@ -14,6 +14,7 @@ import { getPoolRole } from "@/lib/pool-helpers";
 import { getPoolSettings } from "@/lib/pool-helpers";
 import { AnnouncementForm } from "./announcement-form";
 import { PoolThemeActivator } from "@/components/pool-theme-activator";
+import { PoolChat } from "@/components/pool-chat";
 
 export const dynamic = "force-dynamic";
 
@@ -184,6 +185,14 @@ export default async function PoolDashboardPage({
                 </div>
               )}
             </div>
+
+            {/* Chat */}
+            <PoolChat
+              poolId={poolId}
+              currentUserId={session.user.id}
+              isSpectator={false}
+              commissionerId={pool.commissionerId}
+            />
           </div>
 
           {/* Right: Sidebar */}
