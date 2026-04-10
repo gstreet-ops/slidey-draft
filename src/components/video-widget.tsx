@@ -164,8 +164,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
       {/* Jitsi video */}
       <iframe
         src={jitsiEmbedUrl}
-        allow="camera; microphone; fullscreen; display-capture; autoplay"
-        sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        allow="camera *; microphone *; fullscreen; display-capture; autoplay"
         className="w-full bg-black border-0"
         style={{ height: 200 }}
       />
