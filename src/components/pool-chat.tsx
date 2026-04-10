@@ -38,9 +38,16 @@ export function PoolChat({
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastTimestampRef = useRef<string | undefined>();
+
+  // Keep ref in sync with latest message timestamp
+  useEffect(() => {
+    const last = messages.at(-1)?.createdAt;
+    if (last) lastTimestampRef.current = last;
+  }, [messages]);
 
   const fetchMessages = useCallback(async () => {
-    const last = messages.at(-1)?.createdAt;
+    const last = lastTimestampRef.current;
     const url = `/api/pools/${poolId}/chat${last ? `?after=${encodeURIComponent(last)}` : ""}`;
     try {
       const res = await fetch(url);
@@ -54,7 +61,7 @@ export function PoolChat({
         });
       }
     } catch {}
-  }, [poolId, messages]);
+  }, [poolId]);
 
   // Initial load
   useEffect(() => {

@@ -186,13 +186,6 @@ export default async function PoolDashboardPage({
               )}
             </div>
 
-            {/* Chat */}
-            <PoolChat
-              poolId={poolId}
-              currentUserId={session.user.id}
-              isSpectator={false}
-              commissionerId={pool.commissionerId}
-            />
           </div>
 
           {/* Right: Sidebar */}
@@ -277,6 +270,14 @@ export default async function PoolDashboardPage({
                 Go to War Room
               </Link>
             </div>
+
+            {/* Chat */}
+            <PoolChat
+              poolId={poolId}
+              currentUserId={session.user.id}
+              isSpectator={false}
+              commissionerId={pool.commissionerId}
+            />
           </div>
         </div>
       </main>
