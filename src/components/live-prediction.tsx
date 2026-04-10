@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLiveUpdates } from "@/hooks/use-live-updates";
 
 type Player = {
@@ -46,6 +46,8 @@ export function LivePredictionWidget({
   const [posFilter, setPosFilter] = useState("ALL");
   const [submitting, setSubmitting] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const isEditing = useRef(false);
+  const [showCancel, setShowCancel] = useState(false);
 
   // Determine draft state
   const nextPickNumber = actualResults.length + 1;
@@ -141,14 +143,16 @@ export function LivePredictionWidget({
     }
 
     if (predictionData?.myPrediction) {
-      setState({
-        type: "submitted",
-        pickNumber: nextPickNumber,
-        playerName: predictionData.myPrediction.playerName,
-        playerPosition: predictionData.myPrediction.playerPosition,
-        playerSchool: predictionData.myPrediction.playerSchool,
-        isAutoFilled: predictionData.myPrediction.isAutoFilled,
-      });
+      if (!isEditing.current) {
+        setState({
+          type: "submitted",
+          pickNumber: nextPickNumber,
+          playerName: predictionData.myPrediction.playerName,
+          playerPosition: predictionData.myPrediction.playerPosition,
+          playerSchool: predictionData.myPrediction.playerSchool,
+          isAutoFilled: predictionData.myPrediction.isAutoFilled,
+        });
+      }
       return;
     }
 
@@ -172,6 +176,8 @@ export function LivePredictionWidget({
         body: JSON.stringify({ pickNumber: state.pickNumber, playerId: selectedPlayerId }),
       });
       if (res.ok) {
+        isEditing.current = false;
+        setShowCancel(false);
         const player = allPlayers.find((p) => p.id === selectedPlayerId);
         setState({
           type: "submitted",
@@ -326,13 +332,29 @@ export function LivePredictionWidget({
                 </div>
               </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={!selectedPlayerId || submitting}
-                className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
-              >
-                {submitting ? "Locking In..." : "Lock In Prediction"}
-              </button>
+              <div className="flex gap-2">
+                {showCancel && (
+                  <button
+                    onClick={() => {
+                      isEditing.current = false;
+                      setShowCancel(false);
+                      setSelectedPlayerId("");
+                      setSearch("");
+                      setPosFilter("ALL");
+                    }}
+                    className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/50 hover:text-white/80 hover:bg-white/10 transition"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  onClick={handleSubmit}
+                  disabled={!selectedPlayerId || submitting}
+                  className="flex-1 rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+                >
+                  {submitting ? "Locking In..." : "Lock In Prediction"}
+                </button>
+              </div>
               <p className="text-xs text-white/30 text-center">
                 10 pts for correct &middot; 0 pts for wrong &middot; auto-filled with BPA if no pick
               </p>
@@ -369,6 +391,8 @@ export function LivePredictionWidget({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  isEditing.current = true;
+                  setShowCancel(true);
                   setSelectedPlayerId("");
                   setSearch("");
                   setPosFilter("ALL");

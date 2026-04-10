@@ -38,7 +38,7 @@ export function PoolChat({
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const lastTimestampRef = useRef<string | undefined>();
+  const lastTimestampRef = useRef<string | undefined>(undefined);
 
   // Keep ref in sync with latest message timestamp
   useEffect(() => {
