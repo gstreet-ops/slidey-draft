@@ -6,7 +6,8 @@ import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
-import { MobileNav } from "@/components/mobile-nav";
+import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
 
 export const dynamic = "force-dynamic";
 
@@ -31,37 +32,15 @@ export default async function MyBoardPage() {
   const pickedPlayerIds = new Set(boardData.picks.map((p) => p.playerId));
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
 
-  const navLinks = [
-    { href: "/picks", label: "Mock Drafts" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    { href: "/pools", label: "Pools" },
-    { href: "/live", label: "Live" },
-    { href: "/", label: "Home" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={navLinks}
-        logo={
-          <Link
-            href="/"
-            className="text-lg font-bold tracking-wide text-white sm:text-xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
-        trailing={
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-[var(--gtown-highlight)] flex items-center justify-center text-white text-xs font-bold">
-              {(session.user.name || session.user.email)?.[0]?.toUpperCase() || "?"}
-            </div>
-            <span className="text-sm text-white/80 hidden sm:inline">
-              {session.user.name || session.user.email}
-            </span>
-          </div>
-        }
+    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+      <SiteNav
+        isLoggedIn={true}
+        isAdmin={session.user.role === "admin"}
+        isLocked={locked}
+        userInitial={session.user.name?.[0]?.toUpperCase()}
+        teamLogoUrl={session.user.favoriteTeam?.logoUrl}
+        teamName={session.user.favoriteTeam?.name}
       />
 
       {locked && <DraftLockedBanner />}

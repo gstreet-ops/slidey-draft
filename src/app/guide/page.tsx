@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { MobileNav } from "@/components/mobile-nav";
+import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/lib/auth";
+import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -16,25 +18,15 @@ const sections = [
 
 export default async function GuidePage() {
   const session = await auth();
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/picks", label: "Mock Drafts" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    ...(session?.user
-      ? [{ href: "/my-board", label: "My Board" }]
-      : [{ href: "/login", label: "Sign In" }]),
-  ];
+  const locked = await isDraftLocked();
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={navLinks}
-        logo={
-          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
+    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+      <SiteNav
+        isLoggedIn={!!session?.user}
+        isAdmin={session?.user?.role === "admin"}
+        isLocked={locked}
+        userInitial={session?.user?.name?.[0]?.toUpperCase()}
       />
 
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">

@@ -3,7 +3,9 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getPoolsForUser } from "@/lib/queries";
 import { JoinPoolForm } from "./join-pool-form";
-import { MobileNav } from "@/components/mobile-nav";
+import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
+import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -13,21 +15,15 @@ export default async function PoolsPage() {
   if (session.user.status !== "active") redirect("/");
 
   const pools = await getPoolsForUser(session.user.id);
+  const locked = await isDraftLocked();
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={[
-          { href: "/", label: "Home" },
-          { href: "/my-board", label: "My Board" },
-          { href: "/leaderboard", label: "Leaderboard" },
-          { href: "/live", label: "Live" },
-        ]}
-        logo={
-          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
+    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+      <SiteNav
+        isLoggedIn={true}
+        isAdmin={session.user.role === "admin"}
+        isLocked={locked}
+        userInitial={session.user.name?.[0]?.toUpperCase()}
       />
 
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
