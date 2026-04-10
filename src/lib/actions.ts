@@ -61,8 +61,8 @@ export async function createBoard(formData: FormData) {
 
 // ── Create a personal user board ───────────────────
 export async function createUserBoard(season: number) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Not authenticated");
+  const session = await requireActiveUser();
+  if (!session?.user?.id) throw new Error("Active account required to create a mock draft");
 
   const userName = session.user.name || session.user.email?.split("@")[0] || "Player";
 
