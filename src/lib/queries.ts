@@ -7,8 +7,6 @@ import {
   draftBoards,
   picks,
   users,
-  groups,
-  groupMembers,
   actualResults,
   scores,
   pickScores,
@@ -145,103 +143,7 @@ export async function getUserByEmail(email: string) {
   return user || null;
 }
 
-// ── Groups ─────────────────────────────────────────
-export async function getGroupByInviteCode(code: string) {
-  const [group] = await db
-    .select()
-    .from(groups)
-    .where(eq(groups.inviteCode, code));
-  return group || null;
-}
-
-export async function getGroupById(groupId: string) {
-  const [group] = await db
-    .select()
-    .from(groups)
-    .where(eq(groups.id, groupId));
-  return group || null;
-}
-
-export async function getGroupMembers(groupId: string) {
-  return db
-    .select({
-      userId: groupMembers.userId,
-      joinedAt: groupMembers.joinedAt,
-      userName: users.name,
-      userEmail: users.email,
-      userRole: users.role,
-    })
-    .from(groupMembers)
-    .innerJoin(users, eq(groupMembers.userId, users.id))
-    .where(eq(groupMembers.groupId, groupId))
-    .orderBy(asc(groupMembers.joinedAt));
-}
-
-export async function getGroupsForUser(userId: string) {
-  return db
-    .select({
-      groupId: groupMembers.groupId,
-      groupName: groups.name,
-      inviteCode: groups.inviteCode,
-    })
-    .from(groupMembers)
-    .innerJoin(groups, eq(groupMembers.groupId, groups.id))
-    .where(eq(groupMembers.userId, userId));
-}
-
-export async function getAllGroups() {
-  return db.select().from(groups).orderBy(desc(groups.createdAt));
-}
-
-export async function isGroupMember(groupId: string, userId: string) {
-  const [row] = await db
-    .select()
-    .from(groupMembers)
-    .where(
-      and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId))
-    );
-  return !!row;
-}
-
-// ── Boards by group ────────────────────────────────
-export async function getBoardsForGroup(groupId: string, season: number) {
-  // Get all user IDs in this group
-  const members = await db
-    .select({ userId: groupMembers.userId })
-    .from(groupMembers)
-    .where(eq(groupMembers.groupId, groupId));
-
-  if (members.length === 0) return [];
-
-  const memberIds = members.map((m) => m.userId);
-
-  // Get published boards from these users
-  const allBoards = await db
-    .select({
-      id: draftBoards.id,
-      title: draftBoards.title,
-      season: draftBoards.season,
-      status: draftBoards.status,
-      createdBy: draftBoards.createdBy,
-      publishedAt: draftBoards.publishedAt,
-      createdAt: draftBoards.createdAt,
-      userName: users.name,
-      userEmail: users.email,
-      userRole: users.role,
-    })
-    .from(draftBoards)
-    .innerJoin(users, eq(draftBoards.createdBy, users.id))
-    .where(
-      and(
-        eq(draftBoards.season, season),
-        eq(draftBoards.status, "published")
-      )
-    )
-    .orderBy(desc(draftBoards.publishedAt));
-
-  // Filter to group members only
-  return allBoards.filter((b) => b.createdBy && memberIds.includes(b.createdBy));
-}
+// ── Groups (REMOVED — migrated to Pools) ──────────
 
 // ── Actual Results ─────────────────────────────────
 export async function getActualResults(season: number) {
@@ -334,6 +236,10 @@ export async function getLeaderboard(season: number, groupMemberIds?: string[]) 
 export async function getPoolById(poolId: string) {
   const [pool] = await db.select().from(pools).where(eq(pools.id, poolId));
   return pool || null;
+}
+
+export async function getAllPools() {
+  return db.select().from(pools).orderBy(desc(pools.createdAt));
 }
 
 export async function getPoolByInviteCode(code: string) {

@@ -5,8 +5,6 @@ import { eq, and, desc, asc, sql, isNull, notInArray } from "drizzle-orm";
 import {
   draftBoards,
   picks,
-  groups,
-  groupMembers,
   actualResults,
   appInvites,
   users,
@@ -174,38 +172,6 @@ export async function publishBoard(boardId: string) {
   revalidatePath("/picks");
 }
 
-// ── Create a group (admin only) ────────────────────
-export async function createGroup(formData: FormData) {
-  const session = await auth();
-  if (!session?.user?.id || session.user.role !== "admin") {
-    throw new Error("Admin only");
-  }
-
-  const name = (formData.get("name") as string)?.trim();
-  if (!name || name.length > 100) throw new Error("Group name is required (max 100 chars)");
-  // Generate a short invite code using crypto
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const bytes = crypto.getRandomValues(new Uint8Array(6));
-  const inviteCode = Array.from(bytes, (b) => chars[b % chars.length]).join("");
-
-  const [group] = await db
-    .insert(groups)
-    .values({
-      name,
-      inviteCode,
-      createdBy: session.user.id,
-    })
-    .returning();
-
-  // Auto-add admin to the group
-  await db.insert(groupMembers).values({
-    groupId: group.id,
-    userId: session.user.id,
-  });
-
-  revalidatePath("/admin");
-  return group;
-}
 
 // ── Enter an actual draft result (admin only) ─────
 export async function enterActualResult(
@@ -270,21 +236,6 @@ export async function undoLastResult(season: number) {
   return last;
 }
 
-// ── Join a group ───────────────────────────────────
-export async function joinGroup(groupId: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Not authenticated");
-
-  await db
-    .insert(groupMembers)
-    .values({
-      groupId,
-      userId: session.user.id,
-    })
-    .onConflictDoNothing();
-
-  revalidatePath(`/group/${groupId}`);
-}
 
 // ═══════════════════════════════════════════════════
 // PHASE 3: App Invites

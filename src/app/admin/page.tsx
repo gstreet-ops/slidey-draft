@@ -1,16 +1,25 @@
 import Link from "next/link";
-import { getBoards, getAllGroups } from "@/lib/queries";
-import { createBoard, createGroup } from "@/lib/actions";
+import { getBoards, getAllPools, getPoolMemberCount } from "@/lib/queries";
+import { createBoard, createPool } from "@/lib/actions";
 import { isDraftLocked } from "@/lib/config";
 import { DraftControl } from "@/components/draft-control";
 import { redirect } from "next/navigation";
+import { CopyInviteLink } from "@/components/copy-invite-link";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
   const boards = await getBoards(2026);
-  const groups = await getAllGroups();
+  const allPools = await getAllPools();
   const locked = await isDraftLocked();
+
+  // Get member counts for all pools
+  const poolsWithCounts = await Promise.all(
+    allPools.map(async (pool) => ({
+      ...pool,
+      memberCount: await getPoolMemberCount(pool.id),
+    }))
+  );
 
   async function handleCreateBoard(formData: FormData) {
     "use server";
@@ -18,10 +27,10 @@ export default async function AdminDashboard() {
     redirect(`/admin/board/${board.id}`);
   }
 
-  async function handleCreateGroup(formData: FormData) {
+  async function handleCreatePool(formData: FormData) {
     "use server";
-    await createGroup(formData);
-    redirect("/admin");
+    const pool = await createPool(formData);
+    redirect(`/pools/${pool.id}`);
   }
 
   return (
@@ -92,16 +101,16 @@ export default async function AdminDashboard() {
         )}
       </div>
 
-      {/* Groups section */}
+      {/* Pools section */}
       <div className="space-y-6">
         <h2
           className="text-3xl font-bold text-white tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          GROUPS
+          POOLS
         </h2>
 
-        <form action={handleCreateGroup} className="flex gap-3">
+        <form action={handleCreatePool} className="flex gap-3">
           <input
             name="name"
             type="text"
@@ -113,42 +122,57 @@ export default async function AdminDashboard() {
             type="submit"
             className="rounded-lg bg-[var(--gtown-highlight)] px-6 py-2 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
           >
-            + New Group
+            + New Pool
           </button>
         </form>
 
-        {groups.length === 0 ? (
+        {poolsWithCounts.length === 0 ? (
           <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-            <p className="text-white/50">No groups yet. Create one to share invite links.</p>
+            <p className="text-white/50">No pools yet. Create one to share invite links.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {groups.map((group) => (
+            {poolsWithCounts.map((pool) => (
               <div
-                key={group.id}
+                key={pool.id}
                 className="rounded-xl border border-white/10 bg-white/5 p-6"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-white">{group.name}</h3>
-                  <Link
-                    href={`/group/${group.id}`}
-                    className="text-xs text-[var(--gtown-highlight)] hover:underline"
-                  >
-                    View
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-white">{pool.name}</h3>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      pool.status === "open"
+                        ? "bg-green-500/20 text-green-400"
+                        : pool.status === "locked"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-white/10 text-white/50"
+                    }`}>
+                      {pool.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={`/pools/${pool.id}/settings`}
+                      className="text-xs text-white/40 hover:text-white/60 transition"
+                    >
+                      Settings
+                    </Link>
+                    <Link
+                      href={`/pools/${pool.id}`}
+                      className="text-xs text-[var(--gtown-highlight)] hover:underline"
+                    >
+                      View
+                    </Link>
+                  </div>
                 </div>
-                <div className="mt-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-                  <p className="text-xs text-white/40 mb-1">Invite link:</p>
-                  <code className="text-sm text-[var(--gtown-highlight)] break-all">
-                    {typeof window !== "undefined"
-                      ? window.location.origin
-                      : process.env.AUTH_URL || "http://localhost:3000"}
-                    /join/{group.inviteCode}
-                  </code>
+                <p className="mt-1 text-sm text-white/40">
+                  {pool.memberCount} member{pool.memberCount !== 1 ? "s" : ""}
+                </p>
+                <div className="mt-3">
+                  <CopyInviteLink inviteCode={pool.inviteCode} />
                 </div>
                 <p className="mt-2 text-xs text-white/30">
-                  Code: {group.inviteCode} &middot;{" "}
-                  Created {group.createdAt.toLocaleDateString()}
+                  Created {pool.createdAt.toLocaleDateString()}
                 </p>
               </div>
             ))}

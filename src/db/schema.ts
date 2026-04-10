@@ -93,30 +93,7 @@ export const verificationTokens = pgTable(
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
 );
 
-// ── Groups ─────────────────────────────────────────
-export const groups = pgTable("groups", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  inviteCode: text("invite_code").notNull().unique(),
-  createdBy: uuid("created_by")
-    .notNull()
-    .references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const groupMembers = pgTable(
-  "group_members",
-  {
-    groupId: uuid("group_id")
-      .notNull()
-      .references(() => groups.id, { onDelete: "cascade" }),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    joinedAt: timestamp("joined_at").defaultNow().notNull(),
-  },
-  (table) => [primaryKey({ columns: [table.groupId, table.userId] })]
-);
+// ── Groups (REMOVED — migrated to Pools) ──────────
 
 // ── Teams ──────────────────────────────────────────
 export const teams = pgTable("teams", {

@@ -15,6 +15,7 @@ import { getPoolSettings } from "@/lib/pool-helpers";
 import { AnnouncementForm } from "./announcement-form";
 import { PoolThemeActivator } from "@/components/pool-theme-activator";
 import { PoolChat } from "@/components/pool-chat";
+import { CopyInviteLink } from "@/components/copy-invite-link";
 
 export const dynamic = "force-dynamic";
 
@@ -100,11 +101,8 @@ export default async function PoolDashboardPage({
 
           {/* Invite link */}
           {pool.status === "open" && (
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-white/40">Invite code:</span>
-              <code className="text-sm font-mono text-[var(--gtown-highlight)] bg-white/5 px-2 py-0.5 rounded">
-                {pool.inviteCode}
-              </code>
+            <div className="mt-3">
+              <CopyInviteLink inviteCode={pool.inviteCode} />
             </div>
           )}
         </div>
