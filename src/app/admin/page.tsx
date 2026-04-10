@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getBoards, getAllGroups } from "@/lib/queries";
 import { createBoard, createGroup } from "@/lib/actions";
+import { isDraftLocked } from "@/lib/config";
+import { DraftControl } from "@/components/draft-control";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboard() {
   const boards = await getBoards(2026);
   const groups = await getAllGroups();
+  const locked = await isDraftLocked();
 
   async function handleCreateBoard(formData: FormData) {
     "use server";
@@ -23,6 +26,8 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-10">
+      <DraftControl isLocked={locked} />
+
       {/* Mock Draft Boards section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
