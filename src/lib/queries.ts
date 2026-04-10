@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { eq, asc, desc, and } from "drizzle-orm";
+import { eq, asc, desc, and, gt } from "drizzle-orm";
 import {
   teams,
   players,
@@ -18,6 +18,7 @@ import {
   poolStandings,
   appInvites,
   livePredictions,
+  chatMessages,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -522,4 +523,29 @@ export async function getPickScoresForBoard(boardId: string) {
     .leftJoin(players, eq(pickScores.actualPlayerId, players.id))
     .where(eq(pickScores.boardId, boardId))
     .orderBy(asc(pickScores.pickNumber));
+}
+
+export async function getPoolChatMessages(poolId: string, after?: string) {
+  const conditions = [eq(chatMessages.poolId, poolId)];
+  if (after) {
+    conditions.push(gt(chatMessages.createdAt, new Date(after)));
+  }
+
+  const messages = await db
+    .select({
+      id: chatMessages.id,
+      content: chatMessages.content,
+      createdAt: chatMessages.createdAt,
+      userId: chatMessages.userId,
+      userName: users.name,
+      userEmail: users.email,
+      userImage: users.image,
+    })
+    .from(chatMessages)
+    .innerJoin(users, eq(chatMessages.userId, users.id))
+    .where(and(...conditions))
+    .orderBy(chatMessages.createdAt)
+    .limit(50);
+
+  return messages;
 }

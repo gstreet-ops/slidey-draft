@@ -15,6 +15,7 @@ import {
   poolAnnouncements,
   draftOrder,
   players,
+  chatMessages,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -31,6 +32,7 @@ import {
   scoreLivePredictions,
   recalculateAllPools,
 } from "@/lib/pool-scoring";
+import { getUserById, isPoolMember } from "@/lib/queries";
 
 // ── Create a new mock draft board ──────────────────
 export async function createBoard(formData: FormData) {
@@ -760,4 +762,27 @@ export async function autoFillByRank(
   revalidatePath(`/admin/board/${boardId}`);
   revalidatePath(`/my-board`);
   return filledCount;
+}
+// ── Pool Chat ───────────────────────────────────────
+export async function sendChatMessage(poolId: string, content: string) {
+  "use server";
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const user = await getUserById(session.user.id);
+  if (!user || user.status !== "active") throw new Error("Spectators cannot send messages");
+
+  const member = await isPoolMember(poolId, session.user.id);
+  if (!member) throw new Error("Not a pool member");
+
+  const trimmed = content.trim();
+  if (!trimmed || trimmed.length > 500) throw new Error("Message must be 1-500 characters");
+
+  await db.insert(chatMessages).values({
+    poolId,
+    userId: session.user.id,
+    content: trimmed,
+  });
+
+  revalidatePath(`/pools/${poolId}`);
 }
