@@ -28,9 +28,7 @@ export default async function LivePage() {
   if (userId) {
     const board = await getUserBoard(userId, season);
     userBoardId = board?.id || null;
-    if (session?.user?.status === "active") {
-      userPools = await getPoolsForUser(userId);
-    }
+    userPools = await getPoolsForUser(userId);
   }
 
   return (
