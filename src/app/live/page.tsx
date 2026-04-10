@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getUserBoard, getActualResults, getDraftOrder, getPoolsForUser, getPlayers } from "@/lib/queries";
+import { getUserBoard, getActualResults, getDraftOrder, getPoolsForUser, getPlayers, getPoolById } from "@/lib/queries";
 import { isDraftLocked } from "@/lib/config";
+import { getPoolSettings } from "@/lib/pool-helpers";
 import { WarRoom } from "./war-room";
 import { LivePredictionWidget } from "@/components/live-prediction";
 import { TriviaCard } from "@/components/trivia-card";
@@ -25,10 +26,18 @@ export default async function LivePage() {
 
   let userBoardId: string | null = null;
   let userPools: { poolId: string; poolName: string }[] = [];
+  let watchPartyEnabled = true;
   if (userId) {
     const board = await getUserBoard(userId, season);
     userBoardId = board?.id || null;
     userPools = await getPoolsForUser(userId);
+    if (userPools.length > 0) {
+      const pool = await getPoolById(userPools[0].poolId);
+      if (pool) {
+        const settings = getPoolSettings(pool.settings);
+        watchPartyEnabled = settings.watchParty;
+      }
+    }
   }
 
   return (
@@ -84,7 +93,7 @@ export default async function LivePage() {
         poolId={userPools.length > 0 ? userPools[0].poolId : null}
       />
 
-      {userPools.length > 0 && (
+      {userPools.length > 0 && watchPartyEnabled && (
         <VideoWidget poolId={userPools[0].poolId} poolName={userPools[0].poolName} />
       )}
     </div>

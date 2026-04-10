@@ -23,6 +23,7 @@ export function PoolSettingsForm({
   const [description, setDescription] = useState(poolDescription);
   const [mockDraftBonus, setMockDraftBonus] = useState(settings.mockDraftBonus);
   const [livePredictions, setLivePredictions] = useState(settings.livePredictions);
+  const [watchParty, setWatchParty] = useState(settings.watchParty);
   const [rounds, setRounds] = useState<number[]>(settings.rounds);
   const [pointValues, setPointValues] = useState(settings.mockPointValues);
   const [livePointValues, setLivePointValues] = useState(settings.livePointValues);
@@ -39,6 +40,7 @@ export function PoolSettingsForm({
           rounds,
           mockDraftBonus,
           livePredictions,
+          watchParty,
           mockPointValues: pointValues,
           livePointValues,
         },
@@ -129,6 +131,18 @@ export function PoolSettingsForm({
             type="checkbox"
             checked={livePredictions}
             onChange={(e) => setLivePredictions(e.target.checked)}
+            className="w-5 h-5 accent-[var(--gtown-highlight)]"
+          />
+        </label>
+        <label className="flex items-center justify-between cursor-pointer">
+          <div>
+            <span className="text-sm text-white">Watch Party (Video Chat)</span>
+            <p className="text-xs text-white/30">Jitsi video chat appears on draft night</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={watchParty}
+            onChange={(e) => setWatchParty(e.target.checked)}
             className="w-5 h-5 accent-[var(--gtown-highlight)]"
           />
         </label>

@@ -82,6 +82,7 @@ export const DEFAULT_POOL_SETTINGS = {
   rounds: [1],
   mockDraftBonus: true,
   livePredictions: true,
+  watchParty: true,
   entryDeadline: null,
   maxMembers: null,
   mockPointValues: {
