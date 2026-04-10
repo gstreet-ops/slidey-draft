@@ -28,14 +28,11 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
   const [closed, setClosed] = useState(false);
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
-  const [jitsiLoaded, setJitsiLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
   const widgetRef = useRef<HTMLDivElement>(null);
-  const jitsiContainerRef = useRef<HTMLDivElement>(null);
-  const jitsiApiRef = useRef<unknown>(null);
 
-  const jitsiRoom = `ddc-pool-${poolId.slice(0, 8)}`;
+  const jitsiRoom = `DraftDayChallenge${poolId.slice(0, 8)}`;
+  const jitsiEmbedUrl = `https://meet.jit.si/${jitsiRoom}#config.prejoinPageEnabled=false&config.startWithAudioMuted=true&config.startWithVideoMuted=false&interfaceConfig.TOOLBAR_BUTTONS=["microphone","camera","hangup","tileview"]&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.SHOW_BRAND_WATERMARK=false`;
 
   // Set initial position
   useEffect(() => {
@@ -80,75 +77,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     };
   }, [dragging]);
 
-  // Load Jitsi IFrame API
-  useEffect(() => {
-    if (closed || minimized) return;
-    if (jitsiApiRef.current) return;
-
-    if ((window as unknown as Record<string, unknown>).JitsiMeetExternalAPI) {
-      setJitsiLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://meet.jit.si/external_api.js";
-    script.async = true;
-    script.onload = () => setJitsiLoaded(true);
-    script.onerror = () => setError("Failed to load video chat");
-    document.head.appendChild(script);
-  }, [closed, minimized]);
-
-  // Initialize Jitsi
-  useEffect(() => {
-    if (!jitsiLoaded || closed || minimized) return;
-    if (jitsiApiRef.current) return;
-    if (!jitsiContainerRef.current) return;
-
-    const JitsiAPI = (window as unknown as Record<string, unknown>).JitsiMeetExternalAPI as
-      | (new (domain: string, options: Record<string, unknown>) => { dispose: () => void })
-      | undefined;
-
-    if (!JitsiAPI) {
-      setError("Jitsi API not available");
-      return;
-    }
-
-    try {
-      const api = new JitsiAPI("meet.jit.si", {
-        roomName: jitsiRoom,
-        parentNode: jitsiContainerRef.current,
-        width: "100%",
-        height: 200,
-        configOverwrite: {
-          startWithAudioMuted: true,
-          startWithVideoMuted: false,
-          prejoinPageEnabled: false,
-        },
-        interfaceConfigOverwrite: {
-          SHOW_JITSI_WATERMARK: false,
-          SHOW_BRAND_WATERMARK: false,
-          TOOLBAR_BUTTONS: ["microphone", "camera", "hangup", "tileview"],
-          DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-        },
-      });
-      jitsiApiRef.current = api;
-    } catch (err) {
-      setError("Video error: " + (err instanceof Error ? err.message : String(err)));
-    }
-
-    return () => {
-      if (jitsiApiRef.current) {
-        (jitsiApiRef.current as { dispose: () => void }).dispose();
-        jitsiApiRef.current = null;
-      }
-    };
-  }, [jitsiLoaded, closed, minimized, jitsiRoom]);
-
   function handleClose() {
-    if (jitsiApiRef.current) {
-      (jitsiApiRef.current as { dispose: () => void }).dispose();
-      jitsiApiRef.current = null;
-    }
     setClosed(true);
   }
 
@@ -156,7 +85,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
   if (closed) {
     return (
       <button
-        onClick={() => { setClosed(false); setJitsiLoaded(false); setError(null); }}
+        onClick={() => setClosed(false)}
         className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--gtown-navy)] border border-white/20 px-4 py-2.5 text-white text-xs font-semibold hover:bg-white/10 transition shadow-lg"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -232,24 +161,14 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
         </div>
       </div>
 
-      {/* Jitsi container */}
-      <div ref={jitsiContainerRef} className="bg-black" style={{ height: 200 }}>
-        {error ? (
-          <div className="flex flex-col items-center justify-center h-full text-red-400 text-xs gap-2 px-4 text-center">
-            <p>{error}</p>
-            <button
-              onClick={() => { setError(null); setJitsiLoaded(false); }}
-              className="text-white/50 hover:text-white text-xs underline"
-            >
-              Retry
-            </button>
-          </div>
-        ) : !jitsiLoaded ? (
-          <div className="flex items-center justify-center h-full text-white/30 text-xs">
-            Loading video...
-          </div>
-        ) : null}
-      </div>
+      {/* Jitsi video */}
+      <iframe
+        src={jitsiEmbedUrl}
+        allow="camera; microphone; fullscreen; display-capture; autoplay"
+        sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        className="w-full bg-black border-0"
+        style={{ height: 200 }}
+      />
     </div>
   );
 }
