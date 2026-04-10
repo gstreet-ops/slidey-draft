@@ -480,6 +480,7 @@ export const triviaResponses = pgTable(
     questionId: uuid("question_id")
       .notNull()
       .references(() => triviaQuestions.id),
+    pickNumber: integer("pick_number"),
     selectedOption: text("selected_option").notNull(),
     isCorrect: boolean("is_correct").notNull(),
     pointsAwarded: integer("points_awarded").notNull().default(0),
@@ -504,6 +505,25 @@ export const poolTeams = pgTable("pool_teams", {
   colorHex: text("color_hex").notNull().default("#4A7AB5"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// ── Chat Messages ────────────────────────────────
+export const chatMessages = pgTable(
+  "chat_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    content: text("content").notNull(), // max 500 chars enforced at API level
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("chat_messages_pool_created_idx").on(table.poolId, table.createdAt),
+  ]
+);
 
 // ── Pool Team Members ────────────────────────────
 export const poolTeamMembers = pgTable(
