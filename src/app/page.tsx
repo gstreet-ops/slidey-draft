@@ -4,7 +4,8 @@ import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPic
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
-import { HomeNav } from "@/components/home-nav";
+import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
 
 export const dynamic = "force-dynamic";
@@ -32,28 +33,16 @@ export default async function Home() {
     if (board) featuredPicks = board.picks.slice(0, 6);
   }
 
-  // Build nav links
-  const navLinks = [
-    { href: "/picks", label: "Mock Drafts" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    { href: "/guide", label: "How to Play" },
-  ];
-  if (session?.user) {
-    navLinks.push({ href: "/dashboard", label: "Dashboard" });
-    if (session.user.status === "active") navLinks.push({ href: "/pools", label: "Pools" });
-    navLinks.push({ href: "/live", label: locked ? "War Room" : "Live" });
-    navLinks.push({ href: "/my-board", label: "My Board" });
-    navLinks.push({ href: "/guide/user", label: "How to Play" });
-    if (session.user.role === "admin") navLinks.push({ href: "/admin", label: "Studio" });
-  } else {
-    navLinks.push({ href: "/guide/user", label: "How to Play" });
-    navLinks.push({ href: "/login", label: "Sign In" });
-  }
-
-
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <HomeNav links={navLinks} />
+      <SiteNav
+        isLoggedIn={!!session?.user}
+        isAdmin={session?.user?.role === "admin"}
+        isLocked={locked}
+        userInitial={session?.user?.name?.[0]?.toUpperCase()}
+        teamLogoUrl={session?.user?.favoriteTeam?.logoUrl}
+        teamName={session?.user?.favoriteTeam?.name}
+      />
       {isSpectator && <SpectatorBanner />}
 
       {/* ── HERO ── */}
@@ -228,12 +217,7 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ── FOOTER ── */}
-      <footer className="mt-auto border-t border-white/10 px-4 py-6 text-center sm:px-6">
-        <p className="text-xs text-white/25">
-          &copy; {new Date().getFullYear()} Draft Day Challenge &mdash; A GStreet Production
-        </p>
-      </footer>
+      <SiteFooter isAdmin={session?.user?.role === "admin"} />
     </div>
   );
 }
