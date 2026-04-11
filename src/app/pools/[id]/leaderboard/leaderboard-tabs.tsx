@@ -22,10 +22,12 @@ export function LeaderboardTabs({
   poolId,
   standings,
   currentUserId,
+  scoringMode = "standard",
 }: {
   poolId: string;
   standings: Standing[];
   currentUserId: string;
+  scoringMode?: "standard" | "custom";
 }) {
   const [tab, setTab] = useState<"individual" | "teams">("individual");
 
@@ -70,6 +72,7 @@ export function LeaderboardTabs({
                     <th className="text-left px-4 py-3">Name</th>
                     <th className="text-right px-4 py-3">Mock</th>
                     <th className="text-right px-4 py-3">Live</th>
+                    <th className="text-right px-4 py-3">Trivia</th>
                     <th className="text-right px-4 py-3">Total</th>
                     <th className="text-right px-4 py-3">Accuracy</th>
                   </tr>
@@ -111,6 +114,7 @@ export function LeaderboardTabs({
                         </td>
                         <td className="px-4 py-3 text-right text-white/60">{s.mockBonus}</td>
                         <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>
+                        <td className="px-4 py-3 text-right text-white/60">{(s as Record<string, unknown>).triviaTotal as number ?? 0}</td>
                         <td className="px-4 py-3 text-right text-white font-bold">{s.combinedScore}</td>
                         <td className="px-4 py-3 text-right text-white/40">
                           {s.picksPredicted > 0 ? `${accuracy}%` : "-"}

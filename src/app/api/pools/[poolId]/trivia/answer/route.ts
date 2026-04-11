@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { triviaQuestions, triviaResponses } from "@/db/schema";
+import { triviaQuestions, triviaResponses, pools } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { recalculatePoolStandings } from "@/lib/pool-scoring";
+import { getPoolSettings, getEffectiveScoring } from "@/lib/pool-helpers";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ poolId: string }> }) {
   const session = await auth();
@@ -16,15 +18,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ poo
   }
 
   const question = await db.query.triviaQuestions.findFirst({
-    where: (q, { eq }) => eq(q.id, questionId),
+    where: (q, { eq: e }) => e(q.id, questionId),
   });
 
   if (!question) {
     return NextResponse.json({ error: "Question not found" }, { status: 404 });
   }
 
+  // Get pool settings for tiered trivia scoring
+  const [pool] = await db.select().from(pools).where(eq(pools.id, poolId));
+  const settings = getPoolSettings(pool?.settings);
+  const scoring = getEffectiveScoring(settings);
+  const difficulty = (question.difficulty || "medium") as "easy" | "medium" | "hard";
+  const tierPoints = scoring.triviaPointValues[difficulty] ?? scoring.triviaPointValues.medium;
+
   const isCorrect = selectedOption === question.correctOption;
-  const pointsAwarded = isCorrect ? 5 : 0;
+  const pointsAwarded = isCorrect ? tierPoints : 0;
 
   await db
     .insert(triviaResponses)

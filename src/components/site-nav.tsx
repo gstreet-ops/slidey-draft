@@ -30,6 +30,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     { href: "/picks", label: "Mock Drafts" },
     ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     { href: "/guide", label: "How to Play" },
+    { href: "/scoring", label: "Scoring" },
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];
 

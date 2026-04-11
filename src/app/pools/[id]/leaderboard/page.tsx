@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getPoolById, getPoolStandings, isPoolMember } from "@/lib/queries";
+import { getPoolSettings } from "@/lib/pool-helpers";
+import { ScoringBadge } from "@/components/scoring-badge";
 import { LeaderboardTabs } from "./leaderboard-tabs";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +40,10 @@ export default async function PoolLeaderboardPage({
 
       <main className="mx-auto max-w-3xl px-6 py-10 space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-white">{pool.name} Leaderboard</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-white">{pool.name} Leaderboard</h1>
+            <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
+          </div>
           <p className="text-white/40 text-sm mt-1">
             {pool.status === "completed" ? "Final Standings" : "Live Standings"}
           </p>
@@ -48,6 +53,7 @@ export default async function PoolLeaderboardPage({
           poolId={poolId}
           standings={standings}
           currentUserId={session.user.id}
+          scoringMode={getPoolSettings(pool.settings).scoringMode}
         />
       </main>
     </div>

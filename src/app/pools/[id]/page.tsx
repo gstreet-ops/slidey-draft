@@ -16,6 +16,7 @@ import { AnnouncementForm } from "./announcement-form";
 import { PoolThemeActivator } from "@/components/pool-theme-activator";
 import { PoolChat } from "@/components/pool-chat";
 import { CopyInviteLink } from "@/components/copy-invite-link";
+import { ScoringBadge } from "@/components/scoring-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,7 @@ export default async function PoolDashboardPage({
         <div className="space-y-2 mb-8">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold text-white">{pool.name}</h1>
+            <ScoringBadge mode={settings.scoringMode} />
             <span className={`text-xs px-2 py-0.5 rounded-full ${
               pool.status === "open" ? "bg-green-500/20 text-green-400"
               : pool.status === "locked" ? "bg-yellow-500/20 text-yellow-400"

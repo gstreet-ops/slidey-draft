@@ -6,6 +6,8 @@ import { JoinPoolForm } from "./join-pool-form";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { isDraftLocked } from "@/lib/config";
+import { getPoolSettings } from "@/lib/pool-helpers";
+import { ScoringBadge } from "@/components/scoring-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +75,7 @@ export default async function PoolsPage() {
                 )}
                 <div className="flex items-center gap-3 text-xs text-gray-400">
                   <span className="capitalize">{pool.role}</span>
+                  <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
                 </div>
               </Link>
             ))}

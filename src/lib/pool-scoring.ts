@@ -13,7 +13,7 @@ import {
   actualResults,
   players,
 } from "@/db/schema";
-import { getPoolSettings } from "@/lib/pool-helpers";
+import { getPoolSettings, getEffectiveScoring } from "@/lib/pool-helpers";
 
 /**
  * Score a mock draft board using the tiered model for a specific pool.
@@ -35,7 +35,8 @@ export async function scoreMockDraft(
   const settings = getPoolSettings(pool.settings);
   if (!settings.mockDraftBonus) return { total: 0, breakdown: [] };
 
-  const pv = settings.mockPointValues;
+  const scoring = getEffectiveScoring(settings);
+  const pv = scoring.mockPointValues;
 
   // Get board picks with player info
   const boardPicks = await db
@@ -170,6 +171,8 @@ export async function scoreLivePredictions(
     const round = Math.ceil(pickNumber / 32);
     if (!settings.rounds.includes(round)) continue;
 
+    const scoring = getEffectiveScoring(settings);
+
     const predictions = await db
       .select()
       .from(livePredictions)
@@ -182,7 +185,7 @@ export async function scoreLivePredictions(
 
     for (const pred of predictions) {
       const correct = pred.predictedPlayerId === actualPlayerId;
-      const pointsAwarded = correct ? settings.livePointValues.correctPlayer : 0;
+      const pointsAwarded = correct ? scoring.livePointValues.correctPlayer : 0;
 
       // Upsert live score (idempotent)
       const existing = await db

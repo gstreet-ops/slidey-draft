@@ -119,106 +119,35 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are three ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft), <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft), and <span className="text-gray-900 font-semibold">trivia</span> (answered between picks on draft night).
+              There are three ways to earn points:
             </p>
 
-            {/* Mock Draft Scoring Card */}
-            <div className="mt-8 rounded-xl border-2 border-[var(--lions-blue)]/30 bg-blue-50 p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">📋</span>
-                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-                  MOCK DRAFT SCORING
-                </h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-4">
-                Your 32-pick mock draft is scored against the actual results after each real pick is announced.
-              </p>
-
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Global Leaderboard</p>
-              <ScoreTable>
-                <ScoreRow type="exact" label="Exact Match" desc="Correct player at the correct pick number" pts={10} />
-                <ScoreRow type="close" label="Close" desc="Correct player, within 5 picks of actual slot" pts={5} />
-                <ScoreRow type="far" label="Far" desc="Correct player, 6+ picks off from actual slot" pts={3} />
-                <ScoreRow type="miss" label="Miss" desc="Player not drafted in Round 1, or wrong entirely" pts={0} />
-              </ScoreTable>
-              <p className="mt-3 text-xs text-gray-400">
-                Example: you predicted a player at pick #4 and he goes at pick #2 — that is 2 picks off, a "Close" match worth <span className="font-semibold text-yellow-600">+5</span>.
-              </p>
-
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mt-5 mb-2">Pool Mock Draft Bonus</p>
-              <p className="text-xs text-gray-500 mb-2">
-                Pools use a tiered system that rewards you for getting the player right, even if the slot is off:
-              </p>
-              <ScoreTable>
-                <ScoreRow type="exact" label="Exact Slot" desc="Correct player at the correct pick" pts={10} />
-                <ScoreRow type="close" label="Player Called + Close Range" desc="Player was drafted, and you had them within 3 picks" pts={5} />
-                <ScoreRow type="far" label="Player Called + Far Range" desc="Player was drafted, and you had them within 4-7 picks" pts={4} />
-                <ScoreRow type="miss" label="Player Called (any slot)" desc="You predicted a player who was actually drafted in Round 1" pts={3} />
-                <ScoreRow type="miss" label="Position Match" desc="Wrong player, but you predicted the correct position for that slot" pts={1} />
-              </ScoreTable>
-            </div>
-
-            {/* Live Prediction Scoring Card */}
-            <div className="mt-6 rounded-xl border-2 border-green-300 bg-green-50 p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">⚡</span>
-                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-                  LIVE PREDICTION SCORING
-                </h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-4">
-                During the real draft, pool members predict each pick before it is announced.
-              </p>
-              <div className="rounded-lg border border-green-200 bg-white px-4 py-3 flex items-center gap-4">
-                <span className="text-2xl font-bold text-green-600">+10</span>
+            <div className="mt-4 space-y-3">
+              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+                <span className="text-lg shrink-0">📋</span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">Correct Prediction</p>
-                  <p className="text-xs text-gray-500">You predicted the exact player selected for that pick</p>
+                  <p className="text-sm font-bold text-[var(--lions-blue)]">Mock Draft</p>
+                  <p className="mt-0.5 text-sm text-gray-600">Earn bonus points for correctly predicting which players get drafted and where. Up to 10 points per pick.</p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-gray-400">
-                Incorrect predictions earn 0 points. You get one prediction per pick — lock it in before the pick is announced.
-              </p>
-            </div>
-
-            {/* Trivia Scoring Card */}
-            <div className="mt-6 rounded-xl border-2 border-purple-300 bg-purple-50 p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">🧠</span>
-                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
-                  TRIVIA SCORING
-                </h3>
-              </div>
-              <p className="text-xs text-gray-500 mb-4">
-                Between picks, answer trivia questions to rack up bonus points. 15 seconds per question.
-              </p>
-              <div className="rounded-lg border border-purple-200 bg-white px-4 py-3 flex items-center gap-4">
-                <span className="text-2xl font-bold text-purple-600">+5</span>
+              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+                <span className="text-lg shrink-0">⚡</span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">Correct Answer</p>
-                  <p className="text-xs text-gray-500">You answered the trivia question correctly within the time limit</p>
+                  <p className="text-sm font-bold text-green-600">Live Predictions</p>
+                  <p className="mt-0.5 text-sm text-gray-600">Predict each pick in real time during the draft. 10 points for each correct call.</p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-gray-400">
-                Wrong answers and timeouts earn 0 points. Trivia points count toward both your individual and team scores.
-              </p>
+              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+                <span className="text-lg shrink-0">🧠</span>
+                <div>
+                  <p className="text-sm font-bold text-purple-600">Trivia</p>
+                  <p className="mt-0.5 text-sm text-gray-600">Answer draft trivia between picks. 3-10 points based on difficulty.</p>
+                </div>
+              </div>
             </div>
 
-            {/* Combined Score Summary */}
-            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">Your Pool Score</h3>
-              <div className="flex flex-wrap items-center gap-3 text-sm">
-                <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-blue-50 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
-                <span className="text-gray-300 font-bold">+</span>
-                <span className="rounded-lg border border-green-300 bg-green-50 px-3 py-1.5 text-xs font-bold text-green-600">Live Predictions</span>
-                <span className="text-gray-300 font-bold">+</span>
-                <span className="rounded-lg border border-purple-300 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-600">Trivia</span>
-                <span className="text-gray-300 font-bold">=</span>
-                <span className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-bold text-gray-900">Combined Score</span>
-              </div>
-              <p className="mt-3 text-xs text-gray-400">
-                The combined score determines your pool ranking. Rankings update live as each pick is announced.
-              </p>
+            <div className="mt-6">
+              <InlineLink href="/scoring">See the full scoring breakdown with examples &rarr;</InlineLink>
             </div>
           </section>
 
@@ -241,7 +170,7 @@ export default async function GuidePage() {
             <ul className="mt-3 space-y-2">
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (+5 each)</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (3-10 pts based on difficulty)</span></li>
             </ul>
             <p className="mt-2">
               The combined score from all three tracks determines your pool rank. Rankings update live as the draft progresses.
@@ -313,7 +242,7 @@ export default async function GuidePage() {
             </Faq>
 
             <Faq q="How does trivia work?">
-              After each pick is announced, a trivia question appears. Answer correctly for 5 bonus points. Questions cover NFL history, draft trivia, and prospect knowledge. You have until the next pick is announced to answer — if you miss it, no penalty.
+              After each pick is announced, a trivia question appears. Points depend on difficulty: Easy (3 pts), Medium (5 pts), Hard (10 pts). Questions cover NFL history, draft trivia, and prospect knowledge. You have until the next pick is announced to answer — if you miss it, no penalty.
             </Faq>
 
             <Faq q="How do live predictions work?">
@@ -414,33 +343,6 @@ function Feature({ title, desc }: { title: string; desc: string }) {
   );
 }
 
-function ScoreTable({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-3 space-y-1.5">
-      {children}
-    </div>
-  );
-}
-
-function ScoreRow({ type, label, desc, pts }: { type: string; label: string; desc: string; pts: number | string }) {
-  const colors: Record<string, string> = {
-    exact: "text-green-600",
-    close: "text-yellow-600",
-    far: "text-orange-500",
-    miss: "text-red-400",
-  };
-  return (
-    <div className="flex items-center gap-3 rounded-lg bg-white px-4 py-3 shadow-sm">
-      <span className={`text-lg font-bold w-12 text-center ${colors[type] || "text-gray-900"}`}>
-        +{pts}
-      </span>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-900">{label}</p>
-        <p className="text-xs text-gray-500">{desc}</p>
-      </div>
-    </div>
-  );
-}
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (

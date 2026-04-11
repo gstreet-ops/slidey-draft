@@ -260,6 +260,7 @@ export async function getPoolsForUser(userId: string) {
       poolStatus: pools.status,
       inviteCode: pools.inviteCode,
       description: pools.description,
+      settings: pools.settings,
     })
     .from(poolMembers)
     .innerJoin(pools, eq(poolMembers.poolId, pools.id))
@@ -326,6 +327,7 @@ export async function getPoolStandings(poolId: string) {
       userId: poolStandings.userId,
       mockBonus: poolStandings.mockBonus,
       liveTotal: poolStandings.liveTotal,
+      triviaTotal: poolStandings.triviaTotal,
       combinedScore: poolStandings.combinedScore,
       rank: poolStandings.rank,
       previousRank: poolStandings.previousRank,
