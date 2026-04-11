@@ -7,6 +7,7 @@ import { scoreAllBoards } from "@/lib/scoring";
 import { recalculateAllPools } from "@/lib/pool-scoring";
 import { getConfig, setConfig, isDraftLocked } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
+import { invalidateCache } from "@/lib/cache";
 
 const SEASON = 2026;
 const RATE_LIMIT_MS = 10_000;
@@ -99,6 +100,8 @@ export async function POST() {
       }
       await scoreAllBoards(SEASON);
       await recalculateAllPools();
+      invalidateCache("leaderboard:");
+      invalidateCache("draft-results:");
       console.log(`[Sync] ${new Date().toISOString()} — Scoring and standings recalculated for all pools`);
     } else {
       console.log(`[Sync] ${new Date().toISOString()} — Poll complete, no new picks (ESPN total: ${espnPicks.length})`);

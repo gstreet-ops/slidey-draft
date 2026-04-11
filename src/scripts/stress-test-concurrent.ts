@@ -75,7 +75,9 @@ async function runStressTest() {
 
     console.log(`  Requests: ${results.length}`);
     console.log(`  Status codes: ${[...new Set(results.map((r) => r.status))].join(", ")}`);
-    console.log(`  Avg: ${avg.toFixed(0)}ms | Min: ${min.toFixed(0)}ms | Max: ${max.toFixed(0)}ms`);
+    const sorted = [...times].sort((a, b) => a - b);
+    const p95 = sorted[Math.floor(0.95 * sorted.length)] ?? max;
+    console.log(`  Avg: ${avg.toFixed(0)}ms | P95: ${p95.toFixed(0)}ms | Min: ${min.toFixed(0)}ms | Max: ${max.toFixed(0)}ms`);
     if (errors.length > 0) {
       console.log(`  ERRORS: ${errors.length} requests failed`);
       errors.slice(0, 3).forEach((e) => console.log(`    - ${e.error || `status ${e.status}`}`));
@@ -94,16 +96,18 @@ async function runStressTest() {
     grouped.set(r.endpoint, arr);
   }
 
-  console.log("\n| Endpoint          | Avg (ms) | Max (ms) | Errors | Status |");
-  console.log("|-------------------|----------|----------|--------|--------|");
+  console.log("\n| Endpoint          | Avg (ms) | P95 (ms) | Max (ms) | Errors | Status |");
+  console.log("|-------------------|----------|----------|----------|--------|--------|");
   for (const [name, results] of grouped) {
     const times = results.map((r) => r.ms);
+    const sorted = [...times].sort((a, b) => a - b);
     const avg = times.reduce((a, b) => a + b, 0) / times.length;
+    const p95 = sorted[Math.floor(0.95 * sorted.length)] ?? Math.max(...times);
     const max = Math.max(...times);
     const errors = results.filter((r) => r.error || r.status >= 500).length;
-    const status = max > 2000 || errors > 0 ? "WARN" : "OK";
+    const status = max > 1500 || errors > 0 ? "WARN" : "OK";
     console.log(
-      `| ${name.padEnd(17)} | ${avg.toFixed(0).padStart(8)} | ${max.toFixed(0).padStart(8)} | ${String(errors).padStart(6)} | ${status.padStart(6)} |`
+      `| ${name.padEnd(17)} | ${avg.toFixed(0).padStart(8)} | ${p95.toFixed(0).padStart(8)} | ${max.toFixed(0).padStart(8)} | ${String(errors).padStart(6)} | ${status.padStart(6)} |`
     );
   }
 
