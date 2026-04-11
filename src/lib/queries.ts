@@ -243,11 +243,26 @@ export async function getAllPools() {
 }
 
 export async function getPoolByInviteCode(code: string) {
-  const [pool] = await db
-    .select()
+  const [result] = await db
+    .select({
+      id: pools.id,
+      name: pools.name,
+      commissionerId: pools.commissionerId,
+      inviteCode: pools.inviteCode,
+      status: pools.status,
+      settings: pools.settings,
+      description: pools.description,
+      logoUrl: pools.logoUrl,
+      primaryColor: pools.primaryColor,
+      secondaryColor: pools.secondaryColor,
+      createdAt: pools.createdAt,
+      updatedAt: pools.updatedAt,
+      commissionerName: users.name,
+    })
     .from(pools)
+    .leftJoin(users, eq(pools.commissionerId, users.id))
     .where(eq(pools.inviteCode, code.toUpperCase().trim()));
-  return pool || null;
+  return result || null;
 }
 
 export async function getPoolsForUser(userId: string) {

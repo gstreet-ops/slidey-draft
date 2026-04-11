@@ -4,7 +4,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: "admin" | "user";
+      role: "admin" | "commissioner" | "user";
       status: "spectator" | "active" | "suspended";
       favoriteTeam: {
         id: string;
@@ -18,7 +18,7 @@ declare module "next-auth" {
   }
 
   interface User {
-    role?: "admin" | "user";
+    role?: "admin" | "commissioner" | "user";
     status?: "spectator" | "active" | "suspended";
   }
 }

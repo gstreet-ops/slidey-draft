@@ -15,7 +15,7 @@ import {
 import type { AdapterAccountType } from "next-auth/adapters";
 
 // ── Enums ──────────────────────────────────────────
-export const userRoleEnum = pgEnum("user_role", ["admin", "user"]);
+export const userRoleEnum = pgEnum("user_role", ["admin", "commissioner", "user"]);
 export const userStatusEnum = pgEnum("user_status", [
   "spectator",
   "active",
@@ -277,6 +277,20 @@ export const appInvites = pgTable("app_invites", {
   claimedBy: uuid("claimed_by").references(() => users.id),
   claimedAt: timestamp("claimed_at"),
   expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ── Commissioner Invites ─────────────────────────
+export const commissionerInvites = pgTable("commissioner_invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id),
+  usedBy: uuid("used_by").references(() => users.id),
+  usedAt: timestamp("used_at"),
+  expiresAt: timestamp("expires_at").notNull(),
+  poolName: text("pool_name"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

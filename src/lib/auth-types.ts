@@ -7,7 +7,7 @@ declare module "next-auth" {
       email: string;
       name?: string | null;
       image?: string | null;
-      role: "admin" | "user";
+      role: "admin" | "commissioner" | "user";
       status: "spectator" | "active" | "suspended";
       favoriteTeam: {
         id: string;

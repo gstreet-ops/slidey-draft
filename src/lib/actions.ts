@@ -14,6 +14,7 @@ import {
   draftOrder,
   players,
   chatMessages,
+  commissionerInvites,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -370,8 +371,11 @@ export async function activateUser(userId: string) {
 
 // ── Create a pool ─────────────────────────────────
 export async function createPool(formData: FormData) {
-  const session = await requireActiveUser();
-  if (!session) throw new Error("Must be an active user to create a pool");
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  if (session.user.role !== "commissioner" && session.user.role !== "admin") {
+    throw new Error("Only commissioners and admins can create pools");
+  }
 
   const name = (formData.get("name") as string)?.trim();
   const description = (formData.get("description") as string)?.trim() || null;
@@ -403,8 +407,8 @@ export async function createPool(formData: FormData) {
 
 // ── Join a pool ───────────────────────────────────
 export async function joinPool(inviteCode: string) {
-  const session = await requireActiveUser();
-  if (!session) throw new Error("Must be an active user to join a pool");
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
 
   const [pool] = await db
     .select()
@@ -444,6 +448,14 @@ export async function joinPool(inviteCode: string) {
       role: "member",
     })
     .onConflictDoNothing();
+
+  // Activate spectators when they join via pool invite
+  if (session.user.status === "spectator") {
+    await db
+      .update(users)
+      .set({ status: "active" })
+      .where(eq(users.id, session.user.id));
+  }
 
   revalidatePath(`/pools/${pool.id}`);
   revalidatePath("/pools");
@@ -736,4 +748,143 @@ export async function sendChatMessage(poolId: string, content: string) {
   });
 
   revalidatePath(`/pools/${poolId}`);
+}
+
+// ═══════════════════════════════════════════════════
+// Commissioner Invites
+// ═══════════════════════════════════════════════════
+
+export async function generateCommissionerInvite(poolName?: string, expirationDays: number = 7) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  const code = await generateAppInviteCode();
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + expirationDays);
+
+  const [invite] = await db
+    .insert(commissionerInvites)
+    .values({
+      code,
+      createdBy: session.user.id,
+      expiresAt,
+      poolName: poolName?.trim() || null,
+    })
+    .returning();
+
+  revalidatePath("/admin");
+  return invite;
+}
+
+export async function getCommissionerInvites() {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  return db
+    .select({
+      id: commissionerInvites.id,
+      code: commissionerInvites.code,
+      poolName: commissionerInvites.poolName,
+      createdAt: commissionerInvites.createdAt,
+      expiresAt: commissionerInvites.expiresAt,
+      usedBy: commissionerInvites.usedBy,
+      usedAt: commissionerInvites.usedAt,
+      usedByName: users.name,
+      usedByEmail: users.email,
+    })
+    .from(commissionerInvites)
+    .leftJoin(users, eq(commissionerInvites.usedBy, users.id))
+    .orderBy(desc(commissionerInvites.createdAt));
+}
+
+export async function revokeCommissionerInvite(inviteId: string) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  await db.delete(commissionerInvites).where(eq(commissionerInvites.id, inviteId));
+  revalidatePath("/admin");
+}
+
+export async function claimCommissionerInvite(code: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  if (session.user.role === "commissioner" || session.user.role === "admin") {
+    return { success: true, message: "You're already a commissioner!", alreadyCommissioner: true };
+  }
+
+  const [invite] = await db
+    .select()
+    .from(commissionerInvites)
+    .where(eq(commissionerInvites.code, code.toUpperCase().trim()));
+
+  if (!invite) {
+    return { success: false, message: "Invalid commissioner invite code." };
+  }
+  if (invite.usedBy) {
+    return { success: false, message: "This commissioner invite has already been used." };
+  }
+  if (invite.expiresAt < new Date()) {
+    return { success: false, message: "This commissioner invite has expired." };
+  }
+
+  await db
+    .update(users)
+    .set({ role: "commissioner", status: "active" })
+    .where(eq(users.id, session.user.id));
+
+  await db
+    .update(commissionerInvites)
+    .set({ usedBy: session.user.id, usedAt: new Date() })
+    .where(eq(commissionerInvites.id, invite.id));
+
+  revalidatePath("/");
+  return { success: true, message: "You're now a commissioner!", poolName: invite.poolName };
+}
+
+export async function getCommissioners() {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  const commissioners = await db
+    .select({ id: users.id, name: users.name, email: users.email, createdAt: users.createdAt })
+    .from(users)
+    .where(eq(users.role, "commissioner"));
+
+  const result = [];
+  for (const c of commissioners) {
+    const userPools = await db
+      .select({ id: pools.id, memberCount: sql<number>`(SELECT COUNT(*) FROM pool_members WHERE pool_id = ${pools.id})` })
+      .from(pools)
+      .where(eq(pools.commissionerId, c.id));
+    result.push({
+      ...c,
+      poolCount: userPools.length,
+      totalMembers: userPools.reduce((sum, p) => sum + Number(p.memberCount), 0),
+    });
+  }
+  return result;
+}
+
+export async function demoteCommissioner(userId: string) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  await db
+    .update(users)
+    .set({ role: "user" })
+    .where(eq(users.id, userId));
+
+  revalidatePath("/admin");
 }

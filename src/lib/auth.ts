@@ -7,7 +7,12 @@ import {
   accounts,
   sessions,
   verificationTokens,
+  pools,
+  poolMembers,
+  commissionerInvites,
 } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db, {
@@ -30,6 +35,61 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ user }) {
+      // Process pending invite cookies after OAuth
+      try {
+        const cookieStore = await cookies();
+        const pendingCode = cookieStore.get("slidey_pending_invite")?.value;
+        const inviteType = cookieStore.get("slidey_invite_type")?.value;
+
+        if (pendingCode && inviteType && user.id) {
+          if (inviteType === "pool") {
+            // Upgrade spectator to active and auto-join pool
+            const [pool] = await db
+              .select()
+              .from(pools)
+              .where(eq(pools.inviteCode, pendingCode.toUpperCase().trim()));
+
+            if (pool && pool.status === "open") {
+              await db
+                .update(users)
+                .set({ status: "active" })
+                .where(eq(users.id, user.id));
+
+              await db
+                .insert(poolMembers)
+                .values({ poolId: pool.id, userId: user.id, role: "member" })
+                .onConflictDoNothing();
+            }
+          } else if (inviteType === "commissioner") {
+            // Upgrade to commissioner role
+            const [invite] = await db
+              .select()
+              .from(commissionerInvites)
+              .where(eq(commissionerInvites.code, pendingCode.toUpperCase().trim()));
+
+            if (invite && !invite.usedBy && (!invite.expiresAt || invite.expiresAt > new Date())) {
+              await db
+                .update(users)
+                .set({ role: "commissioner", status: "active" })
+                .where(eq(users.id, user.id));
+
+              await db
+                .update(commissionerInvites)
+                .set({ usedBy: user.id, usedAt: new Date() })
+                .where(eq(commissionerInvites.id, invite.id));
+            }
+          }
+
+          // Clear cookies
+          cookieStore.delete("slidey_pending_invite");
+          cookieStore.delete("slidey_invite_type");
+        }
+      } catch {
+        // Don't block sign-in if cookie processing fails
+      }
+      return true;
+    },
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;

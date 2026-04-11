@@ -2,30 +2,49 @@
 
 import { useState } from "react";
 
-export function CopyInviteLink({ inviteCode }: { inviteCode: string }) {
+export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; poolName?: string }) {
   const [copied, setCopied] = useState(false);
+  const [msgCopied, setMsgCopied] = useState(false);
 
-  const inviteUrl = `https://slidey-draft.vercel.app/pools/join/${inviteCode}`;
+  const inviteUrl = `https://slidey-draft.vercel.app/join/${inviteCode}`;
+  const shareMessage = `Join my draft pool on Slidey! \u{1F3C8} ${inviteUrl}`;
 
-  async function handleCopy() {
+  async function handleCopyLink() {
     await navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function handleCopyMessage() {
+    await navigator.clipboard.writeText(shareMessage);
+    setMsgCopied(true);
+    setTimeout(() => setMsgCopied(false), 2000);
+  }
+
   return (
-    <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-      <p className="text-xs text-white/40 mb-1">Invite link:</p>
+    <div className="space-y-2">
+      <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+        <div className="flex items-center gap-2">
+          <code className="text-sm text-[var(--gtown-highlight)] break-all flex-1">
+            {inviteUrl}
+          </code>
+          <button
+            onClick={handleCopyLink}
+            className="shrink-0 rounded-md bg-[var(--gtown-highlight)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-80 transition"
+          >
+            {copied ? "Copied!" : "Copy Link"}
+          </button>
+        </div>
+      </div>
       <div className="flex items-center gap-2">
-        <code className="text-sm text-[var(--gtown-highlight)] break-all flex-1">
-          {inviteUrl}
-        </code>
         <button
-          onClick={handleCopy}
-          className="shrink-0 rounded-md bg-white/10 px-3 py-1 text-xs font-medium text-white hover:bg-white/20 transition"
+          onClick={handleCopyMessage}
+          className="text-xs text-white/40 hover:text-white/60 transition"
         >
-          {copied ? "Copied!" : "Copy"}
+          {msgCopied ? "Message copied!" : "Copy share message"}
         </button>
+        <span className="text-xs text-white/20">&middot;</span>
+        <span className="text-xs text-white/30 font-mono">Code: {inviteCode}</span>
       </div>
     </div>
   );

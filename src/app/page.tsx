@@ -4,6 +4,7 @@ import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPic
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
+import { InviteCodeInput } from "@/components/invite-code-input";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
@@ -16,7 +17,7 @@ export default async function Home() {
   const session = await auth();
   const locked = await isDraftLocked();
   const isSpectator = session?.user && session.user.status === "spectator";
-  const userPools = session?.user?.id && session.user.status === "active"
+  const userPools = session?.user?.id && session.user.status !== "spectator"
     ? await getPoolsForUser(session.user.id)
     : [];
 
@@ -126,15 +127,11 @@ export default async function Home() {
             </h2>
             <p className="text-sm text-gray-500 max-w-md mx-auto">
               {isSpectator
-                ? "You're browsing as a spectator. Enter an invite code to create mock drafts, join pools, and compete on draft night."
+                ? "You're browsing as a spectator. Got an invite code? Enter it below to join a pool and start competing."
                 : "Sign in and enter an invite code to start competing. Ask a friend who's already playing, or request one from the commissioner."}
             </p>
             {isSpectator ? (
-              <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-center">
-                <Link href="/settings" className="rounded-lg bg-[#0076B6] px-6 py-3 text-sm font-bold text-white hover:bg-[#0076B6]/80 transition">
-                  Enter Invite Code
-                </Link>
-              </div>
+              <InviteCodeInput />
             ) : (
               <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-center">
                 <Link href="/login" className="rounded-lg bg-[#0076B6] px-6 py-3 text-sm font-bold text-white hover:bg-[#0076B6]/80 transition">

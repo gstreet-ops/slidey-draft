@@ -5,6 +5,7 @@ import { isDraftLocked } from "@/lib/config";
 import { DraftControl } from "@/components/draft-control";
 import { redirect } from "next/navigation";
 import { CopyInviteLink } from "@/components/copy-invite-link";
+import { AdminCommissionerPanel } from "@/components/admin-commissioner-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +100,17 @@ export default async function AdminDashboard() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Commissioner Invites section */}
+      <div className="space-y-6">
+        <h2
+          className="text-3xl font-bold text-white tracking-wide"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          COMMISSIONER INVITES
+        </h2>
+        <AdminCommissionerPanel />
       </div>
 
       {/* Pools section */}
