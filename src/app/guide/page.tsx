@@ -119,7 +119,7 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are three ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft), <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft), and <span className="text-gray-900 font-semibold">trivia</span> (answered between picks).
+              There are three ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft), <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft), and <span className="text-gray-900 font-semibold">trivia</span> (answered between picks on draft night).
             </p>
 
             {/* Mock Draft Scoring Card */}
@@ -190,17 +190,17 @@ export default async function GuidePage() {
                 </h3>
               </div>
               <p className="text-xs text-gray-500 mb-4">
-                Between picks, answer NFL draft trivia questions to earn bonus points.
+                Between picks, answer trivia questions to rack up bonus points. 15 seconds per question.
               </p>
               <div className="rounded-lg border border-purple-200 bg-white px-4 py-3 flex items-center gap-4">
                 <span className="text-2xl font-bold text-purple-600">+5</span>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">Correct Answer</p>
-                  <p className="text-xs text-gray-500">You answered the trivia question correctly</p>
+                  <p className="text-xs text-gray-500">You answered the trivia question correctly within the time limit</p>
                 </div>
               </div>
               <p className="mt-3 text-xs text-gray-400">
-                Trivia questions auto-trigger between draft picks. You have until the next pick is announced to answer. One answer per question — wrong answers earn 0 points.
+                Wrong answers and timeouts earn 0 points. Trivia points count toward both your individual and team scores.
               </p>
             </div>
 
@@ -236,12 +236,12 @@ export default async function GuidePage() {
 
             <SubHeading>Pool Standings</SubHeading>
             <p>
-              Pool standings combine two scores:
+              Pool standings combine three scores:
             </p>
             <ul className="mt-3 space-y-2">
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia Total</span><span>— points from correct trivia answers between picks</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (+5 each)</span></li>
             </ul>
             <p className="mt-2">
               The combined score from all three tracks determines your pool rank. Rankings update live as the draft progresses.
