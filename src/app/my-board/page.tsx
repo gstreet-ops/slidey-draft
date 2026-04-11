@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 export default async function MyBoardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
+  if (session.user.status !== "active") redirect("/");
 
   const season = 2026;
   const locked = await isDraftLocked();

@@ -119,7 +119,7 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are two ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft) and <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft).
+              There are three ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft), <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft), and <span className="text-gray-900 font-semibold">trivia</span> (answered between picks).
             </p>
 
             {/* Mock Draft Scoring Card */}
@@ -181,6 +181,29 @@ export default async function GuidePage() {
               </p>
             </div>
 
+            {/* Trivia Scoring Card */}
+            <div className="mt-6 rounded-xl border-2 border-purple-300 bg-purple-50 p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">🧠</span>
+                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
+                  TRIVIA SCORING
+                </h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">
+                Between picks, answer NFL draft trivia questions to earn bonus points.
+              </p>
+              <div className="rounded-lg border border-purple-200 bg-white px-4 py-3 flex items-center gap-4">
+                <span className="text-2xl font-bold text-purple-600">+5</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Correct Answer</p>
+                  <p className="text-xs text-gray-500">You answered the trivia question correctly</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-gray-400">
+                Trivia questions auto-trigger between draft picks. You have until the next pick is announced to answer. One answer per question — wrong answers earn 0 points.
+              </p>
+            </div>
+
             {/* Combined Score Summary */}
             <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">Your Pool Score</h3>
@@ -188,6 +211,8 @@ export default async function GuidePage() {
                 <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-blue-50 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
                 <span className="text-gray-300 font-bold">+</span>
                 <span className="rounded-lg border border-green-300 bg-green-50 px-3 py-1.5 text-xs font-bold text-green-600">Live Predictions</span>
+                <span className="text-gray-300 font-bold">+</span>
+                <span className="rounded-lg border border-purple-300 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-600">Trivia</span>
                 <span className="text-gray-300 font-bold">=</span>
                 <span className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-bold text-gray-900">Combined Score</span>
               </div>
@@ -216,9 +241,10 @@ export default async function GuidePage() {
             <ul className="mt-3 space-y-2">
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia Total</span><span>— points from correct trivia answers between picks</span></li>
             </ul>
             <p className="mt-2">
-              The combined score determines your pool rank. Rankings update live as the draft progresses.
+              The combined score from all three tracks determines your pool rank. Rankings update live as the draft progresses.
             </p>
           </section>
 
@@ -237,7 +263,7 @@ export default async function GuidePage() {
                 <span className="text-gray-900 font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
               </Step>
               <Step n={3}>
-                <span className="text-gray-900 font-semibold">Live predictions</span> — if you are in a pool, you can predict each pick before it is announced for bonus points
+                <span className="text-gray-900 font-semibold">Live predictions & trivia</span> — predict each pick before it is announced, and answer trivia questions between picks for bonus points
               </Step>
               <Step n={4}>
                 <span className="text-gray-900 font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
@@ -284,6 +310,10 @@ export default async function GuidePage() {
 
             <Faq q="What is the 'BPA' tag on some picks?">
               BPA stands for "Best Player Available." It indicates a pick that was auto-filled based on consensus rankings rather than manually selected.
+            </Faq>
+
+            <Faq q="How does trivia work?">
+              After each pick is announced, a trivia question appears. Answer correctly for 5 bonus points. Questions cover NFL history, draft trivia, and prospect knowledge. You have until the next pick is announced to answer — if you miss it, no penalty.
             </Faq>
 
             <Faq q="How do live predictions work?">
