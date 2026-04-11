@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { triviaQuestions, triviaResponses } from "@/db/schema";
+import { recalculatePoolStandings } from "@/lib/pool-scoring";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ poolId: string }> }) {
   const session = await auth();
@@ -36,6 +37,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ poo
       pointsAwarded,
     })
     .onConflictDoNothing();
+
+  // Update standings so trivia points appear on leaderboards immediately
+  await recalculatePoolStandings(poolId);
 
   return NextResponse.json({
     correct: isCorrect,
