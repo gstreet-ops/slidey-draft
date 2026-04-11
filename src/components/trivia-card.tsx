@@ -116,7 +116,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Draft Trivia</h3>
-            <p className="text-xs text-white/30 mt-0.5">15 seconds per question — 5pts each</p>
+            <p className="text-xs text-white/30 mt-0.5">15 seconds per question — 3-10pts by difficulty</p>
           </div>
           <button
             onClick={fetchQuestion}
