@@ -107,29 +107,29 @@ export default async function ScoringPage() {
                 <tbody className="text-white/70">
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#1</td>
-                    <td className="py-2 pr-3">Cam Ward, QB</td>
-                    <td className="py-2 pr-3">Cam Ward, QB</td>
+                    <td className="py-2 pr-3">Fernando Mendoza, QB</td>
+                    <td className="py-2 pr-3">Fernando Mendoza, QB</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2) + Exact (5)</td>
                     <td className="py-2 text-right font-bold text-green-400">10</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#5</td>
-                    <td className="py-2 pr-3">Travis Hunter, CB</td>
-                    <td className="py-2 pr-3">Travis Hunter at #3</td>
+                    <td className="py-2 pr-3">Sonny Styles, LB</td>
+                    <td className="py-2 pr-3">Sonny Styles at #3</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2)</td>
                     <td className="py-2 text-right font-bold text-yellow-400">5</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#8</td>
-                    <td className="py-2 pr-3">Tetairoa McMillan, WR</td>
-                    <td className="py-2 pr-3">Luther Burden, WR</td>
+                    <td className="py-2 pr-3">Makai Lemon, WR</td>
+                    <td className="py-2 pr-3">Carnell Tate, WR</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Position Match (1)</td>
                     <td className="py-2 text-right font-bold text-purple-400">1</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#12</td>
-                    <td className="py-2 pr-3">Jalen Milroe, QB</td>
-                    <td className="py-2 pr-3">Malaki Starks, S</td>
+                    <td className="py-2 pr-3">Spencer Fano, OT</td>
+                    <td className="py-2 pr-3">Caleb Downs, S</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Wrong player, wrong position</td>
                     <td className="py-2 text-right font-bold text-red-400">0</td>
                   </tr>
@@ -173,22 +173,22 @@ export default async function ScoringPage() {
                 <tbody className="text-white/70">
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#1</td>
-                    <td className="py-2 pr-3">Cam Ward</td>
-                    <td className="py-2 pr-3">Cam Ward</td>
+                    <td className="py-2 pr-3">Fernando Mendoza</td>
+                    <td className="py-2 pr-3">Fernando Mendoza</td>
                     <td className="py-2 pr-3 text-green-400">Correct!</td>
                     <td className="py-2 text-right font-bold text-green-400">+10</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#2</td>
-                    <td className="py-2 pr-3">Travis Hunter</td>
-                    <td className="py-2 pr-3">Shedeur Sanders</td>
+                    <td className="py-2 pr-3">Jeremiyah Love</td>
+                    <td className="py-2 pr-3">Arvell Reese</td>
                     <td className="py-2 pr-3 text-red-400">Wrong</td>
                     <td className="py-2 text-right font-bold text-red-400">0</td>
                   </tr>
                   <tr className="border-t border-white/5">
                     <td className="py-2 pr-3 text-white/40">#3</td>
                     <td className="py-2 pr-3 text-white/30">— (didn&apos;t predict)</td>
-                    <td className="py-2 pr-3">Travis Hunter</td>
+                    <td className="py-2 pr-3">Jeremiyah Love</td>
                     <td className="py-2 pr-3 text-white/30">Missed</td>
                     <td className="py-2 text-right font-bold text-red-400">0</td>
                   </tr>
