@@ -119,7 +119,7 @@ export default async function GuidePage() {
           <section id="scoring">
             <SectionHeading>Scoring System</SectionHeading>
             <p>
-              There are two ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft) and <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft).
+              There are three ways to earn points: your <span className="text-gray-900 font-semibold">mock draft</span> (submitted before the draft), <span className="text-gray-900 font-semibold">live predictions</span> (made in real-time during the draft), and <span className="text-gray-900 font-semibold">trivia</span> (answered between picks on draft night).
             </p>
 
             {/* Mock Draft Scoring Card */}
@@ -181,6 +181,29 @@ export default async function GuidePage() {
               </p>
             </div>
 
+            {/* Trivia Scoring Card */}
+            <div className="mt-6 rounded-xl border-2 border-purple-300 bg-purple-50 p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">🧠</span>
+                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-display)" }}>
+                  TRIVIA SCORING
+                </h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">
+                Between picks, answer trivia questions to rack up bonus points. 15 seconds per question.
+              </p>
+              <div className="rounded-lg border border-purple-200 bg-white px-4 py-3 flex items-center gap-4">
+                <span className="text-2xl font-bold text-purple-600">+5</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Correct Answer</p>
+                  <p className="text-xs text-gray-500">You answered the trivia question correctly within the time limit</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-gray-400">
+                Wrong answers and timeouts earn 0 points. Trivia points count toward both your individual and team scores.
+              </p>
+            </div>
+
             {/* Combined Score Summary */}
             <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">Your Pool Score</h3>
@@ -188,6 +211,8 @@ export default async function GuidePage() {
                 <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-blue-50 px-3 py-1.5 text-xs font-bold text-[var(--lions-blue)]">Mock Draft Bonus</span>
                 <span className="text-gray-300 font-bold">+</span>
                 <span className="rounded-lg border border-green-300 bg-green-50 px-3 py-1.5 text-xs font-bold text-green-600">Live Predictions</span>
+                <span className="text-gray-300 font-bold">+</span>
+                <span className="rounded-lg border border-purple-300 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-600">Trivia</span>
                 <span className="text-gray-300 font-bold">=</span>
                 <span className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-bold text-gray-900">Combined Score</span>
               </div>
@@ -211,11 +236,12 @@ export default async function GuidePage() {
 
             <SubHeading>Pool Standings</SubHeading>
             <p>
-              Pool standings combine two scores:
+              Pool standings combine three scores:
             </p>
             <ul className="mt-3 space-y-2">
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
               <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (+5 each)</span></li>
             </ul>
             <p className="mt-2">
               The combined score determines your pool rank. Rankings update live as the draft progresses.
