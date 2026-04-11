@@ -33,11 +33,26 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const questionRef = useRef<Question | null>(null);
 
-  const handleTimeout = useCallback(() => {
-    // Time's up — no points, show result as timeout
-    setResult({ correct: false, correctOption: "", pointsAwarded: 0 });
+  const handleTimeout = useCallback(async () => {
+    // Time's up — submit empty answer to server so question is marked answered (not re-asked)
+    const q = questionRef.current;
+    if (q) {
+      try {
+        const res = await fetch(`/api/pools/${poolId}/trivia/answer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questionId: q.id, selectedOption: "__timeout__" }),
+        });
+        const data = await res.json();
+        setResult({ correct: false, correctOption: data.correctOption || "", pointsAwarded: 0 });
+      } catch {
+        setResult({ correct: false, correctOption: "", pointsAwarded: 0 });
+      }
+    } else {
+      setResult({ correct: false, correctOption: "", pointsAwarded: 0 });
+    }
     setSelected(null);
-  }, []);
+  }, [poolId]);
 
   // Start countdown when a new question loads
   useEffect(() => {

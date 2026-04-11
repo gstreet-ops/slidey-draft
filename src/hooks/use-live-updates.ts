@@ -40,6 +40,7 @@ export function useLiveUpdates<T = unknown>(
   const endpointsKey = endpoints.join(",");
   const methodRef = useRef(method);
   methodRef.current = method;
+  const failCountRef = useRef(0);
 
   const fetchAll = useCallback(async () => {
     if (!enabled || endpoints.length === 0) return;
@@ -59,11 +60,14 @@ export function useLiveUpdates<T = unknown>(
       setData(value as T);
       setError(null);
       setFailCount(0);
+      failCountRef.current = 0;
       setLastUpdated(new Date());
     } catch (err) {
       if (!mountedRef.current) return;
       setError(err instanceof Error ? err : new Error(String(err)));
-      setFailCount((prev) => prev + 1);
+      failCountRef.current += 1;
+      setFailCount(failCountRef.current);
+      console.error(`[LiveUpdates] Poll failed (attempt ${failCountRef.current}):`, err instanceof Error ? err.message : err);
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
@@ -81,12 +85,23 @@ export function useLiveUpdates<T = unknown>(
     // Initial fetch
     fetchAll();
 
-    // Set up polling
-    const id = setInterval(fetchAll, interval);
+    // Polling with exponential backoff on failures
+    let timeoutId: ReturnType<typeof setTimeout>;
+    function scheduleNext() {
+      // Backoff: normal interval * 2^(failCount), capped at 4x interval (240s at 60s base)
+      const backoffMultiplier = Math.min(Math.pow(2, failCountRef.current), 4);
+      const nextInterval = failCountRef.current > 0 ? interval * backoffMultiplier : interval;
+      timeoutId = setTimeout(async () => {
+        if (!mountedRef.current) return;
+        await fetchAll();
+        if (mountedRef.current) scheduleNext();
+      }, nextInterval);
+    }
+    scheduleNext();
 
     return () => {
       mountedRef.current = false;
-      clearInterval(id);
+      clearTimeout(timeoutId);
     };
   }, [fetchAll, interval, enabled]);
 

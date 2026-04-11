@@ -311,8 +311,8 @@ export async function recalculatePoolStandings(poolId: string) {
     });
   }
 
-  // Sort by combined score descending
-  standingsData.sort((a, b) => b.combinedScore - a.combinedScore);
+  // Sort by combined score descending, then by correct predictions descending as tiebreaker
+  standingsData.sort((a, b) => b.combinedScore - a.combinedScore || b.correctPredictions - a.correctPredictions);
 
   // Upsert standings
   for (let i = 0; i < standingsData.length; i++) {

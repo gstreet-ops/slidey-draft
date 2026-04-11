@@ -91,6 +91,16 @@ const POSITION_ALIASES: Record<string, string[]> = {
   "ilb": ["ilb", "lb", "mlb"],
   "mlb": ["mlb", "lb", "ilb"],
   "lb": ["lb", "ilb", "mlb", "olb"],
+  "iol": ["iol", "og", "g", "ol", "c"],
+  "c": ["c", "ol", "iol"],
+  "fb": ["fb", "rb"],
+  "rb": ["rb", "fb"],
+  "ls": ["ls"],
+  "p": ["p", "k"],
+  "k": ["k", "p"],
+  "wr": ["wr"],
+  "te": ["te"],
+  "qb": ["qb"],
 };
 
 export function positionMatches(espnPos: string, ourPos: string): boolean {

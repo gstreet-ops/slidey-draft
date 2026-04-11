@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { actualResults, players, draftOrder } from "@/db/schema";
 import { fetchDraftPicks, normalizePlayerName, positionMatches } from "@/lib/espn-api";
 import { scoreAllBoards } from "@/lib/scoring";
+import { recalculateAllPools } from "@/lib/pool-scoring";
 import { getConfig, setConfig, isDraftLocked } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
 
@@ -90,12 +91,17 @@ export async function POST() {
     }
 
     if (newPicks > 0) {
+      console.log(`[Sync] ${new Date().toISOString()} — ${newPicks} new pick(s) detected, total ESPN picks: ${espnPicks.length}`);
       const locked = await isDraftLocked();
       if (!locked) {
         await setConfig("draft_locked", "true");
         await autoFillAllBoards(SEASON);
       }
       await scoreAllBoards(SEASON);
+      await recalculateAllPools();
+      console.log(`[Sync] ${new Date().toISOString()} — Scoring and standings recalculated for all pools`);
+    } else {
+      console.log(`[Sync] ${new Date().toISOString()} — Poll complete, no new picks (ESPN total: ${espnPicks.length})`);
     }
 
     const total = await db
