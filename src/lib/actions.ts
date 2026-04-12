@@ -19,8 +19,8 @@ import {
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { scoreAllBoards } from "@/lib/scoring";
+import { requireActiveUser } from "@/lib/auth-helpers";
 import {
-  requireActiveUser,
   generateAppInviteCode,
   generatePoolInviteCode,
   canManagePool,
