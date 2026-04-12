@@ -3,9 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getPoolsForUser } from "@/lib/queries";
 import { JoinPoolForm } from "./join-pool-form";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { isDraftLocked } from "@/lib/config";
 import { getPoolSettings } from "@/lib/pool-helpers";
 import { ScoringBadge } from "@/components/scoring-badge";
 
@@ -17,17 +15,9 @@ export default async function PoolsPage() {
   if (session.user.status !== "active") redirect("/");
 
   const pools = await getPoolsForUser(session.user.id);
-  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={true}
-        isAdmin={session.user.role === "admin"}
-        isLocked={locked}
-        userInitial={session.user.name?.[0]?.toUpperCase()}
-      />
-
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Your Pools</h1>

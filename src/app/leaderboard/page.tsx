@@ -2,9 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getLeaderboard, getActualResults } from "@/lib/queries";
 import { auth } from "@/lib/auth";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -15,17 +13,8 @@ export default async function LeaderboardPage() {
   const results = await getActualResults(season);
   const allDone = results.length >= 32;
 
-  const locked = await isDraftLocked();
-
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-      />
-
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         {allDone && (
           <div className="mb-6 rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-6 py-4 text-center">

@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/lib/auth";
-import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -18,17 +16,9 @@ const sections = [
 
 export default async function GuidePage() {
   const session = await auth();
-  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-      />
-
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         {/* Header — stays on dark bg */}
         <h1
@@ -73,7 +63,7 @@ export default async function GuidePage() {
           <section id="mock-draft">
             <SectionHeading>Your Mock Draft</SectionHeading>
             <p>
-              Head to <InlineLink href="/my-board">My Board</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
+              Head to <InlineLink href="/my-board">My Draft</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
             </p>
 
             <div className="mt-6 space-y-3">
@@ -218,7 +208,7 @@ export default async function GuidePage() {
             <SectionHeading>FAQ</SectionHeading>
 
             <Faq q="When does my board lock?">
-              Your board locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Board indicating the draft is locked.
+              Your board locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Draft indicating the draft is locked.
             </Faq>
 
             <Faq q="Can I edit my mock draft after publishing?">
@@ -266,7 +256,7 @@ export default async function GuidePage() {
               href={session?.user ? "/my-board" : "/login"}
               className="rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition"
             >
-              {session?.user ? "Go to My Board" : "Sign In & Draft"}
+              {session?.user ? "Go to My Draft" : "Sign In & Draft"}
             </Link>
             <Link
               href="/picks"

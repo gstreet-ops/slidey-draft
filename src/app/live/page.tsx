@@ -8,8 +8,6 @@ import { LivePredictionWidget } from "@/components/live-prediction";
 import { TriviaCard } from "@/components/trivia-card";
 import { SoundToggle } from "@/components/sound-toggle";
 import { VideoWidget } from "@/components/video-widget";
-import Link from "next/link";
-
 export const dynamic = "force-dynamic";
 
 export default async function LivePage() {
@@ -42,24 +40,19 @@ export default async function LivePage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <header className="border-b border-white/10 bg-black/20">
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3">
-          <Link href="/" className="text-xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
+      {/* Live status bar */}
+      <div className="border-b border-white/5 bg-black/10">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-1.5">
+          <span className="flex items-center gap-1.5 text-xs">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-green-400 font-medium">LIVE</span>
+          </span>
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-xs">
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-green-400 font-medium">LIVE</span>
-            </span>
             <SoundToggle />
-            <nav className="flex gap-3 text-sm text-white/60">
-              <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
-              {session?.user && <span className="text-white/40">{session.user.name || session.user.email}</span>}
-            </nav>
+            {session?.user && <span className="text-xs text-white/40">{session.user.name || session.user.email}</span>}
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Live Prediction Widget for pool members */}
       {userPools.length > 0 && (

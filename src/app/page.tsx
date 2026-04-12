@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
 import { InviteCodeInput } from "@/components/invite-code-input";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { ScoringBadge } from "@/components/scoring-badge";
@@ -22,14 +21,6 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-        teamLogoUrl={session?.user?.favoriteTeam?.logoUrl}
-        teamName={session?.user?.favoriteTeam?.name}
-      />
       {isSpectator && <SpectatorBanner />}
 
       {isLoggedIn ? (
@@ -128,7 +119,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           <QuickAction href="/scoring" title="Scoring Guide" desc="How points work" icon="📊" />
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon="📖" />
           {locked && (
-            <QuickAction href="/live" title="War Room" desc="Live draft experience" icon="⚡" highlight />
+            <QuickAction href="/live" title="My Draft (Live)" desc="Live draft experience" icon="⚡" highlight />
           )}
           {isAdmin && (
             <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon="🔧" />

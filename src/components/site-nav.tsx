@@ -20,7 +20,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     { href: "/big-board", label: "Big Board" },
     ...(isLoggedIn
       ? [
-          { href: isLocked ? "/live" : "/my-board", label: isLocked ? "War Room" : "My Board" },
+          { href: isLocked ? "/live" : "/my-board", label: "My Draft" },
           { href: "/pools", label: "Pools" },
         ]
       : []),
@@ -31,6 +31,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     { href: "/guide", label: "How to Play" },
     { href: "/scoring", label: "Scoring" },
+    ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];
 

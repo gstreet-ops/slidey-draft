@@ -95,7 +95,7 @@ const MATCH_LABELS: Record<string, string> = {
 
 const MOBILE_TABS = [
   { id: "picks", label: "Picks" },
-  { id: "board", label: "My Board" },
+  { id: "board", label: "My Draft" },
   { id: "leaderboard", label: "Leaderboard" },
 ];
 

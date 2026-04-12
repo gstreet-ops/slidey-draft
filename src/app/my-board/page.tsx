@@ -6,7 +6,6 @@ import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
 export const dynamic = "force-dynamic";
@@ -35,15 +34,6 @@ export default async function MyBoardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={true}
-        isAdmin={session.user.role === "admin"}
-        isLocked={locked}
-        userInitial={session.user.name?.[0]?.toUpperCase()}
-        teamLogoUrl={session.user.favoriteTeam?.logoUrl}
-        teamName={session.user.favoriteTeam?.name}
-      />
-
       {locked && <DraftLockedBanner />}
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">

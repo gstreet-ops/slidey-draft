@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { MobileNav } from "@/components/mobile-nav";
 import { CopyButton } from "@/components/copy-button";
-import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -20,32 +18,8 @@ Scoring: Mock Board + Live Predictions + Trivia = Your Total Score
 See you on draft night! 🎉`;
 
 export default async function CommissionerGuidePage() {
-  const session = await auth();
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/picks", label: "Mock Drafts" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    ...(session?.user
-      ? [{ href: "/my-board", label: "My Board" }]
-      : [{ href: "/login", label: "Sign In" }]),
-  ];
-
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={navLinks}
-        logo={
-          <Link
-            href="/"
-            className="text-lg font-bold text-white tracking-wider sm:text-2xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
-      />
-
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         {/* Header */}
         <h1

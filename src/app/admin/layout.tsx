@@ -15,45 +15,16 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      {/* Admin header bar */}
-      <header className="border-b border-white/10 bg-black/20">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-6">
-            <Link
-              href="/admin"
-              className="text-xl font-bold tracking-wide text-white"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              ADMIN
-            </Link>
-            <nav className="flex gap-4 text-sm text-white/60">
-              <Link href="/admin" className="hover:text-white transition">
-                Boards
-              </Link>
-              <Link href="/admin/live" className="hover:text-white transition">
-                Live
-              </Link>
-              <Link href="/admin/simulate" className="hover:text-white transition">
-                Simulate
-              </Link>
-              <Link href="/leaderboard" className="hover:text-white transition">
-                Leaderboard
-              </Link>
-              <Link href="/" className="hover:text-white transition">
-                View Site
-              </Link>
-            </nav>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-[var(--lions-blue)] flex items-center justify-center text-white text-xs font-bold">
-              {session.user.name?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase() || "D"}
-            </div>
-            <span className="text-sm text-white/80">
-              {session.user.name || session.user.email}
-            </span>
-          </div>
+      {/* Admin secondary tab bar */}
+      <div className="border-b border-white/5 bg-black/10">
+        <div className="mx-auto flex max-w-7xl items-center gap-1 px-6 py-1.5 text-xs">
+          <span className="text-white/30 font-semibold uppercase tracking-wider mr-3">Admin</span>
+          <Link href="/admin" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Boards</Link>
+          <Link href="/admin/live" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Live</Link>
+          <Link href="/admin/simulate" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Simulate</Link>
+          <Link href="/leaderboard" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Leaderboard</Link>
         </div>
-      </header>
+      </div>
 
       {/* Admin content */}
       <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>

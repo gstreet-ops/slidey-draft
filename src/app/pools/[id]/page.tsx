@@ -64,23 +64,6 @@ export default async function PoolDashboardPage({
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
       <PoolThemeActivator primaryColor={pool.primaryColor} secondaryColor={pool.secondaryColor} />
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-          <nav className="flex gap-4 text-sm">
-            <Link href="/pools" className="text-white/60 hover:text-white transition">Pools</Link>
-            <Link href="/guide/user" className="text-white/60 hover:text-white transition">How to Play</Link>
-            {canManage && (
-              <>
-                <Link href="/guide/commissioner" className="text-white/60 hover:text-white transition">Commissioner Guide</Link>
-                <Link href={`/pools/${poolId}/settings`} className="text-white/60 hover:text-white transition">Settings</Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">
         {/* Pool Header */}
@@ -103,6 +86,14 @@ export default async function PoolDashboardPage({
               <span>Commissioner: {commissioner.userName || commissioner.userEmail}</span>
             )}
           </div>
+
+          {/* Commissioner contextual links */}
+          {canManage && (
+            <div className="flex gap-3 text-xs mt-1">
+              <Link href={`/pools/${poolId}/settings`} className="text-[var(--slidey)] hover:underline">Settings</Link>
+              <Link href="/guide/commissioner" className="text-white/40 hover:text-white/60">Commissioner Guide</Link>
+            </div>
+          )}
 
           {/* Invite link — simple for members, full manager for commissioners */}
           {pool.status === "open" && !canManage && (
@@ -292,7 +283,7 @@ export default async function PoolDashboardPage({
                 href="/live"
                 className="block w-full text-center rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold text-white/70 hover:border-white/40 transition"
               >
-                Go to War Room
+                Go to My Draft
               </Link>
             </div>
 
