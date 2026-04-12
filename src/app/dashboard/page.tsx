@@ -77,7 +77,7 @@ export default async function DashboardPage() {
           { href: "/my-board", label: "My Board" },
           { href: "/guide/user", label: "How to Play" },
           { href: "/settings", label: "Settings" },
-          ...(session.user.role === "admin" ? [{ href: "/admin", label: "Studio" }] : []),
+          ...(session.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
         ]}
         logo={
           <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>

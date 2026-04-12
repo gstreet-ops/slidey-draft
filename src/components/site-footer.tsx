@@ -9,7 +9,7 @@ export function SiteFooter({ isAdmin }: { isAdmin?: boolean }) {
           <Link href="/leaderboard" className="hover:text-white/60 transition">Leaderboard</Link>
           <Link href="/guide" className="hover:text-white/60 transition">How to Play</Link>
           {isAdmin && (
-            <Link href="/admin" className="hover:text-white/60 transition">Studio</Link>
+            <Link href="/admin" className="hover:text-white/60 transition">Admin</Link>
           )}
         </div>
         <p className="text-xs text-white/20">

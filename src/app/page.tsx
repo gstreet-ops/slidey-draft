@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks } from "@/lib/queries";
+import type { Session } from "next-auth";
+import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard, getPoolMemberCount } from "@/lib/queries";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
@@ -8,31 +9,16 @@ import { InviteCodeInput } from "@/components/invite-code-input";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { ScoringBadge } from "@/components/scoring-badge";
+import { getPoolSettings } from "@/lib/pool-helpers";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const boards = await getBoards(2026);
-  const published = boards.filter((b) => b.status === "published");
   const session = await auth();
   const locked = await isDraftLocked();
   const isSpectator = session?.user && session.user.status === "spectator";
-  const userPools = session?.user?.id && session.user.status !== "spectator"
-    ? await getPoolsForUser(session.user.id)
-    : [];
-
-  // Fetch extra data for the landing page
-  const allPlayers = await getPlayers();
-  const topProspects = allPlayers.filter((p) => p.rank).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)).slice(0, 8);
-  const leaderboard = await getLeaderboard(2026);
-  const topRanked = leaderboard.slice(0, 5);
-
-  // Get featured picks from the first published board
-  let featuredPicks: NonNullable<Awaited<ReturnType<typeof getBoardWithPicks>>>["picks"] = [];
-  if (published.length > 0) {
-    const board = await getBoardWithPicks(published[0].id);
-    if (board) featuredPicks = board.picks.slice(0, 6);
-  }
+  const isLoggedIn = !!session?.user && !isSpectator;
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
@@ -46,9 +32,204 @@ export default async function Home() {
       />
       {isSpectator && <SpectatorBanner />}
 
+      {isLoggedIn ? (
+        <LoggedInDashboard session={session!} locked={locked} />
+      ) : (
+        <LandingPage session={session} locked={locked} isSpectator={!!isSpectator} />
+      )}
+
+      <SiteFooter isAdmin={session?.user?.role === "admin"} />
+    </div>
+  );
+}
+
+// ── LOGGED-IN DASHBOARD HUB ──
+
+async function LoggedInDashboard({ session, locked }: { session: Session; locked: boolean }) {
+  const user = session.user;
+  const userId = user.id;
+
+  const [userPools, myBoard] = await Promise.all([
+    getPoolsForUser(userId),
+    getUserBoard(userId, 2026),
+  ]);
+
+  // Get member counts for pools
+  const poolsWithCounts = await Promise.all(
+    userPools.map(async (p) => ({
+      ...p,
+      memberCount: await getPoolMemberCount(p.poolId),
+    }))
+  );
+
+  const draftDate = new Date("2026-04-23T20:00:00-04:00");
+  const now = new Date();
+  const daysUntilDraft = Math.max(0, Math.ceil((draftDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+  const isDraftHere = now >= draftDate;
+
+  const firstName = user.name?.split(" ")[0] || "there";
+  const isAdmin = user.role === "admin";
+  const isCommissioner = user.role === "commissioner" || isAdmin;
+
+  return (
+    <main className="flex-1 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-4xl space-y-8">
+        {/* Welcome */}
+        <div className="flex items-center gap-4">
+          {user.favoriteTeam?.logoUrl && (
+            <Image src={user.favoriteTeam.logoUrl} alt="" width={48} height={48} className="object-contain" />
+          )}
+          <div>
+            <h1
+              className="text-2xl font-bold text-white tracking-wide sm:text-3xl"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Welcome back, {firstName}
+            </h1>
+            <div className="mt-1 flex items-center gap-3 text-sm">
+              {isDraftHere ? (
+                <span className="text-green-400 font-semibold">Draft Night is HERE!</span>
+              ) : (
+                <span className="text-[var(--slidey)]">
+                  {daysUntilDraft} day{daysUntilDraft !== 1 ? "s" : ""} until Draft Night
+                </span>
+              )}
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                isAdmin ? "bg-red-500/20 text-red-400"
+                : isCommissioner ? "bg-yellow-500/20 text-yellow-400"
+                : "bg-green-500/20 text-green-400"
+              }`}>
+                {isAdmin ? "admin" : isCommissioner ? "commissioner" : "active"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <QuickAction
+            href="/pools"
+            title="My Pools"
+            desc={userPools.length > 0 ? `${userPools.length} pool${userPools.length !== 1 ? "s" : ""}` : "Join a pool"}
+            icon="🏆"
+          />
+          <QuickAction
+            href="/my-board"
+            title={myBoard ? "My Mock Draft" : "Create Your Mock Draft"}
+            desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
+            icon="📋"
+          />
+          <QuickAction
+            href="/big-board"
+            title="Big Board"
+            desc="300+ prospects"
+            icon="🏈"
+          />
+          <QuickAction href="/scoring" title="Scoring Guide" desc="How points work" icon="📊" />
+          <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon="📖" />
+          {locked && (
+            <QuickAction href="/live" title="War Room" desc="Live draft experience" icon="⚡" highlight />
+          )}
+          {isAdmin && (
+            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon="🔧" />
+          )}
+          {isCommissioner && (
+            <QuickAction href="/pools/create" title="Create a Pool" desc="Start a new competition" icon="➕" />
+          )}
+        </div>
+
+        {/* My Pools */}
+        <section className="space-y-4">
+          <h2
+            className="text-lg font-bold text-white tracking-wide"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {userPools.length > 0 ? "MY POOLS" : "JOIN A POOL"}
+          </h2>
+
+          {userPools.length === 0 ? (
+            <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center space-y-4">
+              <p className="text-white/50">You&apos;re not in any pools yet. Enter an invite code to join one.</p>
+              <InviteCodeInput />
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {poolsWithCounts.map((pool) => {
+                const settings = getPoolSettings(pool.settings);
+                return (
+                  <Link
+                    key={pool.poolId}
+                    href={`/pools/${pool.poolId}`}
+                    className="group rounded-xl border border-white/10 bg-white/5 p-5 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">
+                        {pool.poolName}
+                      </h3>
+                      <ScoringBadge mode={settings.scoringMode} />
+                    </div>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-white/40">
+                      <span>{pool.memberCount} member{pool.memberCount !== 1 ? "s" : ""}</span>
+                      {pool.role !== "member" && (
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                          pool.role === "commissioner" ? "bg-yellow-500/20 text-yellow-400" : "bg-blue-500/20 text-blue-400"
+                        }`}>
+                          {pool.role}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function QuickAction({ href, title, desc, icon, highlight }: { href: string; title: string; desc: string; icon: string; highlight?: boolean }) {
+  return (
+    <Link
+      href={href}
+      className={`group rounded-xl border p-4 transition ${
+        highlight
+          ? "border-green-500/30 bg-green-500/10 hover:border-green-400/50"
+          : "border-white/10 bg-white/5 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07]"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-xl">{icon}</span>
+        <div>
+          <p className="text-sm font-bold text-white">{title}</p>
+          <p className="text-xs text-white/40">{desc}</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// ── LANDING PAGE (visitors / spectators) ──
+
+async function LandingPage({ session, locked, isSpectator }: { session: Session | null; locked: boolean; isSpectator: boolean }) {
+  const boards = await getBoards(2026);
+  const published = boards.filter((b) => b.status === "published");
+  const allPlayers = await getPlayers();
+  const topProspects = allPlayers.filter((p) => p.rank).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)).slice(0, 8);
+  const leaderboard = await getLeaderboard(2026);
+  const topRanked = leaderboard.slice(0, 5);
+
+  let featuredPicks: NonNullable<Awaited<ReturnType<typeof getBoardWithPicks>>>["picks"] = [];
+  if (published.length > 0) {
+    const board = await getBoardWithPicks(published[0].id);
+    if (board) featuredPicks = board.picks.slice(0, 6);
+  }
+
+  return (
+    <>
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-4 pt-12 pb-16 text-center sm:px-6 sm:pt-20 sm:pb-24">
-        {/* Decorative gradient orb */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-[500px] w-[500px] rounded-full bg-[var(--lions-blue)]/10 blur-[120px]" />
         </div>
@@ -148,7 +329,7 @@ export default async function Home() {
         <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
           {/* Left column */}
           <div className="space-y-8">
-            {/* Dan's Picks / Featured Picks */}
+            {/* Featured Picks */}
             {featuredPicks.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -239,24 +420,6 @@ export default async function Home() {
               <p className="text-xs text-white/40 mt-1">days to go</p>
             </div>
 
-            {/* Your Pools */}
-            {userPools.length > 0 && (
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Your Pools</h3>
-                  <Link href="/pools" className="text-[10px] text-[var(--lions-blue)] hover:underline">Manage &rarr;</Link>
-                </div>
-                <div className="space-y-2">
-                  {userPools.map((pool) => (
-                    <Link key={pool.poolId} href={`/pools/${pool.poolId}`} className="block rounded-lg bg-white/5 px-3 py-2 hover:bg-white/10 transition">
-                      <p className="text-sm font-semibold text-white truncate">{pool.poolName}</p>
-                      {pool.description && <p className="text-[10px] text-white/30 truncate">{pool.description}</p>}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* By The Numbers */}
             <div className="rounded-xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
               <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">By The Numbers</h3>
@@ -273,17 +436,11 @@ export default async function Home() {
                   <span className="text-white/40">Competitors</span>
                   <span className="text-white font-semibold">{leaderboard.length}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-white/40">Pools</span>
-                  <span className="text-[var(--lions-blue)] font-semibold">{userPools.length}</span>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <SiteFooter isAdmin={session?.user?.role === "admin"} />
-    </div>
+    </>
   );
 }
