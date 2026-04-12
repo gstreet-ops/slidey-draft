@@ -36,7 +36,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   ];
 
   return (
-    <header className="border-b border-white/10">
+    <header className="border-b border-white/10 bg-[var(--gtown-navy)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
         <Link
