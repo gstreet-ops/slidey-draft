@@ -154,6 +154,26 @@ export default async function UserGuidePage() {
             </div>
           </section>
 
+          {/* ── Pool Teams ── */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <SectionHeading>Pool Teams</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              Your commissioner can split the pool into teams. You&apos;ll compete as an individual <em>and</em> as part of a team — both standings are tracked separately.
+            </p>
+
+            <div className="mt-4 space-y-3">
+              <TipCard>
+                <strong className="text-white">How team scoring works</strong> — your team&apos;s score is the combined total of every member&apos;s individual score across all three tracks (Mock Bonus + Live Predictions + Trivia). If you score 45 points and your teammate scores 38, your team has 83.
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">Where to see team standings</strong> — the leaderboard has two tabs: &apos;Individual&apos; and &apos;Teams&apos;. The Teams tab shows each team ranked by total score, with a breakdown of each member&apos;s contribution underneath.
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">You don&apos;t create teams</strong> — only the commissioner sets up teams. You just play — your scores automatically roll up to your team.
+              </TipCard>
+            </div>
+          </section>
+
           {/* ── Draft Night Tips ── */}
           <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
             <SectionHeading>Draft Night Tips</SectionHeading>

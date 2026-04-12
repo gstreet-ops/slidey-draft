@@ -9,6 +9,7 @@ import {
   getPoolStandings,
   isPoolMember,
   getUserBoard,
+  getUserPoolTeam,
 } from "@/lib/queries";
 import { getPoolRole } from "@/lib/pool-helpers";
 import { getPoolSettings } from "@/lib/pool-helpers";
@@ -35,12 +36,13 @@ export default async function PoolDashboardPage({
   const member = await isPoolMember(poolId, session.user.id);
   if (!member) redirect("/pools");
 
-  const [members, announcements, standings, myRole, myBoard] = await Promise.all([
+  const [members, announcements, standings, myRole, myBoard, myTeam] = await Promise.all([
     getPoolMembers(poolId),
     getPoolAnnouncements(poolId),
     getPoolStandings(poolId),
     getPoolRole(session.user.id, poolId),
     getUserBoard(session.user.id, 2026),
+    getUserPoolTeam(poolId, session.user.id),
   ]);
 
   const settings = getPoolSettings(pool.settings);
@@ -200,7 +202,17 @@ export default async function PoolDashboardPage({
 
             {/* Your stats */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Your Stats</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Your Stats</h3>
+                {myTeam && (
+                  <span
+                    className="text-xs font-bold px-2.5 py-1 rounded-full"
+                    style={{ backgroundColor: `${myTeam.teamColor}20`, color: myTeam.teamColor }}
+                  >
+                    {myTeam.teamName}
+                  </span>
+                )}
+              </div>
               {myStanding ? (
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">

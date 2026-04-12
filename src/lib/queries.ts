@@ -17,6 +17,8 @@ import {
   appInvites,
   livePredictions,
   chatMessages,
+  poolTeams,
+  poolTeamMembers,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -471,4 +473,23 @@ export async function getPoolChatMessages(poolId: string, after?: string) {
     .limit(50);
 
   return messages;
+}
+
+// ── Pool Teams ──────────────────────────────────────
+export async function getUserPoolTeam(poolId: string, userId: string) {
+  const [result] = await db
+    .select({
+      teamId: poolTeams.id,
+      teamName: poolTeams.name,
+      teamColor: poolTeams.colorHex,
+    })
+    .from(poolTeamMembers)
+    .innerJoin(poolTeams, eq(poolTeamMembers.poolTeamId, poolTeams.id))
+    .where(
+      and(
+        eq(poolTeamMembers.userId, userId),
+        eq(poolTeams.poolId, poolId)
+      )
+    );
+  return result ?? null;
 }

@@ -84,17 +84,27 @@ export default async function CommissionerGuidePage() {
           <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
             <SectionHeading>Managing Teams</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
-              Teams are optional but add a fun layer — individual scores roll up to team totals on the leaderboard.
+              Teams are optional — best for pools with 6+ people. Skip them if you have a small group where individual competition is enough. If you do create teams, individual scores roll up to team totals and both standings are tracked on the leaderboard.
             </p>
-            <div className="mt-4 space-y-3">
-              <InfoCard title="Create Teams">
-                Go to <strong className="text-white">Pool Settings → Team Management</strong> to create teams with custom names and colors.
+
+            <h3 className="mt-6 mb-3 text-sm font-bold uppercase tracking-wider text-[var(--slidey)]">How to Create Teams</h3>
+            <div className="space-y-3">
+              <Step n={1}>Go to your pool dashboard → <strong className="text-white">Pool Settings → Team Management</strong></Step>
+              <Step n={2}>Click <strong className="text-white">Create Team</strong> — give it a name and pick a color from the palette (8 preset colors)</Step>
+              <Step n={3}>Create as many teams as you want — 2, 3, 4+ — flexible, not locked to two</Step>
+              <Step n={4}>Assign members by clicking their name under <strong className="text-white">Unassigned Members</strong> and selecting a team</Step>
+              <Step n={5}>Watch for the warning if any members are still unassigned — <strong className="text-white">unassigned members&apos; scores won&apos;t count toward any team</strong></Step>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <InfoCard title="Balancing Teams">
+                Try to make teams roughly equal in size. A team of 5 vs a team of 2 has a natural scoring advantage since team score = sum of members.
               </InfoCard>
-              <InfoCard title="Assign Members">
-                After creating teams, assign each pool member to a team. Members can also pick their own team when joining, depending on your settings.
+              <InfoCard title="Team Scoring Formula">
+                Team Score = sum of all member Combined Scores. Each member&apos;s Combined Score = Mock Bonus + Live Predictions + Trivia. Standard or Custom scoring (whichever the pool uses) applies to individual scores first, then those roll up to team totals.
               </InfoCard>
-              <InfoCard title="Team Scoring">
-                A team&apos;s score is the <strong className="text-white">sum of all member scores</strong> — mock bonus, live predictions, and trivia all count. The team leaderboard updates in real-time.
+              <InfoCard title="During the Draft">
+                The Teams tab on the leaderboard updates live. Team standings shift as members earn points. Use this as a trash-talk catalyst.
               </InfoCard>
             </div>
           </section>

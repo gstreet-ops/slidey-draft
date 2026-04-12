@@ -12,6 +12,7 @@ const sections = [
   { id: "combined", label: "Combined Score" },
   { id: "examples", label: "Examples" },
   { id: "commissioner", label: "Commissioner" },
+  { id: "team-scoring", label: "Team Scoring" },
 ];
 
 export default async function ScoringPage() {
@@ -356,6 +357,65 @@ export default async function ScoringPage() {
             </p>
             <p>Commissioners can also toggle entire scoring tracks on or off (mock draft bonus, live predictions, trivia) and choose which rounds count.</p>
             <p>Check your pool dashboard for the scoring badge to see which mode your pool uses.</p>
+          </section>
+          {/* ── Team Scoring ── */}
+          <section id="team-scoring">
+            <SectionHeading>Team Scoring</SectionHeading>
+            <p>
+              When your commissioner creates teams, your individual score feeds into your team&apos;s total. There&apos;s no extra scoring — teams simply combine what each member earns across Mock Bonus, Live Predictions, and Trivia.
+            </p>
+
+            <SubHeading>Worked Example</SubHeading>
+            <p>Team: <strong className="text-white">&apos;The Draft Kings&apos;</strong> (3 members)</p>
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                    <th className="pb-2 pr-3">Member</th>
+                    <th className="pb-2 pr-3">Mock Bonus</th>
+                    <th className="pb-2 pr-3">Live Picks</th>
+                    <th className="pb-2 pr-3">Trivia</th>
+                    <th className="pb-2 text-right">Combined</th>
+                  </tr>
+                </thead>
+                <tbody className="text-white/70">
+                  <tr className="border-t border-white/5">
+                    <td className="py-2 pr-3">Alex</td>
+                    <td className="py-2 pr-3 text-blue-400">18</td>
+                    <td className="py-2 pr-3 text-green-400">40</td>
+                    <td className="py-2 pr-3 text-purple-400">21</td>
+                    <td className="py-2 text-right font-bold">79</td>
+                  </tr>
+                  <tr className="border-t border-white/5">
+                    <td className="py-2 pr-3">Jordan</td>
+                    <td className="py-2 pr-3 text-blue-400">12</td>
+                    <td className="py-2 pr-3 text-green-400">50</td>
+                    <td className="py-2 pr-3 text-purple-400">16</td>
+                    <td className="py-2 text-right font-bold">78</td>
+                  </tr>
+                  <tr className="border-t border-white/5">
+                    <td className="py-2 pr-3">Sam</td>
+                    <td className="py-2 pr-3 text-blue-400">24</td>
+                    <td className="py-2 pr-3 text-green-400">30</td>
+                    <td className="py-2 pr-3 text-purple-400">28</td>
+                    <td className="py-2 text-right font-bold">82</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-white/20">
+                    <td className="py-2 pr-3 font-bold text-white">Team Total</td>
+                    <td className="py-2 pr-3 font-bold text-blue-400">54</td>
+                    <td className="py-2 pr-3 font-bold text-green-400">120</td>
+                    <td className="py-2 pr-3 font-bold text-purple-400">65</td>
+                    <td className="py-2 text-right text-lg font-bold text-white">239</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <Callout>
+              Not on a team? If your commissioner hasn&apos;t set up teams, you&apos;ll only see the Individual leaderboard. Your scores still count — teams are an optional layer on top.
+            </Callout>
           </section>
         </div>
 
