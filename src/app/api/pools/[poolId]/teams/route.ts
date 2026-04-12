@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { pools, poolTeams, poolTeamMembers, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { canManagePool } from "@/lib/pool-helpers";
 
 export async function GET(
   _req: NextRequest,
@@ -49,10 +50,8 @@ export async function POST(
 
   const { poolId } = await params;
 
-  const pool = await db.query.pools.findFirst({ where: (p, { eq }) => eq(p.id, poolId) });
-  if (!pool) return NextResponse.json({ error: "Pool not found" }, { status: 404 });
-  if (pool.commissionerId !== session.user.id)
-    return NextResponse.json({ error: "Only the commissioner can manage teams" }, { status: 401 });
+  if (!(await canManagePool(session.user.id, poolId)))
+    return NextResponse.json({ error: "Only commissioners can manage teams" }, { status: 401 });
 
   const { name, colorHex } = await req.json();
   if (!name?.trim())

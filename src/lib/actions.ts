@@ -556,7 +556,7 @@ export async function promoteToAdmin(poolId: string, userId: string) {
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const role = await getPoolRole(session.user.id, poolId);
-  if (role !== "commissioner") throw new Error("Only the commissioner can promote to admin");
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can promote to admin");
 
   await db
     .update(poolMembers)
@@ -574,11 +574,58 @@ export async function demoteToMember(poolId: string, userId: string) {
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const role = await getPoolRole(session.user.id, poolId);
-  if (role !== "commissioner") throw new Error("Only the commissioner can demote admins");
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can demote members");
 
   await db
     .update(poolMembers)
     .set({ role: "member" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Promote to commissioner ───────────────────────
+export async function promoteToCommissioner(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can promote to commissioner");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "commissioner" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Demote commissioner to admin ──────────────────
+export async function demoteFromCommissioner(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can demote");
+
+  // Cannot demote the pool owner
+  const [pool] = await db.select({ commissionerId: pools.commissionerId }).from(pools).where(eq(pools.id, poolId));
+  if (pool && userId === pool.commissionerId) throw new Error("Cannot demote the pool owner — use transfer instead");
+
+  // Cannot demote if they're the last commissioner
+  const commissioners = await db
+    .select({ userId: poolMembers.userId })
+    .from(poolMembers)
+    .where(and(eq(poolMembers.poolId, poolId), eq(poolMembers.role, "commissioner")));
+  if (commissioners.length <= 1) throw new Error("Pool must have at least one commissioner");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "admin" })
     .where(
       and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
     );
