@@ -15,6 +15,7 @@ import {
   players,
   chatMessages,
   commissionerInvites,
+  poolInviteCodes,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -410,12 +411,41 @@ export async function joinPool(inviteCode: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
-  const [pool] = await db
+  const code = inviteCode.toUpperCase().trim();
+
+  // First try the pool's open invite code
+  let [pool] = await db
     .select()
     .from(pools)
-    .where(eq(pools.inviteCode, inviteCode.toUpperCase().trim()));
+    .where(eq(pools.inviteCode, code));
 
-  if (!pool) return { success: false, message: "Pool not found." };
+  let singleCodeId: string | null = null;
+
+  // If not found, check poolInviteCodes table (single-use codes)
+  if (!pool) {
+    const [inviteRow] = await db
+      .select({
+        id: poolInviteCodes.id,
+        poolId: poolInviteCodes.poolId,
+        type: poolInviteCodes.type,
+        usedBy: poolInviteCodes.usedBy,
+        revokedAt: poolInviteCodes.revokedAt,
+      })
+      .from(poolInviteCodes)
+      .where(eq(poolInviteCodes.code, code));
+
+    if (!inviteRow) return { success: false, message: "Pool not found." };
+    if (inviteRow.revokedAt) return { success: false, message: "This invite is no longer valid." };
+    if (inviteRow.type === "single" && inviteRow.usedBy) {
+      return { success: false, message: "This invite has already been used." };
+    }
+
+    const [p] = await db.select().from(pools).where(eq(pools.id, inviteRow.poolId));
+    if (!p) return { success: false, message: "Pool not found." };
+    pool = p;
+    if (inviteRow.type === "single") singleCodeId = inviteRow.id;
+  }
+
   if (pool.status === "locked" || pool.status === "completed") {
     return { success: false, message: "This pool is no longer accepting members." };
   }
@@ -448,6 +478,14 @@ export async function joinPool(inviteCode: string) {
       role: "member",
     })
     .onConflictDoNothing();
+
+  // Mark single-use code as used
+  if (singleCodeId) {
+    await db
+      .update(poolInviteCodes)
+      .set({ usedBy: session.user.id, usedAt: new Date() })
+      .where(eq(poolInviteCodes.id, singleCodeId));
+  }
 
   // Activate spectators when they join via pool invite
   if (session.user.status === "spectator") {
@@ -887,4 +925,73 @@ export async function demoteCommissioner(userId: string) {
     .where(eq(users.id, userId));
 
   revalidatePath("/admin");
+}
+
+// ── Pool Invite Codes ────────────────────────────
+
+export async function generatePoolInviteCodes(poolId: string, count: number = 1) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  const canManage_ = await canManagePool(session.user.id, poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  const codes: { id: string; code: string }[] = [];
+  for (let i = 0; i < count; i++) {
+    const code = await generatePoolInviteCode();
+    const [row] = await db
+      .insert(poolInviteCodes)
+      .values({ poolId, code, type: "single" })
+      .returning({ id: poolInviteCodes.id, code: poolInviteCodes.code });
+    codes.push(row);
+  }
+
+  revalidatePath(`/pools/${poolId}`);
+  return codes;
+}
+
+export async function getPoolInviteCodes(poolId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  const canManage_ = await canManagePool(session.user.id, poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  return db
+    .select({
+      id: poolInviteCodes.id,
+      code: poolInviteCodes.code,
+      type: poolInviteCodes.type,
+      usedBy: poolInviteCodes.usedBy,
+      usedAt: poolInviteCodes.usedAt,
+      revokedAt: poolInviteCodes.revokedAt,
+      createdAt: poolInviteCodes.createdAt,
+      usedByName: users.name,
+      usedByEmail: users.email,
+    })
+    .from(poolInviteCodes)
+    .leftJoin(users, eq(poolInviteCodes.usedBy, users.id))
+    .where(eq(poolInviteCodes.poolId, poolId))
+    .orderBy(desc(poolInviteCodes.createdAt));
+}
+
+export async function revokePoolInviteCode(codeId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  // Get the code to find poolId for auth check
+  const [code] = await db
+    .select({ poolId: poolInviteCodes.poolId, usedBy: poolInviteCodes.usedBy })
+    .from(poolInviteCodes)
+    .where(eq(poolInviteCodes.id, codeId));
+  if (!code) throw new Error("Code not found");
+  if (code.usedBy) throw new Error("Cannot revoke a used code");
+
+  const canManage_ = await canManagePool(session.user.id, code.poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  await db
+    .update(poolInviteCodes)
+    .set({ revokedAt: new Date() })
+    .where(eq(poolInviteCodes.id, codeId));
+
+  revalidatePath(`/pools/${code.poolId}`);
 }

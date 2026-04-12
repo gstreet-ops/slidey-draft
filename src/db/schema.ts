@@ -486,6 +486,20 @@ export const triviaResponses = pgTable(
   ]
 );
 
+// ── Pool Invite Codes ────────────────────────────
+export const poolInviteCodes = pgTable("pool_invite_codes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  code: text("code").notNull().unique(),
+  type: text("type").notNull().default("single"), // 'single' | 'open'
+  usedBy: uuid("used_by").references(() => users.id),
+  usedAt: timestamp("used_at"),
+  revokedAt: timestamp("revoked_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ── Pool Teams ───────────────────────────────────
 export const poolTeams = pgTable("pool_teams", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -19,6 +19,7 @@ import {
   chatMessages,
   poolTeams,
   poolTeamMembers,
+  poolInviteCodes,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -245,6 +246,9 @@ export async function getAllPools() {
 }
 
 export async function getPoolByInviteCode(code: string) {
+  const normalized = code.toUpperCase().trim();
+
+  // Try pool's open invite code first
   const [result] = await db
     .select({
       id: pools.id,
@@ -263,8 +267,44 @@ export async function getPoolByInviteCode(code: string) {
     })
     .from(pools)
     .leftJoin(users, eq(pools.commissionerId, users.id))
-    .where(eq(pools.inviteCode, code.toUpperCase().trim()));
-  return result || null;
+    .where(eq(pools.inviteCode, normalized));
+  if (result) return result;
+
+  // Try single-use pool invite codes
+  const [inviteRow] = await db
+    .select({
+      poolId: poolInviteCodes.poolId,
+      usedBy: poolInviteCodes.usedBy,
+      revokedAt: poolInviteCodes.revokedAt,
+      type: poolInviteCodes.type,
+    })
+    .from(poolInviteCodes)
+    .where(eq(poolInviteCodes.code, normalized));
+
+  if (!inviteRow) return null;
+  // Revoked codes show as not found
+  if (inviteRow.revokedAt) return null;
+
+  const [poolResult] = await db
+    .select({
+      id: pools.id,
+      name: pools.name,
+      commissionerId: pools.commissionerId,
+      inviteCode: pools.inviteCode,
+      status: pools.status,
+      settings: pools.settings,
+      description: pools.description,
+      logoUrl: pools.logoUrl,
+      primaryColor: pools.primaryColor,
+      secondaryColor: pools.secondaryColor,
+      createdAt: pools.createdAt,
+      updatedAt: pools.updatedAt,
+      commissionerName: users.name,
+    })
+    .from(pools)
+    .leftJoin(users, eq(pools.commissionerId, users.id))
+    .where(eq(pools.id, inviteRow.poolId));
+  return poolResult || null;
 }
 
 export async function getPoolsForUser(userId: string) {

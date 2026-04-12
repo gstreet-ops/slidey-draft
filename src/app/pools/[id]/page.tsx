@@ -17,6 +17,7 @@ import { AnnouncementForm } from "./announcement-form";
 import { PoolThemeActivator } from "@/components/pool-theme-activator";
 import { PoolChat } from "@/components/pool-chat";
 import { CopyInviteLink } from "@/components/copy-invite-link";
+import { PoolInviteManager } from "@/components/pool-invite-manager";
 import { ScoringBadge } from "@/components/scoring-badge";
 
 export const dynamic = "force-dynamic";
@@ -103,8 +104,8 @@ export default async function PoolDashboardPage({
             )}
           </div>
 
-          {/* Invite link */}
-          {pool.status === "open" && (
+          {/* Invite link — simple for members, full manager for commissioners */}
+          {pool.status === "open" && !canManage && (
             <div className="mt-3">
               <CopyInviteLink inviteCode={pool.inviteCode} />
             </div>
@@ -132,6 +133,18 @@ export default async function PoolDashboardPage({
                 </div>
               </div>
             </div>
+
+            {/* Commissioner: Invite management */}
+            {canManage && pool.status === "open" && (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <PoolInviteManager
+                  poolId={poolId}
+                  poolName={pool.name}
+                  openInviteCode={pool.inviteCode}
+                  memberCount={members.length}
+                />
+              </div>
+            )}
 
             {/* Pre-draft: member roster */}
             {!isDraftOver && (
