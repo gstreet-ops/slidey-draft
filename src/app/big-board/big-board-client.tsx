@@ -31,9 +31,9 @@ type Prospect = {
 const POSITIONS = ["ALL", "QB", "RB", "WR", "TE", "OT", "OG", "C", "EDGE", "DT", "LB", "CB", "S"];
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "bg-green-100 text-green-700 border-green-200";
-  if (grade >= 80) return "bg-blue-100 text-blue-700 border-blue-200";
-  if (grade >= 70) return "bg-yellow-100 text-yellow-700 border-yellow-200";
+  if (grade >= 90) return "bg-green-500/20 text-green-400 border-green-500/30";
+  if (grade >= 80) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+  if (grade >= 70) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
   return "bg-white/5 text-white/50 border-white/10";
 }
 
@@ -140,6 +140,9 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                       {p.grade}
                     </span>
                   )}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold shrink-0 sm:h-8 sm:w-8 sm:text-xs">
+                    i
+                  </span>
                 </div>
               </button>
             );
