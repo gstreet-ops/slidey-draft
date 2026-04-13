@@ -17,7 +17,7 @@ export default async function BigBoardPage() {
           className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          BIG BOARD
+          PROSPECTS
         </h1>
         <p className="mt-1 text-sm text-white/50 mb-6">
           2026 NFL Draft prospect rankings &middot; {ranked.length} prospects

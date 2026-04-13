@@ -17,7 +17,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   const [open, setOpen] = useState(false);
 
   const primaryLinks = [
-    { href: "/big-board", label: "Big Board" },
+    { href: "/big-board", label: "Prospects" },
     ...(isLoggedIn
       ? [
           { href: isLocked ? "/live" : "/my-board", label: "My Draft" },

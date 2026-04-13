@@ -41,11 +41,11 @@ export default async function LeaderboardPage() {
                 <Link
                   key={entry.boardId}
                   href={`/picks/${entry.boardId}`}
-                  className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-50 border-2 border-amber-300/50 hover:border-amber-400" : "bg-white hover:shadow-md"}`}
+                  className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-500/10 border-2 border-amber-400/30 hover:border-amber-400/50" : "bg-white/5 border border-white/10 hover:bg-white/10"}`}
                   style={entry.teamPrimaryColor ? { borderLeft: `4px solid ${entry.teamPrimaryColor}` } : undefined}
                 >
                   <div className="flex flex-col items-center w-10 shrink-0">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-100 text-yellow-600" : rank === 2 ? "bg-gray-200 text-gray-500" : rank === 3 ? "bg-orange-100 text-orange-500" : "bg-gray-100 text-gray-400"}`}>
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-500/20 text-yellow-400" : rank === 2 ? "bg-gray-300/20 text-gray-300" : rank === 3 ? "bg-orange-400/20 text-orange-400" : "bg-white/10 text-white/40"}`}>
                       {allDone && rank === 1 ? "\uD83C\uDFC6" : rank}
                     </div>
                     {rankDelta !== 0 && (
@@ -59,14 +59,14 @@ export default async function LeaderboardPage() {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-gray-900">{entry.userName}</span>
+                      <span className="text-lg font-bold text-white">{entry.userName}</span>
                       {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">You</span>}
                     </div>
-                    <p className="text-sm text-gray-500 truncate">{entry.boardTitle}</p>
+                    <p className="text-sm text-white/50 truncate">{entry.boardTitle}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-2xl font-bold text-gray-900">{entry.totalScore}<span className="text-sm font-normal text-gray-400 ml-1">pts</span></div>
-                    <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+                    <div className="text-2xl font-bold text-white">{entry.totalScore}<span className="text-sm font-normal text-white/40 ml-1">pts</span></div>
+                    <div className="flex flex-wrap gap-3 text-xs text-white/40">
                       <span>{entry.correctExact} exact</span>
                       <span>{entry.correctPlayer} correct</span>
                       <span>{accuracyDisplay}%</span>

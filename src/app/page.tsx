@@ -112,7 +112,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           />
           <QuickAction
             href="/big-board"
-            title="Big Board"
+            title="Prospects"
             desc="300+ prospects"
             icon="🏈"
           />
