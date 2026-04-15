@@ -22,6 +22,7 @@ export default async function AdminLayout({
           <Link href="/admin" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Boards</Link>
           <Link href="/admin/live" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Live</Link>
           <Link href="/admin/simulate" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Simulate</Link>
+          <Link href="/admin/trivia" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Trivia</Link>
           <Link href="/leaderboard" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Leaderboard</Link>
         </div>
       </div>
