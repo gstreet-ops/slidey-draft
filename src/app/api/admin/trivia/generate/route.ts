@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic();
-
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
@@ -20,13 +18,14 @@ export async function POST(req: NextRequest) {
 
   let message;
   try {
+    const client = new Anthropic();
     message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: `Generate ${count} NFL Draft trivia questions about "${categoryLabel}".
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 4096,
+      messages: [
+        {
+          role: "user",
+          content: `Generate ${count} NFL Draft trivia questions about "${categoryLabel}".
 
 ${difficultyInstruction}.
 
@@ -40,13 +39,22 @@ Return ONLY a valid JSON array. Each object must have exactly these fields:
 Make questions factual and interesting. Avoid duplicating well-known #1 pick trivia. Include combine stats, trade details, draft day surprises, and lesser-known facts.
 
 Return ONLY the JSON array, no markdown fences, no explanation.`,
-      },
-    ],
-  });
-  } catch (err) {
-    console.error("Anthropic API error:", err);
+        },
+      ],
+    });
+  } catch (err: unknown) {
+    const errObj = err as { status?: number; message?: string; error?: { type?: string; message?: string } };
+    console.error("Anthropic API error:", {
+      status: errObj.status,
+      message: errObj.message,
+      errorType: errObj.error?.type,
+      errorMessage: errObj.error?.message,
+      hasKey: !!process.env.ANTHROPIC_API_KEY,
+      keyPrefix: process.env.ANTHROPIC_API_KEY?.substring(0, 10),
+    });
+    const detail = errObj.error?.message || errObj.message || "Unknown error";
     return NextResponse.json(
-      { error: "AI generation failed. Check that ANTHROPIC_API_KEY is set in environment variables." },
+      { error: `AI generation failed: ${detail}` },
       { status: 500 }
     );
   }
