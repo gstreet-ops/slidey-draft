@@ -97,7 +97,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: (u, { eq }) => eq(u.id, user.id),
         });
         session.user.name = dbUser?.name || user.name || null;
-        session.user.email = dbUser?.email || user.email || null;
+        session.user.email = dbUser?.email || user.email || "";
         session.user.role = dbUser?.role || "user";
         session.user.status = dbUser?.status || "spectator";
 
