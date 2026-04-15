@@ -11,6 +11,7 @@ const sections = [
   { id: "scoring", label: "Scoring" },
   { id: "pools", label: "Pools" },
   { id: "draft-day", label: "Draft Day" },
+  { id: "video-chat", label: "Video & Feed" },
   { id: "faq", label: "FAQ" },
 ];
 
@@ -201,6 +202,22 @@ export default async function GuidePage() {
               <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Board</span><span>— your mock draft with running score, showing matches and misses</span></li>
               <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows</span></li>
             </ul>
+          </section>
+
+          {/* ── Video Chat + Live Feed ── */}
+          <section id="video-chat">
+            <SectionHeading>Video Chat &amp; Live Feed</SectionHeading>
+            <p>
+              Draft night is best with friends. Your commissioner can set up a video call link (Google Meet, Zoom, etc.) so everyone can watch and talk together.
+            </p>
+            <div className="mt-4 space-y-3">
+              <InfoCard title="Video Call">
+                If your commissioner has set up a video link, you&apos;ll see a green &quot;Join Video Call&quot; button at the top of the Live page. Click it to join — works great with split screen or picture-in-picture.
+              </InfoCard>
+              <InfoCard title="Live Feed">
+                The in-app Live Feed tracks game events automatically — pick announcements, trivia questions, leaderboard changes. You can also send quick messages and reactions. Use the video call for conversation and the Live Feed to follow the action.
+              </InfoCard>
+            </div>
           </section>
 
           {/* ── FAQ ── */}

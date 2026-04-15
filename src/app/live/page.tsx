@@ -15,6 +15,7 @@ type PoolContext = {
   isCommissioner: boolean;
   triviaTimerSeconds: number;
   watchPartyEnabled: boolean;
+  videoCallUrl: string | null;
   scoringConfig: {
     scoringMode: "standard" | "custom";
     mockPointValues: { playerCalled: number; rangeClose: number; rangeFar: number; exactSlot: number; positionMatch: number };
@@ -55,6 +56,7 @@ export default async function LivePage() {
         isCommissioner: poolRole === "commissioner" || poolRole === "admin" || session?.user?.role === "admin",
         triviaTimerSeconds: settings.triviaTimerSeconds ?? 30,
         watchPartyEnabled: settings.watchParty,
+        videoCallUrl: (settings as Record<string, unknown>).videoCallUrl as string | null ?? null,
         scoringConfig: {
           scoringMode: settings.scoringMode,
           mockPointValues: settings.mockPointValues,

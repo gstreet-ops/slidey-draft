@@ -14,6 +14,7 @@ import { TriviaCard } from "@/components/trivia-card";
 import { CollapsibleTriviaControls } from "@/components/collapsible-trivia-controls";
 import { CollapsibleSimControls } from "@/components/collapsible-sim-controls";
 import { CollapsibleScoringSettings } from "@/components/collapsible-scoring-settings";
+import { CollapsibleVideoSettings } from "@/components/collapsible-video-settings";
 
 type PickContextEntry = {
   userName: string;
@@ -82,6 +83,7 @@ type PoolContext = {
   isCommissioner: boolean;
   triviaTimerSeconds: number;
   watchPartyEnabled: boolean;
+  videoCallUrl: string | null;
   scoringConfig: {
     scoringMode: "standard" | "custom";
     mockPointValues: { playerCalled: number; rangeClose: number; rangeFar: number; exactSlot: number; positionMatch: number };
@@ -126,7 +128,8 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const [animateScore, setAnimateScore] = useState(false);
   const [glowingRows, setGlowingRows] = useState<Map<string, "up" | "down" | "first">>(new Map());
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatPos, setChatPos] = useState({ x: 0, y: 0 }); // offset from default bottom-right
+  const [chatPos, setChatPos] = useState({ x: 0, y: 0 });
+  const [systemEvents, setSystemEvents] = useState<{ id: string; type: "system"; content: string; createdAt: string }[]>([]); // offset from default bottom-right
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const prevResultCountRef = useRef(initialResults.length);
   const prevRanksRef = useRef<Map<string, number>>(new Map());
@@ -178,6 +181,14 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       if (newPick) {
         setAnnouncement(newPick);
         play("pick-announced");
+
+        // Inject system event into live feed
+        setSystemEvents((prev) => [...prev, {
+          id: `pick-${newPick.pickNumber}`,
+          type: "system",
+          content: `\uD83C\uDFC8 Pick #${newPick.pickNumber}: ${newPick.playerName} (${newPick.playerPosition}) \u2192 ${newPick.teamAbbreviation}`,
+          createdAt: new Date().toISOString(),
+        }]);
 
         setTimeout(() => {
           const score = scoreMap.get(newPick.pickNumber);
@@ -325,6 +336,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       {pool?.isCommissioner && poolId && (
         <CollapsibleScoringSettings key={`score-${poolId}`} poolId={poolId} initialConfig={pool.scoringConfig} />
       )}
+
+      {pool?.isCommissioner && poolId && (
+        <CollapsibleVideoSettings key={`video-${poolId}`} poolId={poolId} initialUrl={pool.videoCallUrl} />
+      )}
     </div>
   );
 
@@ -392,7 +407,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     { id: "picks", label: "Picks" },
     { id: "trivia", label: "Trivia" },
     { id: "leaderboard", label: "Leaderboard" },
-    ...(showChat ? [{ id: "chat", label: "Chat" }] : []),
+    ...(showChat ? [{ id: "chat", label: "Live Feed" }] : []),
   ];
 
   return (
@@ -416,6 +431,21 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           )}
           {pool.isCommissioner && (
             <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-semibold text-yellow-400">Commissioner</span>
+          )}
+          {/* Video call button */}
+          {pool.videoCallUrl && (
+            <a
+              href={pool.videoCallUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-500 transition"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              Join Video Call
+            </a>
+          )}
+          {!pool.videoCallUrl && pool.isCommissioner && (
+            <span className="ml-auto text-[10px] text-white/30">Add a video call link in settings</span>
           )}
         </div>
       )}
@@ -461,7 +491,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             {activeTab === "leaderboard" && leaderboardColumn}
             {activeTab === "chat" && showChat && (
               <div className="h-[calc(100vh-200px)]">
-                <PoolChat poolId={poolId!} currentUserId={userId!} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
+                <PoolChat poolId={poolId!} currentUserId={userId!} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} systemEvents={systemEvents} />
               </div>
             )}
           </>
@@ -515,13 +545,13 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                   window.addEventListener("mouseup", onUp);
                 }}
               >
-                <span className="text-sm font-semibold text-white">{pool?.poolName ?? "Chat"}</span>
+                <span className="text-sm font-semibold text-white">Live Feed</span>
                 <button onClick={() => setChatOpen(false)} className="rounded p-1 text-white/40 hover:bg-white/10 hover:text-white transition">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
                 </button>
               </div>
               <div className="flex-1 min-h-0">
-                <PoolChat poolId={poolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
+                <PoolChat poolId={poolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} systemEvents={systemEvents} />
               </div>
             </div>
           )}
