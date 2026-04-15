@@ -312,10 +312,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     <div className="space-y-4">
       <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>TRIVIA</h2>
 
-      {poolId && <TriviaCard poolId={poolId} />}
+      {poolId && <TriviaCard key={`trivia-${poolId}`} poolId={poolId} />}
 
       {pool?.isCommissioner && poolId && (
-        <CollapsibleTriviaControls poolId={poolId} triviaTimerSeconds={pool.triviaTimerSeconds} />
+        <CollapsibleTriviaControls key={`tctl-${poolId}`} poolId={poolId} triviaTimerSeconds={pool.triviaTimerSeconds} />
       )}
 
       {pool?.isCommissioner && (
@@ -323,7 +323,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       )}
 
       {pool?.isCommissioner && poolId && (
-        <CollapsibleScoringSettings poolId={poolId} initialConfig={pool.scoringConfig} />
+        <CollapsibleScoringSettings key={`score-${poolId}`} poolId={poolId} initialConfig={pool.scoringConfig} />
       )}
     </div>
   );
@@ -452,8 +452,8 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         </div>
       )}
 
-      {/* Mobile tabs */}
-      <MobileTabBar tabs={mobileTabs} defaultTab="picks">
+      {/* Mobile tabs — MobileTabBar is lg:hidden internally */}
+      <MobileTabBar key={`mobile-${poolId}`} tabs={mobileTabs} defaultTab="picks">
         {(activeTab) => (
           <>
             {activeTab === "picks" && picksColumn}
@@ -461,15 +461,15 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             {activeTab === "leaderboard" && leaderboardColumn}
             {activeTab === "chat" && showChat && (
               <div className="h-[calc(100vh-200px)]">
-                <PoolChat poolId={poolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
+                <PoolChat poolId={poolId!} currentUserId={userId!} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
               </div>
             )}
           </>
         )}
       </MobileTabBar>
 
-      {/* Desktop 3-column layout */}
-      <div className="hidden lg:grid lg:grid-cols-[1fr_340px_320px] gap-6">
+      {/* Desktop 3-column layout — hidden below lg */}
+      <div className="hidden lg:grid lg:grid-cols-[1fr_340px_320px] gap-6" key={`desktop-${poolId}`}>
         {picksColumn}
         {triviaColumn}
         {leaderboardColumn}
