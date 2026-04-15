@@ -21,7 +21,7 @@ export default async function SimulatePage() {
         <p className="mt-1 text-sm text-white/50">
           Run a live draft simulation. Open{" "}
           <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">
-            War Room
+            Live
           </a>{" "}
           or{" "}
           <a href="/leaderboard" target="_blank" className="text-[var(--lions-blue)] underline">
@@ -43,7 +43,7 @@ export default async function SimulatePage() {
           </div>
           <div className="flex gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">2</span>
-            <p>Open <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">War Room</a> in a second tab to watch as a player would</p>
+            <p>Open <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">Live</a> in a second tab to watch as a player would</p>
           </div>
           <div className="flex gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">3</span>
@@ -58,7 +58,7 @@ export default async function SimulatePage() {
             <p>Watch the leaderboard update in real-time</p>
           </div>
           <p className="text-xs text-white/30 mt-3 pl-9">
-            Commissioners can also manually control trivia (fire, skip, pause) from the War Room trivia controls panel.
+            Commissioners can also manually control trivia (fire, skip, pause) from the Live trivia controls panel.
           </p>
         </div>
       </details>

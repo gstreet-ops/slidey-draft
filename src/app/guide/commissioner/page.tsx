@@ -123,6 +123,33 @@ export default async function CommissionerGuidePage() {
             </div>
           </section>
 
+          {/* ── Running a Simulation ── */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <SectionHeading>Running a Simulation</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              Test your setup before draft night by running a simulated draft. Simulations use realistic pick
+              data so you can verify trivia, scoring, and the live experience all work correctly.
+            </p>
+            <div className="mt-4 space-y-3">
+              <Step n={1}>Go to <strong className="text-white">Admin → Trivia</strong> and build your question queue for the pool</Step>
+              <Step n={2}>Open <strong className="text-white"><a href="/live" className="text-[var(--slidey)] hover:underline">/live</a></strong> in a second tab to see what players will see</Step>
+              <Step n={3}>Go to <strong className="text-white"><a href="/admin/simulate" className="text-[var(--slidey)] hover:underline">Admin → Simulate</a></strong> and click <strong className="text-white">Announce Next Pick</strong> or <strong className="text-white">Auto-Run All</strong></Step>
+              <Step n={4}>Each simulated pick triggers the next trivia question automatically</Step>
+              <Step n={5}>Watch the leaderboard, trivia, and chat update in real-time on /live</Step>
+            </div>
+            <div className="mt-4 space-y-3">
+              <InfoCard title="Trivia Controls">
+                You can also manually fire, skip, or pause trivia from the Live page — expand the Trivia Controls panel at the top.
+              </InfoCard>
+              <InfoCard title="Scoring">
+                Simulation scoring works identically to the real draft — mock board bonus, live predictions, and trivia all count. Use this to verify your scoring settings are correct.
+              </InfoCard>
+              <InfoCard title="Reset">
+                Click <strong className="text-white">Reset</strong> on the Simulate page to clear all results and start over. This also resets trivia queue progress.
+              </InfoCard>
+            </div>
+          </section>
+
           {/* ── Invite Section ── */}
           <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
             <SectionHeading>Invite Template</SectionHeading>
