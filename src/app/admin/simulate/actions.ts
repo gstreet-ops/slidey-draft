@@ -4,8 +4,9 @@ import { db } from "@/db";
 import {
   actualResults, draftOrder, players, scores, draftBoards,
   picks, pickScores, pools, poolMembers, livePredictions, liveScores,
-  poolStandings, mockScores,
+  poolStandings, mockScores, poolTriviaQueue,
 } from "@/db/schema";
+import { getPoolSettings } from "@/lib/pool-helpers";
 import { eq, asc, and, sql, isNotNull, inArray, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { ACTUAL_DRAFT_ORDER } from "@/db/simulation-config";
@@ -259,6 +260,7 @@ export async function simulateNextPick(): Promise<{ done: boolean; pickNumber: n
     // Lightweight scoring — sim boards + sim pool only
     await scoreSimBoards();
     await scoreSimLivePrediction(slot.pickNumber, player.id);
+    await advanceTriviaQueues(slot.pickNumber);
 
     revalidatePath("/admin/simulate");
     revalidatePath("/leaderboard");
@@ -270,6 +272,76 @@ export async function simulateNextPick(): Promise<{ done: boolean; pickNumber: n
     console.error("simulateNextPick error:", msg);
     return { done: false, pickNumber: 0, playerName: "", error: msg };
   }
+}
+
+/**
+ * Advance trivia queues for all pools — complete active question, fire next pending.
+ */
+async function advanceTriviaQueues(pickNumber: number) {
+  const allPools = await db.select({ id: pools.id, settings: pools.settings }).from(pools);
+  for (const pool of allPools) {
+    const settings = getPoolSettings(pool.settings);
+    if (settings.trivia) {
+      await db
+        .update(poolTriviaQueue)
+        .set({ status: "completed", completedAt: new Date() })
+        .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "active")));
+
+      const [next] = await db
+        .select({ id: poolTriviaQueue.id })
+        .from(poolTriviaQueue)
+        .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "pending")))
+        .orderBy(asc(poolTriviaQueue.sortOrder))
+        .limit(1);
+
+      if (next) {
+        await db
+          .update(poolTriviaQueue)
+          .set({ status: "active", activatedAt: new Date(), pickNumber })
+          .where(eq(poolTriviaQueue.id, next.id));
+      }
+    }
+  }
+}
+
+/**
+ * Get trivia status across all pools for the simulate dashboard.
+ */
+export async function getTriviaStatus() {
+  const allPools = await db.select({ id: pools.id, name: pools.name }).from(pools);
+  const statuses = [];
+
+  for (const pool of allPools) {
+    const [active] = await db
+      .select({ question: sql<string>`q.question`, sortOrder: poolTriviaQueue.sortOrder })
+      .from(poolTriviaQueue)
+      .innerJoin(sql`trivia_questions q`, sql`q.id = ${poolTriviaQueue.questionId}`)
+      .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "active")))
+      .limit(1);
+
+    const [counts] = await db
+      .select({
+        total: sql<number>`count(*)`,
+        pending: sql<number>`count(*) filter (where ${poolTriviaQueue.status} = 'pending')`,
+        completed: sql<number>`count(*) filter (where ${poolTriviaQueue.status} = 'completed')`,
+      })
+      .from(poolTriviaQueue)
+      .where(eq(poolTriviaQueue.poolId, pool.id));
+
+    if (Number(counts.total) > 0) {
+      statuses.push({
+        poolId: pool.id,
+        poolName: pool.name,
+        activeQuestion: active?.question ?? null,
+        activeSortOrder: active?.sortOrder ?? null,
+        pending: Number(counts.pending),
+        completed: Number(counts.completed),
+        total: Number(counts.total),
+      });
+    }
+  }
+
+  return statuses;
 }
 
 export async function resetSimulation() {
@@ -291,6 +363,15 @@ export async function resetSimulation() {
   if (poolIds.length > 0) {
     await db.delete(liveScores).where(inArray(liveScores.poolId, poolIds));
     await db.delete(poolStandings).where(inArray(poolStandings.poolId, poolIds));
+  }
+
+  // Reset trivia queues — set active/completed back to pending
+  const allPools = await db.select({ id: pools.id }).from(pools);
+  for (const pool of allPools) {
+    await db
+      .update(poolTriviaQueue)
+      .set({ status: "pending", activatedAt: null, completedAt: null, pickNumber: null })
+      .where(and(eq(poolTriviaQueue.poolId, pool.id), sql`${poolTriviaQueue.status} != 'pending'`));
   }
 
   revalidatePath("/admin/simulate");
