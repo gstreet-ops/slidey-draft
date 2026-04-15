@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import Anthropic from "@anthropic-ai/sdk";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {

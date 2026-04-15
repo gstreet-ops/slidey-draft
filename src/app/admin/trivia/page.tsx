@@ -90,9 +90,9 @@ export default function AdminTriviaPage() {
     fetchLibrary();
   }, [fetchLibrary]);
 
-  function showToast(msg: string) {
+  function showToast(msg: string, persist = false) {
     setToast(msg);
-    setTimeout(() => setToast(""), 3000);
+    if (!persist) setTimeout(() => setToast(""), 3000);
   }
 
   // ── Create Question ──
@@ -136,13 +136,13 @@ export default function AdminTriviaPage() {
       });
       const data = await res.json();
       if (data.error) {
-        showToast(`Error: ${data.error}`);
+        showToast(`Error: ${data.error}`, true);
       } else {
         setGenerated(data.questions);
         setSelectedGen(new Set(data.questions.map((_: unknown, i: number) => i)));
       }
-    } catch {
-      showToast("Failed to generate questions");
+    } catch (e) {
+      showToast(`Failed to generate questions: ${e instanceof Error ? e.message : "network error"}`, true);
     } finally {
       setGenerating(false);
     }
@@ -193,7 +193,7 @@ export default function AdminTriviaPage() {
     <div className="space-y-10">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#0076B6] px-5 py-3 text-sm font-semibold text-white shadow-lg animate-in fade-in">
+        <div className={`fixed top-4 right-4 z-50 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-lg animate-in fade-in max-w-md ${toast.startsWith("Error") || toast.startsWith("Failed") ? "bg-red-600" : "bg-[#0076B6]"}`}>
           {toast}
           <button onClick={() => setToast("")} className="ml-3 text-white/70 hover:text-white">&times;</button>
         </div>
