@@ -49,6 +49,7 @@ export function TriviaQueue() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [toast, setToast] = useState("");
 
   // Fetch pools the user can manage
   useEffect(() => {
@@ -101,14 +102,20 @@ export function TriviaQueue() {
     if (selectedPoolId) fetchAvailable();
   }, [fetchAvailable, selectedPoolId]);
 
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2000);
+  }
+
   async function addToQueue(questionId: string) {
     if (!selectedPoolId) return;
     setBusy(true);
-    await fetch(`/api/pools/${selectedPoolId}/trivia/queue/add`, {
+    const res = await fetch(`/api/pools/${selectedPoolId}/trivia/queue/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ questionId }),
     });
+    if (res.ok) showToast("Added to queue");
     await fetchQueue();
     setBusy(false);
   }
@@ -119,6 +126,7 @@ export function TriviaQueue() {
     await fetch(`/api/pools/${selectedPoolId}/trivia/queue/${questionId}`, {
       method: "DELETE",
     });
+    showToast("Removed from queue");
     await fetchQueue();
     setBusy(false);
   }
@@ -143,11 +151,15 @@ export function TriviaQueue() {
     // Shuffle available for random order
     const shuffled = [...available].sort(() => Math.random() - 0.5);
     const items = shuffled.map((q, i) => ({ questionId: q.id, sortOrder: maxOrder + 1 + i }));
-    await fetch(`/api/pools/${selectedPoolId}/trivia/queue`, {
+    const res = await fetch(`/api/pools/${selectedPoolId}/trivia/queue`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ questions: items }),
     });
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`Added ${data.added ?? items.length} questions to queue`);
+    }
     await fetchQueue();
     setBusy(false);
   }
@@ -165,6 +177,13 @@ export function TriviaQueue() {
 
   return (
     <div className="space-y-4">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-lg animate-in fade-in">
+          {toast}
+        </div>
+      )}
+
       {/* Pool Selector */}
       <div className="flex items-center gap-3">
         <label className="text-xs text-white/50">Pool:</label>
@@ -262,7 +281,15 @@ export function TriviaQueue() {
         {/* RIGHT: Queue Order */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Queue Order</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-white">Queue Order</h3>
+              {queue.length > 0 && (
+                <span className="flex items-center gap-1 text-[10px] text-green-400/60">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 5l2 2 4-4" /></svg>
+                  auto-saved
+                </span>
+              )}
+            </div>
             <span className="text-xs text-white/40">
               {pendingCount} pending · {completedCount} completed
             </span>
