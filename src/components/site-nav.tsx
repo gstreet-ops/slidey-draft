@@ -23,17 +23,17 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     ...(isLoggedIn
       ? [
           { href: "/my-board", label: "My Draft" },
-          { href: "/live", label: "War Room" },
-          { href: "/pools", label: "Pools" },
+          { href: "/live", label: "Live" },
+          { href: "/picks", label: "Mock Drafts" },
         ]
       : []),
   ];
 
   const secondaryLinks = [
-    { href: "/picks", label: "Mock Drafts" },
-    ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     { href: "/guide", label: "How to Play" },
     { href: "/scoring", label: "Scoring" },
+    ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
+    ...(isLoggedIn ? [{ href: "/pools", label: "Pools" }] : []),
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];
@@ -59,17 +59,17 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
               className="relative rounded-lg px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
             >
               {l.label}
-              {l.label === "Pools" && unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
             </Link>
           ))}
           {/* More dropdown for secondary */}
           <div className="relative group">
-            <button className="rounded-lg px-3 py-2 text-sm text-white/40 hover:bg-white/10 hover:text-white transition">
+            <button className="relative rounded-lg px-3 py-2 text-sm text-white/40 hover:bg-white/10 hover:text-white transition">
               More
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </button>
             <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--gtown-navy)] p-1 shadow-xl group-hover:block">
               {secondaryLinks.map((l) => (

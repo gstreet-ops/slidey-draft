@@ -1,3 +1,7 @@
+// Dashboard page: pre-draft hub showing published mock count, user mock status,
+// days-until-draft countdown, and a horizontal comparison grid of all published
+// mock drafts. Redirects to /live when draft is locked. Candidate for merging
+// into /my-board or /pools if we want fewer pages.
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";

@@ -9,9 +9,7 @@ import { ConnectionStatus } from "@/components/connection-status";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { OnTheClock } from "@/components/on-the-clock";
 import { TeamLeaderboard } from "@/components/team-leaderboard";
-import { WarRoomChat } from "@/components/war-room-chat";
 import { PoolChat } from "@/components/pool-chat";
-import { markChatRead } from "@/hooks/use-unread-chat";
 
 type PickContextEntry = {
   userName: string;
@@ -400,8 +398,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   ) : null;
 
   return (
-    <div className="flex">
-      <div className="flex-1 min-w-0 mx-auto max-w-[1400px] px-4 py-6">
+    <div className="mx-auto max-w-[1400px] px-4 py-6">
         {announcement && (
           <div className="mb-4">
             <PickAnnouncement
@@ -446,23 +443,30 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           )}
         </MobileTabBar>
 
-        <div className="hidden lg:grid lg:grid-cols-[300px_1fr_320px] gap-6">
-          {picksColumn}
-          {boardColumn}
-          {leaderboardColumn}
-        </div>
-      </div>
-
-      {/* Desktop chat side panel */}
-      {showChat && (
-        <WarRoomChat
-          poolId={chatPoolId}
-          poolName={chatPoolName ?? "Pool"}
-          currentUserId={userId}
-          commissionerId={commissionerId ?? ""}
-          isSpectator={isSpectator ?? false}
-        />
-      )}
+        {showChat ? (
+          <div className="hidden lg:grid lg:grid-cols-[280px_1fr_300px_300px] gap-6">
+            {picksColumn}
+            {boardColumn}
+            {leaderboardColumn}
+            <div>
+              <h2 className="text-lg font-bold text-white tracking-wide mb-4" style={{ fontFamily: "var(--font-display)" }}>CHAT</h2>
+              <div className="h-[calc(100vh-200px)]">
+                <PoolChat
+                  poolId={chatPoolId}
+                  currentUserId={userId}
+                  isSpectator={isSpectator ?? false}
+                  commissionerId={commissionerId ?? ""}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="hidden lg:grid lg:grid-cols-[300px_1fr_320px] gap-6">
+            {picksColumn}
+            {boardColumn}
+            {leaderboardColumn}
+          </div>
+        )}
     </div>
   );
 }

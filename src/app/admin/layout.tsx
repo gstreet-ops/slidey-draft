@@ -20,10 +20,9 @@ export default async function AdminLayout({
         <div className="mx-auto flex max-w-7xl items-center gap-1 px-6 py-1.5 text-xs">
           <span className="text-white/30 font-semibold uppercase tracking-wider mr-3">Admin</span>
           <Link href="/admin" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Boards</Link>
-          <Link href="/admin/live" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">War Room</Link>
+          <Link href="/admin/live" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Live</Link>
           <Link href="/admin/simulate" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Simulate</Link>
           <Link href="/admin/trivia" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Trivia</Link>
-          <Link href="/leaderboard" className="rounded px-2.5 py-1 text-white/50 hover:bg-white/5 hover:text-white transition">Leaderboard</Link>
         </div>
       </div>
 
