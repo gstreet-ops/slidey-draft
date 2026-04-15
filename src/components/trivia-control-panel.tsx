@@ -172,7 +172,16 @@ export function TriviaControlPanel({
         {/* Fire / Skip / Pause */}
         <div className="flex items-center gap-2 ml-auto">
           <button
-            onClick={() => setPaused(!paused)}
+            onClick={async () => {
+              const next = !paused;
+              setPaused(next);
+              await fetch(`/api/pools/${poolId}/trivia/settings`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ triviaPaused: next }),
+              });
+              showToastMsg(next ? "Trivia paused" : "Trivia resumed");
+            }}
             className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
               paused
                 ? "border-yellow-500/30 bg-yellow-500/20 text-yellow-400"

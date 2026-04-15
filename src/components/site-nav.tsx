@@ -17,11 +17,10 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   const [open, setOpen] = useState(false);
 
   const primaryLinks = [
-    { href: "/big-board", label: "Prospects" },
     ...(isLoggedIn
       ? [
-          { href: "/my-board", label: "My Draft" },
           { href: "/live", label: "Live" },
+          { href: "/my-board", label: "My Draft" },
           { href: "/picks", label: "Mock Drafts" },
         ]
       : []),
@@ -29,8 +28,8 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
 
   const secondaryLinks = [
     { href: "/guide", label: "How to Play" },
+    { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
-    ...(isLoggedIn ? [{ href: "/pools", label: "Pools" }] : []),
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];

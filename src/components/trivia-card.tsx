@@ -12,6 +12,7 @@ type Question = {
   totalQueued?: number;
   timerSeconds?: number;
   expiresAt?: number;
+  paused?: boolean;
   live?: boolean;
 };
 
@@ -43,6 +44,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const [triviaScore, setTriviaScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(DEFAULT_TIMER);
   const [timerTotal, setTimerTotal] = useState(DEFAULT_TIMER);
+  const [paused, setPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const pollRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const questionRef = useRef<Question | null>(null);
@@ -90,13 +92,18 @@ export function TriviaCard({ poolId }: { poolId: string }) {
     setTimeLeft(remaining);
 
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeout();
-          return 0;
-        }
-        return prev - 1;
+      // Don't count down if paused
+      setPaused((currentPaused) => {
+        if (currentPaused) return currentPaused;
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            handleTimeout();
+            return 0;
+          }
+          return prev - 1;
+        });
+        return currentPaused;
       });
     }, 1000);
 
@@ -111,6 +118,9 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         const data = await res.json();
         if (data.noActiveQuestion) return;
         if (data.alreadyAnswered) return;
+        // Update paused state from server on every poll
+        if (data.paused !== undefined) setPaused(!!data.paused);
+
         if (data.live && data.id !== lastQuestionId.current) {
           lastQuestionId.current = data.id;
           setQuestion(data);
@@ -210,12 +220,15 @@ export function TriviaCard({ poolId }: { poolId: string }) {
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
           )}
-          {!result && timerTotal > 0 && (
+          {!result && timerTotal > 0 && !paused && (
             <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-400" : "text-white/60"}`}>
               {timeLeft}s
             </span>
           )}
-          {!result && timerTotal === 0 && (
+          {!result && paused && (
+            <span className="text-[10px] font-bold text-yellow-400 animate-pulse">PAUSED</span>
+          )}
+          {!result && timerTotal === 0 && !paused && (
             <span className="text-[10px] text-white/30">No timer</span>
           )}
         </div>

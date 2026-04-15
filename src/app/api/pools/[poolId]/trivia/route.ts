@@ -74,6 +74,8 @@ export async function GET(
     .from(poolTriviaQueue)
     .where(eq(poolTriviaQueue.poolId, poolId));
 
+  const paused = !!(settings as Record<string, unknown>).triviaPaused;
+
   return NextResponse.json({
     id: activeItem.questionId,
     question: activeItem.question,
@@ -85,6 +87,7 @@ export async function GET(
     timerSeconds,
     expiresAt,
     pickNumber: activeItem.pickNumber,
+    paused,
     live: true,
   });
 }

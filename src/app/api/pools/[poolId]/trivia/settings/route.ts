@@ -18,7 +18,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { triviaTimerSeconds, triviaMode } = await req.json();
+  const { triviaTimerSeconds, triviaMode, triviaPaused } = await req.json();
 
   const [pool] = await db.select({ settings: pools.settings }).from(pools).where(eq(pools.id, poolId));
   const current = getPoolSettings(pool?.settings);
@@ -38,7 +38,11 @@ export async function PATCH(
     current.triviaMode = triviaMode;
   }
 
+  if (triviaPaused !== undefined) {
+    (current as Record<string, unknown>).triviaPaused = !!triviaPaused;
+  }
+
   await db.update(pools).set({ settings: current }).where(eq(pools.id, poolId));
 
-  return NextResponse.json({ success: true, settings: { triviaTimerSeconds: current.triviaTimerSeconds, triviaMode: current.triviaMode } });
+  return NextResponse.json({ success: true, settings: { triviaTimerSeconds: current.triviaTimerSeconds, triviaMode: current.triviaMode, triviaPaused: (current as Record<string, unknown>).triviaPaused ?? false } });
 }
