@@ -8,6 +8,15 @@ import { SoundToggle } from "@/components/sound-toggle";
 import { VideoWidget } from "@/components/video-widget";
 export const dynamic = "force-dynamic";
 
+type PoolContext = {
+  poolId: string;
+  poolName: string;
+  commissionerId: string;
+  isCommissioner: boolean;
+  triviaTimerSeconds: number;
+  watchPartyEnabled: boolean;
+};
+
 export default async function LivePage() {
   const session = await auth();
   const locked = await isDraftLocked();
@@ -19,31 +28,32 @@ export default async function LivePage() {
   const allPlayers = await getPlayers();
 
   let userBoardId: string | null = null;
-  let userPools: { poolId: string; poolName: string }[] = [];
-  let watchPartyEnabled = true;
-  let chatEnabled = false;
-  let commissionerId = "";
+  const poolContexts: PoolContext[] = [];
   let isSpectator = false;
-  let isCommissioner = false;
-  let triviaTimerSeconds = 30;
+
   if (userId) {
     const board = await getUserBoard(userId, season);
     userBoardId = board?.id || null;
-    userPools = await getPoolsForUser(userId);
-    if (userPools.length > 0) {
-      const pool = await getPoolById(userPools[0].poolId);
-      if (pool) {
-        const settings = getPoolSettings(pool.settings);
-        watchPartyEnabled = settings.watchParty;
-        chatEnabled = true;
-        commissionerId = pool.commissionerId;
-        isSpectator = session?.user?.status === "spectator";
-        triviaTimerSeconds = settings.triviaTimerSeconds ?? 30;
-        const poolRole = await getPoolRole(userId, userPools[0].poolId);
-        isCommissioner = poolRole === "commissioner" || poolRole === "admin" || session?.user?.role === "admin";
-      }
+    isSpectator = session?.user?.status === "spectator";
+
+    const userPools = await getPoolsForUser(userId);
+    for (const up of userPools) {
+      const pool = await getPoolById(up.poolId);
+      if (!pool) continue;
+      const settings = getPoolSettings(pool.settings);
+      const poolRole = await getPoolRole(userId, up.poolId);
+      poolContexts.push({
+        poolId: up.poolId,
+        poolName: up.poolName,
+        commissionerId: pool.commissionerId,
+        isCommissioner: poolRole === "commissioner" || poolRole === "admin" || session?.user?.role === "admin",
+        triviaTimerSeconds: settings.triviaTimerSeconds ?? 30,
+        watchPartyEnabled: settings.watchParty,
+      });
     }
   }
+
+  const activePool = poolContexts[0] ?? null;
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
@@ -71,12 +81,12 @@ export default async function LivePage() {
       </div>
 
       {/* Pre-draft banner */}
-      {!locked && (
+      {!locked && poolContexts.length > 0 && (
         <div className="mx-auto max-w-[1400px] px-4 pt-4">
           <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-5 py-4">
             <h2 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Draft hasn&apos;t started yet</h2>
             <p className="text-xs text-white/50 mt-1">
-              {isCommissioner
+              {activePool?.isCommissioner
                 ? "Use the simulation and trivia controls below to set up and test. Trivia auto-advances with each pick."
                 : "Come back when the draft is live to see picks, make predictions, and answer trivia."}
             </p>
@@ -84,41 +94,60 @@ export default async function LivePage() {
         </div>
       )}
 
-      {/* Live Prediction Widget for pool members */}
-      {userPools.length > 0 && locked && (
-        <div className="mx-auto max-w-[1400px] px-4 pt-4">
-          <LivePredictionWidget
-            poolId={userPools[0].poolId}
-            poolName={userPools[0].poolName}
-            allPlayers={allPlayers}
-            actualResults={results}
-            draftOrder={draftOrder.map((d) => ({
-              pickNumber: d.pickNumber,
-              teamName: d.teamName,
-              teamAbbreviation: d.teamAbbreviation,
-            }))}
-          />
+      {/* No pool state */}
+      {poolContexts.length === 0 && userId && (
+        <div className="mx-auto max-w-[1400px] px-4 pt-8">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center">
+            <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO PLAY</h2>
+            <p className="mt-2 text-sm text-white/50">You need to join a pool to participate. Ask your commissioner for an invite link.</p>
+          </div>
         </div>
       )}
 
-      <WarRoom
-        userId={userId}
-        userBoardId={userBoardId}
-        initialResults={results}
-        draftOrder={draftOrder}
-        season={season}
-        poolId={userPools.length > 0 ? userPools[0].poolId : null}
-        chatEnabled={chatEnabled}
-        chatPoolId={userPools.length > 0 ? userPools[0].poolId : null}
-        chatPoolName={userPools.length > 0 ? userPools[0].poolName : ""}
-        commissionerId={commissionerId}
-        isSpectator={isSpectator}
-        isCommissioner={isCommissioner}
-        triviaTimerSeconds={triviaTimerSeconds}
-      />
+      {/* Not logged in */}
+      {!userId && (
+        <div className="mx-auto max-w-[1400px] px-4 pt-8">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center">
+            <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>SIGN IN TO PLAY</h2>
+            <p className="mt-2 text-sm text-white/50">Sign in to join a pool and compete on draft night.</p>
+          </div>
+        </div>
+      )}
 
-      {userPools.length > 0 && watchPartyEnabled && locked && (
-        <VideoWidget poolId={userPools[0].poolId} poolName={userPools[0].poolName} />
+      {/* Main content — only when user has pools */}
+      {poolContexts.length > 0 && (
+        <>
+          {/* Live Prediction Widget */}
+          {locked && (
+            <div className="mx-auto max-w-[1400px] px-4 pt-4">
+              <LivePredictionWidget
+                poolId={activePool!.poolId}
+                poolName={activePool!.poolName}
+                allPlayers={allPlayers}
+                actualResults={results}
+                draftOrder={draftOrder.map((d) => ({
+                  pickNumber: d.pickNumber,
+                  teamName: d.teamName,
+                  teamAbbreviation: d.teamAbbreviation,
+                }))}
+              />
+            </div>
+          )}
+
+          <WarRoom
+            userId={userId}
+            userBoardId={userBoardId}
+            initialResults={results}
+            draftOrder={draftOrder}
+            season={season}
+            poolContexts={poolContexts}
+            isSpectator={isSpectator}
+          />
+
+          {activePool!.watchPartyEnabled && locked && (
+            <VideoWidget poolId={activePool!.poolId} poolName={activePool!.poolName} />
+          )}
+        </>
       )}
     </div>
   );

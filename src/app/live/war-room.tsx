@@ -74,20 +74,23 @@ type PickScore = {
   matchType: string;
 };
 
+type PoolContext = {
+  poolId: string;
+  poolName: string;
+  commissionerId: string;
+  isCommissioner: boolean;
+  triviaTimerSeconds: number;
+  watchPartyEnabled: boolean;
+};
+
 type Props = {
   userId: string | null;
   userBoardId: string | null;
   initialResults: ActualResult[];
   draftOrder: DraftSlot[];
   season: number;
-  poolId: string | null;
-  chatEnabled?: boolean;
-  chatPoolId?: string | null;
-  chatPoolName?: string;
-  commissionerId?: string;
+  poolContexts: PoolContext[];
   isSpectator?: boolean;
-  isCommissioner?: boolean;
-  triviaTimerSeconds?: number;
 };
 
 const MATCH_COLORS: Record<string, string> = {
@@ -104,8 +107,11 @@ const MATCH_LABELS: Record<string, string> = {
   miss: "0",
 };
 
-export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId, chatEnabled, chatPoolId, chatPoolName, commissionerId, isSpectator, isCommissioner, triviaTimerSeconds }: Props) {
+export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolContexts, isSpectator }: Props) {
   const { play } = useSoundEffects();
+  const [selectedPoolIdx, setSelectedPoolIdx] = useState(0);
+  const pool = poolContexts[selectedPoolIdx] ?? poolContexts[0] ?? null;
+  const poolId = pool?.poolId ?? null;
   const [announcement, setAnnouncement] = useState<ActualResult | null>(null);
   const [latestMatchType, setLatestMatchType] = useState<string | null>(null);
   const [announcementContext, setAnnouncementContext] = useState<PickContextEntry[]>([]);
@@ -224,7 +230,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     return { animation: "row-glow-red 1.5s ease-out" };
   }
 
-  const showChat = chatEnabled && chatPoolId && userId;
+  const showChat = poolId && userId;
 
   // ── Column 1: Your Picks vs Actual ──
   const picksColumn = (
@@ -301,11 +307,11 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
       {poolId && <TriviaCard poolId={poolId} />}
 
-      {isCommissioner && poolId && (
-        <CollapsibleTriviaControls poolId={poolId} triviaTimerSeconds={triviaTimerSeconds ?? 30} />
+      {pool?.isCommissioner && poolId && (
+        <CollapsibleTriviaControls poolId={poolId} triviaTimerSeconds={pool.triviaTimerSeconds} />
       )}
 
-      {isCommissioner && (
+      {pool?.isCommissioner && (
         <CollapsibleSimControls />
       )}
     </div>
@@ -380,6 +386,29 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6">
+      {/* Pool context bar */}
+      {pool && (
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-xs text-white/40">Playing in:</span>
+          {poolContexts.length > 1 ? (
+            <select
+              value={selectedPoolIdx}
+              onChange={(e) => setSelectedPoolIdx(Number(e.target.value))}
+              className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white focus:border-[var(--lions-blue)] focus:outline-none"
+            >
+              {poolContexts.map((p, i) => (
+                <option key={p.poolId} value={i} className="bg-gray-900">{p.poolName}</option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-sm font-bold text-white">{pool.poolName}</span>
+          )}
+          {pool.isCommissioner && (
+            <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-semibold text-yellow-400">Commissioner</span>
+          )}
+        </div>
+      )}
+
       {announcement && (
         <div className="mb-4">
           <PickAnnouncement
@@ -421,7 +450,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             {activeTab === "leaderboard" && leaderboardColumn}
             {activeTab === "chat" && showChat && (
               <div className="h-[calc(100vh-200px)]">
-                <PoolChat poolId={chatPoolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={commissionerId ?? ""} />
+                <PoolChat poolId={poolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
               </div>
             )}
           </>
@@ -475,13 +504,13 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                   window.addEventListener("mouseup", onUp);
                 }}
               >
-                <span className="text-sm font-semibold text-white">{chatPoolName ?? "Chat"}</span>
+                <span className="text-sm font-semibold text-white">{pool?.poolName ?? "Chat"}</span>
                 <button onClick={() => setChatOpen(false)} className="rounded p-1 text-white/40 hover:bg-white/10 hover:text-white transition">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
                 </button>
               </div>
               <div className="flex-1 min-h-0">
-                <PoolChat poolId={chatPoolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={commissionerId ?? ""} />
+                <PoolChat poolId={poolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={pool?.commissionerId ?? ""} />
               </div>
             </div>
           )}
