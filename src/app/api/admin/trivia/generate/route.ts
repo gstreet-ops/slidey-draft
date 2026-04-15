@@ -10,13 +10,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { category, difficulty, count, customTopic } = await req.json();
+  const { category, difficulty, count, customTopic, topicMode, sportContext } = await req.json();
 
   const categoryLabel = category === "custom" && customTopic ? customTopic : category;
   const difficultyInstruction =
     difficulty === "mixed"
       ? "Mix of easy, medium, and hard questions"
       : `All questions should be ${difficulty} difficulty`;
+
+  const isTopicOnly = topicMode === "topic_only";
+
+  let contextInstruction: string;
+  if (isTopicOnly) {
+    contextInstruction = `Generate ${count} trivia questions purely about "${categoryLabel}". Do NOT connect them to football, the NFL, or sports unless the topic itself is sports-related.`;
+  } else {
+    const sport = sportContext || "nfl_draft";
+    const sportLabel =
+      sport === "nfl_general" ? "NFL" :
+      sport === "sports_general" ? "sports" :
+      "NFL Draft";
+    contextInstruction = `Generate ${count} trivia questions about "${categoryLabel}" blended with ${sportLabel} context. Connect the topic to ${sportLabel} where possible — find interesting intersections, parallels, or references.`;
+  }
 
   let message;
   try {
@@ -27,7 +41,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `Generate ${count} NFL Draft trivia questions about "${categoryLabel}".
+          content: `${contextInstruction}
 
 ${difficultyInstruction}.
 
@@ -38,7 +52,7 @@ Return ONLY a valid JSON array. Each object must have exactly these fields:
 - "category": "${category === "custom" ? "general" : category}"
 - "difficulty": "${difficulty === "mixed" ? "medium" : difficulty}" (if mixed, vary between "easy", "medium", "hard")
 
-Make questions factual and interesting. Avoid duplicating well-known #1 pick trivia. Include combine stats, trade details, draft day surprises, and lesser-known facts.
+Make questions factual and interesting. Include surprising facts and lesser-known details.
 
 Return ONLY the JSON array, no markdown fences, no explanation.`,
         },
@@ -63,6 +77,12 @@ Return ONLY the JSON array, no markdown fences, no explanation.`,
 
   const text =
     message.content[0].type === "text" ? message.content[0].text : "";
+
+  // Extract usage for cost tracking
+  const usage = {
+    inputTokens: message.usage?.input_tokens ?? 0,
+    outputTokens: message.usage?.output_tokens ?? 0,
+  };
 
   let questions;
   try {
@@ -99,5 +119,5 @@ Return ONLY the JSON array, no markdown fences, no explanation.`,
     );
   }
 
-  return NextResponse.json({ questions });
+  return NextResponse.json({ questions, usage });
 }

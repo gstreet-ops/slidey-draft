@@ -290,9 +290,18 @@ export function TriviaQueue() {
                 </span>
               )}
             </div>
-            <span className="text-xs text-white/40">
-              {pendingCount} pending · {completedCount} completed
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => { fetchQueue().then(() => showToast("Queue is up to date")); }}
+                disabled={busy || queue.length === 0}
+                className="rounded-lg bg-green-600 px-3 py-1 text-[10px] font-semibold text-white hover:bg-green-700 transition disabled:opacity-40"
+              >
+                Save Queue
+              </button>
+              <span className="text-xs text-white/40">
+                {pendingCount} pending · {completedCount} completed
+              </span>
+            </div>
           </div>
 
           <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">

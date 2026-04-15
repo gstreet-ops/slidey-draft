@@ -30,7 +30,17 @@ const AI_CATEGORIES = [
   { value: "custom", label: "Custom Topic" },
 ];
 
-const AI_COUNTS = [5, 10, 15, 20];
+const SPORT_CONTEXTS = [
+  { value: "nfl_draft", label: "NFL Draft" },
+  { value: "nfl_general", label: "NFL General" },
+  { value: "sports_general", label: "Sports General" },
+];
+
+const AI_COUNTS = [3, 5, 10, 15, 20];
+
+// Sonnet 4 pricing: $3/MTok input, $15/MTok output
+const COST_PER_INPUT_TOKEN = 3 / 1_000_000;
+const COST_PER_OUTPUT_TOKEN = 15 / 1_000_000;
 
 const diffColor: Record<string, string> = {
   easy: "bg-green-500/20 text-green-400",
@@ -51,6 +61,8 @@ export default function AdminTriviaPage() {
   const [creatingQuestion, setCreatingQuestion] = useState(false);
 
   // ── AI Generator state ──
+  const [topicMode, setTopicMode] = useState<"topic_football" | "topic_only">("topic_football");
+  const [sportContext, setSportContext] = useState("nfl_draft");
   const [aiCategory, setAiCategory] = useState("draft_history");
   const [customTopic, setCustomTopic] = useState("");
   const [aiDifficulty, setAiDifficulty] = useState("medium");
@@ -59,6 +71,8 @@ export default function AdminTriviaPage() {
   const [generated, setGenerated] = useState<Question[]>([]);
   const [selectedGen, setSelectedGen] = useState<Set<number>>(new Set());
   const [saving, setSaving] = useState(false);
+  const [lastUsage, setLastUsage] = useState<{ inputTokens: number; outputTokens: number } | null>(null);
+  const [sessionCost, setSessionCost] = useState(0);
 
   // ── Library state ──
   const [library, setLibrary] = useState<Question[]>([]);
@@ -128,11 +142,19 @@ export default function AdminTriviaPage() {
   async function handleGenerate() {
     setGenerating(true);
     setGenerated([]);
+    setLastUsage(null);
     try {
       const res = await fetch("/api/admin/trivia/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: aiCategory, difficulty: aiDifficulty, count: aiCount, customTopic: aiCategory === "custom" ? customTopic : undefined }),
+        body: JSON.stringify({
+          category: aiCategory,
+          difficulty: aiDifficulty,
+          count: aiCount,
+          customTopic: aiCategory === "custom" ? customTopic : undefined,
+          topicMode,
+          sportContext: topicMode === "topic_football" ? sportContext : undefined,
+        }),
       });
       const data = await res.json();
       if (data.error) {
@@ -140,6 +162,11 @@ export default function AdminTriviaPage() {
       } else {
         setGenerated(data.questions);
         setSelectedGen(new Set(data.questions.map((_: unknown, i: number) => i)));
+        if (data.usage) {
+          setLastUsage(data.usage);
+          const cost = data.usage.inputTokens * COST_PER_INPUT_TOKEN + data.usage.outputTokens * COST_PER_OUTPUT_TOKEN;
+          setSessionCost((prev) => prev + cost);
+        }
       }
     } catch (e) {
       showToast(`Failed to generate questions: ${e instanceof Error ? e.message : "network error"}`, true);
@@ -187,6 +214,11 @@ export default function AdminTriviaPage() {
       body: JSON.stringify({ id }),
     });
     fetchLibrary();
+  }
+
+  function formatCost(dollars: number) {
+    if (dollars < 0.01) return `~$${(dollars * 100).toFixed(2)}c`;
+    return `~$${dollars.toFixed(3)}`;
   }
 
   return (
@@ -419,6 +451,42 @@ export default function AdminTriviaPage() {
 
         <div className="space-y-6 pt-4">
           <div className="flex flex-wrap gap-4">
+            {/* Topic Mode */}
+            <div>
+              <label className="block text-xs text-white/50 mb-1">Mode</label>
+              <div className="flex rounded-lg border border-white/10 overflow-hidden">
+                <button
+                  onClick={() => setTopicMode("topic_football")}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_football" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                >
+                  Topic + Football
+                </button>
+                <button
+                  onClick={() => setTopicMode("topic_only")}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_only" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                >
+                  Topic Only
+                </button>
+              </div>
+            </div>
+
+            {/* Sport Context (only when Topic + Football) */}
+            {topicMode === "topic_football" && (
+              <div>
+                <label className="block text-xs text-white/50 mb-1">Sport Context</label>
+                <select
+                  value={sportContext}
+                  onChange={(e) => setSportContext(e.target.value)}
+                  className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                >
+                  {SPORT_CONTEXTS.map((s) => (
+                    <option key={s.value} value={s.value} className="bg-gray-900">{s.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Category */}
             <div>
               <label className="block text-xs text-white/50 mb-1">Category</label>
               <select
@@ -444,6 +512,7 @@ export default function AdminTriviaPage() {
               </div>
             )}
 
+            {/* Difficulty */}
             <div>
               <label className="block text-xs text-white/50 mb-1">Difficulty</label>
               <select
@@ -457,6 +526,7 @@ export default function AdminTriviaPage() {
               </select>
             </div>
 
+            {/* Count */}
             <div>
               <label className="block text-xs text-white/50 mb-1">Count</label>
               <select
@@ -470,7 +540,8 @@ export default function AdminTriviaPage() {
               </select>
             </div>
 
-            <div className="flex items-end">
+            {/* Generate button + session cost */}
+            <div className="flex items-end gap-3">
               <button
                 onClick={handleGenerate}
                 disabled={generating || (aiCategory === "custom" && !customTopic)}
@@ -485,6 +556,9 @@ export default function AdminTriviaPage() {
                   "Generate"
                 )}
               </button>
+              {sessionCost > 0 && (
+                <span className="text-[10px] text-white/30 pb-1">Session: {formatCost(sessionCost)}</span>
+              )}
             </div>
           </div>
 
@@ -510,6 +584,18 @@ export default function AdminTriviaPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Cost info */}
+              {lastUsage && (
+                <p className="text-[10px] text-white/30">
+                  Estimated cost: {formatCost(lastUsage.inputTokens * COST_PER_INPUT_TOKEN + lastUsage.outputTokens * COST_PER_OUTPUT_TOKEN)} ({lastUsage.inputTokens.toLocaleString()} input + {lastUsage.outputTokens.toLocaleString()} output tokens)
+                </p>
+              )}
+
+              {/* Accuracy warning */}
+              <p className="text-xs text-yellow-400/70 flex items-center gap-1.5">
+                <span>&#x26A0;</span> AI-generated questions may contain errors. Please verify facts before adding to the queue.
+              </p>
 
               <div className="grid gap-4">
                 {generated.map((q, i) => (
