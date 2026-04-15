@@ -41,7 +41,7 @@ export async function GET(
   return NextResponse.json({ queue });
 }
 
-// POST /api/pools/[poolId]/trivia/queue — bulk set queue (replaces pending items)
+// POST /api/pools/[poolId]/trivia/queue — bulk append questions to the queue (additive, not destructive)
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ poolId: string }> }
@@ -59,31 +59,32 @@ export async function POST(
     return NextResponse.json({ error: "questions array required" }, { status: 400 });
   }
 
-  // Delete only pending items — active/completed are locked
-  await db
-    .delete(poolTriviaQueue)
-    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "pending")));
-
-  // Get max sort_order of non-pending items
+  // Get current max sort_order — append after it
   const [maxRow] = await db
     .select({ max: sql<number>`coalesce(max(sort_order), 0)` })
     .from(poolTriviaQueue)
     .where(eq(poolTriviaQueue.poolId, poolId));
   let nextOrder = (maxRow?.max ?? 0) + 1;
 
-  // Insert new pending items
+  let added = 0;
   for (const q of questions) {
     const questionId = q.questionId || q;
-    await db
-      .insert(poolTriviaQueue)
-      .values({
-        poolId,
-        questionId,
-        sortOrder: q.sortOrder || nextOrder++,
-        status: "pending",
-      })
-      .onConflictDoNothing();
+    try {
+      await db
+        .insert(poolTriviaQueue)
+        .values({
+          poolId,
+          questionId,
+          sortOrder: nextOrder,
+          status: "pending",
+        })
+        .onConflictDoNothing();
+      nextOrder++;
+      added++;
+    } catch {
+      // skip duplicates
+    }
   }
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, added });
 }

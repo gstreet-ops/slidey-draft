@@ -200,7 +200,20 @@ export default function AdminTriviaPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════════
-          SECTION 1: Question Bank
+          Pool Queue Builder
+          ═══════════════════════════════════════════════════════ */}
+      <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
+        <h2 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
+          POOL QUEUE BUILDER
+        </h2>
+        <p className="text-sm text-white/40">
+          Select a pool, then arrange questions in the order they&apos;ll fire during the draft.
+        </p>
+        <TriviaQueue />
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════
+          Question Bank
           ═══════════════════════════════════════════════════════ */}
       <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
         <div className="flex items-center justify-between">
@@ -394,19 +407,6 @@ export default function AdminTriviaPage() {
             </button>
           </div>
         )}
-      </div>
-
-      {/* ═══════════════════════════════════════════════════════
-          SECTION 2: Pool Queue Builder
-          ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
-        <h2 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
-          POOL QUEUE BUILDER
-        </h2>
-        <p className="text-sm text-white/40">
-          Select a pool, then arrange questions in the order they&apos;ll fire during the draft.
-        </p>
-        <TriviaQueue />
       </div>
 
       {/* ═══════════════════════════════════════════════════════

@@ -1,9 +1,10 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import { sql, eq } from "drizzle-orm";
 import * as schema from "./schema";
 
-const sql = neon(process.env.DATABASE_URL!);
-const db = drizzle(sql, { schema });
+const neonSql = neon(process.env.DATABASE_URL!);
+const db = drizzle(neonSql, { schema });
 
 type SeedQuestion = {
   question: string;
@@ -414,10 +415,55 @@ const questions: SeedQuestion[] = [
   },
 ];
 
-async function seed() {
-  console.log(`Seeding ${questions.length} trivia questions...`);
+async function deduplicate() {
+  console.log("Deduplicating system-seeded questions...");
+  // Find duplicate question texts among system-seeded (created_by IS NULL)
+  const allSystemQs = await db
+    .select({ id: schema.triviaQuestions.id, question: schema.triviaQuestions.question })
+    .from(schema.triviaQuestions)
+    .where(sql`${schema.triviaQuestions.createdBy} IS NULL`)
+    .orderBy(schema.triviaQuestions.createdAt);
 
-  for (const q of questions) {
+  const seen = new Map<string, string>(); // question text -> first id
+  const toDelete: string[] = [];
+  for (const q of allSystemQs) {
+    if (seen.has(q.question)) {
+      toDelete.push(q.id);
+    } else {
+      seen.set(q.question, q.id);
+    }
+  }
+
+  if (toDelete.length > 0) {
+    // Remove queue entries referencing duplicates
+    for (const id of toDelete) {
+      await db.delete(schema.poolTriviaQueue).where(eq(schema.poolTriviaQueue.questionId, id));
+    }
+    // Remove duplicate questions
+    for (const id of toDelete) {
+      await db.delete(schema.triviaQuestions).where(eq(schema.triviaQuestions.id, id));
+    }
+    console.log(`Removed ${toDelete.length} duplicate questions.`);
+  } else {
+    console.log("No duplicates found.");
+  }
+}
+
+async function seed() {
+  // Deduplicate first
+  await deduplicate();
+
+  // Only insert questions that don't already exist (by question text)
+  const existing = await db
+    .select({ question: schema.triviaQuestions.question })
+    .from(schema.triviaQuestions)
+    .where(sql`${schema.triviaQuestions.createdBy} IS NULL`);
+  const existingSet = new Set(existing.map((q) => q.question));
+
+  const toInsert = questions.filter((q) => !existingSet.has(q.question));
+  console.log(`Seeding ${toInsert.length} new trivia questions (${existingSet.size} already exist)...`);
+
+  for (const q of toInsert) {
     await db.insert(schema.triviaQuestions).values({
       question: q.question,
       options: q.options,
@@ -429,7 +475,7 @@ async function seed() {
     });
   }
 
-  console.log(`Seeded ${questions.length} questions.`);
+  console.log("Done.");
 }
 
 seed().catch(console.error);

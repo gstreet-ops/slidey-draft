@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
       ? "Mix of easy, medium, and hard questions"
       : `All questions should be ${difficulty} difficulty`;
 
-  const message = await client.messages.create({
+  let message;
+  try {
+    message = await client.messages.create({
     model: "claude-sonnet-4-20250514",
     max_tokens: 4096,
     messages: [
@@ -41,6 +43,13 @@ Return ONLY the JSON array, no markdown fences, no explanation.`,
       },
     ],
   });
+  } catch (err) {
+    console.error("Anthropic API error:", err);
+    return NextResponse.json(
+      { error: "AI generation failed. Check that ANTHROPIC_API_KEY is set in environment variables." },
+      { status: 500 }
+    );
+  }
 
   const text =
     message.content[0].type === "text" ? message.content[0].text : "";

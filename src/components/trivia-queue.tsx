@@ -104,11 +104,10 @@ export function TriviaQueue() {
   async function addToQueue(questionId: string) {
     if (!selectedPoolId) return;
     setBusy(true);
-    const maxOrder = queue.length > 0 ? Math.max(...queue.map((q) => q.sortOrder)) : 0;
-    await fetch(`/api/pools/${selectedPoolId}/trivia/queue`, {
+    await fetch(`/api/pools/${selectedPoolId}/trivia/queue/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questions: [{ questionId, sortOrder: maxOrder + 1 }] }),
+      body: JSON.stringify({ questionId }),
     });
     await fetchQueue();
     setBusy(false);
