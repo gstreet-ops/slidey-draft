@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { TriviaQueue } from "@/components/trivia-queue";
 
 interface Question {
   id?: string;
@@ -316,6 +317,17 @@ export default function AdminTriviaPage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Draft Night Queue */}
+      <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
+        <h2 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
+          DRAFT NIGHT QUEUE
+        </h2>
+        <p className="text-sm text-white/40">
+          Arrange questions in the order they&apos;ll auto-fire during the draft. The auto-fire system picks the next question by sort order.
+        </p>
+        <TriviaQueue />
       </div>
 
       {/* Question Library */}
