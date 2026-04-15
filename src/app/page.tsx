@@ -58,7 +58,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const daysUntilDraft = Math.max(0, Math.ceil((draftDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
   const isDraftHere = now >= draftDate;
 
-  const firstName = user.name?.split(" ")[0] || "there";
+  const firstName = user.name?.split(" ")[0] || user.email?.split("@")[0] || "there";
   const isAdmin = user.role === "admin";
   const isCommissioner = user.role === "commissioner" || isAdmin;
 
