@@ -26,7 +26,7 @@ export default async function BigBoardPage() {
         <BigBoardClient prospects={ranked} isLoggedIn={!!session?.user} />
       </main>
 
-      <SiteFooter isAdmin={session?.user?.role === "admin"} />
+      <SiteFooter />
     </div>
   );
 }

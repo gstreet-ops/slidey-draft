@@ -27,7 +27,7 @@ export default async function Home() {
         <LandingPage session={session} locked={locked} isSpectator={!!isSpectator} />
       )}
 
-      <SiteFooter isAdmin={session?.user?.role === "admin"} />
+      <SiteFooter />
     </div>
   );
 }
