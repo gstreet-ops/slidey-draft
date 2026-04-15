@@ -104,6 +104,15 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           </div>
         )}
 
+        {/* Scoring CTA */}
+        <Link
+          href="/scoring"
+          className="block rounded-xl border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 p-5 text-center hover:border-[var(--lions-blue)]/50 transition"
+        >
+          <p className="text-base font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>{"\uD83C\uDFC6"} SCORING GUIDE</p>
+          <p className="text-xs text-white/50 mt-1">See how mock picks, live predictions, and trivia earn you points</p>
+        </Link>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <QuickAction

@@ -13,6 +13,7 @@ import { PoolChat } from "@/components/pool-chat";
 import { TriviaCard } from "@/components/trivia-card";
 import { CollapsibleTriviaControls } from "@/components/collapsible-trivia-controls";
 import { CollapsibleSimControls } from "@/components/collapsible-sim-controls";
+import { CollapsibleScoringSettings } from "@/components/collapsible-scoring-settings";
 
 type PickContextEntry = {
   userName: string;
@@ -81,6 +82,12 @@ type PoolContext = {
   isCommissioner: boolean;
   triviaTimerSeconds: number;
   watchPartyEnabled: boolean;
+  scoringConfig: {
+    scoringMode: "standard" | "custom";
+    mockPointValues: { playerCalled: number; rangeClose: number; rangeFar: number; exactSlot: number; positionMatch: number };
+    livePointValues: { correctPlayer: number };
+    triviaPointValues: { easy: number; medium: number; hard: number };
+  };
 };
 
 type Props = {
@@ -313,6 +320,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
       {pool?.isCommissioner && (
         <CollapsibleSimControls />
+      )}
+
+      {pool?.isCommissioner && poolId && (
+        <CollapsibleScoringSettings poolId={poolId} initialConfig={pool.scoringConfig} />
       )}
     </div>
   );

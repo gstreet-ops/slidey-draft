@@ -15,6 +15,12 @@ type PoolContext = {
   isCommissioner: boolean;
   triviaTimerSeconds: number;
   watchPartyEnabled: boolean;
+  scoringConfig: {
+    scoringMode: "standard" | "custom";
+    mockPointValues: { playerCalled: number; rangeClose: number; rangeFar: number; exactSlot: number; positionMatch: number };
+    livePointValues: { correctPlayer: number };
+    triviaPointValues: { easy: number; medium: number; hard: number };
+  };
 };
 
 export default async function LivePage() {
@@ -49,6 +55,12 @@ export default async function LivePage() {
         isCommissioner: poolRole === "commissioner" || poolRole === "admin" || session?.user?.role === "admin",
         triviaTimerSeconds: settings.triviaTimerSeconds ?? 30,
         watchPartyEnabled: settings.watchParty,
+        scoringConfig: {
+          scoringMode: settings.scoringMode,
+          mockPointValues: settings.mockPointValues,
+          livePointValues: settings.livePointValues,
+          triviaPointValues: settings.triviaPointValues,
+        },
       });
     }
   }
