@@ -470,29 +470,30 @@ export async function joinPool(inviteCode: string) {
     }
   }
 
-  await db
-    .insert(poolMembers)
-    .values({
-      poolId: pool.id,
-      userId: session.user.id,
-      role: "member",
-    })
-    .onConflictDoNothing();
+  // Insert member + activate spectator + mark single-use code in one batch.
+  // Neon HTTP doesn't support transactions, so we use a single raw SQL statement
+  // to atomically insert the member and activate the user.
+  await db.execute(sql`
+    WITH insert_member AS (
+      INSERT INTO pool_members (pool_id, user_id, role)
+      VALUES (${pool.id}, ${session.user.id}, 'member')
+      ON CONFLICT DO NOTHING
+      RETURNING pool_id
+    ),
+    activate_user AS (
+      UPDATE users SET status = 'active'
+      WHERE id = ${session.user.id} AND status = 'spectator'
+        AND EXISTS (SELECT 1 FROM insert_member)
+    )
+    SELECT 1
+  `);
 
-  // Mark single-use code as used
+  // Mark single-use code as used (non-critical — if this fails, code stays valid but user is in pool)
   if (singleCodeId) {
     await db
       .update(poolInviteCodes)
       .set({ usedBy: session.user.id, usedAt: new Date() })
       .where(eq(poolInviteCodes.id, singleCodeId));
-  }
-
-  // Activate spectators when they join via pool invite
-  if (session.user.status === "spectator") {
-    await db
-      .update(users)
-      .set({ status: "active" })
-      .where(eq(users.id, session.user.id));
   }
 
   revalidatePath(`/pools/${pool.id}`);
@@ -920,15 +921,17 @@ export async function claimCommissionerInvite(code: string) {
     return { success: false, message: "This commissioner invite has expired." };
   }
 
-  await db
-    .update(users)
-    .set({ role: "commissioner", status: "active" })
-    .where(eq(users.id, session.user.id));
-
-  await db
-    .update(commissionerInvites)
-    .set({ usedBy: session.user.id, usedAt: new Date() })
-    .where(eq(commissionerInvites.id, invite.id));
+  // Upgrade user + mark invite used in a single SQL statement for atomicity
+  // (Neon HTTP doesn't support transactions)
+  await db.execute(sql`
+    WITH upgrade_user AS (
+      UPDATE users SET role = 'commissioner', status = 'active'
+      WHERE id = ${session.user.id}
+    )
+    UPDATE commissioner_invites
+    SET used_by = ${session.user.id}, used_at = NOW()
+    WHERE id = ${invite.id}
+  `);
 
   revalidatePath("/");
   return { success: true, message: "You're now a commissioner!", poolName: invite.poolName };
