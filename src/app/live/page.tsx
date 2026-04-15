@@ -4,8 +4,6 @@ import { isDraftLocked } from "@/lib/config";
 import { getPoolSettings, getPoolRole } from "@/lib/pool-helpers";
 import { WarRoom } from "./war-room";
 import { LivePredictionWidget } from "@/components/live-prediction";
-import { TriviaCard } from "@/components/trivia-card";
-import { CollapsibleTriviaControls } from "@/components/collapsible-trivia-controls";
 import { SoundToggle } from "@/components/sound-toggle";
 import { VideoWidget } from "@/components/video-widget";
 export const dynamic = "force-dynamic";
@@ -79,7 +77,7 @@ export default async function LivePage() {
             <h2 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Draft hasn&apos;t started yet</h2>
             <p className="text-xs text-white/50 mt-1">
               {isCommissioner
-                ? "Use the trivia controls below to set up and test questions. Trivia will auto-advance when picks come in during the draft or simulation."
+                ? "Use the simulation and trivia controls below to set up and test. Trivia auto-advances with each pick."
                 : "Come back when the draft is live to see picks, make predictions, and answer trivia."}
             </p>
           </div>
@@ -103,19 +101,6 @@ export default async function LivePage() {
         </div>
       )}
 
-      {userPools.length > 0 && (
-        <div className="mx-auto max-w-[1400px] px-4 pt-2">
-          <TriviaCard poolId={userPools[0].poolId} />
-        </div>
-      )}
-
-      {/* Commissioner Trivia Controls — collapsible */}
-      {isCommissioner && userPools.length > 0 && (
-        <div className="mx-auto max-w-[1400px] px-4 pt-2">
-          <CollapsibleTriviaControls poolId={userPools[0].poolId} triviaTimerSeconds={triviaTimerSeconds} />
-        </div>
-      )}
-
       <WarRoom
         userId={userId}
         userBoardId={userBoardId}
@@ -128,6 +113,8 @@ export default async function LivePage() {
         chatPoolName={userPools.length > 0 ? userPools[0].poolName : ""}
         commissionerId={commissionerId}
         isSpectator={isSpectator}
+        isCommissioner={isCommissioner}
+        triviaTimerSeconds={triviaTimerSeconds}
       />
 
       {userPools.length > 0 && watchPartyEnabled && locked && (

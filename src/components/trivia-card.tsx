@@ -68,11 +68,18 @@ export function TriviaCard({ poolId }: { poolId: string }) {
     setSelected(null);
   }, [poolId]);
 
-  // Start countdown when a new question loads
+  // Start countdown when a new question loads (skip if timer is 0 / no timer)
   useEffect(() => {
     if (!question || result) return;
     questionRef.current = question;
     const t = question.timerSeconds ?? DEFAULT_TIMER;
+
+    // No timer mode: question stays live until manually advanced
+    if (t === 0) {
+      setTimerTotal(0);
+      setTimeLeft(0);
+      return;
+    }
 
     let remaining = t;
     if (question.expiresAt) {
@@ -203,16 +210,19 @@ export function TriviaCard({ poolId }: { poolId: string }) {
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
           )}
-          {!result && (
+          {!result && timerTotal > 0 && (
             <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-400" : "text-white/60"}`}>
               {timeLeft}s
             </span>
+          )}
+          {!result && timerTotal === 0 && (
+            <span className="text-[10px] text-white/30">No timer</span>
           )}
         </div>
       </div>
 
       {/* Timer bar */}
-      {!result && (
+      {!result && timerTotal > 0 && (
         <div className="h-1 rounded-full bg-white/10 overflow-hidden">
           <div
             className={`h-full ${timerColor} transition-all duration-1000 ease-linear`}

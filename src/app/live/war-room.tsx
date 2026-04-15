@@ -10,6 +10,9 @@ import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { OnTheClock } from "@/components/on-the-clock";
 import { TeamLeaderboard } from "@/components/team-leaderboard";
 import { PoolChat } from "@/components/pool-chat";
+import { TriviaCard } from "@/components/trivia-card";
+import { CollapsibleTriviaControls } from "@/components/collapsible-trivia-controls";
+import { CollapsibleSimControls } from "@/components/collapsible-sim-controls";
 
 type PickContextEntry = {
   userName: string;
@@ -83,6 +86,8 @@ type Props = {
   chatPoolName?: string;
   commissionerId?: string;
   isSpectator?: boolean;
+  isCommissioner?: boolean;
+  triviaTimerSeconds?: number;
 };
 
 const MATCH_COLORS: Record<string, string> = {
@@ -99,7 +104,7 @@ const MATCH_LABELS: Record<string, string> = {
   miss: "0",
 };
 
-export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId, chatEnabled, chatPoolId, chatPoolName, commissionerId, isSpectator }: Props) {
+export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId, chatEnabled, chatPoolId, chatPoolName, commissionerId, isSpectator, isCommissioner, triviaTimerSeconds }: Props) {
   const { play } = useSoundEffects();
   const [announcement, setAnnouncement] = useState<ActualResult | null>(null);
   const [latestMatchType, setLatestMatchType] = useState<string | null>(null);
@@ -107,6 +112,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const [previousPickContext, setPreviousPickContext] = useState<PickContextEntry[]>([]);
   const [animateScore, setAnimateScore] = useState(false);
   const [glowingRows, setGlowingRows] = useState<Map<string, "up" | "down" | "first">>(new Map());
+  const [chatOpen, setChatOpen] = useState(false);
   const prevResultCountRef = useRef(initialResults.length);
   const prevRanksRef = useRef<Map<string, number>>(new Map());
 
@@ -164,15 +170,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           setLatestMatchType(matchType);
           setAnimateScore(true);
 
-          if (matchType === "exact") {
-            play("exact-match");
-          } else if (matchType === "close" || matchType === "far") {
-            play("tick");
-          } else if (matchType === "miss") {
-            play("miss");
-          }
+          if (matchType === "exact") play("exact-match");
+          else if (matchType === "close" || matchType === "far") play("tick");
+          else if (matchType === "miss") play("miss");
 
-          // Fetch pick context (who had this player)
           fetch(`/api/draft/pick-context?pickNumber=${newPick.pickNumber}&season=${season}`)
             .then(r => r.json())
             .then(data => {
@@ -190,9 +191,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   // Detect leaderboard rank changes
   useEffect(() => {
     if (leaderboard.length === 0) return;
-
     const newGlows = new Map<string, "up" | "down" | "first">();
-
     leaderboard.forEach((entry) => {
       const prevRank = prevRanksRef.current.get(entry.boardId);
       if (prevRank !== undefined) {
@@ -204,12 +203,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         }
       }
     });
-
     if (newGlows.size > 0) {
       setGlowingRows(newGlows);
       setTimeout(() => setGlowingRows(new Map()), 1500);
     }
-
     const newRanks = new Map<string, number>();
     leaderboard.forEach((e) => newRanks.set(e.boardId, e.currentRank));
     prevRanksRef.current = newRanks;
@@ -225,31 +222,10 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     return { animation: "row-glow-red 1.5s ease-out" };
   }
 
-  const picksColumn = (
-    <div>
-      <h2 className="text-lg font-bold text-white tracking-wide mb-4" style={{ fontFamily: "var(--font-display)" }}>ACTUAL PICKS</h2>
-      <div className="space-y-2 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
-        {results.length === 0 ? (
-          <p className="text-white/30 text-sm py-8 text-center">Waiting for Round 1 to begin...</p>
-        ) : (
-          [...results].reverse().map((result) => (
-            <div key={result.pickNumber} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5"
-                 style={result.pickNumber === results.length ? { animation: "fade-in 0.5s ease-out" } : undefined}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white" style={{ backgroundColor: result.teamPrimaryColor || "#333" }}>
-                {result.pickNumber}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{result.playerName}</p>
-                <p className="text-xs text-white/40">{result.playerPosition} &middot; {result.playerSchool} &middot; {result.teamAbbreviation}</p>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
+  const showChat = chatEnabled && chatPoolId && userId;
 
-  const boardColumn = (
+  // ── Column 1: Your Picks vs Actual ──
+  const picksColumn = (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>YOUR PICKS VS ACTUAL</h2>
@@ -262,10 +238,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           />
         )}
       </div>
-
       {!userBoardId ? (
-        <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center">
-          <p className="text-white/40">You don&apos;t have a mock draft to score.</p>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
+          <p className="text-white/40 text-sm">You don&apos;t have a mock draft to score.</p>
         </div>
       ) : (
         <div className="space-y-1.5 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
@@ -274,7 +249,6 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             const score = scoreMap.get(slot.pickNumber);
             const result = resultMap.get(slot.pickNumber);
             const matchType = score?.matchType || (result ? "miss" : null);
-
             return (
               <div key={slot.pickNumber}
                    className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${matchType ? MATCH_COLORS[matchType] || "border-white/10 bg-white/5" : "border-white/10 bg-white/5"}`}
@@ -318,6 +292,24 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     </div>
   );
 
+  // ── Column 2: Trivia + Commissioner Controls ──
+  const triviaColumn = (
+    <div className="space-y-4">
+      <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>TRIVIA</h2>
+
+      {poolId && <TriviaCard poolId={poolId} />}
+
+      {isCommissioner && poolId && (
+        <CollapsibleTriviaControls poolId={poolId} triviaTimerSeconds={triviaTimerSeconds ?? 30} />
+      )}
+
+      {isCommissioner && (
+        <CollapsibleSimControls />
+      )}
+    </div>
+  );
+
+  // ── Column 3: Leaderboard ──
   const leaderboardColumn = (
     <div>
       {poolId && (
@@ -362,7 +354,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                   {rankDelta !== 0 && (
                     <p className={`text-[10px] font-medium ${rankDelta > 0 ? "text-green-400" : "text-red-400"}`}
                        style={{ animation: "fade-in 0.5s ease-out" }}>
-                      {rankDelta > 0 ? `↑${rankDelta}` : `↓${Math.abs(rankDelta)}`}
+                      {rankDelta > 0 ? `\u2191${rankDelta}` : `\u2193${Math.abs(rankDelta)}`}
                     </p>
                   )}
                 </div>
@@ -377,96 +369,101 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     </div>
   );
 
-  const showChat = chatEnabled && chatPoolId && userId;
-
   const mobileTabs = [
     { id: "picks", label: "Picks" },
-    { id: "board", label: "My Draft" },
+    { id: "trivia", label: "Trivia" },
     { id: "leaderboard", label: "Leaderboard" },
     ...(showChat ? [{ id: "chat", label: "Chat" }] : []),
   ];
 
-  const chatColumn = showChat ? (
-    <div className="h-[calc(100vh-200px)]">
-      <PoolChat
-        poolId={chatPoolId}
-        currentUserId={userId}
-        isSpectator={isSpectator ?? false}
-        commissionerId={commissionerId ?? ""}
-      />
-    </div>
-  ) : null;
-
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6">
-        {announcement && (
-          <div className="mb-4">
-            <PickAnnouncement
-              pickNumber={announcement.pickNumber}
-              playerName={announcement.playerName}
-              playerPosition={announcement.playerPosition}
-              playerSchool={announcement.playerSchool}
-              teamName={announcement.teamName}
-              teamAbbreviation={announcement.teamAbbreviation}
-              teamPrimaryColor={announcement.teamPrimaryColor}
-              matchType={latestMatchType}
-              context={announcementContext}
-              onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); setAnnouncementContext([]); }}
-            />
-          </div>
-        )}
+      {announcement && (
+        <div className="mb-4">
+          <PickAnnouncement
+            pickNumber={announcement.pickNumber}
+            playerName={announcement.playerName}
+            playerPosition={announcement.playerPosition}
+            playerSchool={announcement.playerSchool}
+            teamName={announcement.teamName}
+            teamAbbreviation={announcement.teamAbbreviation}
+            teamPrimaryColor={announcement.teamPrimaryColor}
+            matchType={latestMatchType}
+            context={announcementContext}
+            onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); setAnnouncementContext([]); }}
+          />
+        </div>
+      )}
 
-        {/* On The Clock */}
-        {!announcement && (
-          <div className="mb-4">
-            <OnTheClock
-              draftOrder={draftOrder}
-              results={results.map(r => ({
-                pickNumber: r.pickNumber,
-                playerName: r.playerName,
-                playerPosition: r.playerPosition,
-                teamAbbreviation: r.teamAbbreviation,
-              }))}
-              previousPickContext={previousPickContext}
-            />
-          </div>
-        )}
+      {!announcement && (
+        <div className="mb-4">
+          <OnTheClock
+            draftOrder={draftOrder}
+            results={results.map(r => ({
+              pickNumber: r.pickNumber,
+              playerName: r.playerName,
+              playerPosition: r.playerPosition,
+              teamAbbreviation: r.teamAbbreviation,
+            }))}
+            previousPickContext={previousPickContext}
+          />
+        </div>
+      )}
 
-        <MobileTabBar tabs={mobileTabs} defaultTab="board">
-          {(activeTab) => (
-            <>
-              {activeTab === "picks" && picksColumn}
-              {activeTab === "board" && boardColumn}
-              {activeTab === "leaderboard" && leaderboardColumn}
-              {activeTab === "chat" && chatColumn}
-            </>
-          )}
-        </MobileTabBar>
-
-        {showChat ? (
-          <div className="hidden lg:grid lg:grid-cols-[280px_1fr_300px_300px] gap-6">
-            {picksColumn}
-            {boardColumn}
-            {leaderboardColumn}
-            <div>
-              <h2 className="text-lg font-bold text-white tracking-wide mb-4" style={{ fontFamily: "var(--font-display)" }}>CHAT</h2>
+      {/* Mobile tabs */}
+      <MobileTabBar tabs={mobileTabs} defaultTab="picks">
+        {(activeTab) => (
+          <>
+            {activeTab === "picks" && picksColumn}
+            {activeTab === "trivia" && triviaColumn}
+            {activeTab === "leaderboard" && leaderboardColumn}
+            {activeTab === "chat" && showChat && (
               <div className="h-[calc(100vh-200px)]">
-                <PoolChat
-                  poolId={chatPoolId}
-                  currentUserId={userId}
-                  isSpectator={isSpectator ?? false}
-                  commissionerId={commissionerId ?? ""}
-                />
+                <PoolChat poolId={chatPoolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={commissionerId ?? ""} />
+              </div>
+            )}
+          </>
+        )}
+      </MobileTabBar>
+
+      {/* Desktop 3-column layout */}
+      <div className="hidden lg:grid lg:grid-cols-[1fr_340px_320px] gap-6">
+        {picksColumn}
+        {triviaColumn}
+        {leaderboardColumn}
+      </div>
+
+      {/* Floating chat button + panel (desktop only) */}
+      {showChat && (
+        <>
+          {/* Chat toggle button */}
+          {!chatOpen && (
+            <button
+              onClick={() => setChatOpen(true)}
+              className="hidden lg:flex fixed bottom-6 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-[var(--lions-blue)] text-white shadow-lg hover:bg-[var(--lions-blue)]/80 transition"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+              </svg>
+            </button>
+          )}
+
+          {/* Chat panel */}
+          {chatOpen && (
+            <div className="hidden lg:flex fixed bottom-6 right-6 z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/10 bg-[var(--gtown-navy)] shadow-2xl">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+                <span className="text-sm font-semibold text-white">{chatPoolName ?? "Chat"}</span>
+                <button onClick={() => setChatOpen(false)} className="rounded p-1 text-white/40 hover:bg-white/10 hover:text-white transition">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
+                </button>
+              </div>
+              <div className="flex-1 min-h-0">
+                <PoolChat poolId={chatPoolId} currentUserId={userId} isSpectator={isSpectator ?? false} commissionerId={commissionerId ?? ""} />
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="hidden lg:grid lg:grid-cols-[300px_1fr_320px] gap-6">
-            {picksColumn}
-            {boardColumn}
-            {leaderboardColumn}
-          </div>
-        )}
+          )}
+        </>
+      )}
     </div>
   );
 }

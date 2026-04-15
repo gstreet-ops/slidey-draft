@@ -25,8 +25,8 @@ export async function PATCH(
 
   if (triviaTimerSeconds !== undefined) {
     const t = Number(triviaTimerSeconds);
-    if (![15, 30, 45, 60].includes(t)) {
-      return NextResponse.json({ error: "Timer must be 15, 30, 45, or 60" }, { status: 400 });
+    if (![0, 15, 30, 45, 60].includes(t)) {
+      return NextResponse.json({ error: "Timer must be 0, 15, 30, 45, or 60" }, { status: 400 });
     }
     current.triviaTimerSeconds = t;
   }

@@ -153,7 +153,7 @@ export function TriviaControlPanel({
         <div className="flex items-center gap-2">
           <span className="text-xs text-white/40">Timer</span>
           <div className="flex rounded-lg border border-white/10 overflow-hidden">
-            {[15, 30, 45, 60].map((s) => (
+            {[0, 15, 30, 45, 60].map((s) => (
               <button
                 key={s}
                 onClick={() => updateTimer(s)}
@@ -163,7 +163,7 @@ export function TriviaControlPanel({
                     : "bg-white/5 text-white/40 hover:text-white"
                 }`}
               >
-                {s}s
+                {s === 0 ? "Off" : `${s}s`}
               </button>
             ))}
           </div>
