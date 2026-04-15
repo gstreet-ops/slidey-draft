@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { actualResults } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { poolTriviaQueue } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { getPoolRole } from "@/lib/pool-helpers";
 
-// Track skipped picks in memory (per-deploy). For persistence, could move to appConfig.
-const skippedPicks = new Set<string>(); // "poolId:pickNumber"
-
+// POST /api/pools/[poolId]/trivia/skip — skip current active question, advance to next
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ poolId: string }> }
@@ -21,19 +19,18 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const [latestPick] = await db
-    .select({ pickNumber: actualResults.pickNumber })
-    .from(actualResults)
-    .where(eq(actualResults.season, 2026))
-    .orderBy(sql`pick_number DESC`)
-    .limit(1);
+  // Mark active question as completed (skipped)
+  const [active] = await db
+    .select()
+    .from(poolTriviaQueue)
+    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "active")));
 
-  const currentPick = latestPick?.pickNumber ?? 0;
-  skippedPicks.add(`${poolId}:${currentPick}`);
+  if (active) {
+    await db
+      .update(poolTriviaQueue)
+      .set({ status: "completed", completedAt: new Date() })
+      .where(eq(poolTriviaQueue.id, active.id));
+  }
 
-  return NextResponse.json({ success: true, skippedPick: currentPick });
-}
-
-export function isPickSkipped(poolId: string, pickNumber: number): boolean {
-  return skippedPicks.has(`${poolId}:${pickNumber}`);
+  return NextResponse.json({ success: true, skippedSortOrder: active?.sortOrder ?? null });
 }

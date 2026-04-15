@@ -442,25 +442,59 @@ export const poolStandings = pgTable(
   ]
 );
 
+// ── Enums (trivia) ───────────────────────────────
+export const triviaDifficultyEnum = pgEnum("trivia_difficulty", [
+  "easy",
+  "medium",
+  "hard",
+]);
+export const triviaQueueStatusEnum = pgEnum("trivia_queue_status", [
+  "pending",
+  "active",
+  "completed",
+]);
+
 // ── Trivia Questions ─────────────────────────────
 export const triviaQuestions = pgTable("trivia_questions", {
   id: uuid("id").primaryKey().defaultRandom(),
   question: text("question").notNull(),
-  optionA: text("option_a").notNull(),
-  optionB: text("option_b").notNull(),
-  optionC: text("option_c").notNull(),
-  optionD: text("option_d").notNull(),
-  correctOption: text("correct_option").notNull(), // 'a', 'b', 'c', 'd'
-  category: text("category").notNull(), // 'draft_history', 'combine', 'trades', etc.
-  difficulty: text("difficulty").notNull().default("medium"),
-  sortOrder: integer("sort_order"),
-  usedAt: timestamp("used_at"),
-  firedAt: timestamp("fired_at"),
-  firedBy: uuid("fired_by").references(() => users.id),
-  pickNumber: integer("pick_number"),
-  timerSeconds: integer("timer_seconds"),
+  options: jsonb("options").notNull(), // array of 4 strings
+  correctAnswer: integer("correct_answer").notNull(), // 0-indexed into options
+  category: text("category").notNull(), // freetext: 'nfl_history', 'pop_culture', etc.
+  difficulty: triviaDifficultyEnum("difficulty").notNull().default("medium"),
+  active: boolean("active").notNull().default(true),
+  createdBy: uuid("created_by").references(() => users.id), // null = system-seeded
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// ── Pool Trivia Queue ────────────────────────────
+export const poolTriviaQueue = pgTable(
+  "pool_trivia_queue",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    poolId: uuid("pool_id")
+      .notNull()
+      .references(() => pools.id, { onDelete: "cascade" }),
+    questionId: uuid("question_id")
+      .notNull()
+      .references(() => triviaQuestions.id),
+    sortOrder: integer("sort_order").notNull(), // 1-indexed
+    status: triviaQueueStatusEnum("status").notNull().default("pending"),
+    activatedAt: timestamp("activated_at"),
+    completedAt: timestamp("completed_at"),
+    pickNumber: integer("pick_number"),
+  },
+  (table) => [
+    uniqueIndex("pool_trivia_queue_question_idx").on(
+      table.poolId,
+      table.questionId
+    ),
+    uniqueIndex("pool_trivia_queue_order_idx").on(
+      table.poolId,
+      table.sortOrder
+    ),
+  ]
+);
 
 // ── Trivia Responses ─────────────────────────────
 export const triviaResponses = pgTable(
@@ -476,8 +510,8 @@ export const triviaResponses = pgTable(
     questionId: uuid("question_id")
       .notNull()
       .references(() => triviaQuestions.id),
-    pickNumber: integer("pick_number"),
-    selectedOption: text("selected_option").notNull(),
+    pickNumber: integer("pick_number").notNull(),
+    selectedAnswer: integer("selected_answer").notNull(), // 0-indexed into options
     isCorrect: boolean("is_correct").notNull(),
     pointsAwarded: integer("points_awarded").notNull().default(0),
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),

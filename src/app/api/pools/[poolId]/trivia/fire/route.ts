@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { triviaQuestions, pools, actualResults } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { poolTriviaQueue, triviaQuestions, actualResults } from "@/db/schema";
+import { eq, and, asc, sql } from "drizzle-orm";
 import { getPoolRole } from "@/lib/pool-helpers";
 
+// POST /api/pools/[poolId]/trivia/fire — manually fire the next question in queue
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ poolId: string }> }
@@ -18,13 +19,29 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { questionId, timerSeconds } = await req.json();
+  // Complete any currently active question
+  await db
+    .update(poolTriviaQueue)
+    .set({ status: "completed", completedAt: new Date() })
+    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "active")));
 
-  if (!questionId) {
-    return NextResponse.json({ error: "questionId required" }, { status: 400 });
+  // Find next pending question
+  const [next] = await db
+    .select({
+      id: poolTriviaQueue.id,
+      questionId: poolTriviaQueue.questionId,
+      sortOrder: poolTriviaQueue.sortOrder,
+    })
+    .from(poolTriviaQueue)
+    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "pending")))
+    .orderBy(asc(poolTriviaQueue.sortOrder))
+    .limit(1);
+
+  if (!next) {
+    return NextResponse.json({ success: false, error: "No more questions in queue" });
   }
 
-  // Get current pick number from actual results
+  // Get current pick number
   const [latestPick] = await db
     .select({ pickNumber: actualResults.pickNumber })
     .from(actualResults)
@@ -34,26 +51,17 @@ export async function POST(
 
   const currentPick = latestPick?.pickNumber ?? 0;
 
-  // Mark question as fired
+  // Activate the question
   await db
-    .update(triviaQuestions)
-    .set({
-      firedAt: new Date(),
-      firedBy: session.user.id,
-      pickNumber: currentPick,
-      ...(timerSeconds ? { timerSeconds } : {}),
-    })
-    .where(eq(triviaQuestions.id, questionId));
+    .update(poolTriviaQueue)
+    .set({ status: "active", activatedAt: new Date(), pickNumber: currentPick })
+    .where(eq(poolTriviaQueue.id, next.id));
 
+  // Fetch question details
   const [question] = await db
     .select()
     .from(triviaQuestions)
-    .where(eq(triviaQuestions.id, questionId));
-
-  // Get pool timer setting as fallback
-  const [pool] = await db.select({ settings: pools.settings }).from(pools).where(eq(pools.id, poolId));
-  const poolSettings = pool?.settings as Record<string, unknown> | null;
-  const effectiveTimer = timerSeconds ?? question?.timerSeconds ?? (poolSettings?.triviaTimerSeconds as number) ?? 30;
+    .where(eq(triviaQuestions.id, next.questionId));
 
   return NextResponse.json({
     success: true,
@@ -61,16 +69,12 @@ export async function POST(
       ? {
           id: question.id,
           question: question.question,
-          optionA: question.optionA,
-          optionB: question.optionB,
-          optionC: question.optionC,
-          optionD: question.optionD,
+          options: question.options,
           category: question.category,
           difficulty: question.difficulty,
-          firedAt: question.firedAt,
+          sortOrder: next.sortOrder,
           pickNumber: currentPick,
         }
       : null,
-    timerSeconds: effectiveTimer,
   });
 }

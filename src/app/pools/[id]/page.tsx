@@ -146,7 +146,6 @@ export default async function PoolDashboardPage({
                   poolId={poolId}
                   initialSettings={{
                     triviaTimerSeconds: settings.triviaTimerSeconds ?? 30,
-                    triviaMode: settings.triviaMode ?? "auto",
                   }}
                 />
               </div>

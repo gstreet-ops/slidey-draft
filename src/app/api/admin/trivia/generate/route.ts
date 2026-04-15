@@ -30,11 +30,8 @@ ${difficultyInstruction}.
 
 Return ONLY a valid JSON array. Each object must have exactly these fields:
 - "question": string (the question text)
-- "optionA": string
-- "optionB": string
-- "optionC": string
-- "optionD": string
-- "correctOption": one of "a", "b", "c", "d"
+- "options": array of exactly 4 strings (the answer choices)
+- "correctAnswer": integer 0-3 (index of the correct answer in the options array)
 - "category": "${category === "custom" ? "general" : category}"
 - "difficulty": "${difficulty === "mixed" ? "medium" : difficulty}" (if mixed, vary between "easy", "medium", "hard")
 
@@ -52,7 +49,6 @@ Return ONLY the JSON array, no markdown fences, no explanation.`,
   try {
     questions = JSON.parse(text);
   } catch {
-    // Try extracting JSON from markdown fences
     const match = text.match(/\[[\s\S]*\]/);
     if (match) {
       questions = JSON.parse(match[0]);
@@ -64,16 +60,15 @@ Return ONLY the JSON array, no markdown fences, no explanation.`,
     }
   }
 
-  // Validate shape
   const valid = Array.isArray(questions) &&
     questions.every(
       (q: Record<string, unknown>) =>
         q.question &&
-        q.optionA &&
-        q.optionB &&
-        q.optionC &&
-        q.optionD &&
-        ["a", "b", "c", "d"].includes(q.correctOption as string) &&
+        Array.isArray(q.options) &&
+        (q.options as unknown[]).length === 4 &&
+        typeof q.correctAnswer === "number" &&
+        q.correctAnswer >= 0 &&
+        q.correctAnswer <= 3 &&
         q.category &&
         q.difficulty
     );

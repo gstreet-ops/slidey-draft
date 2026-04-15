@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { triviaQuestions, triviaResponses } from "@/db/schema";
-import { eq, sql, isNull, isNotNull, asc } from "drizzle-orm";
+import { triviaQuestions, triviaResponses, poolTriviaQueue } from "@/db/schema";
+import { eq, sql, asc } from "drizzle-orm";
 import { getPoolRole } from "@/lib/pool-helpers";
 
 export async function GET(
@@ -18,27 +18,23 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Get all questions with response stats
-  const questions = await db
+  // Get queue for this pool with question details
+  const queue = await db
     .select({
-      id: triviaQuestions.id,
+      questionId: poolTriviaQueue.questionId,
+      sortOrder: poolTriviaQueue.sortOrder,
+      status: poolTriviaQueue.status,
+      activatedAt: poolTriviaQueue.activatedAt,
+      completedAt: poolTriviaQueue.completedAt,
+      pickNumber: poolTriviaQueue.pickNumber,
       question: triviaQuestions.question,
-      optionA: triviaQuestions.optionA,
-      optionB: triviaQuestions.optionB,
-      optionC: triviaQuestions.optionC,
-      optionD: triviaQuestions.optionD,
-      correctOption: triviaQuestions.correctOption,
       category: triviaQuestions.category,
       difficulty: triviaQuestions.difficulty,
-      sortOrder: triviaQuestions.sortOrder,
-      firedAt: triviaQuestions.firedAt,
-      firedBy: triviaQuestions.firedBy,
-      pickNumber: triviaQuestions.pickNumber,
-      timerSeconds: triviaQuestions.timerSeconds,
-      createdAt: triviaQuestions.createdAt,
     })
-    .from(triviaQuestions)
-    .orderBy(asc(triviaQuestions.sortOrder), asc(triviaQuestions.createdAt));
+    .from(poolTriviaQueue)
+    .innerJoin(triviaQuestions, eq(poolTriviaQueue.questionId, triviaQuestions.id))
+    .where(eq(poolTriviaQueue.poolId, poolId))
+    .orderBy(asc(poolTriviaQueue.sortOrder));
 
   // Get response stats per question for this pool
   const responseStats = await db
@@ -55,19 +51,20 @@ export async function GET(
     responseStats.map((s) => [s.questionId, { total: Number(s.totalResponses), correct: Number(s.correctResponses) }])
   );
 
-  const enriched = questions.map((q) => {
-    const stats = statsMap.get(q.id);
+  const enriched = queue.map((q) => {
+    const stats = statsMap.get(q.questionId);
     return {
       ...q,
-      used: !!q.firedAt,
+      id: q.questionId,
       responseCount: stats?.total ?? 0,
       correctCount: stats?.correct ?? 0,
       accuracyPct: stats && stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : null,
     };
   });
 
-  const unused = enriched.filter((q) => !q.used);
-  const used = enriched.filter((q) => q.used);
+  const pending = enriched.filter((q) => q.status === "pending");
+  const active = enriched.filter((q) => q.status === "active");
+  const completed = enriched.filter((q) => q.status === "completed");
 
-  return NextResponse.json({ unused, used, total: enriched.length });
+  return NextResponse.json({ pending, active, completed, total: enriched.length });
 }

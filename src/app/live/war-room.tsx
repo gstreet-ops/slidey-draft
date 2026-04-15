@@ -9,6 +9,9 @@ import { ConnectionStatus } from "@/components/connection-status";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { OnTheClock } from "@/components/on-the-clock";
 import { TeamLeaderboard } from "@/components/team-leaderboard";
+import { WarRoomChat } from "@/components/war-room-chat";
+import { PoolChat } from "@/components/pool-chat";
+import { markChatRead } from "@/hooks/use-unread-chat";
 
 type PickContextEntry = {
   userName: string;
@@ -77,6 +80,11 @@ type Props = {
   draftOrder: DraftSlot[];
   season: number;
   poolId: string | null;
+  chatEnabled?: boolean;
+  chatPoolId?: string | null;
+  chatPoolName?: string;
+  commissionerId?: string;
+  isSpectator?: boolean;
 };
 
 const MATCH_COLORS: Record<string, string> = {
@@ -93,13 +101,7 @@ const MATCH_LABELS: Record<string, string> = {
   miss: "0",
 };
 
-const MOBILE_TABS = [
-  { id: "picks", label: "Picks" },
-  { id: "board", label: "My Draft" },
-  { id: "leaderboard", label: "Leaderboard" },
-];
-
-export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId }: Props) {
+export function WarRoom({ userId, userBoardId, initialResults, draftOrder, season, poolId, chatEnabled, chatPoolId, chatPoolName, commissionerId, isSpectator }: Props) {
   const { play } = useSoundEffects();
   const [announcement, setAnnouncement] = useState<ActualResult | null>(null);
   const [latestMatchType, setLatestMatchType] = useState<string | null>(null);
@@ -377,56 +379,90 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
     </div>
   );
 
+  const showChat = chatEnabled && chatPoolId && userId;
+
+  const mobileTabs = [
+    { id: "picks", label: "Picks" },
+    { id: "board", label: "My Draft" },
+    { id: "leaderboard", label: "Leaderboard" },
+    ...(showChat ? [{ id: "chat", label: "Chat" }] : []),
+  ];
+
+  const chatColumn = showChat ? (
+    <div className="h-[calc(100vh-200px)]">
+      <PoolChat
+        poolId={chatPoolId}
+        currentUserId={userId}
+        isSpectator={isSpectator ?? false}
+        commissionerId={commissionerId ?? ""}
+      />
+    </div>
+  ) : null;
+
   return (
-    <div className="mx-auto max-w-[1400px] px-4 py-6">
-      {announcement && (
-        <div className="mb-4">
-          <PickAnnouncement
-            pickNumber={announcement.pickNumber}
-            playerName={announcement.playerName}
-            playerPosition={announcement.playerPosition}
-            playerSchool={announcement.playerSchool}
-            teamName={announcement.teamName}
-            teamAbbreviation={announcement.teamAbbreviation}
-            teamPrimaryColor={announcement.teamPrimaryColor}
-            matchType={latestMatchType}
-            context={announcementContext}
-            onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); setAnnouncementContext([]); }}
-          />
-        </div>
-      )}
-
-      {/* On The Clock */}
-      {!announcement && (
-        <div className="mb-4">
-          <OnTheClock
-            draftOrder={draftOrder}
-            results={results.map(r => ({
-              pickNumber: r.pickNumber,
-              playerName: r.playerName,
-              playerPosition: r.playerPosition,
-              teamAbbreviation: r.teamAbbreviation,
-            }))}
-            previousPickContext={previousPickContext}
-          />
-        </div>
-      )}
-
-      <MobileTabBar tabs={MOBILE_TABS} defaultTab="board">
-        {(activeTab) => (
-          <>
-            {activeTab === "picks" && picksColumn}
-            {activeTab === "board" && boardColumn}
-            {activeTab === "leaderboard" && leaderboardColumn}
-          </>
+    <div className="flex">
+      <div className="flex-1 min-w-0 mx-auto max-w-[1400px] px-4 py-6">
+        {announcement && (
+          <div className="mb-4">
+            <PickAnnouncement
+              pickNumber={announcement.pickNumber}
+              playerName={announcement.playerName}
+              playerPosition={announcement.playerPosition}
+              playerSchool={announcement.playerSchool}
+              teamName={announcement.teamName}
+              teamAbbreviation={announcement.teamAbbreviation}
+              teamPrimaryColor={announcement.teamPrimaryColor}
+              matchType={latestMatchType}
+              context={announcementContext}
+              onDismiss={() => { setAnnouncement(null); setLatestMatchType(null); setAnimateScore(false); setAnnouncementContext([]); }}
+            />
+          </div>
         )}
-      </MobileTabBar>
 
-      <div className="hidden lg:grid lg:grid-cols-[300px_1fr_320px] gap-6">
-        {picksColumn}
-        {boardColumn}
-        {leaderboardColumn}
+        {/* On The Clock */}
+        {!announcement && (
+          <div className="mb-4">
+            <OnTheClock
+              draftOrder={draftOrder}
+              results={results.map(r => ({
+                pickNumber: r.pickNumber,
+                playerName: r.playerName,
+                playerPosition: r.playerPosition,
+                teamAbbreviation: r.teamAbbreviation,
+              }))}
+              previousPickContext={previousPickContext}
+            />
+          </div>
+        )}
+
+        <MobileTabBar tabs={mobileTabs} defaultTab="board">
+          {(activeTab) => (
+            <>
+              {activeTab === "picks" && picksColumn}
+              {activeTab === "board" && boardColumn}
+              {activeTab === "leaderboard" && leaderboardColumn}
+              {activeTab === "chat" && chatColumn}
+            </>
+          )}
+        </MobileTabBar>
+
+        <div className="hidden lg:grid lg:grid-cols-[300px_1fr_320px] gap-6">
+          {picksColumn}
+          {boardColumn}
+          {leaderboardColumn}
+        </div>
       </div>
+
+      {/* Desktop chat side panel */}
+      {showChat && (
+        <WarRoomChat
+          poolId={chatPoolId}
+          poolName={chatPoolName ?? "Pool"}
+          currentUserId={userId}
+          commissionerId={commissionerId ?? ""}
+          isSpectator={isSpectator ?? false}
+        />
+      )}
     </div>
   );
 }

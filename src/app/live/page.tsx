@@ -25,6 +25,9 @@ export default async function LivePage() {
   let userBoardId: string | null = null;
   let userPools: { poolId: string; poolName: string }[] = [];
   let watchPartyEnabled = true;
+  let chatEnabled = false;
+  let commissionerId = "";
+  let isSpectator = false;
   if (userId) {
     const board = await getUserBoard(userId, season);
     userBoardId = board?.id || null;
@@ -34,6 +37,9 @@ export default async function LivePage() {
       if (pool) {
         const settings = getPoolSettings(pool.settings);
         watchPartyEnabled = settings.watchParty;
+        chatEnabled = true;
+        commissionerId = pool.commissionerId;
+        isSpectator = session?.user?.status === "spectator";
       }
     }
   }
@@ -84,6 +90,11 @@ export default async function LivePage() {
         draftOrder={draftOrder}
         season={season}
         poolId={userPools.length > 0 ? userPools[0].poolId : null}
+        chatEnabled={chatEnabled}
+        chatPoolId={userPools.length > 0 ? userPools[0].poolId : null}
+        chatPoolName={userPools.length > 0 ? userPools[0].poolName : ""}
+        commissionerId={commissionerId}
+        isSpectator={isSpectator}
       />
 
       {userPools.length > 0 && watchPartyEnabled && (

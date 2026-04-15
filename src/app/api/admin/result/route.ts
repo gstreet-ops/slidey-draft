@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { actualResults, triviaQuestions, pools } from "@/db/schema";
+import { actualResults, poolTriviaQueue, pools } from "@/db/schema";
 import { scoreAllBoards } from "@/lib/scoring";
 import { isDraftLocked, setConfig } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
-import { eq, isNull, asc, sql } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import { getPoolSettings } from "@/lib/pool-helpers";
 
 const SEASON = 2026;
@@ -44,27 +44,30 @@ export async function POST(req: NextRequest) {
       }
       await scoreAllBoards(SEASON);
 
-      // Auto-fire trivia for pools in auto mode
+      // Auto-advance trivia queue: complete active question, fire next pending
       const allPools = await db.select({ id: pools.id, settings: pools.settings }).from(pools);
       for (const pool of allPools) {
         const settings = getPoolSettings(pool.settings);
-        if (settings.triviaMode === "auto" && settings.trivia) {
-          // Find next unused question
-          const [nextQ] = await db
-            .select({ id: triviaQuestions.id })
-            .from(triviaQuestions)
-            .where(isNull(triviaQuestions.firedAt))
-            .orderBy(asc(triviaQuestions.sortOrder), asc(triviaQuestions.createdAt))
+        if (settings.trivia) {
+          // Complete any currently active question
+          await db
+            .update(poolTriviaQueue)
+            .set({ status: "completed", completedAt: new Date() })
+            .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "active")));
+
+          // Activate next pending question
+          const [next] = await db
+            .select({ id: poolTriviaQueue.id })
+            .from(poolTriviaQueue)
+            .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "pending")))
+            .orderBy(asc(poolTriviaQueue.sortOrder))
             .limit(1);
 
-          if (nextQ) {
+          if (next) {
             await db
-              .update(triviaQuestions)
-              .set({
-                firedAt: new Date(Date.now() + 10_000), // 10s delay after pick
-                pickNumber: result.pickNumber,
-              })
-              .where(eq(triviaQuestions.id, nextQ.id));
+              .update(poolTriviaQueue)
+              .set({ status: "active", activatedAt: new Date(), pickNumber: result.pickNumber })
+              .where(eq(poolTriviaQueue.id, next.id));
           }
         }
       }

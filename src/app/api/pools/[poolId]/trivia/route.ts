@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { triviaQuestions, triviaResponses, pools } from "@/db/schema";
-import { eq, notInArray, sql, isNotNull, desc } from "drizzle-orm";
+import { poolTriviaQueue, triviaQuestions, triviaResponses, pools } from "@/db/schema";
+import { eq, and, sql } from "drizzle-orm";
 import { getPoolSettings } from "@/lib/pool-helpers";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ poolId: string }> }) {
+// GET /api/pools/[poolId]/trivia — returns currently active question for the pool
+// (from pool_trivia_queue where status = 'active')
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ poolId: string }> }
+) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -14,71 +19,72 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ pool
   // Get pool timer settings
   const [pool] = await db.select({ settings: pools.settings }).from(pools).where(eq(pools.id, poolId));
   const settings = getPoolSettings(pool?.settings);
-  const defaultTimer = settings.triviaTimerSeconds ?? 30;
+  const timerSeconds = settings.triviaTimerSeconds ?? 30;
 
-  // Check for a currently live (fired) question the user hasn't answered
-  const answered = await db
-    .select({ questionId: triviaResponses.questionId })
+  // Find the active question in this pool's queue
+  const [activeItem] = await db
+    .select({
+      queueId: poolTriviaQueue.id,
+      questionId: poolTriviaQueue.questionId,
+      sortOrder: poolTriviaQueue.sortOrder,
+      status: poolTriviaQueue.status,
+      activatedAt: poolTriviaQueue.activatedAt,
+      pickNumber: poolTriviaQueue.pickNumber,
+      question: triviaQuestions.question,
+      options: triviaQuestions.options,
+      category: triviaQuestions.category,
+      difficulty: triviaQuestions.difficulty,
+    })
+    .from(poolTriviaQueue)
+    .innerJoin(triviaQuestions, eq(poolTriviaQueue.questionId, triviaQuestions.id))
+    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "active")));
+
+  if (!activeItem) {
+    return NextResponse.json({ noActiveQuestion: true });
+  }
+
+  // Check if user already answered this question
+  const [existing] = await db
+    .select({ id: triviaResponses.id })
     .from(triviaResponses)
-    .where(sql`${triviaResponses.userId} = ${session.user.id} AND ${triviaResponses.poolId} = ${poolId}`);
-  const answeredIds = answered.map((a) => a.questionId);
+    .where(
+      and(
+        eq(triviaResponses.poolId, poolId),
+        eq(triviaResponses.userId, session.user.id),
+        eq(triviaResponses.questionId, activeItem.questionId)
+      )
+    );
 
-  // Look for the most recently fired question that the user hasn't answered
-  const firedQuestions = await db
-    .select()
-    .from(triviaQuestions)
-    .where(isNotNull(triviaQuestions.firedAt))
-    .orderBy(desc(triviaQuestions.firedAt))
-    .limit(1);
-
-  if (firedQuestions.length > 0) {
-    const q = firedQuestions[0];
-    const timerSec = q.timerSeconds ?? defaultTimer;
-    const firedAt = q.firedAt!.getTime();
-    const expiresAt = firedAt + timerSec * 1000;
-    const now = Date.now();
-
-    // If question is still live and user hasn't answered it
-    if (now < expiresAt && !answeredIds.includes(q.id)) {
-      return NextResponse.json({
-        id: q.id,
-        question: q.question,
-        optionA: q.optionA,
-        optionB: q.optionB,
-        optionC: q.optionC,
-        optionD: q.optionD,
-        category: q.category,
-        difficulty: q.difficulty,
-        timerSeconds: timerSec,
-        expiresAt,
-        live: true,
-      });
-    }
+  if (existing) {
+    return NextResponse.json({ alreadyAnswered: true, questionId: activeItem.questionId });
   }
 
-  // Fallback: return a random unanswered question (self-serve mode / pre-draft)
-  const questions = await db
-    .select()
-    .from(triviaQuestions)
-    .where(answeredIds.length > 0 ? notInArray(triviaQuestions.id, answeredIds) : undefined)
-    .orderBy(sql`RANDOM()`)
-    .limit(1);
+  // Calculate expiration
+  const activatedAt = activeItem.activatedAt?.getTime() ?? Date.now();
+  const expiresAt = activatedAt + timerSeconds * 1000;
 
-  if (questions.length === 0) {
-    return NextResponse.json({ noMoreQuestions: true });
+  // If expired, mark as no active question
+  if (Date.now() > expiresAt) {
+    return NextResponse.json({ noActiveQuestion: true, expired: true });
   }
 
-  const q = questions[0];
+  // Get total queue count for progress
+  const [countRow] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(poolTriviaQueue)
+    .where(eq(poolTriviaQueue.poolId, poolId));
+
   return NextResponse.json({
-    id: q.id,
-    question: q.question,
-    optionA: q.optionA,
-    optionB: q.optionB,
-    optionC: q.optionC,
-    optionD: q.optionD,
-    category: q.category,
-    difficulty: q.difficulty,
-    timerSeconds: defaultTimer,
-    live: false,
+    id: activeItem.questionId,
+    question: activeItem.question,
+    options: activeItem.options,
+    category: activeItem.category,
+    difficulty: activeItem.difficulty,
+    sortOrder: activeItem.sortOrder,
+    totalQueued: Number(countRow.count),
+    timerSeconds,
+    expiresAt,
+    pickNumber: activeItem.pickNumber,
+    live: true,
   });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { markChatRead } from "@/hooks/use-unread-chat";
 
 interface ChatMessage {
   id: string;
@@ -63,8 +64,9 @@ export function PoolChat({
     } catch {}
   }, [poolId]);
 
-  // Initial load
+  // Initial load + mark as read
   useEffect(() => {
+    markChatRead(poolId);
     fetch(`/api/pools/${poolId}/chat`)
       .then((r) => r.json())
       .then((d) => d.messages && setMessages(d.messages))
@@ -77,10 +79,11 @@ export function PoolChat({
     return () => clearInterval(id);
   }, [fetchMessages]);
 
-  // Auto-scroll
+  // Auto-scroll + mark as read
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (messages.length > 0) markChatRead(poolId);
+  }, [messages, poolId]);
 
   async function handleSend() {
     const trimmed = input.trim();

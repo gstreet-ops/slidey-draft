@@ -15,15 +15,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No questions provided" }, { status: 400 });
   }
 
-  const rows = questions.map((q: Record<string, string>) => ({
-    question: q.question,
-    optionA: q.optionA,
-    optionB: q.optionB,
-    optionC: q.optionC,
-    optionD: q.optionD,
-    correctOption: q.correctOption,
-    category: q.category,
-    difficulty: q.difficulty,
+  const rows = questions.map((q: Record<string, unknown>) => ({
+    question: q.question as string,
+    options: q.options as string[],
+    correctAnswer: q.correctAnswer as number,
+    category: q.category as string,
+    difficulty: (q.difficulty as "easy" | "medium" | "hard") || "medium",
+    createdBy: session.user!.id,
   }));
 
   await db.insert(triviaQuestions).values(rows);

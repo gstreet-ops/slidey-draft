@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category");
-  const difficulty = searchParams.get("difficulty");
+  const difficulty = searchParams.get("difficulty") as "easy" | "medium" | "hard" | null;
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "50")));
+  const limit = Math.min(1000, Math.max(1, parseInt(searchParams.get("limit") || "50")));
   const offset = (page - 1) * limit;
 
   const conditions = [];
@@ -31,10 +31,7 @@ export async function GET(req: NextRequest) {
       .orderBy(desc(triviaQuestions.createdAt))
       .limit(limit)
       .offset(offset),
-    db
-      .select({ count: sql<number>`count(*)` })
-      .from(triviaQuestions)
-      .where(where),
+    db.select({ count: sql<number>`count(*)` }).from(triviaQuestions).where(where),
   ]);
 
   const total = Number(countResult[0].count);

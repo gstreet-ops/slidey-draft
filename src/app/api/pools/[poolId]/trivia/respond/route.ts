@@ -6,7 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { recalculatePoolStandings } from "@/lib/pool-scoring";
 import { getPoolSettings, getEffectiveScoring } from "@/lib/pool-helpers";
 
-// POST /api/pools/[poolId]/trivia/answer — legacy endpoint, maps to new schema
+// POST /api/pools/[poolId]/trivia/respond — submit answer { questionId, selectedAnswer }
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ poolId: string }> }
@@ -21,6 +21,7 @@ export async function POST(
     return NextResponse.json({ error: "questionId and selectedAnswer required" }, { status: 400 });
   }
 
+  // Verify question exists
   const [question] = await db
     .select()
     .from(triviaQuestions)
@@ -45,9 +46,7 @@ export async function POST(
   const difficulty = question.difficulty as "easy" | "medium" | "hard";
   const tierPoints = scoring.triviaPointValues[difficulty] ?? scoring.triviaPointValues.medium;
 
-  // Handle timeout — selectedAnswer of -1 means timeout
-  const answerIdx = typeof selectedAnswer === "number" ? selectedAnswer : -1;
-  const isCorrect = answerIdx === question.correctAnswer;
+  const isCorrect = selectedAnswer === question.correctAnswer;
   const pointsAwarded = isCorrect ? tierPoints : 0;
 
   await db
@@ -57,12 +56,13 @@ export async function POST(
       userId: session.user.id,
       questionId,
       pickNumber,
-      selectedAnswer: answerIdx,
+      selectedAnswer,
       isCorrect,
       pointsAwarded,
     })
     .onConflictDoNothing();
 
+  // Update standings
   await recalculatePoolStandings(poolId);
 
   return NextResponse.json({
