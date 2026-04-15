@@ -22,7 +22,8 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     { href: "/big-board", label: "Prospects" },
     ...(isLoggedIn
       ? [
-          { href: isLocked ? "/live" : "/my-board", label: "My Draft" },
+          { href: "/my-board", label: "My Draft" },
+          { href: "/live", label: "War Room" },
           { href: "/pools", label: "Pools" },
         ]
       : []),
