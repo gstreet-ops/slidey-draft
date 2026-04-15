@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useUnreadChat } from "@/hooks/use-unread-chat";
 
 type Props = {
   isLoggedIn: boolean;
@@ -16,7 +15,6 @@ type Props = {
 
 export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUrl, teamName }: Props) {
   const [open, setOpen] = useState(false);
-  const { unreadCount } = useUnreadChat(isLoggedIn);
 
   const primaryLinks = [
     { href: "/big-board", label: "Prospects" },
@@ -32,7 +30,6 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   const secondaryLinks = [
     { href: "/guide", label: "How to Play" },
     { href: "/scoring", label: "Scoring" },
-    ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     ...(isLoggedIn ? [{ href: "/pools", label: "Pools" }] : []),
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
@@ -56,20 +53,15 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
             <Link
               key={l.href}
               href={l.href}
-              className="relative rounded-lg px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
+              className="rounded-lg px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
             >
               {l.label}
             </Link>
           ))}
           {/* More dropdown for secondary */}
           <div className="relative group">
-            <button className="relative rounded-lg px-3 py-2 text-sm text-white/40 hover:bg-white/10 hover:text-white transition">
+            <button className="rounded-lg px-3 py-2 text-sm text-white/40 hover:bg-white/10 hover:text-white transition">
               More
-              {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
             </button>
             <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--gtown-navy)] p-1 shadow-xl group-hover:block">
               {secondaryLinks.map((l) => (
@@ -88,7 +80,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
         <div className="flex items-center gap-2">
           {/* User avatar / team logo */}
           {isLoggedIn && (
-            <Link href="/dashboard" className="hidden sm:block">
+            <Link href="/pools" className="hidden sm:block">
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (

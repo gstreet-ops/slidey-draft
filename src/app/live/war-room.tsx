@@ -113,6 +113,8 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const [animateScore, setAnimateScore] = useState(false);
   const [glowingRows, setGlowingRows] = useState<Map<string, "up" | "down" | "first">>(new Map());
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatPos, setChatPos] = useState({ x: 0, y: 0 }); // offset from default bottom-right
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const prevResultCountRef = useRef(initialResults.length);
   const prevRanksRef = useRef<Map<string, number>>(new Map());
 
@@ -433,10 +435,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         {leaderboardColumn}
       </div>
 
-      {/* Floating chat button + panel (desktop only) */}
+      {/* Floating chat button + draggable panel (desktop only) */}
       {showChat && (
         <>
-          {/* Chat toggle button */}
           {!chatOpen && (
             <button
               onClick={() => setChatOpen(true)}
@@ -448,10 +449,32 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             </button>
           )}
 
-          {/* Chat panel */}
           {chatOpen && (
-            <div className="hidden lg:flex fixed bottom-6 right-6 z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/10 bg-[var(--gtown-navy)] shadow-2xl">
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+            <div
+              className="hidden lg:flex fixed z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/10 bg-[var(--gtown-navy)] shadow-2xl"
+              style={{ bottom: 24 - chatPos.y, right: 24 - chatPos.x }}
+            >
+              {/* Draggable header */}
+              <div
+                className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 cursor-grab active:cursor-grabbing select-none"
+                onMouseDown={(e) => {
+                  dragRef.current = { startX: e.clientX, startY: e.clientY, origX: chatPos.x, origY: chatPos.y };
+                  function onMove(ev: MouseEvent) {
+                    if (!dragRef.current) return;
+                    setChatPos({
+                      x: dragRef.current.origX + (ev.clientX - dragRef.current.startX),
+                      y: dragRef.current.origY + (ev.clientY - dragRef.current.startY),
+                    });
+                  }
+                  function onUp() {
+                    dragRef.current = null;
+                    window.removeEventListener("mousemove", onMove);
+                    window.removeEventListener("mouseup", onUp);
+                  }
+                  window.addEventListener("mousemove", onMove);
+                  window.addEventListener("mouseup", onUp);
+                }}
+              >
                 <span className="text-sm font-semibold text-white">{chatPoolName ?? "Chat"}</span>
                 <button onClick={() => setChatOpen(false)} className="rounded p-1 text-white/40 hover:bg-white/10 hover:text-white transition">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
