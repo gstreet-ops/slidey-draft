@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
-import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard } from "@/lib/queries";
+import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard, getPoolMembers } from "@/lib/queries";
+import { db } from "@/db";
+import { draftBoards, picks } from "@/db/schema";
+import { eq, and, sql as dsql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
@@ -42,6 +45,25 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
     getPoolsForUser(userId),
     getUserBoard(userId, 2026),
   ]);
+
+  // Fetch pool members' published boards
+  type PoolmateBoard = { userName: string; boardId: string; pickCount: number; poolName: string };
+  const poolmateBoards: PoolmateBoard[] = [];
+  if (userPools.length > 0) {
+    const pool = userPools[0];
+    const members = await getPoolMembers(pool.poolId);
+    for (const m of members) {
+      if (m.userId === userId) continue;
+      const [memberBoard] = await db
+        .select({ id: draftBoards.id, status: draftBoards.status })
+        .from(draftBoards)
+        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, 2026)));
+      if (memberBoard?.status === "published") {
+        const [count] = await db.select({ c: dsql<number>`count(*)` }).from(picks).where(eq(picks.boardId, memberBoard.id));
+        poolmateBoards.push({ userName: m.userName || m.userEmail, boardId: memberBoard.id, pickCount: Number(count.c), poolName: pool.poolName });
+      }
+    }
+  }
 
   const draftDate = new Date("2026-04-23T20:00:00-04:00");
   const now = new Date();
@@ -121,12 +143,35 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
             desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
             icon={"\uD83D\uDCCB"}
           />
-          <QuickAction href="/picks" title="Mock Drafts" desc="View all boards" icon={"\uD83C\uDFC8"} />
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
           {isAdmin && (
             <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />
           )}
         </div>
+
+        {/* Pool Members' Mock Drafts */}
+        {poolmateBoards.length > 0 && (
+          <div className="space-y-4">
+            <h2
+              className="text-lg font-bold text-white tracking-wide"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {poolmateBoards[0].poolName.toUpperCase()} MOCK DRAFTS
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {poolmateBoards.map((pb) => (
+                <Link
+                  key={pb.boardId}
+                  href={`/picks/${pb.boardId}`}
+                  className="group rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
+                >
+                  <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
+                  <p className="text-xs text-white/40 mt-1">{pb.pickCount}/32 picks</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

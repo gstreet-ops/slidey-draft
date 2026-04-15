@@ -21,15 +21,15 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
       ? [
           { href: "/live", label: "Live" },
           { href: "/my-board", label: "My Draft" },
-          { href: "/picks", label: "Mock Drafts" },
         ]
       : []),
   ];
 
   const secondaryLinks = [
-    { href: "/guide", label: "How to Play" },
+    { href: "/picks", label: "Mock Drafts" },
     { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
+    { href: "/guide", label: "How to Play" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];

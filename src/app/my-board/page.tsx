@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getUserBoard, getDraftOrder, getPlayers, getBoardWithPicks } from "@/lib/queries";
+import { getUserBoard, getDraftOrder, getPlayers, getBoardWithPicks, getPoolsForUser, getPoolMembers } from "@/lib/queries";
 import { createUserBoard } from "@/lib/actions";
 import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
-import { SiteFooter } from "@/components/site-footer";
+import { db } from "@/db";
+import { draftBoards, picks } from "@/db/schema";
+import { eq, and, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +30,37 @@ export default async function MyBoardPage() {
 
   const draftOrder = await getDraftOrder(season);
   const allPlayers = await getPlayers();
-
   const pickedPlayerIds = new Set(boardData.picks.map((p) => p.playerId));
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
+
+  // Get pool members' boards
+  const userPools = await getPoolsForUser(session.user.id);
+  type PoolmatBoard = { userId: string; userName: string; boardId: string; pickCount: number; status: string };
+  const poolmateBoards: PoolmatBoard[] = [];
+
+  if (userPools.length > 0) {
+    const members = await getPoolMembers(userPools[0].poolId);
+    for (const m of members) {
+      if (m.userId === session.user.id) continue;
+      const [memberBoard] = await db
+        .select({ id: draftBoards.id, status: draftBoards.status })
+        .from(draftBoards)
+        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, season)));
+      if (memberBoard && memberBoard.status === "published") {
+        const [count] = await db
+          .select({ c: sql<number>`count(*)` })
+          .from(picks)
+          .where(eq(picks.boardId, memberBoard.id));
+        poolmateBoards.push({
+          userId: m.userId,
+          userName: m.userName || m.userEmail,
+          boardId: memberBoard.id,
+          pickCount: Number(count.c),
+          status: memberBoard.status,
+        });
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
@@ -70,6 +100,33 @@ export default async function MyBoardPage() {
             readOnly={locked}
           />
         </div>
+
+        {/* Pool Members' Boards */}
+        {poolmateBoards.length > 0 && (
+          <div className="mt-10 space-y-4">
+            <h2
+              className="text-lg font-bold text-white tracking-wide"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              YOUR POOL&apos;S MOCK DRAFTS
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {poolmateBoards.map((pb) => (
+                <Link
+                  key={pb.boardId}
+                  href={`/picks/${pb.boardId}`}
+                  className="group rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
+                >
+                  <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
+                  <p className="text-xs text-white/40 mt-1">{pb.pickCount}/32 picks &middot; {pb.status}</p>
+                </Link>
+              ))}
+            </div>
+            <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">
+              View all mock drafts &rarr;
+            </Link>
+          </div>
+        )}
       </main>
     </div>
   );
