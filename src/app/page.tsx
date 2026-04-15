@@ -1,15 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
-import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard, getPoolMemberCount } from "@/lib/queries";
+import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard } from "@/lib/queries";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
 import { InviteCodeInput } from "@/components/invite-code-input";
 import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
-import { ScoringBadge } from "@/components/scoring-badge";
-import { getPoolSettings } from "@/lib/pool-helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -45,14 +43,6 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
     getUserBoard(userId, 2026),
   ]);
 
-  // Get member counts for pools
-  const poolsWithCounts = await Promise.all(
-    userPools.map(async (p) => ({
-      ...p,
-      memberCount: await getPoolMemberCount(p.poolId),
-    }))
-  );
-
   const draftDate = new Date("2026-04-23T20:00:00-04:00");
   const now = new Date();
   const daysUntilDraft = Math.max(0, Math.ceil((draftDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
@@ -61,6 +51,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const firstName = user.name?.split(" ")[0] || user.email?.split("@")[0] || "there";
   const isAdmin = user.role === "admin";
   const isCommissioner = user.role === "commissioner" || isAdmin;
+  const inPool = userPools.length > 0;
 
   return (
     <main className="flex-1 px-4 py-8 sm:px-6 sm:py-12">
@@ -96,85 +87,37 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           </div>
         </div>
 
+        {/* Primary CTA */}
+        {inPool ? (
+          <Link
+            href="/live"
+            className="block rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center hover:border-green-400/50 transition"
+          >
+            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>GO TO LIVE</p>
+            <p className="text-xs text-white/50 mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
+          </Link>
+        ) : (
+          <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center space-y-4">
+            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
+            <p className="text-sm text-white/50 max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
+            <InviteCodeInput />
+          </div>
+        )}
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <QuickAction
-            href="/pools"
-            title="My Pools"
-            desc={userPools.length > 0 ? `${userPools.length} pool${userPools.length !== 1 ? "s" : ""}` : "Join a pool"}
-            icon="🏆"
-          />
           <QuickAction
             href="/my-board"
             title={myBoard ? "My Mock Draft" : "Create Your Mock Draft"}
             desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
-            icon="📋"
+            icon={"\uD83D\uDCCB"}
           />
-          <QuickAction
-            href="/big-board"
-            title="Prospects"
-            desc="300+ prospects"
-            icon="🏈"
-          />
-          <QuickAction href="/scoring" title="Scoring Guide" desc="How points work" icon="📊" />
-          <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon="📖" />
-          {locked && (
-            <QuickAction href="/live" title="My Draft (Live)" desc="Live draft experience" icon="⚡" highlight />
-          )}
+          <QuickAction href="/picks" title="Mock Drafts" desc="View all boards" icon={"\uD83C\uDFC8"} />
+          <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
           {isAdmin && (
-            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon="🔧" />
-          )}
-          {isCommissioner && (
-            <QuickAction href="/pools/create" title="Create a Pool" desc="Start a new competition" icon="➕" />
+            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />
           )}
         </div>
-
-        {/* My Pools */}
-        <section className="space-y-4">
-          <h2
-            className="text-lg font-bold text-white tracking-wide"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {userPools.length > 0 ? "MY POOLS" : "JOIN A POOL"}
-          </h2>
-
-          {userPools.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center space-y-4">
-              <p className="text-white/50">You&apos;re not in any pools yet. Enter an invite code to join one.</p>
-              <InviteCodeInput />
-            </div>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {poolsWithCounts.map((pool) => {
-                const settings = getPoolSettings(pool.settings);
-                return (
-                  <Link
-                    key={pool.poolId}
-                    href={`/pools/${pool.poolId}`}
-                    className="group rounded-xl border border-white/10 bg-white/5 p-5 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">
-                        {pool.poolName}
-                      </h3>
-                      <ScoringBadge mode={settings.scoringMode} />
-                    </div>
-                    <div className="mt-2 flex items-center gap-3 text-xs text-white/40">
-                      <span>{pool.memberCount} member{pool.memberCount !== 1 ? "s" : ""}</span>
-                      {pool.role !== "member" && (
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          pool.role === "commissioner" ? "bg-yellow-500/20 text-yellow-400" : "bg-blue-500/20 text-blue-400"
-                        }`}>
-                          {pool.role}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
       </div>
     </main>
   );
