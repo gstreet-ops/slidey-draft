@@ -18,6 +18,7 @@ import { PoolThemeActivator } from "@/components/pool-theme-activator";
 import { PoolChat } from "@/components/pool-chat";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { PoolInviteManager } from "@/components/pool-invite-manager";
+import { TriviaControlPanel } from "@/components/trivia-control-panel";
 import { ScoringBadge } from "@/components/scoring-badge";
 
 export const dynamic = "force-dynamic";
@@ -133,6 +134,20 @@ export default async function PoolDashboardPage({
                   poolName={pool.name}
                   openInviteCode={pool.inviteCode}
                   memberCount={members.length}
+                />
+              </div>
+            )}
+
+            {/* Commissioner: Trivia control */}
+            {canManage && settings.trivia && (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Trivia Control</h3>
+                <TriviaControlPanel
+                  poolId={poolId}
+                  initialSettings={{
+                    triviaTimerSeconds: settings.triviaTimerSeconds ?? 30,
+                    triviaMode: settings.triviaMode ?? "auto",
+                  }}
                 />
               </div>
             )}

@@ -453,7 +453,12 @@ export const triviaQuestions = pgTable("trivia_questions", {
   correctOption: text("correct_option").notNull(), // 'a', 'b', 'c', 'd'
   category: text("category").notNull(), // 'draft_history', 'combine', 'trades', etc.
   difficulty: text("difficulty").notNull().default("medium"),
+  sortOrder: integer("sort_order"),
   usedAt: timestamp("used_at"),
+  firedAt: timestamp("fired_at"),
+  firedBy: uuid("fired_by").references(() => users.id),
+  pickNumber: integer("pick_number"),
+  timerSeconds: integer("timer_seconds"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

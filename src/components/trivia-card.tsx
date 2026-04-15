@@ -11,6 +11,9 @@ type Question = {
   optionD: string;
   category: string;
   difficulty: string;
+  timerSeconds?: number;
+  expiresAt?: number;
+  live?: boolean;
 };
 
 type Result = {
@@ -19,7 +22,8 @@ type Result = {
   pointsAwarded: number;
 };
 
-const TIMER_SECONDS = 15;
+const POLL_INTERVAL = 5000; // Poll for live questions every 5s
+const DEFAULT_TIMER = 30;
 
 export function TriviaCard({ poolId }: { poolId: string }) {
   const [question, setQuestion] = useState<Question | null>(null);
@@ -29,12 +33,14 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [triviaScore, setTriviaScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_TIMER);
+  const [timerTotal, setTimerTotal] = useState(DEFAULT_TIMER);
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const pollRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const questionRef = useRef<Question | null>(null);
+  const lastQuestionId = useRef<string | null>(null);
 
   const handleTimeout = useCallback(async () => {
-    // Time's up — submit empty answer to server so question is marked answered (not re-asked)
     const q = questionRef.current;
     if (q) {
       try {
@@ -58,7 +64,16 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   useEffect(() => {
     if (!question || result) return;
     questionRef.current = question;
-    setTimeLeft(TIMER_SECONDS);
+    const t = question.timerSeconds ?? DEFAULT_TIMER;
+
+    // If the question has an expiresAt, calculate remaining time
+    let remaining = t;
+    if (question.expiresAt) {
+      remaining = Math.max(1, Math.ceil((question.expiresAt - Date.now()) / 1000));
+    }
+
+    setTimerTotal(t);
+    setTimeLeft(remaining);
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -74,17 +89,40 @@ export function TriviaCard({ poolId }: { poolId: string }) {
     return () => clearInterval(timerRef.current);
   }, [question, result, handleTimeout]);
 
+  // Poll for live questions every 5 seconds
+  useEffect(() => {
+    async function pollForQuestion() {
+      try {
+        const res = await fetch(`/api/pools/${poolId}/trivia`);
+        const data = await res.json();
+        if (data.noMoreQuestions) return;
+        if (data.live && data.id !== lastQuestionId.current) {
+          lastQuestionId.current = data.id;
+          setQuestion(data);
+          setResult(null);
+          setSelected(null);
+          setDone(false);
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }
+
+    pollRef.current = setInterval(pollForQuestion, POLL_INTERVAL);
+    return () => clearInterval(pollRef.current);
+  }, [poolId]);
+
   async function fetchQuestion() {
     setLoading(true);
     setResult(null);
     setSelected(null);
-    setTimeLeft(TIMER_SECONDS);
     const res = await fetch(`/api/pools/${poolId}/trivia`);
     const data = await res.json();
     if (data.noMoreQuestions) {
       setDone(true);
       setQuestion(null);
     } else {
+      lastQuestionId.current = data.id;
       setQuestion(data);
     }
     setLoading(false);
@@ -116,7 +154,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Draft Trivia</h3>
-            <p className="text-xs text-white/30 mt-0.5">15 seconds per question — 3-10pts by difficulty</p>
+            <p className="text-xs text-white/30 mt-0.5">Questions fire automatically during the draft — or start now</p>
           </div>
           <button
             onClick={fetchQuestion}
@@ -148,16 +186,21 @@ export function TriviaCard({ poolId }: { poolId: string }) {
     { key: "d", label: "D", text: question!.optionD },
   ];
 
-  const timerPct = (timeLeft / TIMER_SECONDS) * 100;
+  const timerPct = (timeLeft / timerTotal) * 100;
   const timerColor = timeLeft <= 5 ? "bg-red-500" : timeLeft <= 10 ? "bg-yellow-500" : "bg-[var(--slidey)]";
   const isTimedOut = result && !selected;
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-white/30 uppercase tracking-wider">
-          {question!.category.replace("_", " ")} · {question!.difficulty}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-white/30 uppercase tracking-wider">
+            {question!.category.replace(/_/g, " ")} · {question!.difficulty}
+          </span>
+          {question!.live && (
+            <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-400 animate-pulse">LIVE</span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
