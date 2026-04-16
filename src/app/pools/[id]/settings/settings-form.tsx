@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { updatePoolSettings, lockPool, deletePool } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import type { PoolSettings } from "@/lib/pool-helpers";
-import { DEFAULT_POOL_SETTINGS } from "@/lib/pool-helpers";
+import type { PoolSettings } from "@/lib/pool-settings";
+import { DEFAULT_POOL_SETTINGS } from "@/lib/pool-settings";
 
 export function PoolSettingsForm({
   poolId,
