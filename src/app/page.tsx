@@ -26,7 +26,7 @@ export default async function Home() {
   const isLoggedIn = !!session?.user && !isSpectator;
 
   return (
-    <div className="min-h-screen bg-[#1a3a5c] flex flex-col">
+    <div className="min-h-screen bg-[#1e3d5f] flex flex-col">
       {isSpectator && <SpectatorBanner />}
 
       {isLoggedIn ? (
@@ -126,7 +126,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   return (
     <main
       className="flex-1 px-4 py-8 sm:px-6 sm:py-12"
-      style={{ background: "linear-gradient(180deg, #1e4068 0%, #1a3a5c 30%, #152e4a 100%)" }}
+      style={{ background: "linear-gradient(180deg, #234b72 0%, #1e3d5f 40%, #1a3755 100%)" }}
     >
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Welcome */}
@@ -177,11 +177,11 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
               {!poolmateBoards.some(pb => pb.userId === userId) && (
                 <Link
                   href="/my-board"
-                  className="group rounded-xl border-2 border-dashed border-white/20 bg-white/[0.02] p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.05] transition flex items-center justify-center"
+                  className="group rounded-xl border-2 border-dashed border-[#3a6a94] bg-[#1e3d5f] p-4 hover:border-[#4a7eaa] hover:bg-[#264d73] transition flex items-center justify-center"
                 >
                   <div className="text-center">
-                    <p className="text-sm font-bold text-white/60 group-hover:text-[var(--slidey)] transition">Start Your Mock &rarr;</p>
-                    <p className="text-xs text-white/50 mt-1">Build your 32-pick board</p>
+                    <p className="text-sm font-bold text-white/[0.75] group-hover:text-[var(--slidey)] transition">Start Your Mock &rarr;</p>
+                    <p className="text-xs text-white/70 mt-1">Build your 32-pick board</p>
                   </div>
                 </Link>
               )}
@@ -189,26 +189,26 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
                 <Link
                   key={pb.boardId}
                   href={pb.userId === userId ? "/my-board" : `/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-white/15 bg-white/12 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/15 transition"
+                  className="group rounded-xl border border-[#3a6a94] bg-[#264d73] p-4 hover:border-[var(--slidey)]/40 hover:bg-[#2d5a85] transition"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">
                         {pb.userId === userId ? "You" : pb.userName}
                       </p>
-                      <p className="text-xs text-white/60 mt-1">{pb.pickCount}/32 picks</p>
+                      <p className="text-xs text-white/[0.75] mt-1">{pb.pickCount}/32 picks</p>
                       {pb.grade && (
-                        <p className="text-[10px] text-white/50 mt-0.5">
+                        <p className="text-[10px] text-white/70 mt-0.5">
                           {pb.grade.steals} steal{pb.grade.steals !== 1 ? "s" : ""} &middot; {pb.grade.reaches} reach{pb.grade.reaches !== 1 ? "es" : ""}
                         </p>
                       )}
                       {pb.latestNote && (
-                        <p className="mt-1 text-xs italic text-white/60 truncate">
+                        <p className="mt-1 text-xs italic text-white/[0.75] truncate">
                           💬 {pb.latestNote.length > 80 ? pb.latestNote.slice(0, 80) + "..." : pb.latestNote}
                         </p>
                       )}
                       {pb.noteCount > 0 && !pb.latestNote && (
-                        <p className="mt-0.5 text-[10px] text-white/50">💬 {pb.noteCount} note{pb.noteCount !== 1 ? "s" : ""}</p>
+                        <p className="mt-0.5 text-[10px] text-white/70">💬 {pb.noteCount} note{pb.noteCount !== 1 ? "s" : ""}</p>
                       )}
                     </div>
                     {pb.grade && (
@@ -227,15 +227,15 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         {inPool && liveCtaLabel ? (
           <Link
             href="/live"
-            className="block rounded-xl border border-green-400/40 bg-green-400/15 p-6 text-center hover:border-green-400/50 transition"
+            className="block rounded-xl border border-green-400/50 bg-[#1a4a3a] p-6 text-center hover:border-green-400/60 transition"
           >
             <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>{liveCtaLabel}</p>
-            <p className="text-xs text-white/60 mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
+            <p className="text-xs text-white/[0.75] mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
           </Link>
         ) : inPool && !hasDraftNight ? null : (
-          <div className="rounded-xl border border-white/15 bg-white/12 p-8 text-center space-y-4">
+          <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-8 text-center space-y-4">
             <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
-            <p className="text-sm text-white/60 max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
+            <p className="text-sm text-white/[0.75] max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
             <InviteCodeInput />
           </div>
         )}
@@ -272,14 +272,14 @@ function QuickAction({ href, title, desc, icon, highlight }: { href: string; tit
       className={`group rounded-xl border p-4 transition ${
         highlight
           ? "border-green-500/30 bg-green-500/10 hover:border-green-400/50"
-          : "border-white/15 bg-white/12 hover:border-[var(--slidey)]/40 hover:bg-white/15"
+          : "border-[#3a6a94] bg-[#264d73] hover:border-[#4a7eaa] hover:bg-[#2d5a85]"
       }`}
     >
       <div className="flex items-center gap-3">
         <span className="text-xl">{icon}</span>
         <div>
           <p className="text-sm font-bold text-white">{title}</p>
-          <p className="text-xs text-white/60">{desc}</p>
+          <p className="text-xs text-white/[0.75]">{desc}</p>
         </div>
       </div>
     </Link>
@@ -316,7 +316,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-4 pt-12 pb-16 text-center sm:px-6 sm:pt-20 sm:pb-24">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[500px] w-[500px] rounded-full bg-[var(--lions-blue)]/10 blur-[120px]" />
+          <div className="h-[500px] w-[500px] rounded-full bg-[var(--lions-blue)]/15 blur-[120px]" />
         </div>
         <div className="relative z-10 mx-auto max-w-2xl space-y-5">
           <div className="inline-block rounded-full bg-[#0076B6] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:text-xs">
@@ -328,7 +328,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           >
             DRAFT DAY<br /><span className="text-[var(--slidey)]">CHALLENGE</span>
           </h1>
-          <p className="text-sm text-white/60 max-w-md mx-auto sm:text-base">
+          <p className="text-sm text-white/[0.75] max-w-md mx-auto sm:text-base">
             Build a mock draft, join a pool, and score points live as Roger Goodell reads the cards.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row sm:gap-4">
@@ -410,7 +410,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
       ) : null}
 
       {/* ── MAIN CONTENT (2-column grid) ── */}
-      <section className="px-4 py-10 sm:px-6 sm:py-14">
+      <section className="bg-[#1e3d5f] px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
           {/* Left column */}
           <div className="space-y-8">
@@ -423,7 +423,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                   </h2>
                   <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">All Boards &rarr;</Link>
                 </div>
-                <div className="rounded-xl border border-white/15 bg-white/12 overflow-hidden">
+                <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] overflow-hidden">
                   {publishedGrades.map((entry, i) => (
                     <Link
                       key={entry.boardId}
@@ -433,7 +433,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                       <GradeCircle grade={entry.grade.letterGrade} size="sm" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-white truncate">{entry.title}</p>
-                        <p className="text-[10px] text-white/60">
+                        <p className="text-[10px] text-white/[0.75]">
                           {entry.grade.steals} steal{entry.grade.steals !== 1 ? "s" : ""} &middot; {entry.grade.reaches} reach{entry.grade.reaches !== 1 ? "es" : ""} &middot; {entry.grade.totalPicks}/32 picks
                         </p>
                       </div>
@@ -454,19 +454,19 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                   {featuredPicks.map((pick) => (
-                    <div key={pick.id} className="rounded-xl border border-white/15 bg-white/12 p-3 text-center transition hover:border-white/20">
+                    <div key={pick.id} className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-3 text-center transition hover:border-white/20">
                       <div className="mb-2 flex items-center justify-center gap-1.5">
                         {pick.teamLogoUrl && (
                           <Image src={pick.teamLogoUrl} alt="" width={20} height={20} className="object-contain" />
                         )}
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">Pick {pick.pickNumber}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/[0.75]">Pick {pick.pickNumber}</span>
                       </div>
                       <div className="mx-auto mb-2 h-12 w-12 overflow-hidden rounded-full border-2 sm:h-14 sm:w-14"
                         style={{ borderColor: pick.teamPrimaryColor || "rgba(255,255,255,0.1)" }}>
                         <PlayerAvatar player={{ name: pick.playerName ?? "TBD", imageUrl: pick.playerImageUrl, position: pick.playerPosition ?? "" }} size={56} />
                       </div>
                       <p className="text-xs font-bold text-white truncate">{pick.playerName ?? "TBD"}</p>
-                      <p className="text-[10px] text-white/60">{pick.playerPosition}</p>
+                      <p className="text-[10px] text-white/[0.75]">{pick.playerPosition}</p>
                     </div>
                   ))}
                 </div>
@@ -483,15 +483,15 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 {topProspects.map((p) => (
-                  <div key={p.id} className="group relative rounded-xl border border-white/15 bg-white/12 p-3 text-center transition hover:border-[var(--lions-blue)]/40 hover:bg-white/15 sm:p-4">
+                  <div key={p.id} className="group relative rounded-xl border border-[#3a6a94] bg-[#264d73] p-3 text-center transition hover:border-[var(--lions-blue)]/40 hover:bg-[#2d5a85] sm:p-4">
                     <div className="mx-auto mb-2 h-14 w-14 overflow-hidden rounded-full border-2 border-white/10 sm:h-16 sm:w-16">
                       <PlayerAvatar player={{ name: p.name, imageUrl: p.imageUrl, position: p.position }} size={64} />
                     </div>
                     <p className="text-xs font-bold text-white truncate sm:text-sm">{p.name}</p>
-                    <p className="text-[10px] text-white/60 sm:text-xs">{p.position} &middot; {p.school}</p>
+                    <p className="text-[10px] text-white/[0.75] sm:text-xs">{p.position} &middot; {p.school}</p>
                     <div className="mt-2 flex items-center justify-center gap-2">
                       <span className="rounded-full bg-[var(--lions-blue)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--lions-blue)] sm:text-xs">#{p.rank}</span>
-                      {p.grade && <span className="text-[10px] font-semibold text-white/50 sm:text-xs">{p.grade}</span>}
+                      {p.grade && <span className="text-[10px] font-semibold text-white/70 sm:text-xs">{p.grade}</span>}
                     </div>
                   </div>
                 ))}
@@ -507,15 +507,15 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                   </h2>
                   <Link href="/leaderboard" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">Full Rankings &rarr;</Link>
                 </div>
-                <div className="rounded-xl border border-white/15 bg-white/12 overflow-hidden">
+                <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] overflow-hidden">
                   {topRanked.map((entry, i) => (
                     <div key={i} className={`flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5 sm:py-3.5 ${i !== topRanked.length - 1 ? "border-b border-white/5" : ""}`}>
                       <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-8 sm:w-8 ${
-                        i === 0 ? "bg-yellow-500/20 text-yellow-400" : i === 1 ? "bg-gray-300/20 text-gray-300" : i === 2 ? "bg-orange-400/20 text-orange-400" : "bg-white/10 text-white/60"
+                        i === 0 ? "bg-yellow-500/20 text-yellow-400" : i === 1 ? "bg-gray-300/20 text-gray-300" : i === 2 ? "bg-orange-400/20 text-orange-400" : "bg-white/10 text-white/[0.75]"
                       }`}>{i + 1}</span>
                       <span className="flex-1 text-sm font-semibold text-white truncate">{entry.userName}</span>
                       <span className="text-xs font-bold text-[var(--lions-blue)]">{entry.totalScore} pts</span>
-                      <span className="hidden text-[10px] text-white/50 sm:block">{entry.correctExact} exact &middot; {entry.accuracyPct}%</span>
+                      <span className="hidden text-[10px] text-white/70 sm:block">{entry.correctExact} exact &middot; {entry.accuracyPct}%</span>
                     </div>
                   ))}
                 </div>
@@ -526,28 +526,28 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           {/* Right sidebar */}
           <div className="space-y-6">
             {/* Countdown */}
-            <div className="rounded-xl border border-white/15 bg-white/12 p-6 text-center">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-2">Draft Night</p>
+            <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-6 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/[0.75] mb-2">Draft Night</p>
               <p className="text-3xl font-bold text-white">
                 {Math.max(0, Math.ceil((new Date("2026-04-23T20:00:00-04:00").getTime() - Date.now()) / (1000 * 60 * 60 * 24)))}
               </p>
-              <p className="text-xs text-white/60 mt-1">days to go</p>
+              <p className="text-xs text-white/[0.75] mt-1">days to go</p>
             </div>
 
             {/* By The Numbers */}
-            <div className="rounded-xl border border-white/15 bg-white/12 p-5 space-y-3">
-              <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">By The Numbers</h3>
+            <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-5 space-y-3">
+              <h3 className="text-sm font-bold text-white/[0.75] uppercase tracking-wider">By The Numbers</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-white/60">Boards Published</span>
+                  <span className="text-white/[0.75]">Boards Published</span>
                   <span className="text-white font-semibold">{published.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/60">Prospects</span>
+                  <span className="text-white/[0.75]">Prospects</span>
                   <span className="text-white font-semibold">{allPlayers.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/60">Competitors</span>
+                  <span className="text-white/[0.75]">Competitors</span>
                   <span className="text-white font-semibold">{leaderboard.length}</span>
                 </div>
               </div>
