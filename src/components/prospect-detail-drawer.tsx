@@ -23,6 +23,9 @@ type Prospect = {
   shuttle?: number | null;
   nflComparison?: string | null;
   schoolLogoUrl?: string | null;
+  consensusLow?: number | null;
+  consensusHigh?: number | null;
+  consensusMid?: number | null;
 };
 
 type Props = {
@@ -142,6 +145,41 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
         )}
 
         <div className="p-5 space-y-5">
+          {/* Draft Range */}
+          {prospect.consensusLow != null && prospect.consensusHigh != null && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+                Draft Range
+              </h3>
+              <p className="text-sm text-white/70 mb-2">
+                Projected: Pick {prospect.consensusLow}-{prospect.consensusHigh}
+                {prospect.consensusMid != null && ` (most likely: ${prospect.consensusMid})`}
+              </p>
+              <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
+                {/* Range bar */}
+                <div
+                  className="absolute h-full rounded-full bg-[var(--lions-blue)]/40"
+                  style={{
+                    left: `${((prospect.consensusLow - 1) / 63) * 100}%`,
+                    width: `${Math.max(((prospect.consensusHigh - prospect.consensusLow) / 63) * 100, 2)}%`,
+                  }}
+                />
+                {/* Mid marker */}
+                {prospect.consensusMid != null && (
+                  <div
+                    className="absolute top-0 h-full w-1 rounded-full bg-[var(--lions-blue)]"
+                    style={{ left: `${((prospect.consensusMid - 1) / 63) * 100}%` }}
+                  />
+                )}
+              </div>
+              <div className="flex justify-between mt-1 text-[9px] text-white/30">
+                <span>1</span>
+                <span>16</span>
+                <span>32</span>
+              </div>
+            </div>
+          )}
+
           {/* Combine Measurables grid */}
           {measurables.length > 0 && (
             <div>

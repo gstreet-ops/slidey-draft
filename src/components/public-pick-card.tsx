@@ -35,6 +35,8 @@ type Pick = {
   analysis: string | null;
   teamNeeds?: string[] | null;
   playerFortyTime?: number | null;
+  consensusLow?: number | null;
+  consensusHigh?: number | null;
 };
 
 type ScoreInfo = {
@@ -138,6 +140,17 @@ export function PublicPickCard({
               if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
               return null;
             })()}
+            {pick.consensusLow != null && pick.consensusHigh != null && (
+              <span className={`text-[9px] sm:text-[10px] ${
+                pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :
+                pick.pickNumber < pick.consensusLow ? "text-amber-400/60" :
+                "text-white/30"
+              }`}>
+                Consensus {pick.consensusLow}-{pick.consensusHigh}
+                {pick.pickNumber > pick.consensusHigh && " · Steal"}
+                {pick.pickNumber < pick.consensusLow && " · Reach"}
+              </span>
+            )}
           </div>
           {/* Trait tags on mobile */}
           {tags.length > 0 && (

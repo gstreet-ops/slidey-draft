@@ -43,6 +43,9 @@ type ExistingPick = {
   playerShuttle: number | null;
   playerNflComparison: string | null;
   playerSchoolLogoUrl: string | null;
+  consensusLow: number | null;
+  consensusHigh: number | null;
+  consensusMid: number | null;
   teamName: string;
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
@@ -70,6 +73,9 @@ type Player = {
   shuttle: number | null;
   nflComparison: string | null;
   schoolLogoUrl: string | null;
+  consensusLow: number | null;
+  consensusHigh: number | null;
+  consensusMid: number | null;
 };
 
 type Props = {
@@ -280,6 +286,9 @@ function pickToPlayer(pick: ExistingPick): Player {
     shuttle: pick.playerShuttle,
     nflComparison: pick.playerNflComparison,
     schoolLogoUrl: pick.playerSchoolLogoUrl,
+    consensusLow: pick.consensusLow,
+    consensusHigh: pick.consensusHigh,
+    consensusMid: pick.consensusMid,
   };
 }
 
@@ -561,6 +570,20 @@ export function PickBuilder({
                       <span className={`font-mono text-[10px] ${fortyTimeColor(player.position, player.fortyTime)}`}>
                         {player.fortyTime.toFixed(2)}
                       </span>
+                    )}
+                    {player.consensusLow != null && player.consensusHigh != null && (
+                      <span className="text-[10px] text-white/30 font-mono hidden sm:inline">
+                        {player.consensusLow === player.consensusHigh
+                          ? `Pick ${player.consensusLow}`
+                          : `${player.consensusLow}-${player.consensusHigh}`}
+                      </span>
+                    )}
+                    {activeSlot && player.consensusLow != null && player.consensusHigh != null && (
+                      activeSlot < player.consensusLow
+                        ? <span className="text-[9px] font-semibold text-blue-400/70 hidden sm:inline">Reach</span>
+                        : activeSlot > player.consensusHigh
+                        ? <span className="text-[9px] font-semibold text-amber-400/70 hidden sm:inline">Steal</span>
+                        : <span className="text-[9px] font-semibold text-green-400/70 hidden sm:inline">In range</span>
                     )}
                   </div>
                 </div>

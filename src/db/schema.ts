@@ -129,6 +129,9 @@ export const players = pgTable("players", {
   shuttle: real("shuttle"),
   nflComparison: text("nfl_comparison"),
   schoolLogoUrl: text("school_logo_url"),
+  consensusLow: integer("consensus_low"),
+  consensusHigh: integer("consensus_high"),
+  consensusMid: integer("consensus_mid"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

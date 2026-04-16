@@ -33,6 +33,8 @@ type PickData = {
   teamNeeds: string[] | null;
   autoFilled: boolean | null;
   analysis: string | null;
+  consensusLow: number | null;
+  consensusHigh: number | null;
 };
 
 type ScoreData = {

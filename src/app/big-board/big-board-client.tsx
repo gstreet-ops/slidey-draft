@@ -26,6 +26,9 @@ type Prospect = {
   broadJump: number | null;
   threeConeDrill: number | null;
   shuttle: number | null;
+  consensusLow: number | null;
+  consensusHigh: number | null;
+  consensusMid: number | null;
 };
 
 const POSITIONS = ["ALL", "QB", "RB", "WR", "TE", "OT", "OG", "C", "EDGE", "DT", "LB", "CB", "S"];
@@ -115,6 +118,11 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                     <span className="text-xs text-white/50 truncate">{p.school}</span>
                     {p.nflComparison && (
                       <span className="hidden text-xs text-white/40 sm:inline">· Comp: {p.nflComparison}</span>
+                    )}
+                    {p.consensusLow != null && p.consensusHigh != null && (
+                      <span className="text-[10px] text-white/30 font-mono sm:text-xs">
+                        · Range {p.consensusLow}-{p.consensusHigh}
+                      </span>
                     )}
                   </div>
                   {tags.length > 0 && (
