@@ -27,16 +27,15 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   const primaryLinks = isLoggedIn
     ? [
         ...(liveLabel ? [{ href: "/live", label: liveLabel }] : []),
-        ...(enabled.has("mockDraft") ? [{ href: "/my-board", label: "My Draft" }] : []),
-        ...(enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
+        ...(enabled.has("mockDraft") ? [{ href: "/picks", label: "Mock Drafts" }] : []),
+        { href: "/guide", label: "How to Play" },
       ]
     : [];
 
   const secondaryLinks = [
-    { href: "/picks", label: "Mock Drafts" },
+    ...(isLoggedIn && enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
     { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
-    { href: "/guide", label: "How to Play" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];

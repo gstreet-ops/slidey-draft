@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
-import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard, getPoolMembers } from "@/lib/queries";
+import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getPoolMembers } from "@/lib/queries";
 import { gradeMockDraft } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
 import { GradeCircle } from "@/components/grade-circle";
@@ -46,10 +46,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const user = session.user;
   const userId = user.id;
 
-  const [userPools, myBoard] = await Promise.all([
-    getPoolsForUser(userId),
-    getUserBoard(userId, 2026),
-  ]);
+  const userPools = await getPoolsForUser(userId);
 
   // Fetch pool members' published boards (including current user)
   type PoolmateBoard = { userId: string; userName: string; boardId: string; pickCount: number; poolName: string; grade: MockDraftGrade | null; noteCount: number; latestNote: string | null };
@@ -170,7 +167,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
               >
                 {userPools[0].poolName.toUpperCase()} MOCK DRAFTS
               </h2>
-              <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">See All &rarr;</Link>
+              <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">View All Mock Drafts &rarr;</Link>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {/* Show "Start Your Mock" card if user has no published board in pool */}
@@ -242,15 +239,14 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.filter((f) => f.quickAction && enabled.has(f.key)).map((f) => {
+          {FEATURES.filter((f) => f.quickAction && f.key !== "mockDraft" && enabled.has(f.key)).map((f) => {
             const qa = f.quickAction!;
-            const isMyBoard = f.key === "mockDraft";
             return (
               <QuickAction
                 key={f.key}
                 href={qa.href}
-                title={isMyBoard && myBoard ? "My Mock Draft" : isMyBoard ? "Create Your Mock Draft" : qa.title}
-                desc={isMyBoard && myBoard ? "Edit your picks" : qa.desc}
+                title={qa.title}
+                desc={qa.desc}
                 icon={qa.icon}
               />
             );
