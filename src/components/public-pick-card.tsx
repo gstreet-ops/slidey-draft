@@ -56,7 +56,7 @@ export function PublicPickCard({
   const [expanded, setExpanded] = useState(false);
   const bgClass = score?.matchType ? MATCH_BG[score.matchType] : "border-white/10 bg-white/5";
   const badge = score?.matchType ? MATCH_BADGE[score.matchType] : null;
-  const tags = extractTraitTags(pick.playerNotes);
+  const tags = extractTraitTags(pick.playerNotes, pick.playerPosition);
   const hasExpandContent = pick.playerNotes || pick.analysis;
 
   return (

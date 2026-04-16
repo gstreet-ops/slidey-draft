@@ -56,7 +56,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
 
   if (!prospect) return null;
 
-  const tags = extractTraitTags(prospect.notes ?? null);
+  const tags = extractTraitTags(prospect.notes ?? null, prospect.position);
 
   const measurables: { label: string; value: string }[] = [];
   if (prospect.fortyTime) measurables.push({ label: "40-YD", value: `${prospect.fortyTime}s` });

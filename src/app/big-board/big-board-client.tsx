@@ -85,7 +85,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
         {/* Prospect list */}
         <div className="space-y-2">
           {filtered.map((p) => {
-            const tags = extractTraitTags(p.notes, 2);
+            const tags = extractTraitTags(p.notes, p.position, 2);
             return (
               <button
                 key={p.id}
