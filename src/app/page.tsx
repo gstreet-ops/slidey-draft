@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
 import { getBoards, getPoolsForUser, getPlayers, getLeaderboard, getBoardWithPicks, getUserBoard, getPoolMembers } from "@/lib/queries";
+import { gradeMockDraft } from "@/lib/mock-grading";
+import type { MockDraftGrade } from "@/lib/mock-grading";
+import { GradeCircle } from "@/components/grade-circle";
 import { db } from "@/db";
 import { draftBoards, picks } from "@/db/schema";
 import { eq, and, sql as dsql } from "drizzle-orm";
@@ -46,23 +49,42 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
     getUserBoard(userId, 2026),
   ]);
 
-  // Fetch pool members' published boards
-  type PoolmateBoard = { userName: string; boardId: string; pickCount: number; poolName: string };
+  // Fetch pool members' published boards (including current user)
+  type PoolmateBoard = { userId: string; userName: string; boardId: string; pickCount: number; poolName: string; grade: MockDraftGrade | null };
   const poolmateBoards: PoolmateBoard[] = [];
   if (userPools.length > 0) {
     const pool = userPools[0];
     const members = await getPoolMembers(pool.poolId);
     for (const m of members) {
-      if (m.userId === userId) continue;
       const [memberBoard] = await db
         .select({ id: draftBoards.id, status: draftBoards.status })
         .from(draftBoards)
         .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, 2026)));
       if (memberBoard?.status === "published") {
-        const [count] = await db.select({ c: dsql<number>`count(*)` }).from(picks).where(eq(picks.boardId, memberBoard.id));
-        poolmateBoards.push({ userName: m.userName || m.userEmail, boardId: memberBoard.id, pickCount: Number(count.c), poolName: pool.poolName });
+        const boardData = await getBoardWithPicks(memberBoard.id);
+        const grade = boardData && boardData.picks.length > 0
+          ? gradeMockDraft(boardData.picks.map(p => ({
+              pickNumber: p.pickNumber,
+              playerGrade: p.playerGrade,
+              playerRank: p.playerRank,
+            })))
+          : null;
+        poolmateBoards.push({
+          userId: m.userId,
+          userName: m.userName || m.userEmail,
+          boardId: memberBoard.id,
+          pickCount: boardData?.picks.length ?? 0,
+          poolName: pool.poolName,
+          grade,
+        });
       }
     }
+    // Sort: current user first, then alphabetically
+    poolmateBoards.sort((a, b) => {
+      if (a.userId === userId) return -1;
+      if (b.userId === userId) return 1;
+      return a.userName.localeCompare(b.userName);
+    });
   }
 
   const draftDate = new Date("2026-04-23T20:00:00-04:00");
@@ -150,23 +172,54 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         </div>
 
         {/* Pool Members' Mock Drafts */}
-        {poolmateBoards.length > 0 && (
+        {inPool && (
           <div className="space-y-4">
-            <h2
-              className="text-lg font-bold text-white tracking-wide"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {poolmateBoards[0].poolName.toUpperCase()} MOCK DRAFTS
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2
+                className="text-lg font-bold text-white tracking-wide"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {userPools[0].poolName.toUpperCase()} MOCK DRAFTS
+              </h2>
+              <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">See All &rarr;</Link>
+            </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Show "Start Your Mock" card if user has no published board in pool */}
+              {!poolmateBoards.some(pb => pb.userId === userId) && (
+                <Link
+                  href="/my-board"
+                  className="group rounded-xl border-2 border-dashed border-white/20 bg-white/[0.02] p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.05] transition flex items-center justify-center"
+                >
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-white/60 group-hover:text-[var(--slidey)] transition">Start Your Mock &rarr;</p>
+                    <p className="text-xs text-white/30 mt-1">Build your 32-pick board</p>
+                  </div>
+                </Link>
+              )}
               {poolmateBoards.map((pb) => (
                 <Link
                   key={pb.boardId}
-                  href={`/picks/${pb.boardId}`}
+                  href={pb.userId === userId ? "/my-board" : `/picks/${pb.boardId}`}
                   className="group rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
                 >
-                  <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
-                  <p className="text-xs text-white/40 mt-1">{pb.pickCount}/32 picks</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">
+                        {pb.userId === userId ? "You" : pb.userName}
+                      </p>
+                      <p className="text-xs text-white/40 mt-1">{pb.pickCount}/32 picks</p>
+                      {pb.grade && (
+                        <p className="text-[10px] text-white/30 mt-0.5">
+                          {pb.grade.steals} steal{pb.grade.steals !== 1 ? "s" : ""} &middot; {pb.grade.reaches} reach{pb.grade.reaches !== 1 ? "es" : ""}
+                        </p>
+                      )}
+                    </div>
+                    {pb.grade && (
+                      <div className="shrink-0">
+                        <GradeCircle grade={pb.grade.letterGrade} size="sm" />
+                      </div>
+                    )}
+                  </div>
                 </Link>
               ))}
             </div>
@@ -209,9 +262,18 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
   const topRanked = leaderboard.slice(0, 5);
 
   let featuredPicks: NonNullable<Awaited<ReturnType<typeof getBoardWithPicks>>>["picks"] = [];
-  if (published.length > 0) {
-    const board = await getBoardWithPicks(published[0].id);
-    if (board) featuredPicks = board.picks.slice(0, 6);
+  const publishedGrades: Array<{ boardId: string; createdBy: string | null; title: string; grade: MockDraftGrade }> = [];
+  for (const b of published) {
+    const boardData = await getBoardWithPicks(b.id);
+    if (boardData && boardData.picks.length > 0) {
+      if (featuredPicks.length === 0) featuredPicks = boardData.picks.slice(0, 6);
+      const grade = gradeMockDraft(boardData.picks.map(p => ({
+        pickNumber: p.pickNumber,
+        playerGrade: p.playerGrade,
+        playerRank: p.playerRank,
+      })));
+      publishedGrades.push({ boardId: b.id, createdBy: b.createdBy, title: b.title, grade });
+    }
   }
 
   return (
@@ -342,6 +404,35 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                       <p className="text-xs font-bold text-white truncate">{pick.playerName ?? "TBD"}</p>
                       <p className="text-[10px] text-white/40">{pick.playerPosition}</p>
                     </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Mock Draft Grades */}
+            {publishedGrades.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
+                    MOCK DRAFT GRADES
+                  </h2>
+                  <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">All Boards &rarr;</Link>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] overflow-hidden">
+                  {publishedGrades.map((entry, i) => (
+                    <Link
+                      key={entry.boardId}
+                      href={`/picks/${entry.boardId}`}
+                      className={`flex items-center gap-3 px-4 py-3 hover:bg-white/[0.06] transition ${i !== publishedGrades.length - 1 ? "border-b border-white/5" : ""}`}
+                    >
+                      <GradeCircle grade={entry.grade.letterGrade} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{entry.title}</p>
+                        <p className="text-[10px] text-white/40">
+                          {entry.grade.steals} steal{entry.grade.steals !== 1 ? "s" : ""} &middot; {entry.grade.reaches} reach{entry.grade.reaches !== 1 ? "es" : ""} &middot; {entry.grade.totalPicks}/32 picks
+                        </p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               </div>

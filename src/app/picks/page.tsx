@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getBoards } from "@/lib/queries";
+import { getBoards, getBoardWithPicks } from "@/lib/queries";
+import { gradeMockDraft } from "@/lib/mock-grading";
+import type { MockDraftGrade } from "@/lib/mock-grading";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users, teams } from "@/db/schema";
 import { SiteFooter } from "@/components/site-footer";
+import { GradeCircle } from "@/components/grade-circle";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +20,7 @@ export default async function PicksPage() {
   // Enrich boards with creator info
   const enrichedBoards = await Promise.all(
     published.map(async (board) => {
-      if (!board.createdBy) return { ...board, creator: null, team: null };
+      if (!board.createdBy) return { ...board, creator: null, team: null, grade: null as MockDraftGrade | null, pickCount: 0 };
       const [creator] = await db
         .select({ name: users.name, email: users.email, role: users.role, favoriteTeamId: users.favoriteTeamId })
         .from(users)
@@ -28,7 +31,15 @@ export default async function PicksPage() {
           .from(teams).where(eq(teams.id, creator.favoriteTeamId));
         team = t || null;
       }
-      return { ...board, creator: creator || null, team };
+      const boardData = await getBoardWithPicks(board.id);
+      const grade = boardData && boardData.picks.length > 0
+        ? gradeMockDraft(boardData.picks.map(p => ({
+            pickNumber: p.pickNumber,
+            playerGrade: p.playerGrade,
+            playerRank: p.playerRank,
+          })))
+        : null;
+      return { ...board, creator: creator || null, team, grade, pickCount: boardData?.picks.length ?? 0 };
     })
   );
 
@@ -67,7 +78,17 @@ export default async function PicksPage() {
                       {board.creator?.name || board.creator?.email || "Anonymous"} &middot;
                       Published {board.publishedAt?.toLocaleDateString()}
                     </p>
+                    {board.grade && (
+                      <p className="mt-1 text-xs text-white/40">
+                        {board.grade.steals} steal{board.grade.steals !== 1 ? "s" : ""} &middot; {board.grade.reaches} reach{board.grade.reaches !== 1 ? "es" : ""} &middot; {board.pickCount}/32 picks
+                      </p>
+                    )}
                   </div>
+                  {board.grade && (
+                    <div className="shrink-0">
+                      <GradeCircle grade={board.grade.letterGrade} label={board.grade.pickGrades.length > 0 ? board.grade.summary.split(" — ")[0] : undefined} size="sm" />
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}
