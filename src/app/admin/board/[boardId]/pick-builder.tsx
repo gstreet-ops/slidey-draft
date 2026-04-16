@@ -7,6 +7,7 @@ import { PlayerAvatar } from "@/components/player-avatar";
 import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
+import { checkNeedMatch, matchesAnyNeed } from "@/lib/team-needs";
 
 type DraftSlot = {
   id: string;
@@ -16,6 +17,7 @@ type DraftSlot = {
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
   teamLogoUrl: string | null;
+  teamNeeds: string[] | null;
   note: string | null;
 };
 
@@ -294,6 +296,7 @@ export function PickBuilder({
   // Inline note editing
   const [editingNotePickId, setEditingNotePickId] = useState<string | null>(null);
   const [editingNoteText, setEditingNoteText] = useState("");
+  const [needsOnly, setNeedsOnly] = useState(false);
 
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
@@ -306,9 +309,12 @@ export function PickBuilder({
 
   const positions = ["ALL", ...Array.from(new Set(realAvailable.map((p) => p.position))).sort()];
 
+  const activeSlotData = activeSlot ? draftOrder.find((s) => s.pickNumber === activeSlot) : null;
+
   const filteredPlayers = realAvailable.filter(
     (p) =>
       (posFilter === "ALL" || p.position === posFilter) &&
+      (!needsOnly || !activeSlotData?.teamNeeds || matchesAnyNeed(p.position, activeSlotData.teamNeeds)) &&
       (p.name.toLowerCase().includes(search.toLowerCase()) ||
        p.position.toLowerCase().includes(search.toLowerCase()) ||
        p.school.toLowerCase().includes(search.toLowerCase()))
@@ -435,6 +441,20 @@ export function PickBuilder({
         ))}
       </div>
 
+      {/* Needs Only toggle */}
+      {activeSlot && activeSlotData?.teamNeeds && activeSlotData.teamNeeds.length > 0 && (
+        <button
+          onClick={() => setNeedsOnly(!needsOnly)}
+          className={`mb-2 rounded-full px-3 py-1 text-[10px] font-semibold transition ${
+            needsOnly
+              ? "bg-green-500/20 text-green-400 border border-green-500/30"
+              : "bg-white/5 text-white/40 border border-white/10 hover:text-white/60"
+          }`}
+        >
+          {needsOnly ? "✓ Needs Only" : "Needs Only"}
+        </button>
+      )}
+
       {/* Analysis text area */}
       {activeSlot && !readOnly && (
         <div className="mb-3">
@@ -483,6 +503,9 @@ export function PickBuilder({
                     <span className="text-xs text-[var(--lions-blue)] shrink-0">
                       {player.position}
                     </span>
+                    {slot?.teamNeeds && matchesAnyNeed(player.position, slot.teamNeeds) && (
+                      <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-[9px] font-bold text-green-400">Need</span>
+                    )}
                   </div>
                 </div>
                 {/* Info button — always visible */}
@@ -627,11 +650,28 @@ export function PickBuilder({
                       <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
+                      {(() => {
+                        const nm = checkNeedMatch(pick.playerPosition, slot.teamNeeds);
+                        if (nm === "top") return <span className="text-[9px] font-semibold text-green-400 sm:text-[10px]">● Need</span>;
+                        if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60 sm:text-[10px]">○ Off-need</span>;
+                        return null;
+                      })()}
                     </div>
                   ) : (
-                    <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/40"}`}>
-                      {isActive ? "Select a player →" : "Click to pick"}
-                    </p>
+                    <>
+                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/40"}`}>
+                        {isActive ? "Select a player →" : "Click to pick"}
+                      </p>
+                      {slot.teamNeeds && slot.teamNeeds.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {slot.teamNeeds.map((pos) => (
+                            <span key={pos} className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/50">
+                              {pos}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
 

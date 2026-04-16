@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PlayerAvatar } from "./player-avatar";
 
 import { extractTraitTags } from "@/lib/trait-tags";
+import { checkNeedMatch } from "@/lib/team-needs";
 
 type Pick = {
   id: string;
@@ -21,6 +22,7 @@ type Pick = {
   teamLogoUrl: string | null;
   autoFilled: boolean | null;
   analysis: string | null;
+  teamNeeds?: string[] | null;
 };
 
 type ScoreInfo = {
@@ -113,6 +115,12 @@ export function PublicPickCard({
             <span className="text-white/20">&rarr;</span>
             <span>{pick.teamName}</span>
             <span className="text-[10px] text-white/30 sm:text-xs">({pick.teamAbbreviation})</span>
+            {(() => {
+              const nm = checkNeedMatch(pick.playerPosition, pick.teamNeeds);
+              if (nm === "top") return <span className="text-[9px] font-semibold text-green-400">● Need</span>;
+              if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
+              return null;
+            })()}
           </div>
           {/* Trait tags on mobile */}
           {tags.length > 0 && (

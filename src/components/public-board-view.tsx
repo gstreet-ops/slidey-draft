@@ -30,6 +30,7 @@ type PickData = {
   teamAbbreviation: string;
   teamPrimaryColor: string | null;
   teamLogoUrl: string | null;
+  teamNeeds: string[] | null;
   autoFilled: boolean | null;
   analysis: string | null;
 };

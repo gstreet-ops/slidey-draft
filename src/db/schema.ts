@@ -105,6 +105,7 @@ export const teams = pgTable("teams", {
   logoUrl: text("logo_url"),
   primaryColor: text("primary_color"),
   secondaryColor: text("secondary_color"),
+  needs: jsonb("needs").$type<string[]>(),
 });
 
 // ── Players (prospect pool) ────────────────────────
