@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { pools } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { canManagePool } from "@/lib/pool-helpers";
 
 export async function POST(
   req: NextRequest,
@@ -23,8 +24,8 @@ export async function POST(
     return NextResponse.json({ error: "Pool not found" }, { status: 404 });
   }
 
-  if (pool.commissionerId !== session.user.id) {
-    return NextResponse.json({ error: "Only the commissioner can lock/unlock" }, { status: 403 });
+  if (!(await canManagePool(session.user.id, poolId))) {
+    return NextResponse.json({ error: "Only commissioners can lock/unlock" }, { status: 403 });
   }
 
   const { status } = await req.json();

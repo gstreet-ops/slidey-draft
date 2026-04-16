@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { pools } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { canManagePool } from "@/lib/pool-helpers";
 
 export async function POST(
   req: NextRequest,
@@ -15,17 +16,8 @@ export async function POST(
 
   const { poolId } = await params;
 
-  // Verify commissioner
-  const pool = await db.query.pools.findFirst({
-    where: (p, { eq }) => eq(p.id, poolId),
-  });
-
-  if (!pool) {
-    return NextResponse.json({ error: "Pool not found" }, { status: 404 });
-  }
-
-  if (pool.commissionerId !== session.user.id) {
-    return NextResponse.json({ error: "Only the commissioner can change theme" }, { status: 403 });
+  if (!(await canManagePool(session.user.id, poolId))) {
+    return NextResponse.json({ error: "Only commissioners can change theme" }, { status: 403 });
   }
 
   const { primaryColor, secondaryColor } = await req.json();

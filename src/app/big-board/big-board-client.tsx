@@ -31,10 +31,10 @@ type Prospect = {
 const POSITIONS = ["ALL", "QB", "RB", "WR", "TE", "OT", "OG", "C", "EDGE", "DT", "LB", "CB", "S"];
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "bg-green-100 text-green-700 border-green-200";
-  if (grade >= 80) return "bg-blue-100 text-blue-700 border-blue-200";
-  if (grade >= 70) return "bg-yellow-100 text-yellow-700 border-yellow-200";
-  return "bg-gray-100 text-gray-500 border-gray-200";
+  if (grade >= 90) return "bg-green-500/20 text-green-400 border-green-500/30";
+  if (grade >= 80) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+  if (grade >= 70) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+  return "bg-white/5 text-white/50 border-white/10";
 }
 
 export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[]; isLoggedIn: boolean }) {
@@ -90,10 +90,10 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
               <button
                 key={p.id}
                 onClick={() => setDrawerProspect(p)}
-                className="flex w-full items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm text-left transition hover:shadow-md sm:gap-4 sm:px-5 sm:py-4"
+                className="flex w-full items-center gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-left transition hover:bg-white/10 sm:gap-4 sm:px-5 sm:py-4"
               >
                 {/* Rank */}
-                <span className="w-8 text-center text-sm font-bold text-gray-400 shrink-0 sm:w-10 sm:text-base">
+                <span className="w-8 text-center text-sm font-bold text-white/40 shrink-0 sm:w-10 sm:text-base">
                   {p.rank}
                 </span>
 
@@ -103,7 +103,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-gray-900 truncate sm:text-base">{p.name}</span>
+                    <span className="text-sm font-bold text-white truncate sm:text-base">{p.name}</span>
                     <span className="shrink-0 rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white sm:text-xs">
                       {p.position}
                     </span>
@@ -112,9 +112,9 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                     {p.schoolLogoUrl && (
                       <Image src={p.schoolLogoUrl} alt="" width={14} height={14} className="shrink-0 object-contain" />
                     )}
-                    <span className="text-xs text-gray-500 truncate">{p.school}</span>
+                    <span className="text-xs text-white/50 truncate">{p.school}</span>
                     {p.nflComparison && (
-                      <span className="hidden text-xs text-gray-400 sm:inline">· Comp: {p.nflComparison}</span>
+                      <span className="hidden text-xs text-white/40 sm:inline">· Comp: {p.nflComparison}</span>
                     )}
                   </div>
                   {tags.length > 0 && (
@@ -140,6 +140,9 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                       {p.grade}
                     </span>
                   )}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold shrink-0 sm:h-8 sm:w-8 sm:text-xs">
+                    i
+                  </span>
                 </div>
               </button>
             );

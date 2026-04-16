@@ -1,5 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
+import { poolInviteCodes } from "@/db/schema";
 import { getPoolByInviteCode, getPoolMemberCount, isPoolMember } from "@/lib/queries";
 import { JoinPoolButton } from "@/app/pools/join/[inviteCode]/join-button";
 import { SmartSignInButtonClient } from "./sign-in-button";
@@ -14,6 +17,38 @@ export default async function SmartJoinPage({
 }) {
   const { code } = await params;
   const session = await auth();
+
+  // Check if this is a single-use code that's been used or revoked
+  const normalized = code.toUpperCase().trim();
+  const [singleCode] = await db
+    .select({ usedBy: poolInviteCodes.usedBy, revokedAt: poolInviteCodes.revokedAt, type: poolInviteCodes.type })
+    .from(poolInviteCodes)
+    .where(eq(poolInviteCodes.code, normalized));
+
+  if (singleCode?.revokedAt) {
+    return (
+      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-white">Invite Revoked</h1>
+          <p className="text-white/60 text-sm">This invite is no longer valid.</p>
+          <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (singleCode?.type === "single" && singleCode.usedBy) {
+    return (
+      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-white">Invite Already Used</h1>
+          <p className="text-white/60 text-sm">This invite has already been claimed by another player.</p>
+          <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
+        </div>
+      </div>
+    );
+  }
+
   const pool = await getPoolByInviteCode(code);
 
   if (!pool) {

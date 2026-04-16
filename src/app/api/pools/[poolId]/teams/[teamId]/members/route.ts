@@ -3,12 +3,12 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { pools, poolTeams, poolTeamMembers } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
+import { canManagePool } from "@/lib/pool-helpers";
 
 async function verifyCommissioner(poolId: string, userId: string) {
-  const pool = await db.query.pools.findFirst({ where: (p, { eq }) => eq(p.id, poolId) });
-  if (!pool) return { error: "Pool not found", status: 404 };
-  if (pool.commissionerId !== userId) return { error: "Only the commissioner can manage team members", status: 401 };
-  return { pool };
+  const canManage = await canManagePool(userId, poolId);
+  if (!canManage) return { error: "Only commissioners can manage team members", status: 401 };
+  return {};
 }
 
 export async function POST(

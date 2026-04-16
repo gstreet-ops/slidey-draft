@@ -1,14 +1,15 @@
+// Dashboard page: pre-draft hub showing published mock count, user mock status,
+// days-until-draft countdown, and a horizontal comparison grid of all published
+// mock drafts. Redirects to /live when draft is locked. Candidate for merging
+// into /my-board or /pools if we want fewer pages.
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { getBoards, getUserBoard } from "@/lib/queries";
 import { isDraftLocked } from "@/lib/config";
 import { db } from "@/db";
 import { eq, asc } from "drizzle-orm";
 import { users, picks, players, teams } from "@/db/schema";
-import { MobileNav } from "@/components/mobile-nav";
-
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
@@ -70,42 +71,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={[
-          { href: "/picks", label: "Mock Drafts" },
-          { href: "/leaderboard", label: "Leaderboard" },
-          { href: "/my-board", label: "My Board" },
-          { href: "/guide/user", label: "How to Play" },
-          { href: "/settings", label: "Settings" },
-          ...(session.user.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
-        ]}
-        logo={
-          <Link href="/" className="text-lg font-bold text-white tracking-wider sm:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
-        trailing={
-          session.user.favoriteTeam?.logoUrl ? (
-            <Link href="/settings">
-              <Image
-                src={session.user.favoriteTeam.logoUrl}
-                alt={session.user.favoriteTeam.name}
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
-              />
-            </Link>
-          ) : (
-            <Link
-              href="/settings"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--slidey)] text-xs font-bold text-white"
-            >
-              {session.user.name?.[0]?.toUpperCase() || "?"}
-            </Link>
-          )
-        }
-      />
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Summary bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:px-6 sm:py-4">

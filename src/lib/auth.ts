@@ -11,7 +11,7 @@ import {
   poolMembers,
   commissionerInvites,
 } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -51,15 +51,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               .where(eq(pools.inviteCode, pendingCode.toUpperCase().trim()));
 
             if (pool && pool.status === "open") {
-              await db
-                .update(users)
-                .set({ status: "active" })
-                .where(eq(users.id, user.id));
-
-              await db
-                .insert(poolMembers)
-                .values({ poolId: pool.id, userId: user.id, role: "member" })
-                .onConflictDoNothing();
+              await db.execute(sql`
+                WITH insert_member AS (
+                  INSERT INTO pool_members (pool_id, user_id, role)
+                  VALUES (${pool.id}, ${user.id}, 'member')
+                  ON CONFLICT DO NOTHING
+                  RETURNING pool_id
+                ),
+                activate_user AS (
+                  UPDATE users SET status = 'active'
+                  WHERE id = ${user.id} AND status = 'spectator'
+                    AND EXISTS (SELECT 1 FROM insert_member)
+                )
+                SELECT 1
+              `);
             }
           } else if (inviteType === "commissioner") {
             // Upgrade to commissioner role
@@ -69,15 +74,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               .where(eq(commissionerInvites.code, pendingCode.toUpperCase().trim()));
 
             if (invite && !invite.usedBy && (!invite.expiresAt || invite.expiresAt > new Date())) {
-              await db
-                .update(users)
-                .set({ role: "commissioner", status: "active" })
-                .where(eq(users.id, user.id));
-
-              await db
-                .update(commissionerInvites)
-                .set({ usedBy: user.id, usedAt: new Date() })
-                .where(eq(commissionerInvites.id, invite.id));
+              await db.execute(sql`
+                WITH upgrade_user AS (
+                  UPDATE users SET role = 'commissioner', status = 'active'
+                  WHERE id = ${user.id}
+                )
+                UPDATE commissioner_invites
+                SET used_by = ${user.id}, used_at = NOW()
+                WHERE id = ${invite.id}
+              `);
             }
           }
 
@@ -85,8 +90,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           cookieStore.delete("slidey_pending_invite");
           cookieStore.delete("slidey_invite_type");
         }
-      } catch {
-        // Don't block sign-in if cookie processing fails
+      } catch (error) {
+        console.error("[AUTH] Failed to process pending invite cookie:", error);
+        // Don't block sign-in — user can rejoin manually
       }
       return true;
     },
@@ -96,6 +102,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const dbUser = await db.query.users.findFirst({
           where: (u, { eq }) => eq(u.id, user.id),
         });
+        session.user.name = dbUser?.name || user.name || '';
+        session.user.email = dbUser?.email || user.email || "";
         session.user.role = dbUser?.role || "user";
         session.user.status = dbUser?.status || "spectator";
 

@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/lib/auth";
-import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -13,22 +11,15 @@ const sections = [
   { id: "scoring", label: "Scoring" },
   { id: "pools", label: "Pools" },
   { id: "draft-day", label: "Draft Day" },
+  { id: "video-chat", label: "Video & Feed" },
   { id: "faq", label: "FAQ" },
 ];
 
 export default async function GuidePage() {
   const session = await auth();
-  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-      />
-
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         {/* Header — stays on dark bg */}
         <h1
@@ -73,7 +64,7 @@ export default async function GuidePage() {
           <section id="mock-draft">
             <SectionHeading>Your Mock Draft</SectionHeading>
             <p>
-              Head to <InlineLink href="/my-board">My Board</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
+              Head to <InlineLink href="/my-board">My Draft</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
             </p>
 
             <div className="mt-6 space-y-3">
@@ -123,25 +114,25 @@ export default async function GuidePage() {
             </p>
 
             <div className="mt-4 space-y-3">
-              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">📋</span>
                 <div>
                   <p className="text-sm font-bold text-[var(--lions-blue)]">Mock Draft</p>
-                  <p className="mt-0.5 text-sm text-gray-600">Earn bonus points for correctly predicting which players get drafted and where. Up to 10 points per pick.</p>
+                  <p className="mt-0.5 text-sm text-white/60">Earn bonus points for correctly predicting which players get drafted and where. Up to 10 points per pick.</p>
                 </div>
               </div>
-              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">⚡</span>
                 <div>
                   <p className="text-sm font-bold text-green-600">Live Predictions</p>
-                  <p className="mt-0.5 text-sm text-gray-600">Predict each pick in real time during the draft. 10 points for each correct call.</p>
+                  <p className="mt-0.5 text-sm text-white/60">Predict each pick in real time during the draft. 10 points for each correct call.</p>
                 </div>
               </div>
-              <div className="rounded-lg bg-white px-5 py-4 shadow-sm flex items-start gap-3">
+              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">🧠</span>
                 <div>
                   <p className="text-sm font-bold text-purple-600">Trivia</p>
-                  <p className="mt-0.5 text-sm text-gray-600">Answer draft trivia between picks. 3-10 points based on difficulty.</p>
+                  <p className="mt-0.5 text-sm text-white/60">Answer draft trivia between picks. 3-10 points based on difficulty.</p>
                 </div>
               </div>
             </div>
@@ -168,9 +159,9 @@ export default async function GuidePage() {
               Pool standings combine three scores:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (3-10 pts based on difficulty)</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (3-10 pts based on difficulty)</span></li>
             </ul>
             <p className="mt-2">
               The combined score from all three tracks determines your pool rank. Rankings update live as the draft progresses.
@@ -186,31 +177,47 @@ export default async function GuidePage() {
 
             <StepList>
               <Step n={1}>
-                <span className="text-gray-900 font-semibold">Boards lock</span> — you can no longer edit your mock draft
+                <span className="text-white font-semibold">Boards lock</span> — you can no longer edit your mock draft
               </Step>
               <Step n={2}>
-                <span className="text-gray-900 font-semibold">War Room opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
+                <span className="text-white font-semibold">Live Draft opens</span> — the <InlineLink href="/live">Live</InlineLink> page shows a real-time feed of actual picks, your board vs. reality, and a live leaderboard
               </Step>
               <Step n={3}>
-                <span className="text-gray-900 font-semibold">Live predictions & trivia</span> — predict each pick before it is announced, and answer trivia questions between picks for bonus points
+                <span className="text-white font-semibold">Live predictions & trivia</span> — predict each pick before it is announced, and answer trivia questions between picks for bonus points
               </Step>
               <Step n={4}>
-                <span className="text-gray-900 font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
+                <span className="text-white font-semibold">Scores update in real-time</span> — the leaderboard and pool standings refresh as each pick is announced
               </Step>
               <Step n={5}>
-                <span className="text-gray-900 font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
+                <span className="text-white font-semibold">Final results</span> — after all 32 picks, the leaderboard is finalized with final scores, accuracy percentages, and a winner
               </Step>
             </StepList>
 
-            <SubHeading>The War Room</SubHeading>
+            <SubHeading>The Live Draft</SubHeading>
             <p>
-              The War Room (<InlineLink href="/live">/live</InlineLink>) is a three-panel view:
+              The Live Draft (<InlineLink href="/live">/live</InlineLink>) is a three-panel view:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Actual Picks</span><span>— real-time feed of announced draft picks</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Your Board</span><span>— your mock draft with running score, showing matches and misses</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm text-sm text-gray-600"><span className="text-gray-900 font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Actual Picks</span><span>— real-time feed of announced draft picks</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Board</span><span>— your mock draft with running score, showing matches and misses</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows</span></li>
             </ul>
+          </section>
+
+          {/* ── Video Chat + Live Feed ── */}
+          <section id="video-chat">
+            <SectionHeading>Video Chat &amp; Live Feed</SectionHeading>
+            <p>
+              Draft night is best with friends. Your commissioner can set up a video call link (Google Meet, Zoom, etc.) so everyone can watch and talk together.
+            </p>
+            <div className="mt-4 space-y-3">
+              <InfoCard title="Video Call">
+                If your commissioner has set up a video link, you&apos;ll see a green &quot;Join Video Call&quot; button at the top of the Live page. Click it to join — works great with split screen or picture-in-picture.
+              </InfoCard>
+              <InfoCard title="Live Feed">
+                The in-app Live Feed tracks game events automatically — pick announcements, trivia questions, leaderboard changes. You can also send quick messages and reactions. Use the video call for conversation and the Live Feed to follow the action.
+              </InfoCard>
+            </div>
           </section>
 
           {/* ── FAQ ── */}
@@ -218,7 +225,7 @@ export default async function GuidePage() {
             <SectionHeading>FAQ</SectionHeading>
 
             <Faq q="When does my board lock?">
-              Your board locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Board indicating the draft is locked.
+              Your board locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Draft indicating the draft is locked.
             </Faq>
 
             <Faq q="Can I edit my mock draft after publishing?">
@@ -266,7 +273,7 @@ export default async function GuidePage() {
               href={session?.user ? "/my-board" : "/login"}
               className="rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition"
             >
-              {session?.user ? "Go to My Board" : "Sign In & Draft"}
+              {session?.user ? "Go to My Draft" : "Sign In & Draft"}
             </Link>
             <Link
               href="/picks"
@@ -285,9 +292,9 @@ export default async function GuidePage() {
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white px-5 py-4 shadow-sm">
+    <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4">
       <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
-      <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{children}</p>
+      <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{children}</p>
     </div>
   );
 }
@@ -313,11 +320,11 @@ function StepList({ children }: { children: React.ReactNode }) {
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white px-4 py-3 shadow-sm">
+    <div className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)] text-xs font-bold text-white">
         {n}
       </span>
-      <p className="text-sm text-gray-600 pt-0.5">{children}</p>
+      <p className="text-sm text-white/60 pt-0.5">{children}</p>
     </div>
   );
 }
@@ -336,9 +343,9 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-lg bg-white px-4 py-3 shadow-sm">
+    <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3">
       <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
-      <p className="mt-0.5 text-xs text-gray-600">{desc}</p>
+      <p className="mt-0.5 text-xs text-white/60">{desc}</p>
     </div>
   );
 }
@@ -346,9 +353,9 @@ function Feature({ title, desc }: { title: string; desc: string }) {
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <div className="mt-4 rounded-lg bg-white px-4 py-4 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900">{q}</p>
-      <p className="mt-1.5 text-sm text-gray-500">{children}</p>
+    <div className="mt-4 rounded-lg bg-white/5 border border-white/10 px-4 py-4">
+      <p className="text-sm font-semibold text-white">{q}</p>
+      <p className="mt-1.5 text-sm text-white/50">{children}</p>
     </div>
   );
 }

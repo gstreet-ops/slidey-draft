@@ -1,537 +1,481 @@
-import { db } from "./index";
-import { triviaQuestions, triviaResponses } from "./schema";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import { sql, eq } from "drizzle-orm";
+import * as schema from "./schema";
 
-const questions = [
-  // ── EASY (5) — well-known draft facts ───────────────────────────────────────
-  {
-    question: "Who was the #1 overall pick in the 2024 NFL Draft?",
-    optionA: "Caleb Williams",
-    optionB: "Jayden Daniels",
-    optionC: "Drake Maye",
-    optionD: "Marvin Harrison Jr.",
-    correctOption: "a",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-  {
-    question: "Which player was selected #1 overall in the 2023 NFL Draft?",
-    optionA: "C.J. Stroud",
-    optionB: "Bryce Young",
-    optionC: "Anthony Richardson",
-    optionD: "Will Anderson Jr.",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-  {
-    question: "Which team held the #1 overall pick in the 2021 NFL Draft and selected Trevor Lawrence?",
-    optionA: "New York Jets",
-    optionB: "Jacksonville Jaguars",
-    optionC: "Cincinnati Bengals",
-    optionD: "Atlanta Falcons",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-  {
-    question: "How many rounds are in the modern NFL Draft?",
-    optionA: "5",
-    optionB: "6",
-    optionC: "7",
-    optionD: "8",
-    correctOption: "c",
-    category: "general",
-    difficulty: "easy",
-  },
-  {
-    question: "What is the standard distance of the 40-yard dash measured at the NFL Combine?",
-    optionA: "36 yards",
-    optionB: "40 yards",
-    optionC: "44 yards",
-    optionD: "50 yards",
-    correctOption: "b",
-    category: "combine",
-    difficulty: "easy",
-  },
+const neonSql = neon(process.env.DATABASE_URL!);
+const db = drizzle(neonSql, { schema });
 
-  // ── MEDIUM (5) — requires some draft knowledge ───────────────────────────────
+type SeedQuestion = {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  category: string;
+  difficulty: "easy" | "medium" | "hard";
+};
+
+const questions: SeedQuestion[] = [
+  // ── NFL History (12) ──────────────────────────────
   {
-    question: "Tom Brady was selected in which round of the 2000 NFL Draft?",
-    optionA: "4th round",
-    optionB: "5th round",
-    optionC: "6th round",
-    optionD: "7th round",
-    correctOption: "c",
-    category: "draft_history",
+    question: "Who was the first overall pick in the 2024 NFL Draft?",
+    options: ["Caleb Williams", "Jayden Daniels", "Drake Maye", "JJ McCarthy"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "easy",
+  },
+  {
+    question: "Which team drafted Patrick Mahomes in 2017?",
+    options: ["Kansas City Chiefs", "Chicago Bears", "Houston Texans", "Cleveland Browns"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "easy",
+  },
+  {
+    question: "Who holds the record for most career touchdown passes?",
+    options: ["Tom Brady", "Peyton Manning", "Drew Brees", "Brett Favre"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "easy",
+  },
+  {
+    question: "Which quarterback was drafted 199th overall in the 2000 NFL Draft?",
+    options: ["Tom Brady", "Chad Pennington", "Marc Bulger", "Tee Martin"],
+    correctAnswer: 0,
+    category: "nfl_history",
     difficulty: "medium",
   },
   {
-    question: "Patrick Mahomes was drafted by the Kansas City Chiefs in the 2017 NFL Draft with which pick number?",
-    optionA: "7th overall",
-    optionB: "10th overall",
-    optionC: "14th overall",
-    optionD: "20th overall",
-    correctOption: "b",
-    category: "draft_history",
+    question: "What year did the NFL merge with the AFL?",
+    options: ["1970", "1966", "1972", "1968"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "hard",
+  },
+  {
+    question: "Who was the first player drafted in NFL history (1936)?",
+    options: ["Jay Berwanger", "Riley Smith", "Sam Francis", "Joe Stydahar"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "hard",
+  },
+  {
+    question: "Which team has won the most Super Bowls?",
+    options: ["New England Patriots", "Pittsburgh Steelers", "San Francisco 49ers", "Dallas Cowboys"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "easy",
+  },
+  {
+    question: "Who caught the 'Immaculate Reception' in 1972?",
+    options: ["Franco Harris", "Lynn Swann", "John Stallworth", "Rocky Bleier"],
+    correctAnswer: 0,
+    category: "nfl_history",
     difficulty: "medium",
   },
   {
-    question: "In 2016, the Los Angeles Rams traded up to #1 overall to draft Jared Goff, giving up multiple picks to which team?",
-    optionA: "Cleveland Browns",
-    optionB: "Tennessee Titans",
-    optionC: "San Francisco 49ers",
-    optionD: "Philadelphia Eagles",
-    correctOption: "b",
-    category: "trades",
+    question: "What is the most points scored in a single NFL game by one team?",
+    options: ["73", "72", "66", "62"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "hard",
+  },
+  {
+    question: "Which team went 0-16 in the 2008 season?",
+    options: ["Detroit Lions", "Cleveland Browns", "Tampa Bay Buccaneers", "Jacksonville Jaguars"],
+    correctAnswer: 0,
+    category: "nfl_history",
     difficulty: "medium",
   },
   {
-    question: "How many minutes does each team in the first round have to submit their pick at the NFL Draft?",
-    optionA: "5 minutes",
-    optionB: "10 minutes",
-    optionC: "15 minutes",
-    optionD: "20 minutes",
-    correctOption: "b",
-    category: "general",
-    difficulty: "medium",
+    question: "Who is the NFL's all-time leading rusher?",
+    options: ["Emmitt Smith", "Walter Payton", "Barry Sanders", "Frank Gore"],
+    correctAnswer: 0,
+    category: "nfl_history",
+    difficulty: "easy",
   },
   {
-    question: "At the 2024 NFL Combine, which receiver ran a 4.21 40-yard dash, setting a new combine record?",
-    optionA: "Malik Nabers",
-    optionB: "Brian Thomas Jr.",
-    optionC: "Xavier Worthy",
-    optionD: "Marvin Harrison Jr.",
-    correctOption: "c",
-    category: "combine",
+    question: "In what year was the first Super Bowl played?",
+    options: ["1967", "1966", "1968", "1965"],
+    correctAnswer: 0,
+    category: "nfl_history",
     difficulty: "medium",
   },
 
-  // ── HARD (5) — deep draft trivia ─────────────────────────────────────────────
+  // ── Draft Trivia (10) ─────────────────────────────
   {
-    question: "Bo Jackson was famously drafted first overall in 1986 by which team, but refused to play for them?",
-    optionA: "Houston Oilers",
-    optionB: "Dallas Cowboys",
-    optionC: "Tampa Bay Buccaneers",
-    optionD: "Los Angeles Rams",
-    correctOption: "c",
-    category: "draft_history",
+    question: "How many rounds are in the current NFL Draft?",
+    options: ["7", "6", "8", "5"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "easy",
+  },
+  {
+    question: "Which team traded up to draft RG3 second overall in 2012?",
+    options: ["Washington Redskins", "Cleveland Browns", "St. Louis Rams", "Minnesota Vikings"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "Who was the last running back taken first overall?",
+    options: ["Saquon Barkley (2018)", "Todd Gurley (2015)", "Ezekiel Elliott (2016)", "Leonard Fournette (2017)"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "What position has been drafted first overall the most times?",
+    options: ["Quarterback", "Running Back", "Defensive End", "Offensive Tackle"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "Which city hosted the 2024 NFL Draft?",
+    options: ["Detroit", "Kansas City", "Nashville", "Las Vegas"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "easy",
+  },
+  {
+    question: "Ryan Leaf was drafted 2nd overall in 1998. Which team selected him?",
+    options: ["San Diego Chargers", "Arizona Cardinals", "Chicago Bears", "Oakland Raiders"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "Which college has produced the most first-overall NFL Draft picks?",
+    options: ["USC", "Oklahoma", "Stanford", "Alabama"],
+    correctAnswer: 0,
+    category: "draft_trivia",
     difficulty: "hard",
   },
   {
-    question: "In what year was the first NFL Draft held?",
-    optionA: "1930",
-    optionB: "1936",
-    optionC: "1941",
-    optionD: "1945",
-    correctOption: "b",
-    category: "general",
+    question: "How many quarterbacks were taken in the first round of the 2018 draft?",
+    options: ["5", "4", "3", "6"],
+    correctAnswer: 0,
+    category: "draft_trivia",
     difficulty: "hard",
   },
   {
-    question: "In 2021, the San Francisco 49ers traded three first-round picks to move up to #3 overall to eventually select Trey Lance. Which team traded down?",
-    optionA: "Atlanta Falcons",
-    optionB: "Jacksonville Jaguars",
-    optionC: "Miami Dolphins",
-    optionD: "New York Jets",
-    correctOption: "a",
-    category: "trades",
-    difficulty: "hard",
+    question: "What is the NFL Draft's 'Mr. Irrelevant' award given to?",
+    options: ["The last player drafted", "The first undrafted free agent signed", "The lowest-graded first-rounder", "The oldest player drafted"],
+    correctAnswer: 0,
+    category: "draft_trivia",
+    difficulty: "easy",
   },
   {
-    question: "Which team famously traded away multiple first-round picks in 1999 — including picks the Cleveland Browns used to re-enter the league — in exchange for the right to select Ricky Williams?",
-    optionA: "Washington Redskins",
-    optionB: "Dallas Cowboys",
-    optionC: "New Orleans Saints",
-    optionD: "Minnesota Vikings",
-    correctOption: "c",
-    category: "trades",
-    difficulty: "hard",
-  },
-  {
-    question: "John Ross set the NFL Combine 40-yard dash record in 2017 with a time of 4.22 seconds. Which position did he play?",
-    optionA: "Running Back",
-    optionB: "Cornerback",
-    optionC: "Wide Receiver",
-    optionD: "Safety",
-    correctOption: "c",
-    category: "combine",
+    question: "Which team had the most first-round picks in the 2023 NFL Draft?",
+    options: ["Houston Texans", "Detroit Lions", "Chicago Bears", "Philadelphia Eagles"],
+    correctAnswer: 0,
+    category: "draft_trivia",
     difficulty: "hard",
   },
 
-  // ── BATCH 2: EASY (10 more) ─────────────────────────────────────────────────
+  // ── Team Trivia (8) ───────────────────────────────
   {
-    question: "Which position does the NFL Combine's bench press test measure (225 lbs)?",
-    optionA: "Upper body strength",
-    optionB: "Lower body strength",
-    optionC: "Cardio endurance",
-    optionD: "Flexibility",
-    correctOption: "a",
-    category: "combine",
+    question: "Which NFL team's home stadium is at the highest elevation?",
+    options: ["Denver Broncos", "Arizona Cardinals", "Las Vegas Raiders", "Tennessee Titans"],
+    correctAnswer: 0,
+    category: "team_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "Which NFL franchise was originally called the 'Decatur Staleys'?",
+    options: ["Chicago Bears", "Green Bay Packers", "Arizona Cardinals", "Detroit Lions"],
+    correctAnswer: 0,
+    category: "team_trivia",
+    difficulty: "hard",
+  },
+  {
+    question: "Which team has the longest active playoff drought?",
+    options: ["New York Jets", "Denver Broncos", "New Orleans Saints", "Las Vegas Raiders"],
+    correctAnswer: 0,
+    category: "team_trivia",
+    difficulty: "medium",
+  },
+  {
+    question: "What color is the Green Bay Packers' 'G' logo?",
+    options: ["White", "Yellow", "Green", "Gold"],
+    correctAnswer: 0,
+    category: "team_trivia",
     difficulty: "easy",
   },
   {
-    question: "What city has hosted the NFL Draft most often?",
-    optionA: "Las Vegas",
-    optionB: "Chicago",
-    optionC: "New York",
-    optionD: "Nashville",
-    correctOption: "c",
-    category: "general",
+    question: "Which team plays its home games at SoFi Stadium?",
+    options: ["Los Angeles Rams & Chargers", "Las Vegas Raiders", "San Francisco 49ers", "Arizona Cardinals"],
+    correctAnswer: 0,
+    category: "team_trivia",
     difficulty: "easy",
   },
   {
-    question: "Peyton Manning was the #1 overall pick in which year?",
-    optionA: "1997",
-    optionB: "1998",
-    optionC: "1999",
-    optionD: "2000",
-    correctOption: "b",
-    category: "draft_history",
+    question: "The 'Terrible Towel' is associated with which franchise?",
+    options: ["Pittsburgh Steelers", "Cleveland Browns", "Baltimore Ravens", "Cincinnati Bengals"],
+    correctAnswer: 0,
+    category: "team_trivia",
     difficulty: "easy",
   },
   {
-    question: "Which team drafted Lamar Jackson in 2018?",
-    optionA: "Buffalo Bills",
-    optionB: "Baltimore Ravens",
-    optionC: "Cleveland Browns",
-    optionD: "New York Jets",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-  {
-    question: "The NFL Combine is held annually in which city?",
-    optionA: "Dallas",
-    optionB: "New York",
-    optionC: "Indianapolis",
-    optionD: "Los Angeles",
-    correctOption: "c",
-    category: "combine",
-    difficulty: "easy",
-  },
-  {
-    question: "How many teams are in the NFL?",
-    optionA: "30",
-    optionB: "32",
-    optionC: "34",
-    optionD: "36",
-    correctOption: "b",
-    category: "general",
-    difficulty: "easy",
-  },
-  {
-    question: "Which QB was drafted #1 overall in 2020 by the Cincinnati Bengals?",
-    optionA: "Tua Tagovailoa",
-    optionB: "Justin Herbert",
-    optionC: "Joe Burrow",
-    optionD: "Jordan Love",
-    correctOption: "c",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-  {
-    question: "The vertical jump at the NFL Combine measures what?",
-    optionA: "How high a player can reach from a standing position",
-    optionB: "How far a player can jump forward",
-    optionC: "How quickly a player can climb a wall",
-    optionD: "How many jumps in 30 seconds",
-    correctOption: "a",
-    category: "combine",
-    difficulty: "easy",
-  },
-  {
-    question: "Which team has the most #1 overall draft picks in NFL history?",
-    optionA: "Cleveland Browns",
-    optionB: "Indianapolis Colts",
-    optionC: "Tampa Bay Buccaneers",
-    optionD: "Detroit Lions",
-    correctOption: "a",
-    category: "general",
-    difficulty: "easy",
-  },
-  {
-    question: "Andrew Luck was drafted #1 overall in 2012 by which team?",
-    optionA: "Washington Commanders",
-    optionB: "Indianapolis Colts",
-    optionC: "Cleveland Browns",
-    optionD: "St. Louis Rams",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "easy",
-  },
-
-  // ── BATCH 2: MEDIUM (12 more) ──────────────────────────────────────────────
-  {
-    question: "Which player was selected first overall by the Houston Texans in the 2014 NFL Draft?",
-    optionA: "Johnny Manziel",
-    optionB: "Jadeveon Clowney",
-    optionC: "Blake Bortles",
-    optionD: "Khalil Mack",
-    correctOption: "b",
-    category: "draft_history",
+    question: "Which NFL team has never appeared in a Super Bowl?",
+    options: ["Cleveland Browns", "Houston Texans", "Jacksonville Jaguars", "All of the above"],
+    correctAnswer: 3,
+    category: "team_trivia",
     difficulty: "medium",
   },
   {
-    question: "In 2018, the Cleveland Browns had two top-4 picks. Who did they select at #1 and #4?",
-    optionA: "Baker Mayfield and Denzel Ward",
-    optionB: "Sam Darnold and Bradley Chubb",
-    optionC: "Josh Allen and Roquan Smith",
-    optionD: "Baker Mayfield and Saquon Barkley",
-    correctOption: "a",
-    category: "draft_history",
-    difficulty: "medium",
-  },
-  {
-    question: "What is the 3-cone drill at the NFL Combine designed to measure?",
-    optionA: "Straight-line speed",
-    optionB: "Agility and change of direction",
-    optionC: "Endurance",
-    optionD: "Reaction time",
-    correctOption: "b",
-    category: "combine",
-    difficulty: "medium",
-  },
-  {
-    question: "Which team traded the farm to move up and draft RG3 (Robert Griffin III) in 2012?",
-    optionA: "Washington Redskins",
-    optionB: "Cleveland Browns",
-    optionC: "Minnesota Vikings",
-    optionD: "Jacksonville Jaguars",
-    correctOption: "a",
-    category: "trades",
-    difficulty: "medium",
-  },
-  {
-    question: "Aaron Rodgers famously fell in the 2005 NFL Draft. How many picks waited before he was selected?",
-    optionA: "15",
-    optionB: "20",
-    optionC: "24",
-    optionD: "28",
-    correctOption: "c",
-    category: "draft_history",
-    difficulty: "medium",
-  },
-  {
-    question: "Which conference is the AFC West division part of?",
-    optionA: "NFC",
-    optionB: "AFC",
-    optionC: "Both",
-    optionD: "Neither",
-    correctOption: "b",
-    category: "general",
-    difficulty: "medium",
-  },
-  {
-    question: "In the 2017 NFL Draft, the Chicago Bears traded up one spot to #2 to draft which player?",
-    optionA: "Deshaun Watson",
-    optionB: "Patrick Mahomes",
-    optionC: "Mitchell Trubisky",
-    optionD: "Solomon Thomas",
-    correctOption: "c",
-    category: "trades",
-    difficulty: "medium",
-  },
-  {
-    question: "What does 'compensatory pick' mean in the NFL Draft?",
-    optionA: "A pick given to teams that lost key free agents",
-    optionB: "A pick that compensates for a bad trade",
-    optionC: "An extra pick for winning the Super Bowl",
-    optionD: "A pick traded between divisions",
-    correctOption: "a",
-    category: "general",
-    difficulty: "medium",
-  },
-  {
-    question: "DK Metcalf's legendary NFL Combine performance in 2019 included a 4.33 forty. What was notable about his bench press?",
-    optionA: "He set the WR record with 33 reps",
-    optionB: "He only managed 11 reps but his speed overshadowed it",
-    optionC: "He refused to do the bench press",
-    optionD: "He did 27 reps, highest for a WR that year",
-    correctOption: "d",
-    category: "combine",
-    difficulty: "medium",
-  },
-  {
-    question: "Which team drafted Russell Wilson in the 3rd round of the 2012 NFL Draft?",
-    optionA: "Denver Broncos",
-    optionB: "Seattle Seahawks",
-    optionC: "Green Bay Packers",
-    optionD: "San Francisco 49ers",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "medium",
-  },
-  {
-    question: "The 'Mr. Irrelevant' award goes to whom?",
-    optionA: "The first pick in the draft",
-    optionB: "The last pick in the draft",
-    optionC: "The best undrafted free agent",
-    optionD: "The most traded player",
-    correctOption: "b",
-    category: "general",
-    difficulty: "medium",
-  },
-  {
-    question: "In 2004, Eli Manning refused to play for which team that drafted him #1 overall?",
-    optionA: "Cleveland Browns",
-    optionB: "Oakland Raiders",
-    optionC: "San Diego Chargers",
-    optionD: "Arizona Cardinals",
-    correctOption: "c",
-    category: "draft_history",
+    question: "What year did the Houston Texans join the NFL as an expansion team?",
+    options: ["2002", "2000", "2004", "1999"],
+    correctAnswer: 0,
+    category: "team_trivia",
     difficulty: "medium",
   },
 
-  // ── BATCH 2: HARD (13 more) ────────────────────────────────────────────────
+  // ── Prospects (5) ─────────────────────────────────
   {
-    question: "Which player holds the record for most bench press reps (225 lbs) at the NFL Combine with 49 reps?",
-    optionA: "Stephen Paea",
-    optionB: "Justin Ernest",
-    optionC: "Mitch Petrus",
-    optionD: "Mike Kudla",
-    correctOption: "b",
-    category: "combine",
+    question: "What position does the typical NFL Combine's fastest 40-yard dash come from?",
+    options: ["Wide Receiver", "Cornerback", "Running Back", "Safety"],
+    correctAnswer: 0,
+    category: "prospects",
+    difficulty: "medium",
+  },
+  {
+    question: "The Wonderlic test given at the NFL Combine has how many questions?",
+    options: ["50", "25", "75", "100"],
+    correctAnswer: 0,
+    category: "prospects",
     difficulty: "hard",
   },
   {
-    question: "In 1983, six quarterbacks were drafted in the first round. Which one went #1 overall?",
-    optionA: "Dan Marino",
-    optionB: "Jim Kelly",
-    optionC: "John Elway",
-    optionD: "Todd Blackledge",
-    correctOption: "c",
-    category: "draft_history",
+    question: "What does 'RAS' stand for in draft prospect evaluation?",
+    options: ["Relative Athletic Score", "Ranked Athletic Stat", "Raw Ability Score", "Recruit Analysis System"],
+    correctAnswer: 0,
+    category: "prospects",
     difficulty: "hard",
   },
   {
-    question: "The 2011 draft trade between the Atlanta Falcons and Cleveland Browns to get Julio Jones cost Atlanta how many draft picks?",
-    optionA: "3 picks",
-    optionB: "5 picks",
-    optionC: "4 picks",
-    optionD: "6 picks",
-    correctOption: "b",
-    category: "trades",
+    question: "Chris Johnson's famous 4.24 second 40-yard dash was run at the Combine in what year?",
+    options: ["2008", "2007", "2009", "2006"],
+    correctAnswer: 0,
+    category: "prospects",
     difficulty: "hard",
   },
   {
-    question: "Who was the first player ever selected in an NFL Draft (1936)?",
-    optionA: "Jay Berwanger",
-    optionB: "Sam Francis",
-    optionC: "Riley Smith",
-    optionD: "Red Grange",
-    correctOption: "a",
-    category: "draft_history",
-    difficulty: "hard",
+    question: "Which drill at the NFL Combine tests a player's lateral agility?",
+    options: ["3-cone drill", "40-yard dash", "Broad jump", "Bench press"],
+    correctAnswer: 0,
+    category: "prospects",
+    difficulty: "easy",
+  },
+
+  // ── Sports General (10) ───────────────────────────
+  {
+    question: "How many players are on an NFL team's active game-day roster?",
+    options: ["48", "46", "53", "45"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "medium",
   },
   {
-    question: "In 2014, which OT ran a 4.65 forty at 6'5\" 306 lbs, one of the fastest ever for an offensive lineman?",
-    optionA: "Greg Robinson",
-    optionB: "Taylor Lewan",
-    optionC: "Zack Martin",
-    optionD: "Jake Matthews",
-    correctOption: "a",
-    category: "combine",
-    difficulty: "hard",
+    question: "Which sport's championship trophy is called the 'Larry O'Brien Trophy'?",
+    options: ["NBA", "NFL", "NHL", "MLS"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "easy",
   },
   {
-    question: "The 'Jimmy Johnson trade value chart' assigns how many points to the #1 overall pick?",
-    optionA: "2000",
-    optionB: "2500",
-    optionC: "3000",
-    optionD: "3400",
-    correctOption: "c",
-    category: "trades",
-    difficulty: "hard",
+    question: "How long is an NFL football field (end zone to end zone)?",
+    options: ["120 yards", "100 yards", "110 yards", "130 yards"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "easy",
   },
   {
-    question: "Which team drafted Tony Romo?",
-    optionA: "Dallas Cowboys as a 6th rounder",
-    optionB: "He was undrafted",
-    optionC: "Green Bay Packers as a 7th rounder",
-    optionD: "Dallas Cowboys as a 5th rounder",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "hard",
+    question: "Which country has won the most FIFA World Cup titles?",
+    options: ["Brazil", "Germany", "Italy", "Argentina"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "easy",
   },
   {
-    question: "In the 2000 NFL Draft, Tom Brady was selected with which overall pick number?",
-    optionA: "187th",
-    optionB: "199th",
-    optionC: "201st",
-    optionD: "174th",
-    correctOption: "b",
-    category: "draft_history",
-    difficulty: "hard",
+    question: "What is the diameter of a basketball hoop in inches?",
+    options: ["18 inches", "16 inches", "20 inches", "17 inches"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "medium",
   },
   {
-    question: "The broad jump at the NFL Combine measures explosive power. What is considered an elite broad jump for a WR?",
-    optionA: "9 feet or more",
-    optionB: "10 feet or more",
-    optionC: "11 feet or more",
-    optionD: "12 feet or more",
-    correctOption: "c",
-    category: "combine",
-    difficulty: "hard",
+    question: "In baseball, what is a 'perfect game'?",
+    options: ["No batter reaches base for the entire game", "A no-hitter with no walks", "A shutout with 10+ strikeouts", "Winning by 10 or more runs"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "medium",
   },
   {
-    question: "In 2012, the Minnesota Vikings traded Percy Harvin to the Seattle Seahawks. What round picks did they receive?",
-    optionA: "1st and 7th round picks",
-    optionB: "1st, 3rd, and 7th round picks",
-    optionC: "2nd and 5th round picks",
-    optionD: "1st and conditional 3rd round picks",
-    correctOption: "a",
-    category: "trades",
-    difficulty: "hard",
+    question: "How many periods are in a regulation NHL hockey game?",
+    options: ["3", "4", "2", "5"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "easy",
   },
   {
-    question: "Which team has never had the #1 overall pick in the NFL Draft?",
-    optionA: "Dallas Cowboys",
-    optionB: "Green Bay Packers",
-    optionC: "Pittsburgh Steelers",
-    optionD: "Seattle Seahawks",
-    correctOption: "c",
-    category: "general",
-    difficulty: "hard",
+    question: "Which boxer was known as 'The Greatest'?",
+    options: ["Muhammad Ali", "Mike Tyson", "Sugar Ray Leonard", "Floyd Mayweather"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "easy",
   },
   {
-    question: "The shuttle run (short shuttle/5-10-5) at the Combine tests what specific ability?",
-    optionA: "Straight-line acceleration",
-    optionB: "Lateral quickness and change of direction",
-    optionC: "Vertical explosiveness",
-    optionD: "Stamina under pressure",
-    correctOption: "b",
-    category: "combine",
-    difficulty: "hard",
+    question: "What is the only Grand Slam tennis tournament played on clay?",
+    options: ["French Open", "Australian Open", "US Open", "Wimbledon"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "medium",
   },
   {
-    question: "In 1989, the Dallas Cowboys traded Herschel Walker to the Minnesota Vikings in one of the most lopsided trades in NFL history. How many players/picks did Dallas receive?",
-    optionA: "5 players and 3 draft picks",
-    optionB: "3 players and 6 draft picks",
-    optionC: "5 players and 8 draft picks",
-    optionD: "2 players and 5 draft picks",
-    correctOption: "c",
-    category: "trades",
-    difficulty: "hard",
+    question: "How many laps are in the Indianapolis 500?",
+    options: ["200", "500", "100", "250"],
+    correctAnswer: 0,
+    category: "sports_general",
+    difficulty: "medium",
+  },
+
+  // ── Pop Culture (5) ───────────────────────────────
+  {
+    question: "Which movie features the fictional football team the 'Mud Dogs'?",
+    options: ["The Waterboy", "The Longest Yard", "Remember the Titans", "Any Given Sunday"],
+    correctAnswer: 0,
+    category: "pop_culture",
+    difficulty: "medium",
+  },
+  {
+    question: "What TV show follows the fictional Dillon Panthers football team?",
+    options: ["Friday Night Lights", "All American", "The Game", "Ballers"],
+    correctAnswer: 0,
+    category: "pop_culture",
+    difficulty: "easy",
+  },
+  {
+    question: "In 'The Blind Side', which real NFL player's life story is depicted?",
+    options: ["Michael Oher", "Tim Tebow", "Vince Young", "Reggie Bush"],
+    correctAnswer: 0,
+    category: "pop_culture",
+    difficulty: "easy",
+  },
+  {
+    question: "Which rapper performed at the Super Bowl LVIII halftime show (2024)?",
+    options: ["Usher", "Rihanna", "Drake", "Kendrick Lamar"],
+    correctAnswer: 0,
+    category: "pop_culture",
+    difficulty: "easy",
+  },
+  {
+    question: "Which video game franchise features 'Franchise Mode' for managing NFL teams?",
+    options: ["Madden NFL", "NFL 2K", "Tecmo Bowl", "Backyard Football"],
+    correctAnswer: 0,
+    category: "pop_culture",
+    difficulty: "easy",
+  },
+
+  // ── General Knowledge (5) ─────────────────────────
+  {
+    question: "What is the most-watched annual television broadcast in the United States?",
+    options: ["The Super Bowl", "The Oscars", "The World Series", "New Year's Eve countdown"],
+    correctAnswer: 0,
+    category: "general_knowledge",
+    difficulty: "easy",
+  },
+  {
+    question: "How many time zones does the continental United States span?",
+    options: ["4", "3", "5", "6"],
+    correctAnswer: 0,
+    category: "general_knowledge",
+    difficulty: "easy",
+  },
+  {
+    question: "What does 'NFL' stand for?",
+    options: ["National Football League", "National Football Lineup", "National Field League", "National Football Leaders"],
+    correctAnswer: 0,
+    category: "general_knowledge",
+    difficulty: "easy",
+  },
+  {
+    question: "In what month does the NFL Draft typically take place?",
+    options: ["April", "March", "May", "June"],
+    correctAnswer: 0,
+    category: "general_knowledge",
+    difficulty: "easy",
+  },
+  {
+    question: "What city is known as 'The Big Easy' and has hosted multiple Super Bowls?",
+    options: ["New Orleans", "Las Vegas", "Miami", "Los Angeles"],
+    correctAnswer: 0,
+    category: "general_knowledge",
+    difficulty: "easy",
   },
 ];
 
-async function main() {
-  console.log("Deleting existing trivia responses...");
-  await db.delete(triviaResponses);
-  console.log("Deleting existing trivia questions...");
-  await db.delete(triviaQuestions);
+async function deduplicate() {
+  console.log("Deduplicating system-seeded questions...");
+  // Find duplicate question texts among system-seeded (created_by IS NULL)
+  const allSystemQs = await db
+    .select({ id: schema.triviaQuestions.id, question: schema.triviaQuestions.question })
+    .from(schema.triviaQuestions)
+    .where(sql`${schema.triviaQuestions.createdBy} IS NULL`)
+    .orderBy(schema.triviaQuestions.createdAt);
 
-  console.log(`Inserting ${questions.length} trivia questions...`);
-  await db.insert(triviaQuestions).values(questions);
+  const seen = new Map<string, string>(); // question text -> first id
+  const toDelete: string[] = [];
+  for (const q of allSystemQs) {
+    if (seen.has(q.question)) {
+      toDelete.push(q.id);
+    } else {
+      seen.set(q.question, q.id);
+    }
+  }
 
-  // Verify
-  const rows = await db.select().from(triviaQuestions);
-  console.log(`Done. ${rows.length} questions now in database.`);
-
-  process.exit(0);
+  if (toDelete.length > 0) {
+    // Remove queue entries referencing duplicates
+    for (const id of toDelete) {
+      await db.delete(schema.poolTriviaQueue).where(eq(schema.poolTriviaQueue.questionId, id));
+    }
+    // Remove duplicate questions
+    for (const id of toDelete) {
+      await db.delete(schema.triviaQuestions).where(eq(schema.triviaQuestions.id, id));
+    }
+    console.log(`Removed ${toDelete.length} duplicate questions.`);
+  } else {
+    console.log("No duplicates found.");
+  }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+async function seed() {
+  // Deduplicate first
+  await deduplicate();
+
+  // Only insert questions that don't already exist (by question text)
+  const existing = await db
+    .select({ question: schema.triviaQuestions.question })
+    .from(schema.triviaQuestions)
+    .where(sql`${schema.triviaQuestions.createdBy} IS NULL`);
+  const existingSet = new Set(existing.map((q) => q.question));
+
+  const toInsert = questions.filter((q) => !existingSet.has(q.question));
+  console.log(`Seeding ${toInsert.length} new trivia questions (${existingSet.size} already exist)...`);
+
+  for (const q of toInsert) {
+    await db.insert(schema.triviaQuestions).values({
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
+      category: q.category,
+      difficulty: q.difficulty,
+      active: true,
+      createdBy: null,
+    });
+  }
+
+  console.log("Done.");
+}
+
+seed().catch(console.error);

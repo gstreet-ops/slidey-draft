@@ -3,9 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getPoolsForUser } from "@/lib/queries";
 import { JoinPoolForm } from "./join-pool-form";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { isDraftLocked } from "@/lib/config";
 import { getPoolSettings } from "@/lib/pool-helpers";
 import { ScoringBadge } from "@/components/scoring-badge";
 
@@ -17,17 +15,9 @@ export default async function PoolsPage() {
   if (session.user.status !== "active") redirect("/");
 
   const pools = await getPoolsForUser(session.user.id);
-  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={true}
-        isAdmin={session.user.role === "admin"}
-        isLocked={locked}
-        userInitial={session.user.name?.[0]?.toUpperCase()}
-      />
-
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Your Pools</h1>
@@ -56,26 +46,26 @@ export default async function PoolsPage() {
               <Link
                 key={pool.poolId}
                 href={`/pools/${pool.poolId}`}
-                className="rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition space-y-3"
+                className="rounded-xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">{pool.poolName}</h3>
+                  <h3 className="text-lg font-semibold text-white">{pool.poolName}</h3>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                       pool.poolStatus === "open"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-green-500/20 text-green-400"
                         : pool.poolStatus === "locked"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-white/10 text-white/50"
                     }`}
                   >
                     {pool.poolStatus}
                   </span>
                 </div>
                 {pool.description && (
-                  <p className="text-sm text-gray-500 line-clamp-2">{pool.description}</p>
+                  <p className="text-sm text-white/50 line-clamp-2">{pool.description}</p>
                 )}
-                <div className="flex items-center gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-3 text-xs text-white/40">
                   <span className="capitalize">{pool.role}</span>
                   <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
                 </div>

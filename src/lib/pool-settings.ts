@@ -25,6 +25,8 @@ export const DEFAULT_POOL_SETTINGS = {
     medium: 5,
     hard: 10,
   },
+  triviaTimerSeconds: 30,
+  triviaMode: "auto" as "auto" | "manual",
 };
 
 export type PoolSettings = typeof DEFAULT_POOL_SETTINGS;

@@ -5,7 +5,6 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { teams } from "@/db/schema";
 import { asc } from "drizzle-orm";
-import { MobileNav } from "@/components/mobile-nav";
 import { TeamPicker } from "@/components/team-picker";
 
 export const dynamic = "force-dynamic";
@@ -29,23 +28,6 @@ export default async function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <MobileNav
-        links={[
-          { href: "/dashboard", label: "Dashboard" },
-          { href: "/picks", label: "All Picks" },
-          { href: "/leaderboard", label: "Leaderboard" },
-        ]}
-        logo={
-          <Link
-            href="/"
-            className="text-lg font-bold text-white tracking-wider sm:text-2xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
-          </Link>
-        }
-      />
-
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1
           className="text-3xl font-bold text-white tracking-wider"

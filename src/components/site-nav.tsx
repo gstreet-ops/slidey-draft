@@ -17,25 +17,25 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   const [open, setOpen] = useState(false);
 
   const primaryLinks = [
-    { href: "/big-board", label: "Big Board" },
     ...(isLoggedIn
       ? [
-          { href: isLocked ? "/live" : "/my-board", label: isLocked ? "War Room" : "My Board" },
-          { href: "/pools", label: "Pools" },
+          { href: "/live", label: "Live" },
+          { href: "/my-board", label: "My Draft" },
         ]
       : []),
   ];
 
   const secondaryLinks = [
     { href: "/picks", label: "Mock Drafts" },
-    ...(isLoggedIn ? [{ href: "/dashboard", label: "Dashboard" }] : []),
-    { href: "/guide", label: "How to Play" },
+    { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
+    { href: "/guide", label: "How to Play" },
+    ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];
 
   return (
-    <header className="border-b border-white/10">
+    <header className="border-b border-white/10 bg-[var(--gtown-navy)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
         <Link
@@ -79,7 +79,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
         <div className="flex items-center gap-2">
           {/* User avatar / team logo */}
           {isLoggedIn && (
-            <Link href="/dashboard" className="hidden sm:block">
+            <Link href="/pools" className="hidden sm:block">
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (

@@ -5,9 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users, teams } from "@/db/schema";
-import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -35,17 +33,8 @@ export default async function PicksPage() {
   );
 
   const allBoards = enrichedBoards;
-  const locked = await isDraftLocked();
-
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-      />
-
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
           className="text-4xl font-bold text-white tracking-wide text-center"
@@ -63,7 +52,7 @@ export default async function PicksPage() {
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}
-                className="group rounded-xl bg-white p-6 shadow-sm hover:shadow-md transition"
+                className="group rounded-xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition"
                 style={board.team?.primaryColor ? { borderLeft: `4px solid ${board.team.primaryColor}` } : undefined}
               >
                 <div className="flex items-center gap-3">
@@ -71,10 +60,10 @@ export default async function PicksPage() {
                     <Image src={board.team.logoUrl} alt={board.team.abbreviation || ""} width={28} height={28} className="shrink-0 object-contain" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-gray-900 group-hover:text-[var(--lions-blue)] transition">
+                    <h2 className="text-xl font-bold text-white group-hover:text-[var(--lions-blue)] transition">
                       {board.title}
                     </h2>
-                    <p className="mt-0.5 text-sm text-gray-500">
+                    <p className="mt-0.5 text-sm text-white/50">
                       {board.creator?.name || board.creator?.email || "Anonymous"} &middot;
                       Published {board.publishedAt?.toLocaleDateString()}
                     </p>

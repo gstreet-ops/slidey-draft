@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { poolMembers, appInvites, pools } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 // Re-export client-safe settings so existing server-side imports keep working
 export {
@@ -11,21 +10,6 @@ export {
   getEffectiveScoring,
 } from "@/lib/pool-settings";
 export type { PoolSettings } from "@/lib/pool-settings";
-
-// ── Auth helpers ──────────────────────────────────
-
-export async function requireAuth() {
-  const session = await auth();
-  if (!session?.user?.id) return null;
-  return session;
-}
-
-export async function requireActiveUser() {
-  const session = await requireAuth();
-  if (!session) return null;
-  if (session.user.status !== "active") return null;
-  return session;
-}
 
 // ── Pool role helpers ─────────────────────────────
 

@@ -40,4 +40,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# claude worktrees
+.claude/worktrees/
+
+# prompt / scratch docs (root-level)
+*-prompt.md
+*-fix.md
+*-fix-*.md
+fix-*.md
+test-*.md
+war-room-*.md

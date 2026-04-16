@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { SiteNav } from "@/components/site-nav";
 import { auth } from "@/lib/auth";
-import { isDraftLocked } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +15,9 @@ const sections = [
 
 export default async function ScoringPage() {
   const session = await auth();
-  const locked = await isDraftLocked();
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <SiteNav
-        isLoggedIn={!!session?.user}
-        isAdmin={session?.user?.role === "admin"}
-        isLocked={locked}
-        userInitial={session?.user?.name?.[0]?.toUpperCase()}
-      />
-
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <Link href="/guide" className="text-sm text-white/40 hover:text-white/60 transition">
           &larr; Back to How to Play
@@ -430,7 +420,7 @@ export default async function ScoringPage() {
               href={session?.user ? "/my-board" : "/login"}
               className="rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition"
             >
-              {session?.user ? "Go to My Board" : "Sign In & Draft"}
+              {session?.user ? "Go to My Draft" : "Sign In & Draft"}
             </Link>
             <Link
               href="/picks"

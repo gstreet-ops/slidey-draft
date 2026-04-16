@@ -87,6 +87,7 @@ export default async function PoolSettingsPage({
           members={members}
           myRole={myRole!}
           myUserId={session.user.id}
+          poolOwnerId={pool.commissionerId}
         />
       </main>
     </div>

@@ -1,13 +1,13 @@
 /**
  * Database Data Integrity Check
- * Run: npx tsx src/scripts/check-data-integrity.ts
+ * Run: npx tsx scripts/check-data-integrity.ts
  */
 
 // @ts-ignore
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
-import { db } from "../db";
+import { db } from "../src/db";
 import { sql } from "drizzle-orm";
 import {
   users,
@@ -19,7 +19,7 @@ import {
   chatMessages,
   triviaQuestions,
   poolStandings,
-} from "../db/schema";
+} from "../src/db/schema";
 
 async function runIntegrityCheck() {
   console.log("=== Data Integrity Check ===");

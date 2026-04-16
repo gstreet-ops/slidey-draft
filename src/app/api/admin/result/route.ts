@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { actualResults } from "@/db/schema";
+import { actualResults, poolTriviaQueue, pools } from "@/db/schema";
 import { scoreAllBoards } from "@/lib/scoring";
 import { isDraftLocked, setConfig } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
+import { eq, and, asc } from "drizzle-orm";
+import { getPoolSettings } from "@/lib/pool-helpers";
 
 const SEASON = 2026;
 
@@ -41,6 +43,34 @@ export async function POST(req: NextRequest) {
         await autoFillAllBoards(SEASON);
       }
       await scoreAllBoards(SEASON);
+
+      // Auto-advance trivia queue: complete active question, fire next pending
+      const allPools = await db.select({ id: pools.id, settings: pools.settings }).from(pools);
+      for (const pool of allPools) {
+        const settings = getPoolSettings(pool.settings);
+        if (settings.trivia) {
+          // Complete any currently active question
+          await db
+            .update(poolTriviaQueue)
+            .set({ status: "completed", completedAt: new Date() })
+            .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "active")));
+
+          // Activate next pending question
+          const [next] = await db
+            .select({ id: poolTriviaQueue.id })
+            .from(poolTriviaQueue)
+            .where(and(eq(poolTriviaQueue.poolId, pool.id), eq(poolTriviaQueue.status, "pending")))
+            .orderBy(asc(poolTriviaQueue.sortOrder))
+            .limit(1);
+
+          if (next) {
+            await db
+              .update(poolTriviaQueue)
+              .set({ status: "active", activatedAt: new Date(), pickNumber: result.pickNumber })
+              .where(eq(poolTriviaQueue.id, next.id));
+          }
+        }
+      }
     }
 
     return NextResponse.json({ success: true, result });

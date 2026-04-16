@@ -15,12 +15,13 @@ import {
   players,
   chatMessages,
   commissionerInvites,
+  poolInviteCodes,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { scoreAllBoards } from "@/lib/scoring";
+import { requireActiveUser } from "@/lib/auth-helpers";
 import {
-  requireActiveUser,
   generateAppInviteCode,
   generatePoolInviteCode,
   canManagePool,
@@ -410,12 +411,41 @@ export async function joinPool(inviteCode: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
-  const [pool] = await db
+  const code = inviteCode.toUpperCase().trim();
+
+  // First try the pool's open invite code
+  let [pool] = await db
     .select()
     .from(pools)
-    .where(eq(pools.inviteCode, inviteCode.toUpperCase().trim()));
+    .where(eq(pools.inviteCode, code));
 
-  if (!pool) return { success: false, message: "Pool not found." };
+  let singleCodeId: string | null = null;
+
+  // If not found, check poolInviteCodes table (single-use codes)
+  if (!pool) {
+    const [inviteRow] = await db
+      .select({
+        id: poolInviteCodes.id,
+        poolId: poolInviteCodes.poolId,
+        type: poolInviteCodes.type,
+        usedBy: poolInviteCodes.usedBy,
+        revokedAt: poolInviteCodes.revokedAt,
+      })
+      .from(poolInviteCodes)
+      .where(eq(poolInviteCodes.code, code));
+
+    if (!inviteRow) return { success: false, message: "Pool not found." };
+    if (inviteRow.revokedAt) return { success: false, message: "This invite is no longer valid." };
+    if (inviteRow.type === "single" && inviteRow.usedBy) {
+      return { success: false, message: "This invite has already been used." };
+    }
+
+    const [p] = await db.select().from(pools).where(eq(pools.id, inviteRow.poolId));
+    if (!p) return { success: false, message: "Pool not found." };
+    pool = p;
+    if (inviteRow.type === "single") singleCodeId = inviteRow.id;
+  }
+
   if (pool.status === "locked" || pool.status === "completed") {
     return { success: false, message: "This pool is no longer accepting members." };
   }
@@ -440,21 +470,30 @@ export async function joinPool(inviteCode: string) {
     }
   }
 
-  await db
-    .insert(poolMembers)
-    .values({
-      poolId: pool.id,
-      userId: session.user.id,
-      role: "member",
-    })
-    .onConflictDoNothing();
+  // Insert member + activate spectator + mark single-use code in one batch.
+  // Neon HTTP doesn't support transactions, so we use a single raw SQL statement
+  // to atomically insert the member and activate the user.
+  await db.execute(sql`
+    WITH insert_member AS (
+      INSERT INTO pool_members (pool_id, user_id, role)
+      VALUES (${pool.id}, ${session.user.id}, 'member')
+      ON CONFLICT DO NOTHING
+      RETURNING pool_id
+    ),
+    activate_user AS (
+      UPDATE users SET status = 'active'
+      WHERE id = ${session.user.id} AND status = 'spectator'
+        AND EXISTS (SELECT 1 FROM insert_member)
+    )
+    SELECT 1
+  `);
 
-  // Activate spectators when they join via pool invite
-  if (session.user.status === "spectator") {
+  // Mark single-use code as used (non-critical — if this fails, code stays valid but user is in pool)
+  if (singleCodeId) {
     await db
-      .update(users)
-      .set({ status: "active" })
-      .where(eq(users.id, session.user.id));
+      .update(poolInviteCodes)
+      .set({ usedBy: session.user.id, usedAt: new Date() })
+      .where(eq(poolInviteCodes.id, singleCodeId));
   }
 
   revalidatePath(`/pools/${pool.id}`);
@@ -518,7 +557,7 @@ export async function promoteToAdmin(poolId: string, userId: string) {
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const role = await getPoolRole(session.user.id, poolId);
-  if (role !== "commissioner") throw new Error("Only the commissioner can promote to admin");
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can promote to admin");
 
   await db
     .update(poolMembers)
@@ -536,11 +575,58 @@ export async function demoteToMember(poolId: string, userId: string) {
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const role = await getPoolRole(session.user.id, poolId);
-  if (role !== "commissioner") throw new Error("Only the commissioner can demote admins");
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can demote members");
 
   await db
     .update(poolMembers)
     .set({ role: "member" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Promote to commissioner ───────────────────────
+export async function promoteToCommissioner(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can promote to commissioner");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "commissioner" })
+    .where(
+      and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
+    );
+
+  revalidatePath(`/pools/${poolId}/settings`);
+}
+
+// ── Demote commissioner to admin ──────────────────
+export async function demoteFromCommissioner(poolId: string, userId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const role = await getPoolRole(session.user.id, poolId);
+  if (role !== "commissioner" && role !== "admin") throw new Error("Only commissioners can demote");
+
+  // Cannot demote the pool owner
+  const [pool] = await db.select({ commissionerId: pools.commissionerId }).from(pools).where(eq(pools.id, poolId));
+  if (pool && userId === pool.commissionerId) throw new Error("Cannot demote the pool owner — use transfer instead");
+
+  // Cannot demote if they're the last commissioner
+  const commissioners = await db
+    .select({ userId: poolMembers.userId })
+    .from(poolMembers)
+    .where(and(eq(poolMembers.poolId, poolId), eq(poolMembers.role, "commissioner")));
+  if (commissioners.length <= 1) throw new Error("Pool must have at least one commissioner");
+
+  await db
+    .update(poolMembers)
+    .set({ role: "admin" })
     .where(
       and(eq(poolMembers.poolId, poolId), eq(poolMembers.userId, userId))
     );
@@ -835,15 +921,17 @@ export async function claimCommissionerInvite(code: string) {
     return { success: false, message: "This commissioner invite has expired." };
   }
 
-  await db
-    .update(users)
-    .set({ role: "commissioner", status: "active" })
-    .where(eq(users.id, session.user.id));
-
-  await db
-    .update(commissionerInvites)
-    .set({ usedBy: session.user.id, usedAt: new Date() })
-    .where(eq(commissionerInvites.id, invite.id));
+  // Upgrade user + mark invite used in a single SQL statement for atomicity
+  // (Neon HTTP doesn't support transactions)
+  await db.execute(sql`
+    WITH upgrade_user AS (
+      UPDATE users SET role = 'commissioner', status = 'active'
+      WHERE id = ${session.user.id}
+    )
+    UPDATE commissioner_invites
+    SET used_by = ${session.user.id}, used_at = NOW()
+    WHERE id = ${invite.id}
+  `);
 
   revalidatePath("/");
   return { success: true, message: "You're now a commissioner!", poolName: invite.poolName };
@@ -887,4 +975,73 @@ export async function demoteCommissioner(userId: string) {
     .where(eq(users.id, userId));
 
   revalidatePath("/admin");
+}
+
+// ── Pool Invite Codes ────────────────────────────
+
+export async function generatePoolInviteCodes(poolId: string, count: number = 1) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  const canManage_ = await canManagePool(session.user.id, poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  const codes: { id: string; code: string }[] = [];
+  for (let i = 0; i < count; i++) {
+    const code = await generatePoolInviteCode();
+    const [row] = await db
+      .insert(poolInviteCodes)
+      .values({ poolId, code, type: "single" })
+      .returning({ id: poolInviteCodes.id, code: poolInviteCodes.code });
+    codes.push(row);
+  }
+
+  revalidatePath(`/pools/${poolId}`);
+  return codes;
+}
+
+export async function getPoolInviteCodes(poolId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  const canManage_ = await canManagePool(session.user.id, poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  return db
+    .select({
+      id: poolInviteCodes.id,
+      code: poolInviteCodes.code,
+      type: poolInviteCodes.type,
+      usedBy: poolInviteCodes.usedBy,
+      usedAt: poolInviteCodes.usedAt,
+      revokedAt: poolInviteCodes.revokedAt,
+      createdAt: poolInviteCodes.createdAt,
+      usedByName: users.name,
+      usedByEmail: users.email,
+    })
+    .from(poolInviteCodes)
+    .leftJoin(users, eq(poolInviteCodes.usedBy, users.id))
+    .where(eq(poolInviteCodes.poolId, poolId))
+    .orderBy(desc(poolInviteCodes.createdAt));
+}
+
+export async function revokePoolInviteCode(codeId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  // Get the code to find poolId for auth check
+  const [code] = await db
+    .select({ poolId: poolInviteCodes.poolId, usedBy: poolInviteCodes.usedBy })
+    .from(poolInviteCodes)
+    .where(eq(poolInviteCodes.id, codeId));
+  if (!code) throw new Error("Code not found");
+  if (code.usedBy) throw new Error("Cannot revoke a used code");
+
+  const canManage_ = await canManagePool(session.user.id, code.poolId);
+  if (!canManage_) throw new Error("Not authorized");
+
+  await db
+    .update(poolInviteCodes)
+    .set({ revokedAt: new Date() })
+    .where(eq(poolInviteCodes.id, codeId));
+
+  revalidatePath(`/pools/${code.poolId}`);
 }

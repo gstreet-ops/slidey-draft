@@ -79,10 +79,10 @@ type Props = {
 /* ── Inline detail panel (ESPN-style) ────────────────────────── */
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "text-green-600 bg-green-50 border-green-200";
-  if (grade >= 80) return "text-blue-600 bg-blue-50 border-blue-200";
-  if (grade >= 70) return "text-yellow-600 bg-yellow-50 border-yellow-200";
-  return "text-red-600 bg-red-50 border-red-200";
+  if (grade >= 90) return "text-green-400 bg-green-500/20 border-green-500/30";
+  if (grade >= 80) return "text-blue-400 bg-blue-500/20 border-blue-500/30";
+  if (grade >= 70) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30";
+  return "text-white/50 bg-white/5 border-white/10";
 }
 
 function InlineProspectDetail({ player, onClose }: { player: Player; onClose: () => void }) {
@@ -97,13 +97,13 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
   if (player.weight) measurables.push({ label: "WEIGHT", value: `${player.weight} lbs` });
 
   return (
-    <div className="border-t border-gray-200 bg-gray-50 px-3 py-3">
+    <div className="border-t border-white/10 bg-[#0c1322] px-3 py-3">
       {/* Header: avatar + name + basics */}
       <div className="flex items-start gap-3 mb-3">
         <PlayerAvatar player={player} size={56} />
         <div className="flex-1 min-w-0">
           <h3
-            className="text-sm font-bold text-gray-900 tracking-wide sm:text-base"
+            className="text-sm font-bold text-white tracking-wide sm:text-base"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {player.name}
@@ -112,22 +112,22 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
             <span className="inline-block rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white">
               {player.position}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-white/50">
               {player.height && `${player.height}`}
               {player.height && player.weight && " · "}
               {player.weight && `${player.weight} lbs`}
             </span>
-            <span className="text-xs text-gray-400">{player.school}</span>
+            <span className="text-xs text-white/40">{player.school}</span>
           </div>
           {player.nflComparison && (
-            <p className="mt-1 text-[11px] text-gray-400">
-              NFL Comp: <span className="font-semibold text-gray-600">{player.nflComparison}</span>
+            <p className="mt-1 text-[11px] text-white/40">
+              NFL Comp: <span className="font-semibold text-white/60">{player.nflComparison}</span>
             </p>
           )}
         </div>
         <button
           onClick={onClose}
-          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-gray-400 hover:bg-gray-300 hover:text-gray-600 transition"
+          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/40 hover:bg-white/20 hover:text-white/60 transition"
         >
           <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -137,25 +137,25 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
 
       {/* Stats bar: POS RK / OVR RK / GRADE */}
       {(player.positionRank || player.rank || player.grade) && (
-        <div className="flex rounded-lg border border-gray-200 overflow-hidden mb-3">
+        <div className="flex rounded-lg border border-white/10 overflow-hidden mb-3">
           {player.positionRank && (
-            <div className="flex-1 border-r border-gray-200 px-3 py-2 text-center bg-white">
-              <p className="text-lg font-bold text-gray-900">{player.positionRank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">POS RK</p>
+            <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+              <p className="text-lg font-bold text-white">{player.positionRank}</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">POS RK</p>
             </div>
           )}
           {player.rank && (
-            <div className="flex-1 border-r border-gray-200 px-3 py-2 text-center bg-white">
-              <p className="text-lg font-bold text-gray-900">{player.rank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">OVR RK</p>
+            <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+              <p className="text-lg font-bold text-white">{player.rank}</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">OVR RK</p>
             </div>
           )}
           {player.grade && (
-            <div className="flex-1 px-3 py-2 text-center bg-white">
+            <div className="flex-1 px-3 py-2 text-center bg-white/5">
               <p className={`inline-flex items-center justify-center rounded border px-2 py-0.5 text-lg font-bold ${gradeColor(player.grade)}`}>
                 {player.grade}
               </p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-400 mt-0.5">GRADE</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">GRADE</p>
             </div>
           )}
         </div>
@@ -163,11 +163,11 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
 
       {/* Measurables mini-grid */}
       {measurables.length > 0 && (
-        <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200 mb-3">
+        <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 mb-3">
           {measurables.map((m, i) => (
-            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
-              <p className="text-xs font-bold text-gray-900">{m.value}</p>
-              <p className="text-[8px] font-semibold uppercase tracking-wider text-gray-400">{m.label}</p>
+            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[#0c1322]" : "bg-white/5"}`}>
+              <p className="text-xs font-bold text-white">{m.value}</p>
+              <p className="text-[8px] font-semibold uppercase tracking-wider text-white/40">{m.label}</p>
             </div>
           ))}
         </div>
@@ -176,8 +176,8 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
       {/* Pre-Draft Analysis */}
       {player.notes && (
         <div>
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pre-Draft Analysis</h4>
-          <p className="text-xs leading-relaxed text-gray-600">{player.notes}</p>
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Pre-Draft Analysis</h4>
+          <p className="text-xs leading-relaxed text-white/60">{player.notes}</p>
         </div>
       )}
     </div>
@@ -397,22 +397,22 @@ export function PickBuilder({
             <div key={player.id} className="rounded-md overflow-hidden sm:rounded-lg">
               {/* Row */}
               <div
-                className={`flex items-center gap-1.5 bg-white px-1.5 py-1 text-left shadow-sm transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
+                className={`flex items-center gap-1.5 bg-white/5 px-1.5 py-1 text-left transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
                   canPick
-                    ? "hover:bg-gray-50 hover:shadow-md cursor-pointer"
+                    ? "hover:bg-white/10 cursor-pointer"
                     : "cursor-default"
                 }`}
                 onClick={() => canPick && slot && handleMakePick(player.id, slot)}
               >
                 {player.rank && (
-                  <span className="text-xs font-bold text-gray-400 w-5 text-right shrink-0">
+                  <span className="text-xs font-bold text-white/40 w-5 text-right shrink-0">
                     #{player.rank}
                   </span>
                 )}
                 <PlayerAvatar player={player} size={28} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-gray-900 truncate sm:text-sm">
+                    <span className="text-xs font-semibold text-white truncate sm:text-sm">
                       {player.name}
                     </span>
                     <span className="text-xs text-[var(--lions-blue)] shrink-0">
@@ -431,7 +431,7 @@ export function PickBuilder({
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition sm:h-6 sm:w-6 ${
                     isExpanded
                       ? "bg-[var(--lions-blue)] text-white"
-                      : "text-gray-300 hover:text-[var(--lions-blue)]"
+                      : "text-white/30 hover:text-[var(--lions-blue)]"
                   }`}
                   title="View scouting report"
                 >
@@ -452,7 +452,7 @@ export function PickBuilder({
           );
         })}
         {filteredPlayers.length === 0 && (
-          <p className="py-4 text-center text-sm text-gray-400">
+          <p className="py-4 text-center text-sm text-white/40">
             No players match your search
           </p>
         )}
@@ -461,9 +461,9 @@ export function PickBuilder({
   );
 
   return (
-    <div className="grid grid-cols-[1.1fr_1fr] gap-2 sm:grid-cols-[1.2fr_1fr] sm:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.2fr_1fr] md:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
       {/* Draft board column */}
-      <div className="space-y-1 sm:space-y-1.5 max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
+      <div className="space-y-1 sm:space-y-1.5 max-h-[50vh] md:max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
         {/* Auto-save indicator */}
         <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-400">
@@ -483,10 +483,10 @@ export function PickBuilder({
               <div
                 className={`flex items-center gap-1.5 border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:px-3 sm:py-2 ${
                   pick
-                    ? "border-gray-200 bg-white"
+                    ? "border-white/10 bg-white/5"
                     : isActive
-                    ? "border-[var(--lions-blue)] bg-white ring-2 ring-[var(--lions-blue)]/30"
-                    : "border-gray-200 bg-white hover:border-[var(--lions-blue)]/40"
+                    ? "border-[var(--lions-blue)] bg-white/5 ring-2 ring-[var(--lions-blue)]/30"
+                    : "border-white/10 bg-white/5 hover:border-[var(--lions-blue)]/40"
                 }`}
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -526,17 +526,17 @@ export function PickBuilder({
                 {/* Team + pick info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-[10px] font-semibold text-gray-500 sm:text-xs">
+                    <span className="text-[10px] font-semibold text-white/50 sm:text-xs">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-[10px] text-gray-400 hidden sm:inline sm:text-xs">{slot.teamName}</span>
+                    <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">{slot.teamName}</span>
                     {slot.note && (
                       <span className="text-[9px] text-amber-600/70 sm:text-[10px]">({slot.note})</span>
                     )}
                   </div>
                   {pick ? (
                     <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
-                      <span className="text-xs font-semibold text-gray-900 sm:text-sm">
+                      <span className="text-xs font-semibold text-white sm:text-sm">
                         {pick.playerName}
                       </span>
                       <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
@@ -551,12 +551,12 @@ export function PickBuilder({
                           {pick.playerGrade}
                         </span>
                       )}
-                      <span className="text-[10px] text-gray-400 hidden sm:inline sm:text-xs">
+                      <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
                     </div>
                   ) : (
-                    <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-gray-400"}`}>
+                    <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/40"}`}>
                       {isActive ? "Select a player →" : "Click to pick"}
                     </p>
                   )}
@@ -643,6 +643,17 @@ export function PickBuilder({
 
       {/* Prospect pool column (always visible) */}
       <div className="max-h-[calc(100vh-100px)] overflow-y-auto">
+        <div className="md:hidden mb-3">
+          <h3
+            className="text-sm font-bold text-white tracking-wide uppercase"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            AVAILABLE PROSPECTS
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white">
+              {realAvailable.length}
+            </span>
+          </h3>
+        </div>
         {prospectPoolContent}
       </div>
     </div>
