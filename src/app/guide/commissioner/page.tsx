@@ -135,7 +135,7 @@ export default async function CommissionerGuidePage() {
               <Step n={2}>Open <strong className="text-white"><a href="/live" className="text-[var(--slidey)] hover:underline">/live</a></strong> in a second tab to see what players will see</Step>
               <Step n={3}>Go to <strong className="text-white"><a href="/admin/simulate" className="text-[var(--slidey)] hover:underline">Admin → Simulate</a></strong> and click <strong className="text-white">Announce Next Pick</strong> or <strong className="text-white">Auto-Run All</strong></Step>
               <Step n={4}>Each simulated pick triggers the next trivia question automatically</Step>
-              <Step n={5}>Watch the leaderboard, trivia, and chat update in real-time on /live</Step>
+              <Step n={5}>Watch the leaderboard, trivia, and Live Feed update in real-time on /live</Step>
             </div>
             <div className="mt-4 space-y-3">
               <InfoCard title="Trivia Controls">
@@ -146,6 +146,58 @@ export default async function CommissionerGuidePage() {
               </InfoCard>
               <InfoCard title="Reset">
                 Click <strong className="text-white">Reset</strong> on the Simulate page to clear all results and start over. This also resets trivia queue progress.
+              </InfoCard>
+            </div>
+          </section>
+
+          {/* ── Scoring Configuration ── */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <SectionHeading>Scoring Configuration</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              Control how points are awarded in your pool. Open <strong className="text-white">Scoring Settings</strong> on the Live page to configure.
+            </p>
+            <div className="mt-4 space-y-3">
+              <InfoCard title="Standard Mode">
+                Default point values: Exact slot +5, Player called +3, Within 5 picks +2, 6+ off +1, Position match +1. Live predictions +10. Trivia: Easy 3, Medium 5, Hard 10.
+              </InfoCard>
+              <InfoCard title="Custom Mode">
+                Override any point value. Adjust mock pick tiers, live prediction rewards, and trivia difficulty multipliers to fit your pool&apos;s style.
+              </InfoCard>
+            </div>
+          </section>
+
+          {/* ── Video Call Setup ── */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <SectionHeading>Video Call Setup</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              Set up a video call so your pool can talk during the draft.
+            </p>
+            <div className="mt-4 space-y-3">
+              <Step n={1}>Create a Google Meet, Zoom, or any video call link</Step>
+              <Step n={2}>On the <strong className="text-white">Live page</strong>, expand <strong className="text-white">Video Call</strong> in the commissioner controls</Step>
+              <Step n={3}>Paste the URL and click <strong className="text-white">Save</strong></Step>
+              <Step n={4}>Players will see a green <strong className="text-white">Join Video Call</strong> button at the top of their Live page</Step>
+            </div>
+          </section>
+
+          {/* ── Live Page Controls ── */}
+          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+            <SectionHeading>Live Page Commissioner Controls</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              During the draft (or simulation), all commissioner controls are accessible directly from the Live page — no need to switch tabs.
+            </p>
+            <div className="mt-4 space-y-3">
+              <InfoCard title="Trivia Controls">
+                Fire, skip, or pause trivia questions. Set the timer (15s, 30s, 45s, 60s, or no timer). Preview the next 3 questions in the queue.
+              </InfoCard>
+              <InfoCard title="Simulation Controls">
+                Announce picks one at a time or auto-run the entire draft. Adjust speed (1-10 seconds between picks). Reset to start over.
+              </InfoCard>
+              <InfoCard title="Scoring Settings">
+                Switch between Standard and Custom scoring. Edit point values for mock picks, live predictions, and trivia on the fly.
+              </InfoCard>
+              <InfoCard title="Video Call">
+                Paste a Meet/Zoom link so players can join with one click.
               </InfoCard>
             </div>
           </section>

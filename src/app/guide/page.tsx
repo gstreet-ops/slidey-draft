@@ -193,15 +193,18 @@ export default async function GuidePage() {
               </Step>
             </StepList>
 
-            <SubHeading>The Live Draft</SubHeading>
+            <SubHeading>The Live Page</SubHeading>
             <p>
-              The Live Draft (<InlineLink href="/live">/live</InlineLink>) is a three-panel view:
+              The <InlineLink href="/live">Live</InlineLink> page is a three-column layout:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Actual Picks</span><span>— real-time feed of announced draft picks</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Board</span><span>— your mock draft with running score, showing matches and misses</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Picks vs Actual</span><span>— your mock draft side-by-side with actual results, color-coded by match quality</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— active trivia question with timer, plus commissioner controls if applicable</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows and team standings</span></li>
             </ul>
+            <p>
+              A floating <strong className="text-white">Live Feed</strong> button (bottom-right) opens the event feed and chat. If your commissioner has set up a video call, you&apos;ll see a <strong className="text-white">Join Video Call</strong> button at the top.
+            </p>
           </section>
 
           {/* ── Video Chat + Live Feed ── */}
@@ -249,7 +252,7 @@ export default async function GuidePage() {
             </Faq>
 
             <Faq q="How does trivia work?">
-              After each pick is announced, a trivia question appears. Points depend on difficulty: Easy (3 pts), Medium (5 pts), Hard (10 pts). Questions cover NFL history, draft trivia, and prospect knowledge. You have until the next pick is announced to answer — if you miss it, no penalty.
+              Your commissioner builds a queue of trivia questions that fire automatically between picks. Points depend on difficulty: Easy (3 pts), Medium (5 pts), Hard (10 pts). Questions can cover anything — NFL history, pop culture, inside jokes. Your commissioner can also set a timer (15-60 seconds), no timer, or pause mid-question.
             </Faq>
 
             <Faq q="How do live predictions work?">

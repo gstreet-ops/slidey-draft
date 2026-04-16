@@ -1,0 +1,43 @@
+{
+  "skill_name": "slidey-draft-guides",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We just shipped the rolling trivia burst feature — commissioners can now set a maxBurstQuestions value and trivia fires automatically between picks. Update the guides.",
+      "expected_output": "Commissioner guide updated with burst trivia settings documentation. User guide updated to explain trivia between picks. Scoring page trivia section verified. Stale terminology check passes.",
+      "files": [],
+      "expectations": [
+        "The commissioner guide (/guide/commissioner) mentions maxBurstQuestions or burst trivia settings",
+        "The user guide (/guide/user) explains that trivia questions appear between draft picks",
+        "The scoring page trivia section is verified or updated if needed",
+        "A summary of changes is provided at the end",
+        "No references to 'War Room' or 'Chat' remain in updated files"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Sync the guides — I think they're behind after the last few sessions.",
+      "expected_output": "Skill reads git log to detect recent changes, identifies which guide sections are stale, and updates only the affected sections. Provides a summary showing what was changed and what was already current.",
+      "files": [],
+      "expectations": [
+        "Git log is read to detect recent feature changes",
+        "At least one guide file is read before any edits are made",
+        "Only sections related to actual changes are modified",
+        "A structured summary is provided listing each guide file and what happened",
+        "Terminology consistency check is performed"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We renamed Chat to Live Feed — it's now a one-way system notification stream, not a two-way chat. Make sure the guides reflect this.",
+      "expected_output": "All references to 'Chat' replaced with 'Live Feed' across guide pages. Description updated to explain one-way notification stream. Commissioner guide updated if chat moderation was documented.",
+      "files": [],
+      "expectations": [
+        "The word 'Chat' is replaced with 'Live Feed' in guide content",
+        "The description of Live Feed explains it's a one-way system notification stream",
+        "A grep or search is run to find all instances of stale 'Chat' terminology",
+        "A summary of terminology fixes is provided with count"
+      ]
+    }
+  ]
+}

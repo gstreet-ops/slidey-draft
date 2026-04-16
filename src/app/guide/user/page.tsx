@@ -108,10 +108,12 @@ export default async function UserGuidePage() {
                 </h3>
               </div>
               <p className="text-xs text-white/50 mb-4">
-                NFL draft trivia questions appear between picks. 15 questions, 15 seconds each.
+                Trivia questions fire between picks. Points depend on difficulty — your commissioner sets the queue.
               </p>
               <div className="space-y-2">
-                <ScoreRow type="exact" label="Correct" desc="Right answer within the time limit" pts={5} />
+                <ScoreRow type="exact" label="Easy — Correct" desc="Right answer on an easy question" pts={3} />
+                <ScoreRow type="close" label="Medium — Correct" desc="Right answer on a medium question" pts={5} />
+                <ScoreRow type="far" label="Hard — Correct" desc="Right answer on a hard question" pts={10} />
                 <ScoreRow type="miss" label="Wrong / Timeout" desc="Incorrect or didn't answer in time" pts={0} />
               </div>
             </div>
@@ -170,20 +172,19 @@ export default async function UserGuidePage() {
             </div>
           </section>
 
-          {/* ── Invite Section ── */}
+          {/* ── Video Call + Live Feed ── */}
           <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
-            <SectionHeading>Watch Party (Video Chat)</SectionHeading>
+            <SectionHeading>Video Call &amp; Live Feed</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
-              On draft night, join the Watch Party to video chat with your pool while picks come in.
+              Draft night is best with friends on video. Your commissioner can set up a Google Meet, Zoom, or any video call link.
             </p>
-            <div className="mt-3 space-y-2">
-              <Step n={1}>Click the <strong className="text-white">Watch Party</strong> button in the bottom-right corner of the live page</Step>
-              <Step n={2}>Your browser may ask to allow popups — click <strong className="text-white">Allow</strong></Step>
-              <Step n={3}>A video window opens — allow camera and microphone access when prompted</Step>
-              <Step n={4}>Enter your name (first time only) and you&apos;re in!</Step>
-            </div>
-            <div className="mt-3 rounded-lg border border-white/10 bg-black/30 p-3">
-              <p className="text-xs text-white/40"><strong className="text-white/60">Tips:</strong> The video runs in a separate window so you can see it alongside the draft. Use the control bar in the main app to minimize, bring the window to front, or leave. Audio stays live even when you&apos;re focused on making picks.</p>
+            <div className="mt-4 space-y-3">
+              <TipCard>
+                <strong className="text-white">Video Call</strong> — if your commissioner has set up a video link, you&apos;ll see a green &quot;Join Video Call&quot; button at the top of the Live page. Click it to join in a new tab. Works great with split screen or picture-in-picture.
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">Live Feed</strong> — the in-app Live Feed (floating chat button, bottom-right) tracks game events automatically: pick announcements, trivia questions, and leaderboard changes. You can also send quick messages and reactions. Use video for conversation and the Live Feed to follow the action.
+              </TipCard>
             </div>
           </section>
 
