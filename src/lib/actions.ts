@@ -1114,6 +1114,28 @@ export async function submitPropPick(propId: string, poolId: string, answer: str
   revalidatePath("/props");
 }
 
+// ── Clear Prop Pick ──────────────────────────────
+export async function clearPropPick(propId: string, poolId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [prop] = await db.select({ status: props.status }).from(props).where(eq(props.id, propId));
+  if (!prop) throw new Error("Prop not found");
+  if (prop.status !== "open") throw new Error("Cannot clear pick on a locked or resolved prop");
+
+  await db
+    .delete(propPicks)
+    .where(
+      and(
+        eq(propPicks.propId, propId),
+        eq(propPicks.userId, session.user.id),
+        eq(propPicks.poolId, poolId)
+      )
+    );
+
+  revalidatePath("/props");
+}
+
 // ── Create Custom Prop ───────────────────────────
 export async function createCustomProp(
   poolId: string,

@@ -34,10 +34,11 @@ export default async function PropsPage() {
         <h1 className="text-3xl font-bold text-white tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           PROP BETS
         </h1>
-        <p className="mt-1 text-sm text-white/50">
+        <div className="mt-2 h-px bg-gradient-to-r from-[var(--lions-blue)] to-transparent" />
+        <p className="mt-2 text-sm text-white/50">
           2026 NFL Draft Side Predictions &middot; {poolName}
         </p>
-        <p className="mt-2 text-xs text-[var(--lions-blue)]">
+        <p className="mt-1 text-xs text-[var(--lions-blue)]">
           Up to {totalPoints} bonus points available
         </p>
 
@@ -51,20 +52,29 @@ export default async function PropsPage() {
           />
         </div>
 
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/60">Your picks</span>
-            <span className="text-sm font-bold text-white">
-              {Object.keys(pickMap).length}/{allProps.length} submitted
-            </span>
-          </div>
-          <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-[var(--lions-blue)] transition-all"
-              style={{ width: `${(Object.keys(pickMap).length / Math.max(allProps.length, 1)) * 100}%` }}
-            />
-          </div>
-        </div>
+        {(() => {
+          const picked = Object.keys(pickMap).length;
+          const total = Math.max(allProps.length, 1);
+          const pct = (picked / total) * 100;
+          const barColor = pct >= 100 ? "bg-emerald-400" : pct >= 67 ? "bg-emerald-400" : pct >= 34 ? "bg-[var(--lions-blue)]" : "bg-white/40";
+          return (
+            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-white/60">Your picks</span>
+                <span className="text-sm font-bold text-white">
+                  {picked}/{allProps.length} submitted
+                  {pct >= 100 && " \u2728 All picks in!"}
+                </span>
+              </div>
+              <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${barColor}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
