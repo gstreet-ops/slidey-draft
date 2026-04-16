@@ -7,7 +7,7 @@ import type { MockDraftGrade } from "@/lib/mock-grading";
 import { GradeCircle } from "@/components/grade-circle";
 import { db } from "@/db";
 import { draftBoards, picks } from "@/db/schema";
-import { eq, and, sql as dsql } from "drizzle-orm";
+import { eq, and, sql as dsql, isNotNull, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
@@ -50,7 +50,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   ]);
 
   // Fetch pool members' published boards (including current user)
-  type PoolmateBoard = { userId: string; userName: string; boardId: string; pickCount: number; poolName: string; grade: MockDraftGrade | null };
+  type PoolmateBoard = { userId: string; userName: string; boardId: string; pickCount: number; poolName: string; grade: MockDraftGrade | null; noteCount: number; latestNote: string | null };
   const poolmateBoards: PoolmateBoard[] = [];
   if (userPools.length > 0) {
     const pool = userPools[0];
@@ -69,6 +69,13 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
               playerRank: p.playerRank,
             })))
           : null;
+        const noteCount = boardData ? boardData.picks.filter(p => p.analysis).length : 0;
+        const [latestNoteRow] = await db
+          .select({ analysis: picks.analysis })
+          .from(picks)
+          .where(and(eq(picks.boardId, memberBoard.id), isNotNull(picks.analysis)))
+          .orderBy(desc(picks.createdAt))
+          .limit(1);
         poolmateBoards.push({
           userId: m.userId,
           userName: m.userName || m.userEmail,
@@ -76,6 +83,8 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           pickCount: boardData?.picks.length ?? 0,
           poolName: pool.poolName,
           grade,
+          noteCount,
+          latestNote: latestNoteRow?.analysis ?? null,
         });
       }
     }
@@ -212,6 +221,14 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
                         <p className="text-[10px] text-white/30 mt-0.5">
                           {pb.grade.steals} steal{pb.grade.steals !== 1 ? "s" : ""} &middot; {pb.grade.reaches} reach{pb.grade.reaches !== 1 ? "es" : ""}
                         </p>
+                      )}
+                      {pb.latestNote && (
+                        <p className="mt-1 text-xs italic text-white/40 truncate">
+                          💬 {pb.latestNote.length > 80 ? pb.latestNote.slice(0, 80) + "..." : pb.latestNote}
+                        </p>
+                      )}
+                      {pb.noteCount > 0 && !pb.latestNote && (
+                        <p className="mt-0.5 text-[10px] text-white/30">💬 {pb.noteCount} note{pb.noteCount !== 1 ? "s" : ""}</p>
                       )}
                     </div>
                     {pb.grade && (

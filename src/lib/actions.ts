@@ -812,6 +812,32 @@ export async function autoFillByRank(
   revalidatePath(`/my-board`);
   return filledCount;
 }
+// ── Update pick analysis note ─────────────────────
+export async function updatePickAnalysis(pickId: string, analysis: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [pick] = await db
+    .select({ boardId: picks.boardId })
+    .from(picks)
+    .where(eq(picks.id, pickId));
+  if (!pick) throw new Error("Pick not found");
+
+  const [board] = await db
+    .select({ createdBy: draftBoards.createdBy })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, pick.boardId));
+  if (!board || board.createdBy !== session.user.id) throw new Error("Not authorized");
+
+  await db
+    .update(picks)
+    .set({ analysis: analysis.trim() || null })
+    .where(eq(picks.id, pickId));
+
+  revalidatePath("/my-board");
+  revalidatePath(`/picks/${pick.boardId}`);
+}
+
 // ── Pool Chat ───────────────────────────────────────
 export async function sendChatMessage(poolId: string, content: string) {
   "use server";

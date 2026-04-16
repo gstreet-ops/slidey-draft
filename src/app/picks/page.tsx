@@ -20,7 +20,7 @@ export default async function PicksPage() {
   // Enrich boards with creator info
   const enrichedBoards = await Promise.all(
     published.map(async (board) => {
-      if (!board.createdBy) return { ...board, creator: null, team: null, grade: null as MockDraftGrade | null, pickCount: 0 };
+      if (!board.createdBy) return { ...board, creator: null, team: null, grade: null as MockDraftGrade | null, pickCount: 0, noteCount: 0 };
       const [creator] = await db
         .select({ name: users.name, email: users.email, role: users.role, favoriteTeamId: users.favoriteTeamId })
         .from(users)
@@ -39,7 +39,8 @@ export default async function PicksPage() {
             playerRank: p.playerRank,
           })))
         : null;
-      return { ...board, creator: creator || null, team, grade, pickCount: boardData?.picks.length ?? 0 };
+      const noteCount = boardData ? boardData.picks.filter(p => p.analysis).length : 0;
+      return { ...board, creator: creator || null, team, grade, pickCount: boardData?.picks.length ?? 0, noteCount };
     })
   );
 
@@ -82,6 +83,9 @@ export default async function PicksPage() {
                       <p className="mt-1 text-xs text-white/40">
                         {board.grade.steals} steal{board.grade.steals !== 1 ? "s" : ""} &middot; {board.grade.reaches} reach{board.grade.reaches !== 1 ? "es" : ""} &middot; {board.pickCount}/32 picks
                       </p>
+                    )}
+                    {board.noteCount > 0 && (
+                      <p className="mt-0.5 text-xs text-white/40">💬 {board.noteCount} pick{board.noteCount !== 1 ? "s" : ""} with commentary</p>
                     )}
                   </div>
                   {board.grade && (

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import { makePick, removePick, publishBoard, autoFillByRank } from "@/lib/actions";
+import { makePick, removePick, publishBoard, autoFillByRank, updatePickAnalysis } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
@@ -291,6 +291,10 @@ export function PickBuilder({
   const [expandedPickId, setExpandedPickId] = useState<string | null>(null);
   const [expandedProspectId, setExpandedProspectId] = useState<string | null>(null);
 
+  // Inline note editing
+  const [editingNotePickId, setEditingNotePickId] = useState<string | null>(null);
+  const [editingNoteText, setEditingNoteText] = useState("");
+
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
   const allPickedIds = new Set([
@@ -434,13 +438,15 @@ export function PickBuilder({
       {/* Analysis text area */}
       {activeSlot && !readOnly && (
         <div className="mb-3">
+          <label className="block text-xs font-semibold text-white/50 mb-1">Why this pick?</label>
           <textarea
-            placeholder="Why this pick? (optional analysis)"
+            placeholder="Share your reasoning — why does this player fit here? (optional)"
             value={analysisText}
             onChange={(e) => setAnalysisText(e.target.value)}
             className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
             rows={2}
           />
+          <p className="text-[10px] text-white/30 mt-1">Your notes will be visible to everyone in your pool</p>
         </div>
       )}
 
@@ -696,6 +702,69 @@ export function PickBuilder({
                   </div>
                 );
               })()}
+
+              {/* Inline note edit / preview */}
+              {pick && !readOnly && (
+                editingNotePickId === pick.id ? (
+                  <div className="ml-10 mt-1 mb-1">
+                    <textarea
+                      value={editingNoteText}
+                      onChange={(e) => setEditingNoteText(e.target.value)}
+                      placeholder="Share your reasoning..."
+                      className="w-full rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
+                      rows={2}
+                      autoFocus
+                    />
+                    <div className="flex gap-2 mt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startTransition(async () => {
+                            await updatePickAnalysis(pick.id, editingNoteText);
+                            setEditingNotePickId(null);
+                            flashSaved();
+                          });
+                        }}
+                        disabled={isPending}
+                        className="text-[10px] font-semibold text-[var(--lions-blue)] hover:underline disabled:opacity-50"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setEditingNotePickId(null); }}
+                        className="text-[10px] text-white/40 hover:text-white/60"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : pick.analysis ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingNotePickId(pick.id);
+                      setEditingNoteText(pick.analysis || "");
+                    }}
+                    className="ml-10 mt-1 text-[10px] text-white/40 italic hover:text-white/60 transition truncate max-w-[80%] block text-left"
+                  >
+                    💬 {pick.analysis.length > 100 ? pick.analysis.slice(0, 100) + "..." : pick.analysis}
+                  </button>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingNotePickId(pick.id);
+                      setEditingNoteText("");
+                    }}
+                    className="ml-10 mt-1 flex items-center gap-1 text-[10px] text-white/30 hover:text-[var(--lions-blue)] transition"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
+                    </svg>
+                    Add your take
+                  </button>
+                )
+              )}
 
               {/* Inline expansion for picked player */}
               {isExpanded && pick && (

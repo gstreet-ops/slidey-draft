@@ -122,6 +122,14 @@ export function PublicPickCard({
               ))}
             </div>
           )}
+          {pick.analysis && (
+            <p className="mt-1 text-xs italic text-white/50 truncate">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" className="inline-block mr-1 -mt-0.5 text-white/30">
+                <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2l3 2v-2h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm0 1.5h10a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H6.5L4.5 14v-1.5H2a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z" />
+              </svg>
+              {pick.analysis.length > 120 ? pick.analysis.slice(0, 120) + "..." : pick.analysis}
+            </p>
+          )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
             <p className="mt-0.5 text-[10px] text-white/40 sm:text-xs">
               Actual: <span className="text-white/60">{score.actualPlayerName}</span> ({score.actualPlayerPosition}, {score.actualPlayerSchool})
