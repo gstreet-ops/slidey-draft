@@ -140,48 +140,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           </div>
         </div>
 
-        {/* Primary CTA */}
-        {inPool ? (
-          <Link
-            href="/live"
-            className="block rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center hover:border-green-400/50 transition"
-          >
-            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>GO TO LIVE</p>
-            <p className="text-xs text-white/50 mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
-          </Link>
-        ) : (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center space-y-4">
-            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
-            <p className="text-sm text-white/50 max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
-            <InviteCodeInput />
-          </div>
-        )}
-
-        {/* Scoring CTA */}
-        <Link
-          href="/scoring"
-          className="block rounded-xl border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 p-5 text-center hover:border-[var(--lions-blue)]/50 transition"
-        >
-          <p className="text-base font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>{"\uD83C\uDFC6"} SCORING GUIDE</p>
-          <p className="text-xs text-white/50 mt-1">See how mock picks, live predictions, and trivia earn you points</p>
-        </Link>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <QuickAction
-            href="/my-board"
-            title={myBoard ? "My Mock Draft" : "Create Your Mock Draft"}
-            desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
-            icon={"\uD83D\uDCCB"}
-          />
-          <QuickAction href="/props" title="Prop Bets" desc="Side predictions for bonus points" icon={"\uD83C\uDFB2"} />
-          <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
-          {isAdmin && (
-            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />
-          )}
-        </div>
-
-        {/* Pool Members' Mock Drafts */}
+        {/* Pool Members' Mock Drafts — primary engagement */}
         {inPool && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -243,6 +202,38 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
             </div>
           </div>
         )}
+
+        {/* Primary CTA */}
+        {inPool ? (
+          <Link
+            href="/live"
+            className="block rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center hover:border-green-400/50 transition"
+          >
+            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>GO TO LIVE</p>
+            <p className="text-xs text-white/50 mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
+          </Link>
+        ) : (
+          <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center space-y-4">
+            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
+            <p className="text-sm text-white/50 max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
+            <InviteCodeInput />
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <QuickAction
+            href="/my-board"
+            title={myBoard ? "My Mock Draft" : "Create Your Mock Draft"}
+            desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
+            icon={"\uD83D\uDCCB"}
+          />
+          <QuickAction href="/props" title="Prop Bets" desc="Side predictions for bonus points" icon={"\uD83C\uDFB2"} />
+          <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
+          {isAdmin && (
+            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />
+          )}
+        </div>
       </div>
     </main>
   );
@@ -397,6 +388,35 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
         <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
           {/* Left column */}
           <div className="space-y-8">
+            {/* Mock Draft Grades — most engaging for visitors */}
+            {publishedGrades.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
+                    MOCK DRAFT GRADES
+                  </h2>
+                  <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">All Boards &rarr;</Link>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] overflow-hidden">
+                  {publishedGrades.map((entry, i) => (
+                    <Link
+                      key={entry.boardId}
+                      href={`/picks/${entry.boardId}`}
+                      className={`flex items-center gap-3 px-4 py-3 hover:bg-white/[0.06] transition ${i !== publishedGrades.length - 1 ? "border-b border-white/5" : ""}`}
+                    >
+                      <GradeCircle grade={entry.grade.letterGrade} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{entry.title}</p>
+                        <p className="text-[10px] text-white/40">
+                          {entry.grade.steals} steal{entry.grade.steals !== 1 ? "s" : ""} &middot; {entry.grade.reaches} reach{entry.grade.reaches !== 1 ? "es" : ""} &middot; {entry.grade.totalPicks}/32 picks
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Featured Picks */}
             {featuredPicks.length > 0 && (
               <div>
@@ -422,35 +442,6 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                       <p className="text-xs font-bold text-white truncate">{pick.playerName ?? "TBD"}</p>
                       <p className="text-[10px] text-white/40">{pick.playerPosition}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Mock Draft Grades */}
-            {publishedGrades.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
-                    MOCK DRAFT GRADES
-                  </h2>
-                  <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">All Boards &rarr;</Link>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.04] overflow-hidden">
-                  {publishedGrades.map((entry, i) => (
-                    <Link
-                      key={entry.boardId}
-                      href={`/picks/${entry.boardId}`}
-                      className={`flex items-center gap-3 px-4 py-3 hover:bg-white/[0.06] transition ${i !== publishedGrades.length - 1 ? "border-b border-white/5" : ""}`}
-                    >
-                      <GradeCircle grade={entry.grade.letterGrade} size="sm" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">{entry.title}</p>
-                        <p className="text-[10px] text-white/40">
-                          {entry.grade.steals} steal{entry.grade.steals !== 1 ? "s" : ""} &middot; {entry.grade.reaches} reach{entry.grade.reaches !== 1 ? "es" : ""} &middot; {entry.grade.totalPicks}/32 picks
-                        </p>
-                      </div>
-                    </Link>
                   ))}
                 </div>
               </div>
