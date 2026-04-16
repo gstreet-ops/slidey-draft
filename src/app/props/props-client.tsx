@@ -78,7 +78,8 @@ export function PropsClient({
     startTransition(async () => {
       try {
         await clearPropPick(propId, poolId);
-      } catch {
+      } catch (err) {
+        console.error("clearPropPick failed:", err);
         if (oldAnswer) setPickMap((prev) => ({ ...prev, [propId]: oldAnswer }));
       } finally {
         setSavingPropId(null);

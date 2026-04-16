@@ -140,17 +140,6 @@ export function PublicPickCard({
               if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
               return null;
             })()}
-            {pick.consensusLow != null && pick.consensusHigh != null && (
-              <span className={`text-[9px] sm:text-[10px] ${
-                pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :
-                pick.pickNumber < pick.consensusLow ? "text-amber-400/60" :
-                "text-white/30"
-              }`}>
-                Consensus {pick.consensusLow}-{pick.consensusHigh}
-                {pick.pickNumber > pick.consensusHigh && " · Steal"}
-                {pick.pickNumber < pick.consensusLow && " · Reach"}
-              </span>
-            )}
           </div>
           {/* Trait tags on mobile */}
           {tags.length > 0 && (
@@ -161,10 +150,10 @@ export function PublicPickCard({
             </div>
           )}
           {pick.analysis && (
-            <div className="mt-2 rounded-md bg-white/5 border border-white/10 px-3 py-2">
-              <span className="text-lg text-white/20 leading-none font-serif">{"\u201C"}</span>
-              <p className="text-xs text-white/70 italic line-clamp-2">{pick.analysis}</p>
-              <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
+            <div className="mt-2 rounded-md bg-amber-950/40 border border-amber-500/20 px-3 py-2">
+              <span className="text-lg text-amber-400/30 leading-none font-serif">{"\u201C"}</span>
+              <p className="text-xs text-amber-100/80 italic line-clamp-2">{pick.analysis}</p>
+              <p className="text-[10px] text-amber-400/40 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
             </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
@@ -213,11 +202,22 @@ export function PublicPickCard({
       {expanded && hasExpandContent && (
         <div className="border-t border-white/10 px-4 py-3 space-y-3 sm:px-5 sm:py-4">
           {pick.analysis && (
-            <div className="rounded-lg bg-white/[0.06] border border-white/10 px-4 py-3">
-              <span className="text-2xl text-white/15 font-serif leading-none">{"\u201C"}</span>
-              <p className="text-sm text-white/70 italic leading-relaxed">{pick.analysis}</p>
-              <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
+            <div className="rounded-lg bg-amber-950/40 border border-amber-500/20 px-4 py-3">
+              <span className="text-2xl text-amber-400/25 font-serif leading-none">{"\u201C"}</span>
+              <p className="text-sm text-amber-100/80 italic leading-relaxed">{pick.analysis}</p>
+              <p className="text-[10px] text-amber-400/40 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
             </div>
+          )}
+          {pick.consensusLow != null && pick.consensusHigh != null && (
+            <p className={`text-xs ${
+              pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :
+              pick.pickNumber < pick.consensusLow ? "text-amber-400/60" :
+              "text-white/30"
+            }`}>
+              Consensus range: {pick.consensusLow}-{pick.consensusHigh}
+              {pick.pickNumber > pick.consensusHigh && " — Steal at #" + pick.pickNumber}
+              {pick.pickNumber < pick.consensusLow && " — Reach at #" + pick.pickNumber}
+            </p>
           )}
           {pick.playerNotes && (
             <div>

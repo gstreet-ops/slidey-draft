@@ -748,11 +748,14 @@ export function PickBuilder({
                       </p>
                       {slot.teamNeeds && slot.teamNeeds.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {slot.teamNeeds.map((pos) => (
+                          {slot.teamNeeds.slice(0, 3).map((pos) => (
                             <span key={pos} className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/50">
                               {pos}
                             </span>
                           ))}
+                          {slot.teamNeeds.length > 3 && (
+                            <span className="text-[10px] text-white/20">+{slot.teamNeeds.length - 3} more</span>
+                          )}
                         </div>
                       )}
                     </>
@@ -830,16 +833,16 @@ export function PickBuilder({
                   </div>
                 ) : pick.analysis ? (
                   <div
-                    className="ml-10 mt-2 rounded-md bg-white/5 border border-white/10 px-3 py-2 cursor-pointer hover:bg-white/[0.07] transition group relative"
+                    className="ml-10 mt-2 rounded-md bg-amber-950/40 border border-amber-500/20 px-3 py-2 cursor-pointer hover:bg-amber-950/50 transition group relative"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingNotePickId(pick.id);
                       setEditingNoteText(pick.analysis || "");
                     }}
                   >
-                    <span className="text-sm text-white/20 font-serif leading-none">{"\u201C"}</span>
-                    <p className="text-[11px] text-white/60 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
-                    <p className="text-[9px] text-white/25 uppercase tracking-wider font-semibold mt-1">Your Take</p>
+                    <span className="text-sm text-amber-400/30 font-serif leading-none">{"\u201C"}</span>
+                    <p className="text-[11px] text-amber-100/70 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
+                    <p className="text-[9px] text-amber-400/40 uppercase tracking-wider font-semibold mt-1">Your Take</p>
                     <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-white/30">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
