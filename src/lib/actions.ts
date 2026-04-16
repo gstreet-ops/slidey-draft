@@ -16,6 +16,8 @@ import {
   chatMessages,
   commissionerInvites,
   poolInviteCodes,
+  props,
+  propPicks,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -1070,4 +1072,44 @@ export async function revokePoolInviteCode(codeId: string) {
     .where(eq(poolInviteCodes.id, codeId));
 
   revalidatePath(`/pools/${code.poolId}`);
+}
+
+// ── Submit Prop Pick ─────────────────────────────
+export async function submitPropPick(propId: string, poolId: string, answer: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  // Verify prop is open
+  const [prop] = await db.select({ status: props.status }).from(props).where(eq(props.id, propId));
+  if (!prop) throw new Error("Prop not found");
+  if (prop.status !== "open") throw new Error("This prop is no longer accepting picks");
+
+  // Verify user is pool member
+  const member = await isPoolMember(poolId, session.user.id);
+  if (!member) throw new Error("Not a pool member");
+
+  // Upsert
+  const existing = await db
+    .select({ id: propPicks.id })
+    .from(propPicks)
+    .where(and(
+      eq(propPicks.propId, propId),
+      eq(propPicks.userId, session.user.id),
+      eq(propPicks.poolId, poolId),
+    ));
+
+  if (existing.length > 0) {
+    await db.update(propPicks)
+      .set({ answer: answer.trim(), submittedAt: new Date() })
+      .where(eq(propPicks.id, existing[0].id));
+  } else {
+    await db.insert(propPicks).values({
+      propId,
+      userId: session.user.id,
+      poolId,
+      answer: answer.trim(),
+    });
+  }
+
+  revalidatePath("/props");
 }

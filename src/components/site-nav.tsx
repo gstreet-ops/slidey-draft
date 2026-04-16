@@ -21,6 +21,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
       ? [
           { href: "/live", label: "Live" },
           { href: "/my-board", label: "My Draft" },
+          { href: "/props", label: "Props" },
         ]
       : []),
   ];

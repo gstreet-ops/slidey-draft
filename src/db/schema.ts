@@ -431,7 +431,8 @@ export const poolStandings = pgTable(
     mockBonus: integer("mock_bonus").notNull().default(0),
     liveTotal: integer("live_total").notNull().default(0),
     triviaTotal: integer("trivia_total").notNull().default(0),
-    combinedScore: integer("combined_score").notNull().default(0),
+    propTotal: integer("prop_total").notNull().default(0),
+    combinedScore: integer("combined_score").notNull().default(0), // mock + live + trivia + props
     rank: integer("rank"),
     previousRank: integer("previous_rank"),
     picksPredicted: integer("picks_predicted").notNull().default(0),
@@ -585,3 +586,45 @@ export const poolTeamMembers = pgTable(
     primaryKey({ columns: [table.poolTeamId, table.userId] }),
   ]
 );
+
+// ── Enums (props) ────────────────────────────────
+export const propTypeEnum = pgEnum('prop_type', [
+  'over_under',
+  'pick_player',
+  'pick_team',
+  'yes_no',
+  'pick_number',
+]);
+
+export const propStatusEnum = pgEnum('prop_status', ['open', 'locked', 'resolved']);
+
+// ── Props ────────────────────────────────────────
+export const props = pgTable('props', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  poolId: uuid('pool_id').references(() => pools.id, { onDelete: 'cascade' }),
+  question: text('question').notNull(),
+  type: propTypeEnum('type').notNull(),
+  options: jsonb('options'),
+  correctAnswer: text('correct_answer'),
+  points: integer('points').notNull().default(5),
+  status: propStatusEnum('status').notNull().default('open'),
+  category: text('category').notNull().default('general'),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdBy: uuid('created_by').references(() => users.id),
+  resolvedAt: timestamp('resolved_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ── Prop Picks ───────────────────────────────────
+export const propPicks = pgTable('prop_picks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  propId: uuid('prop_id').notNull().references(() => props.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').notNull().references(() => users.id),
+  poolId: uuid('pool_id').notNull().references(() => pools.id, { onDelete: 'cascade' }),
+  answer: text('answer').notNull(),
+  pointsAwarded: integer('points_awarded'),
+  isCorrect: boolean('is_correct'),
+  submittedAt: timestamp('submitted_at').defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex('prop_pick_unique_idx').on(table.propId, table.userId, table.poolId),
+]);

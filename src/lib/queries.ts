@@ -20,6 +20,8 @@ import {
   poolTeams,
   poolTeamMembers,
   poolInviteCodes,
+  props,
+  propPicks,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -534,4 +536,21 @@ export async function getUserPoolTeam(poolId: string, userId: string) {
       )
     );
   return result ?? null;
+}
+
+// ── Props ────────────────────────────────────────
+export async function getPropsForPool(poolId: string) {
+  // Get global props + pool-specific props
+  return db
+    .select()
+    .from(props)
+    .where(sql`${props.poolId} IS NULL OR ${props.poolId} = ${poolId}`)
+    .orderBy(asc(props.sortOrder));
+}
+
+export async function getUserPropPicks(userId: string, poolId: string) {
+  return db
+    .select()
+    .from(propPicks)
+    .where(and(eq(propPicks.userId, userId), eq(propPicks.poolId, poolId)));
 }

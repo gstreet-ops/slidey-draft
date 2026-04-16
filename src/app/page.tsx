@@ -174,6 +174,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
             desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
             icon={"\uD83D\uDCCB"}
           />
+          <QuickAction href="/props" title="Prop Bets" desc="Side predictions for bonus points" icon={"\uD83C\uDFB2"} />
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
           {isAdmin && (
             <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />

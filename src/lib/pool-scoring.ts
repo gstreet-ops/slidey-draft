@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { eq, and, asc, desc, sql, inArray } from "drizzle-orm";
+import { eq, and, asc, desc, sql, inArray, isNotNull } from "drizzle-orm";
 import {
   pools,
   poolMembers,
@@ -12,6 +12,7 @@ import {
   picks,
   actualResults,
   players,
+  propPicks,
 } from "@/db/schema";
 import { getPoolSettings, getEffectiveScoring } from "@/lib/pool-helpers";
 
@@ -265,6 +266,7 @@ export async function recalculatePoolStandings(poolId: string) {
     mockBonus: number;
     liveTotal: number;
     triviaTotal: number;
+    propTotal: number;
     combinedScore: number;
     picksPredicted: number;
     correctPredictions: number;
@@ -300,12 +302,24 @@ export async function recalculatePoolStandings(poolId: string) {
     const correctPredictions = Number(liveRows[0]?.correct || 0);
     const triviaTotal = triviaMap.get(member.userId) ?? 0;
 
+    // Get prop totals
+    const propRows = await db
+      .select({
+        total: sql<number>`COALESCE(SUM(${propPicks.pointsAwarded}), 0)`,
+      })
+      .from(propPicks)
+      .where(
+        and(eq(propPicks.poolId, poolId), eq(propPicks.userId, member.userId), isNotNull(propPicks.pointsAwarded))
+      );
+    const propTotal = Number(propRows[0]?.total || 0);
+
     standingsData.push({
       userId: member.userId,
       mockBonus,
       liveTotal,
       triviaTotal,
-      combinedScore: mockBonus + liveTotal + triviaTotal,
+      propTotal,
+      combinedScore: mockBonus + liveTotal + triviaTotal + propTotal,
       picksPredicted,
       correctPredictions,
     });
@@ -337,6 +351,7 @@ export async function recalculatePoolStandings(poolId: string) {
           mockBonus: s.mockBonus,
           liveTotal: s.liveTotal,
           triviaTotal: s.triviaTotal,
+          propTotal: s.propTotal,
           combinedScore: s.combinedScore,
           rank,
           previousRank,
@@ -357,6 +372,7 @@ export async function recalculatePoolStandings(poolId: string) {
         mockBonus: s.mockBonus,
         liveTotal: s.liveTotal,
         triviaTotal: s.triviaTotal,
+        propTotal: s.propTotal,
         combinedScore: s.combinedScore,
         rank,
         previousRank,
