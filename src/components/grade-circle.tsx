@@ -20,6 +20,16 @@ function gradeCircleColor(grade: LetterGrade): string {
   }
 }
 
+function gradeLabelColor(grade: LetterGrade): string {
+  switch (grade) {
+    case "A+": case "A": return "text-green-400/70";
+    case "B+": case "B": return "text-blue-400/70";
+    case "C+": case "C": return "text-yellow-400/70";
+    case "D": return "text-orange-400/70";
+    case "F": return "text-red-400/70";
+  }
+}
+
 export function GradeCircle({
   grade,
   label,
@@ -38,7 +48,7 @@ export function GradeCircle({
         {grade}
       </div>
       {label && (
-        <span className="text-[10px] text-white/40 font-medium">{label}</span>
+        <span className={`text-[10px] font-medium ${gradeLabelColor(grade)}`}>{label}</span>
       )}
     </div>
   );

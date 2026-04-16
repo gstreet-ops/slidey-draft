@@ -147,15 +147,20 @@ export function gradeMockDraft(
   const reaches = pickGrades.filter((g) => g.letterGrade === 'C+' || g.letterGrade === 'C').length;
   const busts = pickGrades.filter((g) => g.letterGrade === 'D' || g.letterGrade === 'F').length;
 
-  const hasNoF = !pickGrades.some((g) => g.letterGrade === 'F');
+  const GRADE_SUMMARIES: Record<LetterGrade, string[]> = {
+    'A+': ['Draft room genius — steals everywhere', 'GM-caliber board — almost no wasted picks'],
+    'A': ['Excellent board — you know your prospects', 'Strong instincts — value picks throughout'],
+    'B+': ['Above average — more hits than misses', 'Solid strategy with a few nice steals'],
+    'B': ['Competitive mock — right in the mix', 'Respectable board — some nice calls in there'],
+    'C+': ['Middle of the pack — a few too many reaches', 'Some good calls but inconsistent value'],
+    'C': ['Below average — reaching too often', 'Needs work — too many picks above consensus'],
+    'D': ['Rough board — big reaches across the board', 'Contrarian picks everywhere — bold or bust'],
+    'F': ['Off the rails — time to hit the tape room', 'Starting from scratch might not be a bad idea'],
+  };
 
-  let summary: string;
-  if (numericAverage >= 3.5 && hasNoF) summary = 'Elite draft — you clearly did your homework';
-  else if (numericAverage >= 3.0) summary = 'Strong mock — solid value throughout';
-  else if (numericAverage >= 2.5) summary = 'Decent draft — a few reaches but competitive';
-  else if (numericAverage >= 2.0) summary = 'Mixed bag — some steals offset by big reaches';
-  else if (numericAverage >= 1.5) summary = 'Rough draft — too many reaches to be competitive';
-  else summary = "Bold strategy... let's see how it plays out";
+  const summaryOptions = GRADE_SUMMARIES[letterGrade];
+  const summaryIdx = (totalPicks + steals) % summaryOptions.length;
+  const summary = summaryOptions[summaryIdx];
 
   return {
     letterGrade,

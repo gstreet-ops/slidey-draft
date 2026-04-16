@@ -7,10 +7,20 @@ import { generateMockSummaryCommentary } from "@/lib/pick-commentary";
 function gradeCircleColor(grade: LetterGrade): string {
   switch (grade) {
     case 'A+': case 'A': return "border-green-500/30 bg-green-500/20 text-green-400";
-    case 'B+': case 'B': return "border-blue-500/30 bg-blue-500/20 text-blue-400";
-    case 'C+': case 'C': return "border-yellow-500/30 bg-yellow-500/20 text-yellow-400";
-    case 'D': return "border-orange-500/30 bg-orange-500/20 text-orange-400";
+    case 'B+': case 'B': return "border-blue-400/30 bg-blue-400/20 text-blue-400";
+    case 'C+': case 'C': return "border-yellow-400/30 bg-yellow-400/20 text-yellow-400";
+    case 'D': return "border-orange-400/30 bg-orange-400/20 text-orange-400";
     case 'F': return "border-red-500/30 bg-red-500/20 text-red-400";
+  }
+}
+
+function gradeSummaryColor(grade: LetterGrade): string {
+  switch (grade) {
+    case 'A+': case 'A': return "text-green-400/70";
+    case 'B+': case 'B': return "text-blue-400/70";
+    case 'C+': case 'C': return "text-yellow-400/70";
+    case 'D': return "text-orange-400/70";
+    case 'F': return "text-red-400/70";
   }
 }
 
@@ -65,7 +75,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
           >
             Your Mock Draft Grade
           </p>
-          <p className="text-sm text-white/80 mt-0.5">{grade.summary}</p>
+          <p className={`text-sm mt-0.5 ${gradeSummaryColor(grade.letterGrade)}`}>{grade.summary}</p>
           {grade.pickPositions && (() => {
             const richSummary = generateMockSummaryCommentary(grade, grade.pickPositions);
             return richSummary !== grade.summary ? (
