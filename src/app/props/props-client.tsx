@@ -318,7 +318,7 @@ function PlayerPickInput({
   if (disabled && selectedPlayer) {
     return (
       <div className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-2 text-sm text-[var(--lions-blue)] ring-1 ring-[var(--lions-blue)]/30">
-        \u2713 {selectedPlayer.name} ({selectedPlayer.position}, {selectedPlayer.school})
+        ✓ {selectedPlayer.name} ({selectedPlayer.position}, {selectedPlayer.school})
       </div>
     );
   }
@@ -327,13 +327,13 @@ function PlayerPickInput({
     <div className="space-y-2">
       {selectedPlayer && (
         <div className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-2 text-sm text-[var(--lions-blue)] flex items-center justify-between ring-1 ring-[var(--lions-blue)]/30">
-          <span>\u2713 {selectedPlayer.name} ({selectedPlayer.position})</span>
+          <span>✓ {selectedPlayer.name} ({selectedPlayer.position})</span>
           <div className="flex gap-2">
             <button onClick={() => onSearchChange("")} className="text-xs text-white/50 hover:text-white/60">
               Change
             </button>
             <button onClick={onClear} className="text-xs text-red-400/60 hover:text-red-400">
-              \u2717
+              ✗
             </button>
           </div>
         </div>
