@@ -39,7 +39,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 animate-pulse">
+      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 animate-pulse">
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-full bg-white/10" />
           <div className="flex-1 space-y-2">
@@ -54,7 +54,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
   if (!grade) return null;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4">
       <div className="flex items-center gap-4">
         {/* Large grade circle */}
         <div
@@ -71,7 +71,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
         {/* Summary */}
         <div className="flex-1 min-w-0">
           <p
-            className="text-[10px] font-bold uppercase tracking-wider text-white/40"
+            className="text-[10px] font-bold uppercase tracking-wider text-white/50"
           >
             Your Mock Draft Grade
           </p>
@@ -79,7 +79,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
           {grade.pickPositions && (() => {
             const richSummary = generateMockSummaryCommentary(grade, grade.pickPositions);
             return richSummary !== grade.summary ? (
-              <p className="text-xs text-white/40 mt-1 line-clamp-2">{richSummary}</p>
+              <p className="text-xs text-white/50 mt-1 line-clamp-2">{richSummary}</p>
             ) : null;
           })()}
         </div>
@@ -88,19 +88,19 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
         <div className="hidden sm:flex items-center gap-3 text-center shrink-0">
           <div>
             <p className="text-sm font-bold text-green-400">{grade.steals}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Steals</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Steals</p>
           </div>
           <div>
             <p className="text-sm font-bold text-blue-400">{grade.solid}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Solid</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Solid</p>
           </div>
           <div>
             <p className="text-sm font-bold text-yellow-400">{grade.reaches}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Reaches</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Reaches</p>
           </div>
           <div>
             <p className="text-sm font-bold text-red-400">{grade.busts}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Busts</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Busts</p>
           </div>
         </div>
       </div>
@@ -109,23 +109,23 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
       <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-white/10">
         <div className="text-center">
           <p className="text-sm font-bold text-green-400">{grade.steals}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Steals</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Steals</p>
         </div>
         <div className="text-center">
           <p className="text-sm font-bold text-blue-400">{grade.solid}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Solid</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Solid</p>
         </div>
         <div className="text-center">
           <p className="text-sm font-bold text-yellow-400">{grade.reaches}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Reaches</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Reaches</p>
         </div>
         <div className="text-center">
           <p className="text-sm font-bold text-red-400">{grade.busts}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">Busts</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Busts</p>
         </div>
       </div>
 
-      <p className="text-[10px] text-white/30 mt-2">
+      <p className="text-[10px] text-white/40 mt-2">
         Based on ESPN prospect grades and consensus rankings
       </p>
     </div>

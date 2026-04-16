@@ -65,6 +65,7 @@ export default async function MyBoardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
       {locked && <DraftLockedBanner />}
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
@@ -120,10 +121,10 @@ export default async function MyBoardPage() {
                 <Link
                   key={pb.boardId}
                   href={`/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
+                  className="group rounded-xl border border-white/[0.12] bg-white/8 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
                 >
                   <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
-                  <p className="text-xs text-white/40 mt-1">{pb.pickCount}/32 picks &middot; {pb.status}</p>
+                  <p className="text-xs text-white/50 mt-1">{pb.pickCount}/32 picks &middot; {pb.status}</p>
                 </Link>
               ))}
             </div>

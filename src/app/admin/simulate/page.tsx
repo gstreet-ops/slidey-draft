@@ -32,7 +32,7 @@ export default async function SimulatePage() {
       </div>
 
       {/* Simulation Guide */}
-      <details className="rounded-xl border border-white/10 bg-white/5">
+      <details className="rounded-xl border border-white/[0.12] bg-white/8">
         <summary className="px-5 py-3 text-sm font-semibold text-white/60 uppercase tracking-wider cursor-pointer hover:bg-white/5 transition">
           How to Run a Simulation
         </summary>
@@ -57,7 +57,7 @@ export default async function SimulatePage() {
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">5</span>
             <p>Watch the leaderboard update in real-time</p>
           </div>
-          <p className="text-xs text-white/30 mt-3 pl-9">
+          <p className="text-xs text-white/40 mt-3 pl-9">
             Commissioners can also manually control trivia (fire, skip, pause) from the Live trivia controls panel.
           </p>
         </div>
@@ -65,8 +65,8 @@ export default async function SimulatePage() {
 
       {/* Trivia Status */}
       {triviaStatus.length > 0 && (
-        <div className="rounded-xl border border-white/10 bg-white/5 p-5 space-y-3">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white/40">Trivia Status</h2>
+        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5 space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white/50">Trivia Status</h2>
           {triviaStatus.map((ts) => (
             <div key={ts.poolId} className="flex flex-wrap items-center gap-3 text-sm">
               <span className="text-white/60 font-semibold">{ts.poolName}</span>
@@ -75,9 +75,9 @@ export default async function SimulatePage() {
                   Active: Q{ts.activeSortOrder} &mdash; {ts.activeQuestion.length > 50 ? ts.activeQuestion.slice(0, 50) + "..." : ts.activeQuestion}
                 </span>
               ) : (
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs text-white/40">No active question</span>
+                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs text-white/50">No active question</span>
               )}
-              <span className="text-xs text-white/30">
+              <span className="text-xs text-white/40">
                 {ts.pending} pending &middot; {ts.completed} completed &middot; {ts.total} total
               </span>
             </div>

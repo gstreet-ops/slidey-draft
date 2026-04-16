@@ -126,7 +126,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
         </div>
       </div>
       <div className="bg-[var(--gtown-navy)]/80 px-4 py-2 text-center">
-        <p className="text-[10px] text-white/30">Video running in separate window</p>
+        <p className="text-[10px] text-white/40">Video running in separate window</p>
         <button
           onClick={() => popupRef.current?.focus()}
           className="text-xs text-[var(--slidey)] font-semibold hover:opacity-80 mt-1"

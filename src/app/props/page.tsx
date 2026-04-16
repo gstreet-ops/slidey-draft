@@ -30,6 +30,7 @@ export default async function PropsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <h1 className="text-3xl font-bold text-white tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           PROP BETS
@@ -58,7 +59,7 @@ export default async function PropsPage() {
           const pct = (picked / total) * 100;
           const barColor = pct >= 100 ? "bg-emerald-400" : pct >= 67 ? "bg-emerald-400" : pct >= 34 ? "bg-[var(--lions-blue)]" : "bg-white/40";
           return (
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mt-6 rounded-xl border border-white/[0.12] bg-white/8 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-white/60">Your picks</span>
                 <span className="text-sm font-bold text-white">

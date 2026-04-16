@@ -37,7 +37,7 @@ function gradeColor(grade: number): string {
   if (grade >= 90) return "bg-green-500/20 text-green-400 border-green-500/30";
   if (grade >= 80) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
   if (grade >= 70) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-  return "bg-white/5 text-white/50 border-white/10";
+  return "bg-white/8 text-white/50 border-white/[0.12]";
 }
 
 export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[]; isLoggedIn: boolean }) {
@@ -83,7 +83,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
           </div>
         </div>
 
-        <p className="text-xs text-white/40">{filtered.length} prospects</p>
+        <p className="text-xs text-white/50">{filtered.length} prospects</p>
 
         {/* Prospect list */}
         <div className="space-y-2">
@@ -93,10 +93,10 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
               <button
                 key={p.id}
                 onClick={() => setDrawerProspect(p)}
-                className="flex w-full items-center gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-left transition hover:bg-white/10 sm:gap-4 sm:px-5 sm:py-4"
+                className="flex w-full items-center gap-3 rounded-xl bg-white/8 border border-white/[0.12] px-4 py-3 text-left transition hover:bg-white/10 sm:gap-4 sm:px-5 sm:py-4"
               >
                 {/* Rank */}
-                <span className="w-8 text-center text-sm font-bold text-white/40 shrink-0 sm:w-10 sm:text-base">
+                <span className="w-8 text-center text-sm font-bold text-white/50 shrink-0 sm:w-10 sm:text-base">
                   {p.rank}
                 </span>
 
@@ -117,10 +117,10 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                     )}
                     <span className="text-xs text-white/50 truncate">{p.school}</span>
                     {p.nflComparison && (
-                      <span className="hidden text-xs text-white/40 sm:inline">· Comp: {p.nflComparison}</span>
+                      <span className="hidden text-xs text-white/50 sm:inline">· Comp: {p.nflComparison}</span>
                     )}
                     {p.consensusLow != null && p.consensusHigh != null && (
-                      <span className="text-[10px] text-white/30 font-mono sm:text-xs">
+                      <span className="text-[10px] text-white/40 font-mono sm:text-xs">
                         · Range {p.consensusLow}-{p.consensusHigh}
                       </span>
                     )}

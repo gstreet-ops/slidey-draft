@@ -60,7 +60,7 @@ export function ScoreCascade({ targetScore, pointsEarned, matchType, animate }: 
       >
         {displayScore}
       </span>
-      <span className="text-sm text-white/40 ml-1">pts</span>
+      <span className="text-sm text-white/50 ml-1">pts</span>
 
       {showBadge && pointsEarned > 0 && (
         <span

@@ -19,10 +19,10 @@ export function SoundPreference() {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-5 py-4">
+    <div className="flex items-center justify-between rounded-xl border border-white/[0.12] bg-white/8 px-5 py-4">
       <div>
         <p className="text-sm font-semibold text-white">Draft Night Sounds</p>
-        <p className="text-xs text-white/40 mt-0.5">Pick alerts, score chimes, and reactions</p>
+        <p className="text-xs text-white/50 mt-0.5">Pick alerts, score chimes, and reactions</p>
       </div>
       <button
         onClick={toggle}

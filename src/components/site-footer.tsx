@@ -7,7 +7,7 @@ export function SiteFooter() {
         <p className="text-xs text-white/20">
           &copy; {new Date().getFullYear()} Draft Day Challenge
         </p>
-        <Link href="/guide" className="text-xs text-white/20 hover:text-white/40 transition">
+        <Link href="/guide" className="text-xs text-white/20 hover:text-white/50 transition">
           How to Play
         </Link>
       </div>

@@ -32,7 +32,7 @@ export default function InviteActivationPage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-6">
+      <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
         <h1 className="text-2xl font-bold text-white">Activate Your Account</h1>
         <p className="text-white/60">
           Invite code: <span className="font-mono text-white">{code}</span>
@@ -54,7 +54,7 @@ export default function InviteActivationPage() {
         {status === "success" && (
           <div className="space-y-2">
             <p className="text-green-400 font-semibold">{message}</p>
-            <p className="text-white/40 text-sm">Redirecting...</p>
+            <p className="text-white/50 text-sm">Redirecting...</p>
           </div>
         )}
 

@@ -37,11 +37,11 @@ export default async function SettingsPage() {
         </h1>
 
         <section className="mt-8">
-          <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider">
+          <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider">
             Your Team
           </h2>
           {currentTeam ? (
-            <div className="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mt-3 flex items-center gap-3 rounded-xl border border-white/[0.12] bg-white/8 p-4">
               {currentTeam.logoUrl ? (
                 <Image
                   src={currentTeam.logoUrl}
@@ -61,12 +61,12 @@ export default async function SettingsPage() {
               <span className="text-white font-semibold">{currentTeam.name}</span>
             </div>
           ) : (
-            <p className="mt-3 text-white/40 text-sm">No team selected</p>
+            <p className="mt-3 text-white/50 text-sm">No team selected</p>
           )}
         </section>
 
         <section className="mt-8">
-          <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">
             {currentTeam ? "Change Team" : "Pick a Team"}
           </h2>
           <TeamPicker

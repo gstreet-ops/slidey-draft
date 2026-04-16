@@ -37,7 +37,7 @@ function gradeColor(grade: number): string {
   if (grade >= 90) return "text-green-400 bg-green-500/20 border-green-500/30";
   if (grade >= 80) return "text-blue-400 bg-blue-500/20 border-blue-500/30";
   if (grade >= 70) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30";
-  return "text-white/50 bg-white/5 border-white/10";
+  return "text-white/50 bg-white/8 border-white/[0.12]";
 }
 
 export function ProspectDetailDrawer({ prospect, onClose }: Props) {
@@ -92,7 +92,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
         </button>
 
         {/* Header row */}
-        <div className="flex items-start gap-4 border-b border-white/10 bg-white/5 p-5 pt-6">
+        <div className="flex items-start gap-4 border-b border-white/[0.12] bg-white/8 p-5 pt-6">
           <PlayerAvatar player={prospect} size={80} />
           <div className="flex-1 min-w-0 pt-1">
             <h2
@@ -111,7 +111,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               <span className="text-sm text-white/50">{prospect.school}</span>
             </div>
             {prospect.nflComparison && (
-              <p className="mt-1.5 text-xs text-white/40">
+              <p className="mt-1.5 text-xs text-white/50">
                 NFL Comp: <span className="font-semibold text-white/70">{prospect.nflComparison}</span>
               </p>
             )}
@@ -124,13 +124,13 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
             {prospect.positionRank && (
               <div className="flex-1 border-r border-white/10 px-4 py-3 text-center">
                 <p className="text-2xl font-bold text-white">{prospect.positionRank}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">POS RK</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50">POS RK</p>
               </div>
             )}
             {prospect.rank && (
               <div className="flex-1 border-r border-white/10 px-4 py-3 text-center">
                 <p className="text-2xl font-bold text-white">{prospect.rank}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">OVR RK</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50">OVR RK</p>
               </div>
             )}
             {prospect.grade && (
@@ -138,7 +138,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                 <p className={`inline-flex items-center justify-center rounded-lg border px-3 py-0.5 text-2xl font-bold ${gradeColor(prospect.grade)}`}>
                   {prospect.grade}
                 </p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">GRADE</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">GRADE</p>
               </div>
             )}
           </div>
@@ -148,7 +148,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Draft Range */}
           {prospect.consensusLow != null && prospect.consensusHigh != null && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
                 Draft Range
               </h3>
               <p className="text-sm text-white/70 mb-2">
@@ -172,7 +172,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                   />
                 )}
               </div>
-              <div className="flex justify-between mt-1 text-[9px] text-white/30">
+              <div className="flex justify-between mt-1 text-[9px] text-white/40">
                 <span>1</span>
                 <span>16</span>
                 <span>32</span>
@@ -183,7 +183,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Combine Measurables grid */}
           {measurables.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
                 Combine Measurables
               </h3>
               <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4">
@@ -193,7 +193,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                     className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[#0c1322]" : "bg-white/5"}`}
                   >
                     <p className="text-sm font-bold text-white">{m.value}</p>
-                    <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">{m.label}</p>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Scouting Report */}
           {prospect.notes && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
                 Scouting Report
               </h3>
               <p className="text-sm leading-relaxed text-white/60">

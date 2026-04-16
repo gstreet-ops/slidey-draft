@@ -31,7 +31,7 @@ export default async function CommissionerGuidePage() {
         <p className="mt-2 text-sm text-white/50">
           Set up your pool, manage teams, and run draft night.
         </p>
-        <p className="mt-2 text-xs text-white/40">
+        <p className="mt-2 text-xs text-white/50">
           Looking for player instructions?{" "}
           <Link href="/guide/user" className="text-[var(--slidey)] hover:underline">
             Player Guide →
@@ -40,7 +40,7 @@ export default async function CommissionerGuidePage() {
 
         <div className="mt-8 space-y-6">
           {/* ── Setting Up Your Pool ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Setting Up Your Pool</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Creating a pool takes about two minutes. Once it&apos;s live, share your invite code and
@@ -55,7 +55,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Managing Teams ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Managing Teams</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Teams are optional — best for pools with 6+ people. Skip them if you have a small group where individual competition is enough. If you do create teams, individual scores roll up to team totals and both standings are tracked on the leaderboard.
@@ -84,7 +84,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Pool Theming ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Pool Theming</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Give your pool a custom look that carries through all pool pages.
@@ -103,7 +103,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Draft Night Checklist ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Draft Night Checklist</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Run through this before the draft starts to make sure everything is in order.
@@ -124,7 +124,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Running a Simulation ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Running a Simulation</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Test your setup before draft night by running a simulated draft. Simulations use realistic pick
@@ -151,7 +151,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Scoring Configuration ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Scoring Configuration</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Control how points are awarded in your pool. Open <strong className="text-white">Scoring Settings</strong> on the Live page to configure.
@@ -167,7 +167,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Video Call Setup ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Video Call Setup</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Set up a video call so your pool can talk during the draft.
@@ -181,7 +181,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Live Page Controls ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Live Page Commissioner Controls</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               During the draft (or simulation), all commissioner controls are accessible directly from the Live page — no need to switch tabs.
@@ -203,7 +203,7 @@ export default async function CommissionerGuidePage() {
           </section>
 
           {/* ── Invite Section ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Invite Template</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Use this template to invite your group. Replace <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-white/80">[YOUR-CODE]</code> with your actual pool invite code before sending.
@@ -219,7 +219,7 @@ export default async function CommissionerGuidePage() {
 
         {/* Footer link */}
         <div className="mt-10 text-center">
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/40">
             Sharing with players?{" "}
             <Link href="/guide/user" className="text-[var(--slidey)] hover:underline">
               View the Player Guide →
@@ -246,7 +246,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--slidey)] text-xs font-bold text-white">
         {n}
       </span>
@@ -257,7 +257,7 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4">
+    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4">
       <p className="text-sm font-bold text-[var(--slidey)]">{title}</p>
       <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{children}</p>
     </div>
@@ -266,7 +266,7 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/20 text-green-400 text-xs font-bold mt-0.5">
         ✓
       </span>

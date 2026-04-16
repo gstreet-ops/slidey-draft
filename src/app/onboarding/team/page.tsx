@@ -55,7 +55,7 @@ export default async function OnboardingTeamPage() {
 
         <Link
           href="/dashboard"
-          className="mt-6 inline-block text-sm text-white/30 hover:text-white/50 transition"
+          className="mt-6 inline-block text-sm text-white/40 hover:text-white/50 transition"
         >
           Skip for now
         </Link>

@@ -26,13 +26,13 @@ export function PoolLockControl({ poolId, status }: { poolId: string; status: st
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
             Pool Status
           </h3>
-          <p className="text-xs text-white/40 mt-1">
+          <p className="text-xs text-white/50 mt-1">
             {isLocked
               ? "Pool is LOCKED — mock boards are frozen, live predictions and trivia are active."
               : "Pool is OPEN — members can still edit their mock boards."}

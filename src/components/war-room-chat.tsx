@@ -100,11 +100,11 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <div className="min-w-0">
               <h3 className="text-sm font-semibold text-white truncate">{poolName}</h3>
-              <span className="text-[10px] text-white/40">Chat</span>
+              <span className="text-[10px] text-white/50">Chat</span>
             </div>
             <button
               onClick={toggle}
-              className="rounded-lg p-1.5 text-white/40 hover:bg-white/10 hover:text-white transition"
+              className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white transition"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M1 1l12 12M13 1L1 13" />
@@ -133,11 +133,11 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
               <div>
                 <h3 className="text-sm font-semibold text-white">{poolName}</h3>
-                <span className="text-[10px] text-white/40">Chat</span>
+                <span className="text-[10px] text-white/50">Chat</span>
               </div>
               <button
                 onClick={toggle}
-                className="rounded-lg p-1.5 text-white/40 hover:bg-white/10 hover:text-white transition"
+                className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white transition"
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 1l12 12M13 1L1 13" />

@@ -97,7 +97,7 @@ function fortyTimeColor(position: string, time: number): string {
   if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
   if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
   if (EDGE_LB_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
-  return "text-white/40";
+  return "text-white/50";
 }
 
 /* ── Inline detail panel (ESPN-style) ────────────────────────── */
@@ -106,7 +106,7 @@ function gradeColor(grade: number): string {
   if (grade >= 90) return "text-green-400 bg-green-500/20 border-green-500/30";
   if (grade >= 80) return "text-blue-400 bg-blue-500/20 border-blue-500/30";
   if (grade >= 70) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30";
-  return "text-white/50 bg-white/5 border-white/10";
+  return "text-white/50 bg-white/8 border-white/[0.12]";
 }
 
 function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player; onClose: () => void; pickNumber?: number }) {
@@ -141,17 +141,17 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
               {player.height && player.weight && " · "}
               {player.weight && `${player.weight} lbs`}
             </span>
-            <span className="text-xs text-white/40">{player.school}</span>
+            <span className="text-xs text-white/50">{player.school}</span>
           </div>
           {player.nflComparison && (
-            <p className="mt-1 text-[11px] text-white/40">
+            <p className="mt-1 text-[11px] text-white/50">
               NFL Comp: <span className="font-semibold text-white/60">{player.nflComparison}</span>
             </p>
           )}
         </div>
         <button
           onClick={onClose}
-          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/40 hover:bg-white/20 hover:text-white/60 transition"
+          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/50 hover:bg-white/20 hover:text-white/60 transition"
         >
           <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -165,13 +165,13 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
           {player.positionRank && (
             <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
               <p className="text-lg font-bold text-white">{player.positionRank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">POS RK</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">POS RK</p>
             </div>
           )}
           {player.rank && (
             <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
               <p className="text-lg font-bold text-white">{player.rank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40">OVR RK</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">OVR RK</p>
             </div>
           )}
           {player.grade && (
@@ -179,7 +179,7 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
               <p className={`inline-flex items-center justify-center rounded border px-2 py-0.5 text-lg font-bold ${gradeColor(player.grade)}`}>
                 {player.grade}
               </p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">GRADE</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">GRADE</p>
             </div>
           )}
         </div>
@@ -191,7 +191,7 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
           {measurables.map((m, i) => (
             <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[#0c1322]" : "bg-white/5"}`}>
               <p className="text-xs font-bold text-white">{m.value}</p>
-              <p className="text-[8px] font-semibold uppercase tracking-wider text-white/40">{m.label}</p>
+              <p className="text-[8px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>
             </div>
           ))}
         </div>
@@ -203,19 +203,19 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
           const pg = gradePick(pickNumber, player.grade, player.rank);
           return (
             <div className="mb-3">
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Mock Grade</h4>
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Mock Grade</h4>
               <div className="flex rounded-lg border border-white/10 overflow-hidden">
                 <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
                   <PickGradeBadge grade={pg.valueGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Value</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Value</p>
                 </div>
                 <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
                   <PickGradeBadge grade={pg.consensusGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Consensus</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Consensus</p>
                 </div>
                 <div className="flex-1 px-3 py-2 text-center bg-white/5">
                   <PickGradeBadge grade={pg.letterGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Combined</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Combined</p>
                 </div>
               </div>
             </div>
@@ -243,9 +243,9 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
         );
         return (
           <div className="mb-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Draft Analysis</h4>
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Draft Analysis</h4>
             <p className="text-xs italic leading-relaxed text-white/60">{commentary}</p>
-            <div className="mt-1.5 text-[10px] text-white/40 space-y-0.5">
+            <div className="mt-1.5 text-[10px] text-white/50 space-y-0.5">
               <p>Value: {pg.valueGrade} — {valueExplanation(pickNumber, player.grade)}</p>
               <p>Consensus: {pg.consensusGrade} — {consensusExplanation(pickNumber, player.rank)}</p>
             </div>
@@ -256,7 +256,7 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
       {/* Pre-Draft Analysis */}
       {player.notes && (
         <div>
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Pre-Draft Analysis</h4>
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Pre-Draft Analysis</h4>
           <p className="text-xs leading-relaxed text-white/60">{player.notes}</p>
         </div>
       )}
@@ -451,7 +451,7 @@ export function PickBuilder({
           >
             PROSPECT POOL
           </h2>
-          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/40">
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/50">
             Next Best Prospect
           </span>
         </div>
@@ -476,7 +476,7 @@ export function PickBuilder({
             className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold transition sm:px-2 sm:py-1 sm:text-xs ${
               posFilter === pos
                 ? "bg-[var(--lions-blue)] text-white"
-                : "bg-white/5 text-white/40 hover:text-white/60"
+                : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
             {pos}
@@ -491,7 +491,7 @@ export function PickBuilder({
           className={`mb-2 rounded-full px-3 py-1 text-[10px] font-semibold transition ${
             needsOnly
               ? "bg-green-500/20 text-green-400 border border-green-500/30"
-              : "bg-white/5 text-white/40 border border-white/10 hover:text-white/60"
+              : "bg-white/5 text-white/50 border border-white/10 hover:text-white/60"
           }`}
         >
           {needsOnly ? "✓ Needs Only" : "Needs Only"}
@@ -507,7 +507,7 @@ export function PickBuilder({
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
               sortBy === s
                 ? "bg-[var(--lions-blue)] text-white"
-                : "bg-white/5 text-white/40 hover:text-white/60"
+                : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
             {s === "rank" ? "Rank" : s === "fastest" ? "Fastest" : "Grade"}
@@ -526,7 +526,7 @@ export function PickBuilder({
             className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
             rows={2}
           />
-          <p className="text-[10px] text-white/30 mt-1">Your notes will be visible to everyone in your pool</p>
+          <p className="text-[10px] text-white/40 mt-1">Your notes will be visible to everyone in your pool</p>
         </div>
       )}
 
@@ -550,7 +550,7 @@ export function PickBuilder({
                 onClick={() => canPick && slot && handleMakePick(player.id, slot)}
               >
                 {player.rank && (
-                  <span className="text-xs font-bold text-white/40 w-5 text-right shrink-0">
+                  <span className="text-xs font-bold text-white/50 w-5 text-right shrink-0">
                     #{player.rank}
                   </span>
                 )}
@@ -572,7 +572,7 @@ export function PickBuilder({
                       </span>
                     )}
                     {player.consensusLow != null && player.consensusHigh != null && (
-                      <span className="text-[10px] text-white/30 font-mono hidden sm:inline">
+                      <span className="text-[10px] text-white/40 font-mono hidden sm:inline">
                         {player.consensusLow === player.consensusHigh
                           ? `Pick ${player.consensusLow}`
                           : `${player.consensusLow}-${player.consensusHigh}`}
@@ -598,7 +598,7 @@ export function PickBuilder({
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition sm:h-6 sm:w-6 ${
                     isExpanded
                       ? "bg-[var(--lions-blue)] text-white"
-                      : "text-white/30 hover:text-[var(--lions-blue)]"
+                      : "text-white/40 hover:text-[var(--lions-blue)]"
                   }`}
                   title="View scouting report"
                 >
@@ -619,7 +619,7 @@ export function PickBuilder({
           );
         })}
         {filteredPlayers.length === 0 && (
-          <p className="py-4 text-center text-sm text-white/40">
+          <p className="py-4 text-center text-sm text-white/50">
             No players match your search
           </p>
         )}
@@ -650,10 +650,10 @@ export function PickBuilder({
               <div
                 className={`flex items-center gap-1.5 border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:px-3 sm:py-2 ${
                   pick
-                    ? "border-white/10 bg-white/5"
+                    ? "border-white/[0.12] bg-white/8"
                     : isActive
-                    ? "border-[var(--lions-blue)] bg-white/5 ring-2 ring-[var(--lions-blue)]/30"
-                    : "border-white/10 bg-white/5 hover:border-[var(--lions-blue)]/40"
+                    ? "border-[var(--lions-blue)] bg-white/8 ring-2 ring-[var(--lions-blue)]/30"
+                    : "border-white/[0.12] bg-white/8 hover:border-[var(--lions-blue)]/40"
                 }`}
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -696,7 +696,7 @@ export function PickBuilder({
                     <span className="text-[10px] font-semibold text-white/50 sm:text-xs">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">{slot.teamName}</span>
+                    <span className="text-[10px] text-white/50 hidden sm:inline sm:text-xs">{slot.teamName}</span>
                     {slot.note && (
                       <span className="text-[9px] text-amber-600/70 sm:text-[10px]">({slot.note})</span>
                     )}
@@ -731,7 +731,7 @@ export function PickBuilder({
                           </>
                         );
                       })()}
-                      <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">
+                      <span className="text-[10px] text-white/50 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
                       {(() => {
@@ -743,7 +743,7 @@ export function PickBuilder({
                     </div>
                   ) : (
                     <>
-                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/40"}`}>
+                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/50"}`}>
                         {isActive ? "Select a player →" : "Click to pick"}
                       </p>
                       {slot.teamNeeds && slot.teamNeeds.length > 0 && (
@@ -825,7 +825,7 @@ export function PickBuilder({
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setEditingNotePickId(null); }}
-                        className="text-[10px] text-white/40 hover:text-white/60"
+                        className="text-[10px] text-white/50 hover:text-white/60"
                       >
                         Cancel
                       </button>
@@ -843,7 +843,7 @@ export function PickBuilder({
                     <span className="text-sm text-amber-400/30 font-serif leading-none">{"\u201C"}</span>
                     <p className="text-[11px] text-amber-100/70 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
                     <p className="text-[9px] text-amber-400/40 uppercase tracking-wider font-semibold mt-1">Your Take</p>
-                    <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-white/30">
+                    <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-white/40">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
                       </svg>
@@ -858,7 +858,7 @@ export function PickBuilder({
                       setEditingNoteText("");
                     }}
                   >
-                    <p className="text-[11px] text-white/30 italic hover:text-white/40 flex items-center gap-1.5">
+                    <p className="text-[11px] text-white/40 italic hover:text-white/50 flex items-center gap-1.5">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="shrink-0">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
                       </svg>
@@ -896,7 +896,7 @@ export function PickBuilder({
                   <div className="ml-10 mt-1 hidden sm:block">
                     <p className="text-[9px] text-white/20 uppercase tracking-wider font-semibold mb-0.5">AI Analysis</p>
                     <div
-                      className="border-l-2 pl-2 text-[11px] italic text-white/40"
+                      className="border-l-2 pl-2 text-[11px] italic text-white/50"
                       style={{ borderColor: gradeColorHex(pg.letterGrade) }}
                     >
                       {commentary}

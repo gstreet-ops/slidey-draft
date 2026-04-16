@@ -48,28 +48,28 @@ export default async function PublicBoardPage({ params }: { params: Params }) {
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-        <Link href="/picks" className="text-sm text-white/40 hover:text-white/70 transition">&larr; All Boards</Link>
+        <Link href="/picks" className="text-sm text-white/50 hover:text-white/70 transition">&larr; All Boards</Link>
         <h1 className="mt-4 text-3xl font-bold text-white tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           {data.board.title.toUpperCase()}
         </h1>
         <p className="mt-1 text-sm text-white/50">{data.board.season} NFL Mock Draft &middot; {data.picks.length} picks</p>
 
         {boardScore && (
-          <div className="mt-4 flex flex-wrap gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
+          <div className="mt-4 flex flex-wrap gap-4 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
             <div>
-              <p className="text-[10px] text-white/40 uppercase tracking-wider sm:text-xs">Score</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider sm:text-xs">Score</p>
               <p className="text-2xl font-bold text-white sm:text-3xl">{boardScore.totalScore}</p>
             </div>
             <div>
-              <p className="text-[10px] text-white/40 uppercase tracking-wider sm:text-xs">Exact</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider sm:text-xs">Exact</p>
               <p className="text-lg font-bold text-green-400 sm:text-xl">{boardScore.correctExact}</p>
             </div>
             <div>
-              <p className="text-[10px] text-white/40 uppercase tracking-wider sm:text-xs">Correct</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider sm:text-xs">Correct</p>
               <p className="text-lg font-bold text-white sm:text-xl">{boardScore.correctPlayer}</p>
             </div>
             <div>
-              <p className="text-[10px] text-white/40 uppercase tracking-wider sm:text-xs">Accuracy</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider sm:text-xs">Accuracy</p>
               <p className="text-lg font-bold text-white sm:text-xl">{boardScore.accuracyPct?.toFixed(1)}%</p>
             </div>
           </div>

@@ -21,13 +21,13 @@ export function DraftControl({ isLocked }: { isLocked: boolean }) {
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
             DRAFT STATUS
           </h2>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-white/50 mt-1">
             {locked
               ? "Draft is LOCKED — /live page is active, mock boards are frozen, scoring is live."
               : "Draft is UNLOCKED — users can still edit mock boards. Lock when ready for draft night."}

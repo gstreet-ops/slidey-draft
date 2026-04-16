@@ -29,7 +29,7 @@ export function CollapsibleVideoSettings({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8">
       {toast && (
         <div className="fixed top-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-lg">{toast}</div>
       )}
@@ -41,18 +41,18 @@ export function CollapsibleVideoSettings({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           Video Call
         </span>
-        <span className="text-xs text-white/30">{expanded ? "\u25BE" : "\u25B8"}</span>
+        <span className="text-xs text-white/40">{expanded ? "\u25BE" : "\u25B8"}</span>
       </button>
       {expanded && (
         <div className="px-5 pb-5 space-y-3">
-          <p className="text-xs text-white/40">Paste a Google Meet, Zoom, or any video call link. Players will see a &quot;Join Video Call&quot; button.</p>
+          <p className="text-xs text-white/50">Paste a Google Meet, Zoom, or any video call link. Players will see a &quot;Join Video Call&quot; button.</p>
           <div className="flex gap-2">
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://meet.google.com/abc-defg-hij"
-              className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
+              className="flex-1 rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
             />
             <button
               onClick={handleSave}

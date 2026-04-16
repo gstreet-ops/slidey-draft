@@ -89,14 +89,14 @@ export function PoolInviteManager({
           <span className="text-lg">👥</span>
           <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Invite Players</h3>
         </div>
-        <span className="text-xs text-white/30">
+        <span className="text-xs text-white/40">
           {usedCount} of {codes.length} invites used · {memberCount} member{memberCount !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Open invite link */}
       <div className="rounded-lg border border-white/10 bg-black/20 p-4 space-y-2">
-        <p className="text-xs text-white/40 font-semibold uppercase tracking-wider">Shared Pool Link (unlimited joins)</p>
+        <p className="text-xs text-white/50 font-semibold uppercase tracking-wider">Shared Pool Link (unlimited joins)</p>
         <div className="flex items-center gap-2">
           <code className="text-sm text-[var(--gtown-highlight)] break-all flex-1">
             https://slidey-draft.vercel.app/join/{openInviteCode}
@@ -115,7 +115,7 @@ export function PoolInviteManager({
               "open-msg"
             )
           }
-          className="text-xs text-white/40 hover:text-white/60 transition"
+          className="text-xs text-white/50 hover:text-white/60 transition"
         >
           {copied === "open-msg" ? "Message copied!" : "Copy share message"}
         </button>
@@ -123,7 +123,7 @@ export function PoolInviteManager({
 
       {/* Generate personal invite codes */}
       <div className="space-y-3">
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-white/50">
           Personal invites are single-use — each code works for one player only.
         </p>
         <div className="flex gap-3">
@@ -147,7 +147,7 @@ export function PoolInviteManager({
       {/* Generated link display */}
       {generatedLink && (
         <div className="rounded-lg border border-[var(--slidey)]/30 bg-[var(--slidey)]/10 p-4 space-y-2">
-          <p className="text-xs text-white/40">Share this link (single-use):</p>
+          <p className="text-xs text-white/50">Share this link (single-use):</p>
           <code className="block text-sm text-[var(--slidey)] break-all">{generatedLink}</code>
           <div className="flex gap-4">
             <button
@@ -178,7 +178,7 @@ export function PoolInviteManager({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                   <th className="pb-2 pr-3">Code</th>
                   <th className="pb-2 pr-3">Status</th>
                   <th className="pb-2 pr-3">Used By</th>
@@ -199,7 +199,7 @@ export function PoolInviteManager({
                         </span>
                       </td>
                       <td className="py-2 pr-3 text-xs">{c.usedByName || c.usedByEmail || "—"}</td>
-                      <td className="py-2 pr-3 text-xs text-white/30">{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td className="py-2 pr-3 text-xs text-white/40">{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td className="py-2 text-right">
                         {!c.usedBy && !c.revokedAt && (
                           <div className="flex items-center gap-3 justify-end">

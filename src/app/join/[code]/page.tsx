@@ -79,7 +79,7 @@ export default async function SmartJoinPage({
     if (pool.status !== "open") {
       return (
         <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-          <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-4">
+          <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
             <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
             <p className="text-white/60 text-sm">This pool is no longer accepting members.</p>
             <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
@@ -90,10 +90,10 @@ export default async function SmartJoinPage({
 
     return (
       <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-6">
+        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
           <h1 className="text-2xl font-bold text-white">Join {pool.name}?</h1>
           {pool.description && <p className="text-white/50 text-sm">{pool.description as string}</p>}
-          <div className="flex items-center justify-center gap-4 text-sm text-white/40">
+          <div className="flex items-center justify-center gap-4 text-sm text-white/50">
             <span>{commissionerName}</span>
             <span>&middot;</span>
             <span>{memberCount} member{memberCount !== 1 ? "s" : ""}</span>
@@ -108,12 +108,12 @@ export default async function SmartJoinPage({
   if (session?.user?.id && session.user.status !== "active") {
     return (
       <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-6">
+        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
           <h1 className="text-2xl font-bold text-white">Join {pool.name}</h1>
           <p className="text-white/50 text-sm">
             Joining this pool will activate your account and give you full access.
           </p>
-          <div className="text-sm text-white/40">
+          <div className="text-sm text-white/50">
             {memberCount} member{memberCount !== 1 ? "s" : ""} &middot; {commissionerName}
           </div>
           <JoinPoolButton inviteCode={code} poolId={pool.id} />
@@ -146,21 +146,21 @@ export default async function SmartJoinPage({
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">1</span>
             <div>
               <p className="text-sm font-semibold text-white">Sign in with Google</p>
-              <p className="text-xs text-white/40">One click — no password needed</p>
+              <p className="text-xs text-white/50">One click — no password needed</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">2</span>
             <div>
               <p className="text-sm font-semibold text-white">Make your mock draft picks</p>
-              <p className="text-xs text-white/40">Predict the first round before draft night</p>
+              <p className="text-xs text-white/50">Predict the first round before draft night</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">3</span>
             <div>
               <p className="text-sm font-semibold text-white">Compete live on draft night</p>
-              <p className="text-xs text-white/40">Predict picks, answer trivia, climb the leaderboard</p>
+              <p className="text-xs text-white/50">Predict picks, answer trivia, climb the leaderboard</p>
             </div>
           </div>
         </div>
@@ -168,10 +168,10 @@ export default async function SmartJoinPage({
         <SmartSignInButton code={code} />
 
         <div className="space-y-2">
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/40">
             What is Slidey Draft? A fantasy draft competition where you predict NFL Draft picks, compete in trivia, and race your friends up the leaderboard — all live on draft night.
           </p>
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/40">
             Want to explore first?{" "}
             <Link href="/" className="text-[var(--slidey)] hover:underline">Visit the home page</Link>
           </p>

@@ -19,7 +19,7 @@ export default async function ScoringPage() {
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        <Link href="/guide" className="text-sm text-white/40 hover:text-white/60 transition">
+        <Link href="/guide" className="text-sm text-white/50 hover:text-white/60 transition">
           &larr; Back to How to Play
         </Link>
 
@@ -87,7 +87,7 @@ export default async function ScoringPage() {
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                  <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                     <th className="pb-2 pr-3">Pick</th>
                     <th className="pb-2 pr-3">You Predicted</th>
                     <th className="pb-2 pr-3">Actual</th>
@@ -97,28 +97,28 @@ export default async function ScoringPage() {
                 </thead>
                 <tbody className="text-white/70">
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#1</td>
+                    <td className="py-2 pr-3 text-white/50">#1</td>
                     <td className="py-2 pr-3">Fernando Mendoza, QB</td>
                     <td className="py-2 pr-3">Fernando Mendoza, QB</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2) + Exact (5)</td>
                     <td className="py-2 text-right font-bold text-green-400">10</td>
                   </tr>
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#5</td>
+                    <td className="py-2 pr-3 text-white/50">#5</td>
                     <td className="py-2 pr-3">Sonny Styles, LB</td>
                     <td className="py-2 pr-3">Sonny Styles at #3</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2)</td>
                     <td className="py-2 text-right font-bold text-yellow-400">5</td>
                   </tr>
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#8</td>
+                    <td className="py-2 pr-3 text-white/50">#8</td>
                     <td className="py-2 pr-3">Makai Lemon, WR</td>
                     <td className="py-2 pr-3">Carnell Tate, WR</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Position Match (1)</td>
                     <td className="py-2 text-right font-bold text-purple-400">1</td>
                   </tr>
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#12</td>
+                    <td className="py-2 pr-3 text-white/50">#12</td>
                     <td className="py-2 pr-3">Spencer Fano, OT</td>
                     <td className="py-2 pr-3">Caleb Downs, S</td>
                     <td className="py-2 pr-3 text-xs text-white/50">Wrong player, wrong position</td>
@@ -127,7 +127,7 @@ export default async function ScoringPage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-white/20">
-                    <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/40 uppercase">Total mock bonus (4 picks)</td>
+                    <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Total mock bonus (4 picks)</td>
                     <td className="py-2 text-right font-bold text-white">16</td>
                   </tr>
                 </tfoot>
@@ -153,7 +153,7 @@ export default async function ScoringPage() {
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                  <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                     <th className="pb-2 pr-3">Pick</th>
                     <th className="pb-2 pr-3">Your Prediction</th>
                     <th className="pb-2 pr-3">Actual</th>
@@ -163,30 +163,30 @@ export default async function ScoringPage() {
                 </thead>
                 <tbody className="text-white/70">
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#1</td>
+                    <td className="py-2 pr-3 text-white/50">#1</td>
                     <td className="py-2 pr-3">Fernando Mendoza</td>
                     <td className="py-2 pr-3">Fernando Mendoza</td>
                     <td className="py-2 pr-3 text-green-400">Correct!</td>
                     <td className="py-2 text-right font-bold text-green-400">+10</td>
                   </tr>
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#2</td>
+                    <td className="py-2 pr-3 text-white/50">#2</td>
                     <td className="py-2 pr-3">Jeremiyah Love</td>
                     <td className="py-2 pr-3">Arvell Reese</td>
                     <td className="py-2 pr-3 text-red-400">Wrong</td>
                     <td className="py-2 text-right font-bold text-red-400">0</td>
                   </tr>
                   <tr className="border-t border-white/5">
-                    <td className="py-2 pr-3 text-white/40">#3</td>
-                    <td className="py-2 pr-3 text-white/30">— (didn&apos;t predict)</td>
+                    <td className="py-2 pr-3 text-white/50">#3</td>
+                    <td className="py-2 pr-3 text-white/40">— (didn&apos;t predict)</td>
                     <td className="py-2 pr-3">Jeremiyah Love</td>
-                    <td className="py-2 pr-3 text-white/30">Missed</td>
+                    <td className="py-2 pr-3 text-white/40">Missed</td>
                     <td className="py-2 text-right font-bold text-red-400">0</td>
                   </tr>
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-white/20">
-                    <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/40 uppercase">Live total</td>
+                    <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Live total</td>
                     <td className="py-2 text-right font-bold text-white">10</td>
                   </tr>
                 </tfoot>
@@ -203,7 +203,7 @@ export default async function ScoringPage() {
             <p>Points depend on question difficulty:</p>
 
             <div className="mt-4 space-y-1.5">
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 px-4 py-3">
+              <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
                 <span className="text-lg font-bold w-12 text-center text-green-400">+3</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -213,7 +213,7 @@ export default async function ScoringPage() {
                   <p className="text-xs text-white/50">&quot;How many rounds are in the NFL Draft?&quot;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 px-4 py-3">
+              <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
                 <span className="text-lg font-bold w-12 text-center text-yellow-400">+5</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ export default async function ScoringPage() {
                   <p className="text-xs text-white/50">&quot;Which team has the most #1 overall picks in draft history?&quot;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 px-4 py-3">
+              <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
                 <span className="text-lg font-bold w-12 text-center text-red-400">+10</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -249,11 +249,11 @@ export default async function ScoringPage() {
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
               <span className="rounded-lg border border-[var(--lions-blue)]/30 bg-blue-500/10 px-4 py-2 text-sm font-bold text-blue-400">Mock Draft Bonus</span>
-              <span className="text-white/30 font-bold text-lg">+</span>
+              <span className="text-white/40 font-bold text-lg">+</span>
               <span className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400">Live Predictions</span>
-              <span className="text-white/30 font-bold text-lg">+</span>
+              <span className="text-white/40 font-bold text-lg">+</span>
               <span className="rounded-lg border border-purple-500/30 bg-purple-500/10 px-4 py-2 text-sm font-bold text-purple-400">Trivia</span>
-              <span className="text-white/30 font-bold text-lg">=</span>
+              <span className="text-white/40 font-bold text-lg">=</span>
               <span className="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-white">Combined Score</span>
             </div>
 
@@ -270,7 +270,7 @@ export default async function ScoringPage() {
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                  <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                     <th className="pb-2 pr-3">Track</th>
                     <th className="pb-2 pr-3">What Happened</th>
                     <th className="pb-2 text-right">Points</th>
@@ -295,14 +295,14 @@ export default async function ScoringPage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-white/20">
-                    <td colSpan={2} className="py-2 pr-3 text-right text-xs text-white/40 uppercase">Combined Score</td>
+                    <td colSpan={2} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Combined Score</td>
                     <td className="py-2 text-right text-lg font-bold text-white">57</td>
                   </tr>
                 </tfoot>
               </table>
             </div>
 
-            <div className="mt-4 rounded-lg bg-white/5 border border-white/10 p-4">
+            <div className="mt-4 rounded-lg bg-white/8 border border-white/[0.12] p-4">
               <p className="text-sm text-white/60">
                 Your rival got 3 players called in their mock (better scouting!) but missed all live predictions and only got 1 trivia right. Their score: 12 + 0 + 5 = <span className="font-bold text-white">17</span>. You win by 40 points because you showed up on draft night.
               </p>
@@ -321,7 +321,7 @@ export default async function ScoringPage() {
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                  <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                     <th className="pb-2 pr-3">Track</th>
                     <th className="pb-2 pr-3">Tier</th>
                     <th className="pb-2 text-right">Points</th>
@@ -360,7 +360,7 @@ export default async function ScoringPage() {
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                  <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                     <th className="pb-2 pr-3">Member</th>
                     <th className="pb-2 pr-3">Mock Bonus</th>
                     <th className="pb-2 pr-3">Live Picks</th>
@@ -410,7 +410,7 @@ export default async function ScoringPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 rounded-xl border border-white/10 bg-white/5 p-8 text-center">
+        <div className="mt-16 rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
           <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
             READY TO DRAFT?
           </h2>
@@ -454,7 +454,7 @@ function SubHeading({ children }: { children: React.ReactNode }) {
 
 function ScoreRow({ color, pts, label, desc }: { color: string; pts: number | string; label: string; desc: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-white/5 px-4 py-3">
+    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
       <span className={`text-lg font-bold w-12 text-center ${color}`}>
         {typeof pts === "number" ? `+${pts}` : pts}
       </span>

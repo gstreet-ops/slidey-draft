@@ -47,7 +47,7 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
     const lastSlot = draftOrder.find(s => s.pickNumber === totalPicks);
     const lastResult = results.find(r => r.pickNumber === totalPicks);
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 px-6 py-5 flex items-center gap-4">
+      <div className="rounded-xl border border-white/[0.12] bg-white/8 px-6 py-5 flex items-center gap-4">
         <div className="flex-1 text-center">
           <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">DRAFT COMPLETE</p>
           <p className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
@@ -81,8 +81,8 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
       {/* Previous Pick */}
       {hasPrev ? (
-        <div className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 opacity-70">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">
+        <div className="flex-1 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 opacity-70">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
             PICK #{prevResult!.pickNumber}
           </p>
           <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
               </p>
               <p className="text-xs text-white/50 truncate">
                 {prevResult!.playerName}
-                <span className="ml-1 text-white/30">{prevResult!.playerPosition}</span>
+                <span className="ml-1 text-white/40">{prevResult!.playerPosition}</span>
               </p>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">
               ON THE CLOCK
             </p>
-            <span className="ml-auto text-xs font-bold text-white/40">#{currentSlot.pickNumber}</span>
+            <span className="ml-auto text-xs font-bold text-white/50">#{currentSlot.pickNumber}</span>
           </div>
           <div className="flex items-center gap-3">
             <TeamLogo slot={currentSlot} size="lg" />
@@ -141,7 +141,7 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
               <p className="text-lg font-bold text-white truncate" style={{ fontFamily: "var(--font-display)" }}>
                 {currentSlot.teamName}
               </p>
-              <p className="text-xs text-white/40 mt-0.5">Prediction window open</p>
+              <p className="text-xs text-white/50 mt-0.5">Prediction window open</p>
             </div>
           </div>
         </div>
@@ -149,8 +149,8 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
 
       {/* Next Up */}
       {hasNext ? (
-        <div className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 opacity-60">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">
+        <div className="flex-1 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 opacity-60">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
             UP NEXT · #{nextSlot!.pickNumber}
           </p>
           <div className="flex items-center gap-3">
@@ -159,7 +159,7 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
               <p className="text-sm font-bold text-white/80 truncate" style={{ fontFamily: "var(--font-display)" }}>
                 {nextSlot!.teamName}
               </p>
-              <p className="text-xs text-white/30">{nextSlot!.teamAbbreviation}</p>
+              <p className="text-xs text-white/40">{nextSlot!.teamAbbreviation}</p>
             </div>
           </div>
         </div>

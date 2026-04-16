@@ -26,7 +26,7 @@ export function MobileTabBar({ tabs, defaultTab, children }: Props) {
             className={`flex-1 py-3 text-sm font-semibold text-center transition ${
               activeTab === tab.id
                 ? "text-white border-b-2 border-[var(--slidey)]"
-                : "text-white/40 hover:text-white/60"
+                : "text-white/50 hover:text-white/60"
             }`}
           >
             {tab.label}

@@ -84,7 +84,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
   return (
     <div className="space-y-6">
       {/* Progress bar */}
-      <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold text-white">
             {state.picksAnnounced} / {state.totalPicks} picks announced
@@ -108,7 +108,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
           </p>
         )}
         {state.nextProspect && (
-          <p className="mt-1 text-xs text-white/40">
+          <p className="mt-1 text-xs text-white/50">
             Next up: Pick #{state.nextPickNumber} &mdash; {state.nextProspect.name} ({state.nextProspect.position})
           </p>
         )}
@@ -166,25 +166,25 @@ export function SimulationControls({ initialState }: { initialState: SimState })
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Leaderboard */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-3">Leaderboard</h2>
+        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white/50 mb-3">Leaderboard</h2>
           {state.leaderboard.length === 0 ? (
-            <p className="text-sm text-white/30">No scores yet — announce a pick to start.</p>
+            <p className="text-sm text-white/40">No scores yet — announce a pick to start.</p>
           ) : (
             <div className="space-y-2">
               {state.leaderboard.map((entry, i) => (
-                <div key={entry.title} className="flex items-center gap-3 rounded-lg bg-white/5 px-3 py-2">
+                <div key={entry.title} className="flex items-center gap-3 rounded-lg bg-white/8 px-3 py-2">
                   <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
                     i === 0 ? "bg-yellow-500/20 text-yellow-400" :
                     i === 1 ? "bg-gray-400/20 text-gray-300" :
                     i === 2 ? "bg-orange-500/20 text-orange-400" :
-                    "bg-white/5 text-white/40"
+                    "bg-white/5 text-white/50"
                   }`}>
                     {i + 1}
                   </span>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-white">{entry.title}</p>
-                    <p className="text-xs text-white/40">{entry.correctExact} exact &middot; {entry.correctPlayer} correct</p>
+                    <p className="text-xs text-white/50">{entry.correctExact} exact &middot; {entry.correctPlayer} correct</p>
                   </div>
                   <span className="text-lg font-bold text-white">{entry.totalScore}</span>
                 </div>
@@ -194,10 +194,10 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         </div>
 
         {/* Announce log */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-3">Draft Feed</h2>
+        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white/50 mb-3">Draft Feed</h2>
           {state.announceLog.length === 0 ? (
-            <p className="text-sm text-white/30">No picks announced yet.</p>
+            <p className="text-sm text-white/40">No picks announced yet.</p>
           ) : (
             <div className="space-y-1 max-h-[400px] overflow-y-auto">
               {[...state.announceLog].reverse().map((pick) => (

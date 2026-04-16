@@ -77,21 +77,21 @@ export default function CommissionerInvitePage({
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--slidey)]/20 text-xs font-bold text-[var(--slidey)]">1</span>
               <div>
                 <p className="text-sm font-semibold text-white">Create your pool and customize scoring</p>
-                <p className="text-xs text-white/40">Standard or custom point values, toggle features on/off</p>
+                <p className="text-xs text-white/50">Standard or custom point values, toggle features on/off</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--slidey)]/20 text-xs font-bold text-[var(--slidey)]">2</span>
               <div>
                 <p className="text-sm font-semibold text-white">Share your invite link with friends</p>
-                <p className="text-xs text-white/40">One-tap join from any device</p>
+                <p className="text-xs text-white/50">One-tap join from any device</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--slidey)]/20 text-xs font-bold text-[var(--slidey)]">3</span>
               <div>
                 <p className="text-sm font-semibold text-white">Manage teams and run the show on draft night</p>
-                <p className="text-xs text-white/40">Leaderboard, chat, trivia, and live predictions</p>
+                <p className="text-xs text-white/50">Leaderboard, chat, trivia, and live predictions</p>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function CommissionerInvitePage({
             Sign in with Google to Get Started
           </button>
 
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/40">
             Just looking to join someone else&apos;s pool?{" "}
             <Link href="/" className="text-[var(--slidey)] hover:underline">Visit the home page</Link>
           </p>
@@ -117,7 +117,7 @@ export default function CommissionerInvitePage({
   if (session.user.role === "commissioner" || session.user.role === "admin") {
     return (
       <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-4">
+        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
           <div className="inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">Already a Commissioner</div>
           <h1 className="text-2xl font-bold text-white">You&apos;re already set up!</h1>
           <p className="text-white/50 text-sm">Create a new pool or manage your existing ones.</p>
@@ -137,7 +137,7 @@ export default function CommissionerInvitePage({
   // Signed in but not commissioner — show accept button
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-6">
+      <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
         <div className="inline-block rounded-full bg-[var(--slidey)]/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--slidey)]">
           Commissioner Invite
         </div>

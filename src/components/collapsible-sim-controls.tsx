@@ -80,7 +80,7 @@ export function CollapsibleSimControls() {
     : 0;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8">
       <button
         onClick={handleExpand}
         className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-white/5 transition rounded-xl"
@@ -88,7 +88,7 @@ export function CollapsibleSimControls() {
         <span className="text-sm font-semibold text-white/60 uppercase tracking-wider flex items-center gap-2">
           <span>{"\u{1F3AE}"}</span> Simulation Controls
         </span>
-        <span className="text-xs text-white/30">{expanded ? "\u25BE" : "\u25B8"}</span>
+        <span className="text-xs text-white/40">{expanded ? "\u25BE" : "\u25B8"}</span>
       </button>
       {expanded && (
         <div className="px-5 pb-5 space-y-4">
@@ -97,7 +97,7 @@ export function CollapsibleSimControls() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-white/50">{state.picksAnnounced} / {state.totalPicks} picks</span>
-                <span className="text-xs text-white/30">{progress}%</span>
+                <span className="text-xs text-white/40">{progress}%</span>
               </div>
               <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                 <div className="h-full rounded-full bg-[var(--lions-blue)] transition-all" style={{ width: `${progress}%` }} />

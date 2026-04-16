@@ -62,18 +62,18 @@ export function TeamLeaderboard({ poolId, standings }: Props) {
   const maxScore = ranked[0]?.totalScore ?? 1;
 
   if (loading) {
-    return <div className="text-center py-4 text-white/30 text-sm">Loading teams…</div>;
+    return <div className="text-center py-4 text-white/40 text-sm">Loading teams…</div>;
   }
 
   if (ranked.length === 0) return null;
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-bold text-white/40 uppercase tracking-wider">Team Standings</h3>
+      <h3 className="text-sm font-bold text-white/50 uppercase tracking-wider">Team Standings</h3>
       {ranked.map((team) => (
         <div
           key={team.id}
-          className="rounded-lg border border-white/10 bg-white/5 overflow-hidden"
+          className="rounded-lg border border-white/[0.12] bg-white/8 overflow-hidden"
         >
           <div className="flex items-center gap-3 px-3 py-2.5">
             <span className="w-5 text-center text-sm font-bold text-white/60">

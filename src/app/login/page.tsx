@@ -36,7 +36,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-white/70 transition mb-6"
+            className="inline-flex items-center gap-1 text-sm text-white/50 hover:text-white/70 transition mb-6"
           >
             &larr; Back to home
           </Link>
@@ -75,7 +75,7 @@ export default function LoginPage() {
             Sign in with Google
           </button>
 
-          <p className="mt-6 text-center text-xs text-white/30">
+          <p className="mt-6 text-center text-xs text-white/40">
             We&apos;ll create your account automatically on first sign-in.
           </p>
         </div>

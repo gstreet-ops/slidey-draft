@@ -118,20 +118,20 @@ export function PoolChat({
   ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl flex flex-col h-[400px]">
+    <div className="bg-white/8 border border-white/[0.12] rounded-xl flex flex-col h-[400px]">
       <div className="px-4 py-3 border-b border-white/10">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Live Feed</h3>
       </div>
 
       <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {feed.length === 0 && (
-          <p className="text-white/30 text-sm text-center mt-8">No activity yet.</p>
+          <p className="text-white/40 text-sm text-center mt-8">No activity yet.</p>
         )}
         {feed.map((item) => {
           if (item.type === "system") {
             return (
               <div key={item.id} className="text-center py-1">
-                <p className="text-[11px] text-white/40 bg-white/5 rounded-full px-3 py-1 inline-block">
+                <p className="text-[11px] text-white/50 bg-white/5 rounded-full px-3 py-1 inline-block">
                   {item.content}
                 </p>
               </div>
@@ -143,7 +143,7 @@ export function PoolChat({
               {m.userImage ? (
                 <img src={m.userImage} alt="" className="h-6 w-6 rounded-full shrink-0 mt-0.5" />
               ) : (
-                <div className="h-6 w-6 rounded-full bg-white/10 shrink-0 mt-0.5 flex items-center justify-center text-[10px] text-white/40">
+                <div className="h-6 w-6 rounded-full bg-white/10 shrink-0 mt-0.5 flex items-center justify-center text-[10px] text-white/50">
                   {(m.userName || m.userEmail)[0].toUpperCase()}
                 </div>
               )}
@@ -155,7 +155,7 @@ export function PoolChat({
                   {m.userId === commissionerId && (
                     <span className="text-[10px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400">Commish</span>
                   )}
-                  <span className="text-[10px] text-white/30">{timeAgo(m.createdAt)}</span>
+                  <span className="text-[10px] text-white/40">{timeAgo(m.createdAt)}</span>
                 </div>
                 <p className="text-sm text-white/80 break-words">{m.content}</p>
               </div>
@@ -166,7 +166,7 @@ export function PoolChat({
       </div>
 
       {isSpectator ? (
-        <div className="px-4 py-3 border-t border-white/10 text-center text-xs text-white/30">
+        <div className="px-4 py-3 border-t border-white/10 text-center text-xs text-white/40">
           Spectators can read the feed but not send messages.
         </div>
       ) : (
@@ -177,7 +177,7 @@ export function PoolChat({
             onChange={(e) => setInput(e.target.value.slice(0, 500))}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
             placeholder="Send a message..."
-            className="flex-1 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+            className="flex-1 rounded-lg bg-white/8 border border-white/[0.12] px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30"
           />
           <button
             onClick={handleSend}
@@ -186,7 +186,7 @@ export function PoolChat({
           >
             Send
           </button>
-          <span className="self-center text-[10px] text-white/30">{input.length}/500</span>
+          <span className="self-center text-[10px] text-white/40">{input.length}/500</span>
         </div>
       )}
     </div>

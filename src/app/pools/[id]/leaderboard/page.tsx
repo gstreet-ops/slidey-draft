@@ -44,7 +44,7 @@ export default async function PoolLeaderboardPage({
             <h1 className="text-3xl font-bold text-white">{pool.name} Leaderboard</h1>
             <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
           </div>
-          <p className="text-white/40 text-sm mt-1">
+          <p className="text-white/50 text-sm mt-1">
             {pool.status === "completed" ? "Final Standings" : "Live Standings"}
           </p>
         </div>

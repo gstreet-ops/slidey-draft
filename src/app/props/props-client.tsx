@@ -22,7 +22,7 @@ const CATEGORY_LABELS: Record<string, { label: string; emoji: string; color: str
   position: { label: "POSITION PROPS", emoji: "\uD83C\uDFC8", color: "text-emerald-400", border: "border-emerald-500/30", cardBorder: "border-emerald-500/15", cardBg: "bg-emerald-500/[0.03]" },
   trade: { label: "TRADE PROPS", emoji: "\uD83D\uDD04", color: "text-amber-400", border: "border-amber-500/30", cardBorder: "border-amber-500/15", cardBg: "bg-amber-500/[0.03]" },
   fun: { label: "FUN PROPS", emoji: "\uD83C\uDF89", color: "text-pink-400", border: "border-pink-500/30", cardBorder: "border-pink-500/15", cardBg: "bg-pink-500/[0.03]" },
-  general: { label: "GENERAL", emoji: "", color: "text-sky-400", border: "border-sky-500/30", cardBorder: "border-white/10", cardBg: "bg-white/5" },
+  general: { label: "GENERAL", emoji: "", color: "text-sky-400", border: "border-sky-500/30", cardBorder: "border-white/[0.12]", cardBg: "bg-white/8" },
   team: { label: "TEAM PROPS", emoji: "\uD83D\uDEE1\uFE0F", color: "text-orange-400", border: "border-orange-500/30", cardBorder: "border-orange-500/15", cardBg: "bg-orange-500/[0.03]" },
 };
 
@@ -144,7 +144,7 @@ export function PropsClient({
                       <div className="flex-1">
                         <p className="text-sm font-semibold text-white">{prop.question}</p>
                         {isResolved && (
-                          <p className="mt-1 text-xs text-white/40">
+                          <p className="mt-1 text-xs text-white/50">
                             {isCorrect ? "\u2713 Correct!" : "\u2717 Incorrect"}{" "}
                             {isCorrect && `(+${prop.points} pts)`}
                           </p>
@@ -242,7 +242,7 @@ function OverUnderInput({
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
               ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]"
-              : "border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
+              : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
           } disabled:opacity-50`}
         >
           {userPick === choice && "\u2713 "}
@@ -274,7 +274,7 @@ function YesNoInput({
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
               ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]"
-              : "border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
+              : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
           } disabled:opacity-50`}
         >
           {userPick === choice && "\u2713 "}
@@ -329,7 +329,7 @@ function PlayerPickInput({
         <div className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-2 text-sm text-[var(--lions-blue)] flex items-center justify-between ring-1 ring-[var(--lions-blue)]/30">
           <span>\u2713 {selectedPlayer.name} ({selectedPlayer.position})</span>
           <div className="flex gap-2">
-            <button onClick={() => onSearchChange("")} className="text-xs text-white/40 hover:text-white/60">
+            <button onClick={() => onSearchChange("")} className="text-xs text-white/50 hover:text-white/60">
               Change
             </button>
             <button onClick={onClear} className="text-xs text-red-400/60 hover:text-red-400">
@@ -361,7 +361,7 @@ function PlayerPickInput({
                 >
                   <span className="font-semibold text-white">{p.name}</span>
                   <span className="text-xs text-[var(--lions-blue)]">{p.position}</span>
-                  <span className="text-xs text-white/30">{p.school}</span>
+                  <span className="text-xs text-white/40">{p.school}</span>
                 </button>
               ))}
             </div>
@@ -395,7 +395,7 @@ function TeamPickInput({
           className={`rounded-lg border p-2 text-center transition-all duration-150 ${
             userPick === t.id
               ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 ring-2 ring-[var(--lions-blue)]/40 scale-105"
-              : "border-white/10 bg-white/5 hover:border-white/20"
+              : "border-white/[0.12] bg-white/8 hover:border-white/20"
           } disabled:opacity-50`}
           title={t.name}
         >

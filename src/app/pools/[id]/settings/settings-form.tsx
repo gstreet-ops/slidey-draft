@@ -78,14 +78,14 @@ export function PoolSettingsForm({
   return (
     <div className="space-y-8">
       {/* Name & Description */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">General</h3>
         <div>
           <label className="block text-sm text-white/50 mb-1">Pool Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)]"
+            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)]"
           />
         </div>
         <div>
@@ -94,13 +94,13 @@ export function PoolSettingsForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
-            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)] resize-none"
+            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)] resize-none"
           />
         </div>
       </div>
 
       {/* Rounds */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Rounds</h3>
         <div className="flex gap-2 flex-wrap">
           {[1, 2, 3, 4, 5, 6, 7].map((r) => (
@@ -110,7 +110,7 @@ export function PoolSettingsForm({
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                 rounds.includes(r)
                   ? "bg-[var(--gtown-highlight)] text-white"
-                  : "bg-white/5 text-white/40 border border-white/10"
+                  : "bg-white/5 text-white/50 border border-white/10"
               }`}
             >
               Round {r}
@@ -120,7 +120,7 @@ export function PoolSettingsForm({
       </div>
 
       {/* Toggles */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Features</h3>
         <label className="flex items-center justify-between cursor-pointer">
           <span className="text-sm text-white">Mock Draft Bonus</span>
@@ -143,7 +143,7 @@ export function PoolSettingsForm({
         <label className="flex items-center justify-between cursor-pointer">
           <div>
             <span className="text-sm text-white">Watch Party (Video Chat)</span>
-            <p className="text-xs text-white/30">Jitsi video chat appears on draft night</p>
+            <p className="text-xs text-white/40">Jitsi video chat appears on draft night</p>
           </div>
           <input
             type="checkbox"
@@ -155,7 +155,7 @@ export function PoolSettingsForm({
       </div>
 
       {/* Scoring Mode */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Scoring Mode</h3>
         <div className="flex rounded-lg overflow-hidden border border-white/10">
           <button
@@ -171,7 +171,7 @@ export function PoolSettingsForm({
             className={`flex-1 px-4 py-2.5 text-sm font-semibold transition ${
               scoringMode === "standard"
                 ? "bg-blue-500/20 text-blue-400"
-                : "bg-white/5 text-white/40 hover:text-white/60"
+                : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
             Standard Scoring
@@ -186,13 +186,13 @@ export function PoolSettingsForm({
             className={`flex-1 px-4 py-2.5 text-sm font-semibold transition ${
               scoringMode === "custom"
                 ? "bg-amber-500/20 text-amber-400"
-                : "bg-white/5 text-white/40 hover:text-white/60"
+                : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
             Custom Scoring
           </button>
         </div>
-        <p className="text-xs text-white/30">
+        <p className="text-xs text-white/40">
           {scoringMode === "standard"
             ? "Using official point values. Your pool is eligible for cross-pool comparison."
             : "Custom point values active. Your pool will show a Custom Rules badge."}
@@ -200,12 +200,12 @@ export function PoolSettingsForm({
       </div>
 
       {/* Point values */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Mock Draft Points</h3>
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(pointValues).map(([key, val]) => (
             <div key={key}>
-              <label className="block text-xs text-white/40 mb-1 capitalize">
+              <label className="block text-xs text-white/50 mb-1 capitalize">
                 {key.replace(/([A-Z])/g, " $1")}
               </label>
               <input
@@ -219,7 +219,7 @@ export function PoolSettingsForm({
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
                     ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
-                    : "bg-white/[0.02] border-white/5 text-white/30 cursor-not-allowed"
+                    : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
                 }`}
               />
             </div>
@@ -228,7 +228,7 @@ export function PoolSettingsForm({
 
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider pt-4">Live Prediction Points</h3>
         <div>
-          <label className="block text-xs text-white/40 mb-1">Correct Player</label>
+          <label className="block text-xs text-white/50 mb-1">Correct Player</label>
           <input
             type="number"
             min={0}
@@ -240,7 +240,7 @@ export function PoolSettingsForm({
             className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
               isCustom
                 ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
-                : "bg-white/[0.02] border-white/5 text-white/30 cursor-not-allowed"
+                : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
             }`}
           />
         </div>
@@ -249,7 +249,7 @@ export function PoolSettingsForm({
         <div className="grid grid-cols-3 gap-4">
           {(["easy", "medium", "hard"] as const).map((diff) => (
             <div key={diff}>
-              <label className="block text-xs text-white/40 mb-1 capitalize">{diff}</label>
+              <label className="block text-xs text-white/50 mb-1 capitalize">{diff}</label>
               <input
                 type="number"
                 min={0}
@@ -261,7 +261,7 @@ export function PoolSettingsForm({
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
                     ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
-                    : "bg-white/[0.02] border-white/5 text-white/30 cursor-not-allowed"
+                    : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
                 }`}
               />
             </div>

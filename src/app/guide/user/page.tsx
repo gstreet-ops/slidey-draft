@@ -34,7 +34,7 @@ export default async function UserGuidePage() {
         <p className="mt-2 text-sm text-white/50">
           Everything you need to compete on draft night.
         </p>
-        <p className="mt-2 text-xs text-white/40">
+        <p className="mt-2 text-xs text-white/50">
           Commissioner?{" "}
           <Link href="/guide/commissioner" className="text-[var(--slidey)] hover:underline">
             Commissioner Guide →
@@ -43,7 +43,7 @@ export default async function UserGuidePage() {
 
         <div className="mt-8 space-y-6">
           {/* ── How It Works ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>How It Works</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Draft Day Challenge is a live NFL draft night competition. Build your mock board before
@@ -58,7 +58,7 @@ export default async function UserGuidePage() {
           </section>
 
           {/* ── Scoring ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Scoring</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Your total score combines three tracks. The leaderboard updates in real-time as the draft progresses.
@@ -119,22 +119,22 @@ export default async function UserGuidePage() {
             </div>
 
             {/* Combined */}
-            <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">Your Total Score</p>
+            <div className="mt-5 rounded-xl border border-white/[0.12] bg-white/8 p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">Your Total Score</p>
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <span className="rounded-lg border border-blue-400/30 bg-blue-900/30 px-3 py-1.5 text-xs font-bold text-blue-300">Mock Bonus</span>
-                <span className="text-white/30 font-bold">+</span>
+                <span className="text-white/40 font-bold">+</span>
                 <span className="rounded-lg border border-green-400/30 bg-green-900/30 px-3 py-1.5 text-xs font-bold text-green-300">Live Predictions</span>
-                <span className="text-white/30 font-bold">+</span>
+                <span className="text-white/40 font-bold">+</span>
                 <span className="rounded-lg border border-purple-400/30 bg-purple-900/30 px-3 py-1.5 text-xs font-bold text-purple-300">Trivia</span>
-                <span className="text-white/30 font-bold">=</span>
+                <span className="text-white/40 font-bold">=</span>
                 <span className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white">Combined Score</span>
               </div>
             </div>
           </section>
 
           {/* ── Pool Teams ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Pool Teams</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Your commissioner can split the pool into teams. You&apos;ll compete as an individual <em>and</em> as part of a team — both standings are tracked separately.
@@ -154,7 +154,7 @@ export default async function UserGuidePage() {
           </section>
 
           {/* ── Draft Night Tips ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Draft Night Tips</SectionHeading>
             <div className="mt-4 space-y-3">
               <TipCard>
@@ -173,7 +173,7 @@ export default async function UserGuidePage() {
           </section>
 
           {/* ── Video Call + Live Feed ── */}
-          <section className="rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8">
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
             <SectionHeading>Video Call &amp; Live Feed</SectionHeading>
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
               Draft night is best with friends on video. Your commissioner can set up a Google Meet, Zoom, or any video call link.
@@ -204,7 +204,7 @@ export default async function UserGuidePage() {
 
         {/* Footer link */}
         <div className="mt-10 text-center">
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/40">
             Running a pool?{" "}
             <Link href="/guide/commissioner" className="text-[var(--slidey)] hover:underline">
               View the Commissioner Guide →
@@ -231,7 +231,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--slidey)] text-xs font-bold text-white">
         {n}
       </span>
@@ -245,10 +245,10 @@ function ScoreRow({ type, label, desc, pts }: { type: string; label: string; des
     exact: "text-green-400",
     close: "text-yellow-400",
     far: "text-orange-400",
-    miss: "text-white/30",
+    miss: "text-white/40",
   };
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="flex items-center gap-3 rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <span className={`text-lg font-bold w-12 text-center ${colors[type] || "text-white"}`}>
         +{pts}
       </span>
@@ -262,7 +262,7 @@ function ScoreRow({ type, label, desc, pts }: { type: string; label: string; des
 
 function TipCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/70 leading-relaxed">
+    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/70 leading-relaxed">
       {children}
     </div>
   );

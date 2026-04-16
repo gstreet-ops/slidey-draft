@@ -63,7 +63,7 @@ export function MemberManagement({
   }
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+    <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
       <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Members</h3>
       <div className="space-y-2">
         {members.map((m) => {
@@ -82,7 +82,7 @@ export function MemberManagement({
                     ? "bg-yellow-500/20 text-yellow-400"
                     : m.role === "admin"
                     ? "bg-blue-500/20 text-blue-400"
-                    : "bg-white/10 text-white/40"
+                    : "bg-white/10 text-white/50"
                 }`}>
                   {m.role}
                 </span>
@@ -113,7 +113,7 @@ export function MemberManagement({
                       <button onClick={() => handlePromoteCommissioner(m.userId)} className="text-xs text-yellow-400 hover:text-yellow-300 transition">
                         → Commissioner
                       </button>
-                      <button onClick={() => handleDemoteMember(m.userId)} className="text-xs text-white/40 hover:text-white/60 transition">
+                      <button onClick={() => handleDemoteMember(m.userId)} className="text-xs text-white/50 hover:text-white/60 transition">
                         → Member
                       </button>
                     </>

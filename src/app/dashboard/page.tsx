@@ -73,20 +73,20 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-[var(--gtown-navy)]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Summary bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex flex-wrap gap-4 sm:gap-6">
             <div>
-              <p className="text-xs text-white/40 uppercase tracking-wider">Published Mocks</p>
+              <p className="text-xs text-white/50 uppercase tracking-wider">Published Mocks</p>
               <p className="text-2xl font-bold text-white">{published.length}</p>
             </div>
             <div>
-              <p className="text-xs text-white/40 uppercase tracking-wider">Your Mock</p>
+              <p className="text-xs text-white/50 uppercase tracking-wider">Your Mock</p>
               <p className="text-2xl font-bold text-white">
                 {userBoard ? (userBoard.status === "published" ? "Published" : "Draft") : "Not Started"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-white/40 uppercase tracking-wider">Days Until Draft</p>
+              <p className="text-xs text-white/50 uppercase tracking-wider">Days Until Draft</p>
               <p className="text-2xl font-bold text-[var(--slidey)]">{daysUntilDraft}</p>
             </div>
           </div>
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
               {sorted.map((board) => {
                 const isUser = board.createdBy === session.user!.id;
                 return (
-                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/10 bg-white/5"}`}>
+                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/[0.12] bg-white/8"}`}>
                     <div className="flex items-center gap-2 mb-3">
                       {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">You</span>}
                       <span className="text-sm font-bold text-white truncate">{board.creator?.name || board.creator?.email || "Anonymous"}</span>
@@ -135,8 +135,8 @@ export default async function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-12 text-center">
-            <p className="text-white/40 text-lg">No published boards yet.</p>
+          <div className="mt-12 rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
+            <p className="text-white/50 text-lg">No published boards yet.</p>
           </div>
         )}
       </div>

@@ -234,11 +234,11 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Pool Queue Builder
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
+      <div className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
         <h2 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
           POOL QUEUE BUILDER
         </h2>
-        <p className="text-sm text-white/40">
+        <p className="text-sm text-white/50">
           Select a pool, then arrange questions in the order they&apos;ll fire during the draft.
         </p>
         <TriviaQueue />
@@ -247,7 +247,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Question Bank
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
+      <div className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
             QUESTION BANK
@@ -264,14 +264,14 @@ export default function AdminTriviaPage() {
 
         {/* Create Question Form */}
         {showCreate && (
-          <div className="rounded-lg border border-white/10 bg-white/5 p-5 space-y-4">
+          <div className="rounded-lg border border-white/[0.12] bg-white/8 p-5 space-y-4">
             <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">New Question</h3>
             <textarea
               value={createForm.question}
               onChange={(e) => setCreateForm((f) => ({ ...f, question: e.target.value }))}
               placeholder="Question text..."
               rows={2}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none resize-none"
+              className="w-full rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none resize-none"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {["A", "B", "C", "D"].map((letter, i) => (
@@ -283,7 +283,7 @@ export default function AdminTriviaPage() {
                     onChange={() => setCreateForm((f) => ({ ...f, correctAnswer: i }))}
                     className="accent-green-500"
                   />
-                  <span className="text-xs text-white/40 w-4">{letter}.</span>
+                  <span className="text-xs text-white/50 w-4">{letter}.</span>
                   <input
                     value={createForm.options[i]}
                     onChange={(e) => {
@@ -292,7 +292,7 @@ export default function AdminTriviaPage() {
                       setCreateForm((f) => ({ ...f, options: opts }));
                     }}
                     placeholder={`Option ${letter}`}
-                    className="flex-1 rounded border border-white/10 bg-white/5 px-2 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
+                    className="flex-1 rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
                   />
                 </div>
               ))}
@@ -364,13 +364,13 @@ export default function AdminTriviaPage() {
               <option key={d.value} value={d.value} className="bg-gray-900">{d.label}</option>
             ))}
           </select>
-          <div className="text-xs text-white/40 self-center">{libraryTotal} questions</div>
+          <div className="text-xs text-white/50 self-center">{libraryTotal} questions</div>
         </div>
 
         {/* Question Table */}
         <div className="space-y-2">
           {library.map((q) => (
-            <div key={q.id} className={`rounded-lg border ${q.active ? "border-white/10 bg-white/5" : "border-white/5 bg-white/[0.02] opacity-60"}`}>
+            <div key={q.id} className={`rounded-lg border ${q.active ? "border-white/[0.12] bg-white/8" : "border-white/8 bg-white/[0.02] opacity-60"}`}>
               <div
                 className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-white/5 transition"
                 onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
@@ -381,10 +381,10 @@ export default function AdminTriviaPage() {
                 <span className="rounded-full bg-[#0076B6]/20 px-2 py-0.5 text-xs text-[#0076B6] shrink-0">
                   {q.category.replace(/_/g, " ")}
                 </span>
-                <span className={`rounded-full px-2 py-0.5 text-xs shrink-0 ${diffColor[q.difficulty] || "bg-white/10 text-white/40"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-xs shrink-0 ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
                   {q.difficulty}
                 </span>
-                <span className="text-[10px] text-white/30 shrink-0">
+                <span className="text-[10px] text-white/40 shrink-0">
                   {q.createdBy ? "Commissioner" : "System"}
                 </span>
                 <button
@@ -415,7 +415,7 @@ export default function AdminTriviaPage() {
             </div>
           ))}
           {library.length === 0 && (
-            <div className="text-center py-8 text-white/40 text-sm">No questions found.</div>
+            <div className="text-center py-8 text-white/50 text-sm">No questions found.</div>
           )}
         </div>
 
@@ -429,7 +429,7 @@ export default function AdminTriviaPage() {
             >
               Prev
             </button>
-            <span className="text-sm text-white/40">Page {libraryPage} of {libraryPages}</span>
+            <span className="text-sm text-white/50">Page {libraryPage} of {libraryPages}</span>
             <button
               onClick={() => setLibraryPage((p) => Math.min(libraryPages, p + 1))}
               disabled={libraryPage >= libraryPages}
@@ -444,7 +444,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           AI Generator (collapsible)
           ═══════════════════════════════════════════════════════ */}
-      <details className="rounded-xl border border-white/10 bg-gray-900/60 p-6 space-y-6">
+      <details className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
         <summary className="text-xl font-bold text-white tracking-wide cursor-pointer" style={{ fontFamily: "var(--font-display)" }}>
           AI TRIVIA GENERATOR
         </summary>
@@ -457,13 +457,13 @@ export default function AdminTriviaPage() {
               <div className="flex rounded-lg border border-white/10 overflow-hidden">
                 <button
                   onClick={() => setTopicMode("topic_football")}
-                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_football" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_football" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
                 >
                   Topic + Football
                 </button>
                 <button
                   onClick={() => setTopicMode("topic_only")}
-                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_only" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_only" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
                 >
                   Topic Only
                 </button>
@@ -557,7 +557,7 @@ export default function AdminTriviaPage() {
                 )}
               </button>
               {sessionCost > 0 && (
-                <span className="text-[10px] text-white/30 pb-1">Session: {formatCost(sessionCost)}</span>
+                <span className="text-[10px] text-white/40 pb-1">Session: {formatCost(sessionCost)}</span>
               )}
             </div>
           </div>
@@ -587,7 +587,7 @@ export default function AdminTriviaPage() {
 
               {/* Cost info */}
               {lastUsage && (
-                <p className="text-[10px] text-white/30">
+                <p className="text-[10px] text-white/40">
                   Estimated cost: {formatCost(lastUsage.inputTokens * COST_PER_INPUT_TOKEN + lastUsage.outputTokens * COST_PER_OUTPUT_TOKEN)} ({lastUsage.inputTokens.toLocaleString()} input + {lastUsage.outputTokens.toLocaleString()} output tokens)
                 </p>
               )}
@@ -599,7 +599,7 @@ export default function AdminTriviaPage() {
 
               <div className="grid gap-4">
                 {generated.map((q, i) => (
-                  <div key={i} className="rounded-lg border border-white/10 bg-white/5 p-4 space-y-2">
+                  <div key={i} className="rounded-lg border border-white/[0.12] bg-white/8 p-4 space-y-2">
                     <div className="flex items-start gap-3">
                       <input
                         type="checkbox"
@@ -622,7 +622,7 @@ export default function AdminTriviaPage() {
                         </div>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="rounded-full bg-[#0076B6]/20 px-2 py-0.5 text-xs text-[#0076B6]">{q.category}</span>
-                          <span className={`rounded-full px-2 py-0.5 text-xs ${diffColor[q.difficulty] || "bg-white/10 text-white/40"}`}>{q.difficulty}</span>
+                          <span className={`rounded-full px-2 py-0.5 text-xs ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>{q.difficulty}</span>
                         </div>
                       </div>
                       <button

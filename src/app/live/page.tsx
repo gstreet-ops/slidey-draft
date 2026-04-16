@@ -71,6 +71,7 @@ export default async function LivePage() {
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
       {/* Status bar */}
       <div className="border-b border-white/5 bg-black/10">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-1.5">
@@ -89,7 +90,7 @@ export default async function LivePage() {
           </span>
           <div className="flex items-center gap-3">
             <SoundToggle />
-            {session?.user && <span className="text-xs text-white/40">{session.user.name || session.user.email}</span>}
+            {session?.user && <span className="text-xs text-white/50">{session.user.name || session.user.email}</span>}
           </div>
         </div>
       </div>
@@ -111,7 +112,7 @@ export default async function LivePage() {
       {/* No pool state */}
       {poolContexts.length === 0 && userId && (
         <div className="mx-auto max-w-[1400px] px-4 pt-8">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center">
+          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
             <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO PLAY</h2>
             <p className="mt-2 text-sm text-white/50">You need to join a pool to participate. Ask your commissioner for an invite link.</p>
           </div>
@@ -121,7 +122,7 @@ export default async function LivePage() {
       {/* Not logged in */}
       {!userId && (
         <div className="mx-auto max-w-[1400px] px-4 pt-8">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center">
+          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
             <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>SIGN IN TO PLAY</h2>
             <p className="mt-2 text-sm text-white/50">Sign in to join a pool and compete on draft night.</p>
           </div>

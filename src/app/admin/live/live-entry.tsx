@@ -162,7 +162,7 @@ export function LiveResultsEntry({
                   <span className="text-xs text-[var(--lions-blue)]">
                     {player.position}
                   </span>
-                  <span className="ml-auto text-xs text-white/30">
+                  <span className="ml-auto text-xs text-white/40">
                     {player.school}
                   </span>
                 </button>
@@ -190,7 +190,7 @@ export function LiveResultsEntry({
                     ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
                     : isNext
                     ? "border-yellow-500/30 bg-yellow-500/5"
-                    : "border-white/10 bg-white/5 hover:border-white/20"
+                    : "border-white/[0.12] bg-white/8 hover:border-white/20"
                 }`}
                 onClick={() => !result && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -205,7 +205,7 @@ export function LiveResultsEntry({
                     <span className="text-xs font-semibold text-white/50">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-xs text-white/30">{slot.teamName}</span>
+                    <span className="text-xs text-white/40">{slot.teamName}</span>
                   </div>
                   {result ? (
                     <div className="flex items-center gap-2 mt-0.5">
@@ -215,12 +215,12 @@ export function LiveResultsEntry({
                       <span className="text-xs text-green-400/70">
                         {result.playerPosition}
                       </span>
-                      <span className="text-xs text-white/30">
+                      <span className="text-xs text-white/40">
                         {result.playerSchool}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-xs text-white/30 mt-0.5">
+                    <p className="text-xs text-white/40 mt-0.5">
                       {isActive
                         ? "Select player below →"
                         : isNext
@@ -238,7 +238,7 @@ export function LiveResultsEntry({
         </div>
 
         {/* Desktop sidebar: player search */}
-        <div className="hidden lg:block rounded-xl border border-white/10 bg-white/5 p-4 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="hidden lg:block rounded-xl border border-white/[0.12] bg-white/8 p-4 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto">
           <h2
             className="mb-3 text-lg font-bold text-white tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
@@ -260,7 +260,7 @@ export function LiveResultsEntry({
                 className={`px-2 py-1 rounded text-xs font-semibold transition ${
                   posFilter === pos
                     ? "bg-[var(--lions-blue)] text-white"
-                    : "bg-white/5 text-white/40 hover:text-white/60"
+                    : "bg-white/5 text-white/50 hover:text-white/60"
                 }`}
               >
                 {pos}
@@ -295,14 +295,14 @@ export function LiveResultsEntry({
                   <span className="text-xs text-[var(--lions-blue)]">
                     {player.position}
                   </span>
-                  <span className="ml-auto text-xs text-white/30">
+                  <span className="ml-auto text-xs text-white/40">
                     {player.school}
                   </span>
                 </button>
               );
             })}
             {filteredPlayers.length === 0 && (
-              <p className="py-4 text-center text-sm text-white/30">
+              <p className="py-4 text-center text-sm text-white/40">
                 No available players
               </p>
             )}

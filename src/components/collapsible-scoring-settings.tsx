@@ -67,7 +67,7 @@ export function CollapsibleScoringSettings({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8">
       {toast && (
         <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#0076B6] px-5 py-3 text-sm font-semibold text-white shadow-lg">
           {toast}
@@ -80,23 +80,23 @@ export function CollapsibleScoringSettings({
         <span className="text-sm font-semibold text-white/60 uppercase tracking-wider flex items-center gap-2">
           {"\uD83C\uDFC6"} Scoring Settings
         </span>
-        <span className="text-xs text-white/30">{expanded ? "\u25BE" : "\u25B8"}</span>
+        <span className="text-xs text-white/40">{expanded ? "\u25BE" : "\u25B8"}</span>
       </button>
       {expanded && (
         <div className="px-5 pb-5 space-y-4">
           {/* Mode toggle */}
           <div className="flex items-center gap-3">
-            <span className="text-xs text-white/40">Mode:</span>
+            <span className="text-xs text-white/50">Mode:</span>
             <div className="flex rounded-lg border border-white/10 overflow-hidden">
               <button
                 onClick={() => setMode("standard")}
-                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "standard" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "standard" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
               >
                 Standard
               </button>
               <button
                 onClick={() => setMode("custom")}
-                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "custom" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/40 hover:text-white"}`}
+                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "custom" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
               >
                 Custom
               </button>
@@ -136,7 +136,7 @@ export function CollapsibleScoringSettings({
           )}
 
           {config.scoringMode === "standard" && (
-            <p className="text-xs text-white/30">Standard scoring: Exact slot +5, Player called +3, Within 5 +2, 6+ off +1, Position match +1. Live predictions +10. Trivia: Easy 3, Medium 5, Hard 10.</p>
+            <p className="text-xs text-white/40">Standard scoring: Exact slot +5, Player called +3, Within 5 +2, 6+ off +1, Position match +1. Live predictions +10. Trivia: Easy 3, Medium 5, Hard 10.</p>
           )}
 
           <button
@@ -155,14 +155,14 @@ export function CollapsibleScoringSettings({
 function PointInput({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
   return (
     <div>
-      <label className="block text-[10px] text-white/40 mb-1">{label}</label>
+      <label className="block text-[10px] text-white/50 mb-1">{label}</label>
       <input
         type="number"
         min={0}
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full rounded border border-white/10 bg-white/5 px-2 py-1.5 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+        className="w-full rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white focus:border-[#0076B6] focus:outline-none"
       />
     </div>
   );

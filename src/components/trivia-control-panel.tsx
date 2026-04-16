@@ -133,13 +133,13 @@ export function TriviaControlPanel({
               {activeItem.category.replace(/_/g, " ")}
             </span>
             {activeItem.pickNumber != null && (
-              <span className="text-[10px] text-white/30">Pick #{activeItem.pickNumber}</span>
+              <span className="text-[10px] text-white/40">Pick #{activeItem.pickNumber}</span>
             )}
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-          <span className="text-xs text-white/40">
+        <div className="rounded-lg border border-white/[0.12] bg-white/8 px-4 py-3">
+          <span className="text-xs text-white/50">
             {pendingItems.length > 0
               ? "No active question — fire the next one below"
               : "Queue exhausted — no more trivia questions"}
@@ -148,10 +148,10 @@ export function TriviaControlPanel({
       )}
 
       {/* Controls Bar */}
-      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-white/[0.12] bg-white/8 px-4 py-3">
         {/* Timer */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-white/40">Timer</span>
+          <span className="text-xs text-white/50">Timer</span>
           <div className="flex rounded-lg border border-white/10 overflow-hidden">
             {[0, 15, 30, 45, 60].map((s) => (
               <button
@@ -160,7 +160,7 @@ export function TriviaControlPanel({
                 className={`px-2.5 py-1 text-xs font-semibold transition ${
                   settings.triviaTimerSeconds === s
                     ? "bg-[#0076B6] text-white"
-                    : "bg-white/5 text-white/40 hover:text-white"
+                    : "bg-white/5 text-white/50 hover:text-white"
                 }`}
               >
                 {s === 0 ? "Off" : `${s}s`}
@@ -208,7 +208,7 @@ export function TriviaControlPanel({
           </button>
         </div>
 
-        <div className="text-xs text-white/30 w-full sm:w-auto">
+        <div className="text-xs text-white/40 w-full sm:w-auto">
           {pendingItems.length} pending / {totalCount} total
         </div>
       </div>
@@ -218,7 +218,7 @@ export function TriviaControlPanel({
         <div className="space-y-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-wider hover:text-white/60 transition"
+            className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-wider hover:text-white/60 transition"
           >
             <span>{showPreview ? "▾" : "▸"}</span>
             Next {nextThree.length} Questions
@@ -228,9 +228,9 @@ export function TriviaControlPanel({
               {nextThree.map((q) => (
                 <div
                   key={q.questionId}
-                  className="flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
+                  className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2"
                 >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[9px] font-bold text-white/40">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[9px] font-bold text-white/50">
                     {q.sortOrder}
                   </span>
                   <div className="flex-1 min-w-0">

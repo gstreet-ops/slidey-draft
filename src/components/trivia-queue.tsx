@@ -33,7 +33,7 @@ const diffColor: Record<string, string> = {
 };
 
 const statusColor: Record<string, string> = {
-  pending: "bg-white/10 text-white/40",
+  pending: "bg-white/10 text-white/50",
   active: "bg-orange-500/20 text-orange-400",
   completed: "bg-green-500/20 text-green-400/60",
 };
@@ -168,11 +168,11 @@ export function TriviaQueue() {
   const completedCount = queue.filter((q) => q.status === "completed").length;
 
   if (loading) {
-    return <div className="text-center py-8 text-white/30 text-sm">Loading...</div>;
+    return <div className="text-center py-8 text-white/40 text-sm">Loading...</div>;
   }
 
   if (pools.length === 0) {
-    return <div className="text-center py-8 text-white/30 text-sm">No pools found. Create a pool first.</div>;
+    return <div className="text-center py-8 text-white/40 text-sm">No pools found. Create a pool first.</div>;
   }
 
   return (
@@ -196,7 +196,7 @@ export function TriviaQueue() {
             <option key={p.id} value={p.id} className="bg-gray-900">{p.name}</option>
           ))}
         </select>
-        <span className="text-xs text-white/40 ml-auto">
+        <span className="text-xs text-white/50 ml-auto">
           {queue.length} questions queued — enough for {queue.length} picks
         </span>
       </div>
@@ -206,7 +206,7 @@ export function TriviaQueue() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-white">Available Questions</h3>
-            <span className="text-xs text-white/40">{available.length} available</span>
+            <span className="text-xs text-white/50">{available.length} available</span>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -247,19 +247,19 @@ export function TriviaQueue() {
 
           <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
             {available.length === 0 ? (
-              <div className="text-center py-8 text-white/30 text-sm">
+              <div className="text-center py-8 text-white/40 text-sm">
                 {queue.length > 0 ? "All questions are in the queue!" : "No questions match filters."}
               </div>
             ) : (
               available.map((q) => (
                 <div
                   key={q.id}
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2"
+                  className="flex items-center gap-2 rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-white/80 truncate">{q.question}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/40"}`}>
+                  <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
                     {q.difficulty}
                   </span>
                   <span className="shrink-0 rounded-full bg-[#0076B6]/20 px-1.5 py-0.5 text-[9px] text-[#0076B6]">
@@ -298,7 +298,7 @@ export function TriviaQueue() {
               >
                 Save Queue
               </button>
-              <span className="text-xs text-white/40">
+              <span className="text-xs text-white/50">
                 {pendingCount} pending · {completedCount} completed
               </span>
             </div>
@@ -306,7 +306,7 @@ export function TriviaQueue() {
 
           <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
             {queue.length === 0 ? (
-              <div className="text-center py-8 text-white/30 text-sm">
+              <div className="text-center py-8 text-white/40 text-sm">
                 No questions in queue. Add questions from the left panel.
               </div>
             ) : (
@@ -316,7 +316,7 @@ export function TriviaQueue() {
                   <div
                     key={q.questionId}
                     className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
-                      isLocked ? "border-white/5 bg-white/[0.02] opacity-60" : "border-white/10 bg-white/5"
+                      isLocked ? "border-white/8 bg-white/[0.02] opacity-60" : "border-white/[0.12] bg-white/8"
                     }`}
                   >
                     {/* Position */}
@@ -328,7 +328,7 @@ export function TriviaQueue() {
                       <p className="text-xs text-white/80 truncate">{q.question}</p>
                     </div>
 
-                    <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/40"}`}>
+                    <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
                       {q.difficulty}
                     </span>
                     <span className="shrink-0 rounded-full bg-[#0076B6]/20 px-1.5 py-0.5 text-[9px] text-[#0076B6]">
@@ -343,7 +343,7 @@ export function TriviaQueue() {
                         <button
                           onClick={() => moveInQueue(q.questionId, Math.max(1, q.sortOrder - 1))}
                           disabled={busy || i === 0 || queue[i - 1]?.status !== "pending"}
-                          className="rounded px-1 py-0.5 text-[10px] text-white/30 hover:text-white hover:bg-white/10 disabled:opacity-20 transition"
+                          className="rounded px-1 py-0.5 text-[10px] text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20 transition"
                           title="Move up"
                         >
                           ▲
@@ -351,7 +351,7 @@ export function TriviaQueue() {
                         <button
                           onClick={() => moveInQueue(q.questionId, Math.min(queue.length, q.sortOrder + 1))}
                           disabled={busy || i === queue.length - 1}
-                          className="rounded px-1 py-0.5 text-[10px] text-white/30 hover:text-white hover:bg-white/10 disabled:opacity-20 transition"
+                          className="rounded px-1 py-0.5 text-[10px] text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20 transition"
                           title="Move down"
                         >
                           ▼

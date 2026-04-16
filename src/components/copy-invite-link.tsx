@@ -39,12 +39,12 @@ export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; p
       <div className="flex items-center gap-2">
         <button
           onClick={handleCopyMessage}
-          className="text-xs text-white/40 hover:text-white/60 transition"
+          className="text-xs text-white/50 hover:text-white/60 transition"
         >
           {msgCopied ? "Message copied!" : "Copy share message"}
         </button>
         <span className="text-xs text-white/20">&middot;</span>
-        <span className="text-xs text-white/30 font-mono">Code: {inviteCode}</span>
+        <span className="text-xs text-white/40 font-mono">Code: {inviteCode}</span>
       </div>
     </div>
   );

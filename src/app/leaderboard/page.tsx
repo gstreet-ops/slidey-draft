@@ -26,8 +26,8 @@ export default async function LeaderboardPage() {
         <p className="mt-2 text-center text-white/50">{results.length}/32 picks scored &middot; 2026 NFL Draft</p>
 
         {leaderboard.length === 0 ? (
-          <div className="mt-12 rounded-xl border border-white/10 bg-white/5 p-12 text-center">
-            <p className="text-white/40 text-lg">No scores yet. The leaderboard will populate once draft results are entered.</p>
+          <div className="mt-12 rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
+            <p className="text-white/50 text-lg">No scores yet. The leaderboard will populate once draft results are entered.</p>
           </div>
         ) : (
           <div className="mt-8 space-y-3">
@@ -41,11 +41,11 @@ export default async function LeaderboardPage() {
                 <Link
                   key={entry.boardId}
                   href={`/picks/${entry.boardId}`}
-                  className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-500/10 border-2 border-amber-400/30 hover:border-amber-400/50" : "bg-white/5 border border-white/10 hover:bg-white/10"}`}
+                  className={`flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 shadow-sm transition sm:gap-4 sm:px-5 sm:py-4 ${isUser ? "bg-amber-500/10 border-2 border-amber-400/30 hover:border-amber-400/50" : "bg-white/8 border border-white/[0.12] hover:bg-white/10"}`}
                   style={entry.teamPrimaryColor ? { borderLeft: `4px solid ${entry.teamPrimaryColor}` } : undefined}
                 >
                   <div className="flex flex-col items-center w-10 shrink-0">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-500/20 text-yellow-400" : rank === 2 ? "bg-gray-300/20 text-gray-300" : rank === 3 ? "bg-orange-400/20 text-orange-400" : "bg-white/10 text-white/40"}`}>
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${rank === 1 ? "bg-yellow-500/20 text-yellow-400" : rank === 2 ? "bg-gray-300/20 text-gray-300" : rank === 3 ? "bg-orange-400/20 text-orange-400" : "bg-white/10 text-white/50"}`}>
                       {allDone && rank === 1 ? "\uD83C\uDFC6" : rank}
                     </div>
                     {rankDelta !== 0 && (
@@ -65,8 +65,8 @@ export default async function LeaderboardPage() {
                     <p className="text-sm text-white/50 truncate">{entry.boardTitle}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-2xl font-bold text-white">{entry.totalScore}<span className="text-sm font-normal text-white/40 ml-1">pts</span></div>
-                    <div className="flex flex-wrap gap-3 text-xs text-white/40">
+                    <div className="text-2xl font-bold text-white">{entry.totalScore}<span className="text-sm font-normal text-white/50 ml-1">pts</span></div>
+                    <div className="flex flex-wrap gap-3 text-xs text-white/50">
                       <span>{entry.correctExact} exact</span>
                       <span>{entry.correctPlayer} correct</span>
                       <span>{accuracyDisplay}%</span>

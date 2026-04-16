@@ -60,7 +60,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
           ))}
           {/* More dropdown for secondary */}
           <div className="relative group">
-            <button className="rounded-lg px-3 py-2 text-sm text-white/40 hover:bg-white/10 hover:text-white transition">
+            <button className="rounded-lg px-3 py-2 text-sm text-white/50 hover:bg-white/10 hover:text-white transition">
               More
             </button>
             <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--gtown-navy)] p-1 shadow-xl group-hover:block">

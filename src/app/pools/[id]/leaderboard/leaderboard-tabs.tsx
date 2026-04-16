@@ -40,7 +40,7 @@ export function LeaderboardTabs({
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "individual"
               ? "bg-[var(--gtown-highlight)] text-white"
-              : "text-white/40 hover:text-white/60"
+              : "text-white/50 hover:text-white/60"
           }`}
         >
           Individual
@@ -50,7 +50,7 @@ export function LeaderboardTabs({
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "teams"
               ? "bg-[var(--gtown-highlight)] text-white"
-              : "text-white/40 hover:text-white/60"
+              : "text-white/50 hover:text-white/60"
           }`}
         >
           Teams
@@ -60,14 +60,14 @@ export function LeaderboardTabs({
       {tab === "individual" && (
         <>
           {standings.length === 0 ? (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-              <p className="text-white/40">No scores yet. Standings will appear once the draft begins.</p>
+            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-12 text-center">
+              <p className="text-white/50">No scores yet. Standings will appear once the draft begins.</p>
             </div>
           ) : (
-            <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+            <div className="bg-white/8 border border-white/[0.12] rounded-xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-white/40 text-xs uppercase tracking-wider">
+                  <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
                     <th className="text-left px-4 py-3">Rank</th>
                     <th className="text-left px-4 py-3">Name</th>
                     <th className="text-right px-4 py-3">Mock</th>
@@ -116,7 +116,7 @@ export function LeaderboardTabs({
                         <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>
                         <td className="px-4 py-3 text-right text-white/60">{(s as Record<string, unknown>).triviaTotal as number ?? 0}</td>
                         <td className="px-4 py-3 text-right text-white font-bold">{s.combinedScore}</td>
-                        <td className="px-4 py-3 text-right text-white/40">
+                        <td className="px-4 py-3 text-right text-white/50">
                           {s.picksPredicted > 0 ? `${accuracy}%` : "-"}
                         </td>
                       </tr>

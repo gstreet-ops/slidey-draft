@@ -13,7 +13,7 @@ export function CollapsibleTriviaControls({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8">
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-white/5 transition rounded-xl"
@@ -21,7 +21,7 @@ export function CollapsibleTriviaControls({
         <span className="text-sm font-semibold text-white/60 uppercase tracking-wider flex items-center gap-2">
           <span>{"\uD83C\uDFAE"}</span> Trivia Controls
         </span>
-        <span className="text-xs text-white/30">{expanded ? "▾" : "▸"}</span>
+        <span className="text-xs text-white/40">{expanded ? "▾" : "▸"}</span>
       </button>
       {expanded && (
         <div className="px-5 pb-5">

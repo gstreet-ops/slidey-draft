@@ -160,11 +160,11 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   // No active question
   if (!question && !done) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Draft Trivia</h3>
-            <p className="text-xs text-white/30 mt-0.5">Questions fire automatically during the draft</p>
+            <p className="text-xs text-white/40 mt-0.5">Questions fire automatically during the draft</p>
           </div>
           {triviaScore > 0 && (
             <span className="text-sm text-[var(--slidey)] font-bold">{triviaScore}pts</span>
@@ -176,7 +176,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
 
   if (done) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 text-center">
         <p className="text-white/60 text-sm">No more trivia questions</p>
         <p className="text-white font-bold mt-1">Trivia Score: {triviaScore}pts</p>
       </div>
@@ -196,7 +196,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const isTimedOut = result && selected === null;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/60">
@@ -215,7 +215,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         </div>
         <div className="flex items-center gap-2">
           {question!.sortOrder && question!.totalQueued && (
-            <span className="text-[10px] text-white/30">Q{question!.sortOrder} of {question!.totalQueued}</span>
+            <span className="text-[10px] text-white/40">Q{question!.sortOrder} of {question!.totalQueued}</span>
           )}
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
@@ -229,7 +229,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
             <span className="text-[10px] font-bold text-yellow-400 animate-pulse">PAUSED</span>
           )}
           {!result && timerTotal === 0 && !paused && (
-            <span className="text-[10px] text-white/30">No timer</span>
+            <span className="text-[10px] text-white/40">No timer</span>
           )}
         </div>
       </div>
@@ -248,7 +248,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((opt) => {
-          let style = "border-white/10 bg-white/5 hover:bg-white/10 text-white/80";
+          let style = "border-white/[0.12] bg-white/8 hover:bg-white/10 text-white/80";
 
           if (result) {
             if (opt.index === result.correctAnswer) {
@@ -256,7 +256,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
             } else if (opt.index === selected && !result.correct) {
               style = "border-red-500/50 bg-red-500/20 text-red-300";
             } else {
-              style = "border-white/5 bg-white/[0.02] text-white/30";
+              style = "border-white/8 bg-white/[0.02] text-white/40";
             }
           } else if (opt.index === selected) {
             style = "border-[var(--slidey)]/50 bg-[var(--slidey)]/20 text-white";

@@ -38,7 +38,7 @@ export default async function PoolsPage() {
         {pools.length === 0 ? (
           <div className="rounded-xl bg-white/10 p-12 text-center space-y-4">
             <p className="text-white/60">You haven&apos;t joined any pools yet.</p>
-            <p className="text-white/40 text-sm">Create a pool or join one with an invite code.</p>
+            <p className="text-white/50 text-sm">Create a pool or join one with an invite code.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -46,7 +46,7 @@ export default async function PoolsPage() {
               <Link
                 key={pool.poolId}
                 href={`/pools/${pool.poolId}`}
-                className="rounded-xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition space-y-3"
+                className="rounded-xl bg-white/8 border border-white/[0.12] p-6 hover:bg-white/10 transition space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-white">{pool.poolName}</h3>
@@ -65,7 +65,7 @@ export default async function PoolsPage() {
                 {pool.description && (
                   <p className="text-sm text-white/50 line-clamp-2">{pool.description}</p>
                 )}
-                <div className="flex items-center gap-3 text-xs text-white/40">
+                <div className="flex items-center gap-3 text-xs text-white/50">
                   <span className="capitalize">{pool.role}</span>
                   <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
                 </div>

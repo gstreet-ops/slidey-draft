@@ -36,7 +36,7 @@ export default async function JoinPoolPage({
   if (session.user.status !== "active") {
     return (
       <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-4">
+        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
           <p className="text-white/60">
             You need an invite to participate. Enter your invite code or ask a friend for one.
@@ -69,10 +69,10 @@ export default async function JoinPoolPage({
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-xl p-8 text-center space-y-6">
+      <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
         <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
         {pool.description && <p className="text-white/50 text-sm">{pool.description as string}</p>}
-        <p className="text-white/40 text-sm">{memberCount} member{memberCount !== 1 ? "s" : ""}</p>
+        <p className="text-white/50 text-sm">{memberCount} member{memberCount !== 1 ? "s" : ""}</p>
         <JoinPoolButton inviteCode={inviteCode} poolId={pool.id} />
       </div>
     </div>

@@ -64,7 +64,7 @@ export default async function PicksPage() {
               <Link
                 key={board.id}
                 href={`/picks/${board.id}`}
-                className="group rounded-xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition"
+                className="group rounded-xl bg-white/8 border border-white/[0.12] p-6 hover:bg-white/10 transition"
                 style={board.team?.primaryColor ? { borderLeft: `4px solid ${board.team.primaryColor}` } : undefined}
               >
                 <div className="flex items-center gap-3">
@@ -80,12 +80,12 @@ export default async function PicksPage() {
                       Published {board.publishedAt?.toLocaleDateString()}
                     </p>
                     {board.grade && (
-                      <p className="mt-1 text-xs text-white/40">
+                      <p className="mt-1 text-xs text-white/50">
                         {board.grade.steals} steal{board.grade.steals !== 1 ? "s" : ""} &middot; {board.grade.reaches} reach{board.grade.reaches !== 1 ? "es" : ""} &middot; {board.pickCount}/32 picks
                       </p>
                     )}
                     {board.noteCount > 0 && (
-                      <p className="mt-0.5 text-xs text-white/40">💬 {board.noteCount} pick{board.noteCount !== 1 ? "s" : ""} with commentary</p>
+                      <p className="mt-0.5 text-xs text-white/50">💬 {board.noteCount} pick{board.noteCount !== 1 ? "s" : ""} with commentary</p>
                     )}
                   </div>
                   {board.grade && (

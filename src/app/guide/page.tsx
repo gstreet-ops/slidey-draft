@@ -114,21 +114,21 @@ export default async function GuidePage() {
             </p>
 
             <div className="mt-4 space-y-3">
-              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
+              <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">📋</span>
                 <div>
                   <p className="text-sm font-bold text-[var(--lions-blue)]">Mock Draft</p>
                   <p className="mt-0.5 text-sm text-white/60">Earn bonus points for correctly predicting which players get drafted and where. Up to 10 points per pick.</p>
                 </div>
               </div>
-              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
+              <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">⚡</span>
                 <div>
                   <p className="text-sm font-bold text-green-600">Live Predictions</p>
                   <p className="mt-0.5 text-sm text-white/60">Predict each pick in real time during the draft. 10 points for each correct call.</p>
                 </div>
               </div>
-              <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4 flex items-start gap-3">
+              <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4 flex items-start gap-3">
                 <span className="text-lg shrink-0">🧠</span>
                 <div>
                   <p className="text-sm font-bold text-purple-600">Trivia</p>
@@ -159,9 +159,9 @@ export default async function GuidePage() {
               Pool standings combine three scores:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (3-10 pts based on difficulty)</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Mock Draft Bonus</span><span>— points from your published mock draft (tiered scoring above)</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Live Prediction Total</span><span>— points from correct real-time picks during the draft</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— bonus points from answering trivia questions between picks (3-10 pts based on difficulty)</span></li>
             </ul>
             <p className="mt-2">
               The combined score from all three tracks determines your pool rank. Rankings update live as the draft progresses.
@@ -198,9 +198,9 @@ export default async function GuidePage() {
               The <InlineLink href="/live">Live</InlineLink> page is a three-column layout:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Picks vs Actual</span><span>— your mock draft side-by-side with actual results, color-coded by match quality</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— active trivia question with timer, plus commissioner controls if applicable</span></li>
-              <li className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows and team standings</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Your Picks vs Actual</span><span>— your mock draft side-by-side with actual results, color-coded by match quality</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Trivia</span><span>— active trivia question with timer, plus commissioner controls if applicable</span></li>
+              <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60"><span className="text-white font-semibold shrink-0">Leaderboard</span><span>— live rankings with trending arrows and team standings</span></li>
             </ul>
             <p>
               A floating <strong className="text-white">Live Feed</strong> button (bottom-right) opens the event feed and chat. If your commissioner has set up a video call, you&apos;ll see a <strong className="text-white">Join Video Call</strong> button at the top.
@@ -266,7 +266,7 @@ export default async function GuidePage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 rounded-xl border border-white/10 bg-white/5 p-8 text-center">
+        <div className="mt-16 rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
           <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
             READY TO DRAFT?
           </h2>
@@ -295,7 +295,7 @@ export default async function GuidePage() {
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white/5 border border-white/10 px-5 py-4">
+    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4">
       <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
       <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{children}</p>
     </div>
@@ -323,7 +323,7 @@ function StepList({ children }: { children: React.ReactNode }) {
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)] text-xs font-bold text-white">
         {n}
       </span>
@@ -346,7 +346,7 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3">
+    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
       <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
       <p className="mt-0.5 text-xs text-white/60">{desc}</p>
     </div>
@@ -356,7 +356,7 @@ function Feature({ title, desc }: { title: string; desc: string }) {
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <div className="mt-4 rounded-lg bg-white/5 border border-white/10 px-4 py-4">
+    <div className="mt-4 rounded-lg bg-white/8 border border-white/[0.12] px-4 py-4">
       <p className="text-sm font-semibold text-white">{q}</p>
       <p className="mt-1.5 text-sm text-white/50">{children}</p>
     </div>

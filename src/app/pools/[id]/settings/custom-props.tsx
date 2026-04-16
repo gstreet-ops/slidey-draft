@@ -26,7 +26,7 @@ const TYPE_OPTIONS = [
 const STATUS_COLORS: Record<string, string> = {
   open: "bg-green-500/20 text-green-400",
   locked: "bg-yellow-500/20 text-yellow-400",
-  resolved: "bg-white/10 text-white/40",
+  resolved: "bg-white/10 text-white/50",
 };
 
 export function CustomProps({
@@ -98,7 +98,7 @@ export function CustomProps({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-6 space-y-4">
+    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-white">Custom Prop Bets</h3>
         <button
@@ -204,10 +204,10 @@ export function CustomProps({
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white">{prop.question}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[prop.status] || "bg-white/10 text-white/40"}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[prop.status] || "bg-white/10 text-white/50"}`}>
                       {prop.status}
                     </span>
-                    <span className="text-[10px] text-white/30">
+                    <span className="text-[10px] text-white/40">
                       {TYPE_OPTIONS.find((t) => t.value === prop.type)?.label} · {prop.points} pts · {prop.category}
                     </span>
                   </div>
@@ -291,7 +291,7 @@ export function CustomProps({
           ))}
         </div>
       ) : !showForm ? (
-        <p className="text-xs text-white/30">No custom props yet. Create fun pool-specific predictions for your group.</p>
+        <p className="text-xs text-white/40">No custom props yet. Create fun pool-specific predictions for your group.</p>
       ) : null}
     </div>
   );

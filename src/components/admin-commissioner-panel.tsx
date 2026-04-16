@@ -99,7 +99,7 @@ export function AdminCommissionerPanel() {
 
         {generatedLink && (
           <div className="rounded-lg border border-[var(--slidey)]/30 bg-[var(--slidey)]/10 p-4 space-y-2">
-            <p className="text-xs text-white/40">Share this link:</p>
+            <p className="text-xs text-white/50">Share this link:</p>
             <code className="block text-sm text-[var(--slidey)] break-all">{generatedLink}</code>
             <button
               onClick={() => {
@@ -110,7 +110,7 @@ export function AdminCommissionerPanel() {
               Copy link
             </button>
             <div className="pt-2 border-t border-white/10">
-              <p className="text-xs text-white/40">Pre-written message:</p>
+              <p className="text-xs text-white/50">Pre-written message:</p>
               <p className="text-sm text-white/60 mt-1">
                 I&apos;m inviting you to run a draft pool on Slidey! Set up your pool here: {generatedLink}
               </p>
@@ -134,7 +134,7 @@ export function AdminCommissionerPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                   <th className="pb-2 pr-3">Code</th>
                   <th className="pb-2 pr-3">Pool Name</th>
                   <th className="pb-2 pr-3">Status</th>
@@ -149,14 +149,14 @@ export function AdminCommissionerPanel() {
                   return (
                     <tr key={inv.id} className="border-t border-white/5">
                       <td className="py-2 pr-3 font-mono text-xs">{inv.code}</td>
-                      <td className="py-2 pr-3 text-white/40">{inv.poolName || "—"}</td>
+                      <td className="py-2 pr-3 text-white/50">{inv.poolName || "—"}</td>
                       <td className="py-2 pr-3">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status.color}`}>
                           {status.label}
                         </span>
                       </td>
                       <td className="py-2 pr-3 text-xs">{inv.usedByName || inv.usedByEmail || "—"}</td>
-                      <td className="py-2 pr-3 text-xs text-white/30">{new Date(inv.createdAt).toLocaleDateString()}</td>
+                      <td className="py-2 pr-3 text-xs text-white/40">{new Date(inv.createdAt).toLocaleDateString()}</td>
                       <td className="py-2 text-right">
                         {!inv.usedBy && (
                           <button
@@ -183,7 +183,7 @@ export function AdminCommissionerPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-white/40 uppercase tracking-wider">
+                <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
                   <th className="pb-2 pr-3">Name</th>
                   <th className="pb-2 pr-3">Email</th>
                   <th className="pb-2 pr-3">Pools</th>
@@ -195,7 +195,7 @@ export function AdminCommissionerPanel() {
                 {commissioners.map((c) => (
                   <tr key={c.id} className="border-t border-white/5">
                     <td className="py-2 pr-3">{c.name || "—"}</td>
-                    <td className="py-2 pr-3 text-xs text-white/40">{c.email}</td>
+                    <td className="py-2 pr-3 text-xs text-white/50">{c.email}</td>
                     <td className="py-2 pr-3">{c.poolCount}</td>
                     <td className="py-2 pr-3">{c.totalMembers}</td>
                     <td className="py-2 text-right">

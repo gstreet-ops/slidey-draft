@@ -15,7 +15,7 @@ function fortyTimeColor(position: string, time: number): string {
   if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
   if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
   if (EDGE_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
-  return "text-white/40";
+  return "text-white/50";
 }
 
 type Pick = {
@@ -70,7 +70,7 @@ export function PublicPickCard({
   onPlayerClick?: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const bgClass = score?.matchType ? MATCH_BG[score.matchType] : "border-white/10 bg-white/5";
+  const bgClass = score?.matchType ? MATCH_BG[score.matchType] : "border-white/[0.12] bg-white/8";
   const badge = score?.matchType ? MATCH_BADGE[score.matchType] : null;
   const tags = extractTraitTags(pick.playerNotes, pick.playerPosition);
   const hasExpandContent = pick.playerNotes || pick.analysis;
@@ -133,7 +133,7 @@ export function PublicPickCard({
             <span>{pick.playerSchool}</span>
             <span className="text-white/20">&rarr;</span>
             <span>{pick.teamName}</span>
-            <span className="text-[10px] text-white/30 sm:text-xs">({pick.teamAbbreviation})</span>
+            <span className="text-[10px] text-white/40 sm:text-xs">({pick.teamAbbreviation})</span>
             {(() => {
               const nm = checkNeedMatch(pick.playerPosition, pick.teamNeeds);
               if (nm === "top") return <span className="text-[9px] font-semibold text-green-400">● Need</span>;
@@ -157,7 +157,7 @@ export function PublicPickCard({
             </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
-            <p className="mt-0.5 text-[10px] text-white/40 sm:text-xs">
+            <p className="mt-0.5 text-[10px] text-white/50 sm:text-xs">
               Actual: <span className="text-white/60">{score.actualPlayerName}</span> ({score.actualPlayerPosition}, {score.actualPlayerSchool})
             </p>
           )}
@@ -172,7 +172,7 @@ export function PublicPickCard({
                 <span key={t.label} className={`rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${t.color}`}>{t.label}</span>
               ))}
               {tags.length > 2 && (
-                <span className="text-xs text-white/40">+{tags.length - 2}</span>
+                <span className="text-xs text-white/50">+{tags.length - 2}</span>
               )}
             </div>
           )}
@@ -180,7 +180,7 @@ export function PublicPickCard({
           {hasExpandContent && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white transition"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-white/50 hover:bg-white/10 hover:text-white transition"
             >
               <svg
                 width="16"
@@ -212,7 +212,7 @@ export function PublicPickCard({
             <p className={`text-xs ${
               pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :
               pick.pickNumber < pick.consensusLow ? "text-amber-400/60" :
-              "text-white/30"
+              "text-white/40"
             }`}>
               Consensus range: {pick.consensusLow}-{pick.consensusHigh}
               {pick.pickNumber > pick.consensusHigh && " — Steal at #" + pick.pickNumber}

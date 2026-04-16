@@ -50,7 +50,7 @@ export function PickGradeBadge({
         {grade}
       </span>
       {label && (
-        <span className="text-[9px] font-semibold uppercase tracking-wider text-white/40">
+        <span className="text-[9px] font-semibold uppercase tracking-wider text-white/50">
           {label}
         </span>
       )}
