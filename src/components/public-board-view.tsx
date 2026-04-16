@@ -60,8 +60,13 @@ export function PublicBoardView({
 }) {
   const [selectedProspect, setSelectedProspect] = useState<PickData | null>(null);
 
+  const hasAnyNotes = picks.some((p) => p.analysis);
+
   return (
     <>
+      {!hasAnyNotes && picks.length > 0 && (
+        <p className="text-xs text-white/20 italic mb-3">No author commentary on this mock yet</p>
+      )}
       <div className="space-y-2">
         {picks.map((pick) => {
           const score = scoreMap[pick.pickNumber];

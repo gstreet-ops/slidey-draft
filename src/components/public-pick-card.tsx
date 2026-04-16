@@ -161,12 +161,11 @@ export function PublicPickCard({
             </div>
           )}
           {pick.analysis && (
-            <p className="mt-1 text-xs italic text-white/50 truncate">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" className="inline-block mr-1 -mt-0.5 text-white/30">
-                <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2l3 2v-2h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm0 1.5h10a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H6.5L4.5 14v-1.5H2a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z" />
-              </svg>
-              {pick.analysis.length > 120 ? pick.analysis.slice(0, 120) + "..." : pick.analysis}
-            </p>
+            <div className="mt-2 rounded-md bg-white/5 border border-white/10 px-3 py-2">
+              <span className="text-lg text-white/20 leading-none font-serif">{"\u201C"}</span>
+              <p className="text-xs text-white/70 italic line-clamp-2">{pick.analysis}</p>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
+            </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
             <p className="mt-0.5 text-[10px] text-white/40 sm:text-xs">
@@ -214,15 +213,16 @@ export function PublicPickCard({
       {expanded && hasExpandContent && (
         <div className="border-t border-white/10 px-4 py-3 space-y-3 sm:px-5 sm:py-4">
           {pick.analysis && (
-            <div>
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Pick Analysis</h4>
-              <p className="text-sm text-white/60 leading-relaxed">{pick.analysis}</p>
+            <div className="rounded-lg bg-white/[0.06] border border-white/10 px-4 py-3">
+              <span className="text-2xl text-white/15 font-serif leading-none">{"\u201C"}</span>
+              <p className="text-sm text-white/70 italic leading-relaxed">{pick.analysis}</p>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
             </div>
           )}
           {pick.playerNotes && (
             <div>
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Scouting Report</h4>
-              <p className="text-sm text-white/60 leading-relaxed">{pick.playerNotes}</p>
+              <h4 className="text-[9px] font-bold uppercase tracking-wider text-white/20 mb-1">Scouting Report</h4>
+              <p className="text-sm text-white/50 leading-relaxed">{pick.playerNotes}</p>
             </div>
           )}
         </div>

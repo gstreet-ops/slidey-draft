@@ -793,7 +793,79 @@ export function PickBuilder({
                 )}
               </div>
 
-              {/* Pick commentary */}
+              {/* Inline note edit / preview — personal notes FIRST */}
+              {pick && !readOnly && (
+                editingNotePickId === pick.id ? (
+                  <div className="ml-10 mt-2 mb-1">
+                    <textarea
+                      value={editingNoteText}
+                      onChange={(e) => setEditingNoteText(e.target.value)}
+                      placeholder="Why this player here? What makes this pick interesting?"
+                      className="w-full rounded-lg border border-white/15 bg-white/[0.06] p-3 text-sm text-white/80 placeholder:text-white/30 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
+                      rows={2}
+                      autoFocus
+                    />
+                    <div className="flex gap-2 mt-1.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startTransition(async () => {
+                            await updatePickAnalysis(pick.id, editingNoteText);
+                            setEditingNotePickId(null);
+                            flashSaved();
+                          });
+                        }}
+                        disabled={isPending}
+                        className="rounded-md bg-[var(--lions-blue)] px-3 py-1 text-[10px] font-semibold text-white hover:bg-[var(--lions-blue)]/80 disabled:opacity-50 transition"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setEditingNotePickId(null); }}
+                        className="text-[10px] text-white/40 hover:text-white/60"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : pick.analysis ? (
+                  <div
+                    className="ml-10 mt-2 rounded-md bg-white/5 border border-white/10 px-3 py-2 cursor-pointer hover:bg-white/[0.07] transition group relative"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingNotePickId(pick.id);
+                      setEditingNoteText(pick.analysis || "");
+                    }}
+                  >
+                    <span className="text-sm text-white/20 font-serif leading-none">{"\u201C"}</span>
+                    <p className="text-[11px] text-white/60 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
+                    <p className="text-[9px] text-white/25 uppercase tracking-wider font-semibold mt-1">Your Take</p>
+                    <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-white/30">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
+                      </svg>
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className="ml-10 mt-2 rounded-md border border-dashed border-white/15 px-3 py-2 cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingNotePickId(pick.id);
+                      setEditingNoteText("");
+                    }}
+                  >
+                    <p className="text-[11px] text-white/30 italic hover:text-white/40 flex items-center gap-1.5">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="shrink-0">
+                        <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
+                      </svg>
+                      Add your take on this pick...
+                    </p>
+                  </div>
+                )
+              )}
+
+              {/* Auto-generated commentary — secondary to personal notes */}
               {pick && (() => {
                 const pg = gradePick(slot.pickNumber, pick.playerGrade, pick.playerRank);
                 const boardCtx = {
@@ -818,77 +890,17 @@ export function PickBuilder({
                   boardCtx
                 );
                 return (
-                  <div
-                    className="ml-10 mt-1 border-l-2 pl-2 text-[11px] italic text-white/50 hidden sm:block"
-                    style={{ borderColor: gradeColorHex(pg.letterGrade) }}
-                  >
-                    {commentary}
+                  <div className="ml-10 mt-1 hidden sm:block">
+                    <p className="text-[9px] text-white/20 uppercase tracking-wider font-semibold mb-0.5">AI Analysis</p>
+                    <div
+                      className="border-l-2 pl-2 text-[11px] italic text-white/40"
+                      style={{ borderColor: gradeColorHex(pg.letterGrade) }}
+                    >
+                      {commentary}
+                    </div>
                   </div>
                 );
               })()}
-
-              {/* Inline note edit / preview */}
-              {pick && !readOnly && (
-                editingNotePickId === pick.id ? (
-                  <div className="ml-10 mt-1 mb-1">
-                    <textarea
-                      value={editingNoteText}
-                      onChange={(e) => setEditingNoteText(e.target.value)}
-                      placeholder="Share your reasoning..."
-                      className="w-full rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
-                      rows={2}
-                      autoFocus
-                    />
-                    <div className="flex gap-2 mt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startTransition(async () => {
-                            await updatePickAnalysis(pick.id, editingNoteText);
-                            setEditingNotePickId(null);
-                            flashSaved();
-                          });
-                        }}
-                        disabled={isPending}
-                        className="text-[10px] font-semibold text-[var(--lions-blue)] hover:underline disabled:opacity-50"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setEditingNotePickId(null); }}
-                        className="text-[10px] text-white/40 hover:text-white/60"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : pick.analysis ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingNotePickId(pick.id);
-                      setEditingNoteText(pick.analysis || "");
-                    }}
-                    className="ml-10 mt-1 text-[10px] text-white/40 italic hover:text-white/60 transition truncate max-w-[80%] block text-left"
-                  >
-                    💬 {pick.analysis.length > 100 ? pick.analysis.slice(0, 100) + "..." : pick.analysis}
-                  </button>
-                ) : (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingNotePickId(pick.id);
-                      setEditingNoteText("");
-                    }}
-                    className="ml-10 mt-1 flex items-center gap-1 text-[10px] text-white/30 hover:text-[var(--lions-blue)] transition"
-                  >
-                    <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
-                    </svg>
-                    Add your take
-                  </button>
-                )
-              )}
 
               {/* Inline expansion for picked player */}
               {isExpanded && pick && (
