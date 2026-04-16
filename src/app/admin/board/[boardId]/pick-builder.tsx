@@ -6,6 +6,7 @@ import { makePick, removePick, publishBoard, autoFillByRank } from "@/lib/action
 import { PlayerAvatar } from "@/components/player-avatar";
 import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
+import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
 
 type DraftSlot = {
   id: string;
@@ -200,6 +201,36 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
           );
         })()
       )}
+
+      {/* Draft Analysis (commentary) */}
+      {pickNumber && (() => {
+        const pg = gradePick(pickNumber, player.grade, player.rank);
+        const commentary = generatePickCommentary(
+          {
+            pickNumber,
+            playerName: player.name,
+            playerPosition: player.position,
+            playerGrade: player.grade,
+            playerRank: player.rank,
+            playerPositionRank: player.positionRank,
+            playerNflComparison: player.nflComparison,
+            teamName: "",
+            teamAbbreviation: "",
+          },
+          pg,
+          { picksSoFar: [], totalPicks: 0 }
+        );
+        return (
+          <div className="mb-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Draft Analysis</h4>
+            <p className="text-xs italic leading-relaxed text-white/60">{commentary}</p>
+            <div className="mt-1.5 text-[10px] text-white/40 space-y-0.5">
+              <p>Value: {pg.valueGrade} — {valueExplanation(pickNumber, player.grade)}</p>
+              <p>Consensus: {pg.consensusGrade} — {consensusExplanation(pickNumber, player.rank)}</p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Pre-Draft Analysis */}
       {player.notes && (
@@ -631,6 +662,40 @@ export function PickBuilder({
                   </div>
                 )}
               </div>
+
+              {/* Pick commentary */}
+              {pick && (() => {
+                const pg = gradePick(slot.pickNumber, pick.playerGrade, pick.playerRank);
+                const boardCtx = {
+                  picksSoFar: existingPicks
+                    .filter((ep) => ep.pickNumber < slot.pickNumber)
+                    .map((ep) => ({ position: ep.playerPosition, pickNumber: ep.pickNumber })),
+                  totalPicks: existingPicks.filter((ep) => ep.pickNumber <= slot.pickNumber).length,
+                };
+                const commentary = generatePickCommentary(
+                  {
+                    pickNumber: slot.pickNumber,
+                    playerName: pick.playerName,
+                    playerPosition: pick.playerPosition,
+                    playerGrade: pick.playerGrade,
+                    playerRank: pick.playerRank,
+                    playerPositionRank: pick.playerPositionRank ?? null,
+                    playerNflComparison: pick.playerNflComparison ?? null,
+                    teamName: slot.teamName,
+                    teamAbbreviation: slot.teamAbbreviation,
+                  },
+                  pg,
+                  boardCtx
+                );
+                return (
+                  <div
+                    className="ml-10 mt-1 border-l-2 pl-2 text-[11px] italic text-white/50 hidden sm:block"
+                    style={{ borderColor: gradeColorHex(pg.letterGrade) }}
+                  >
+                    {commentary}
+                  </div>
+                );
+              })()}
 
               {/* Inline expansion for picked player */}
               {isExpanded && pick && (

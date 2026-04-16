@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { MockDraftGrade, LetterGrade } from "@/lib/mock-grading";
+import { generateMockSummaryCommentary } from "@/lib/pick-commentary";
 
 function gradeCircleColor(grade: LetterGrade): string {
   switch (grade) {
@@ -14,7 +15,7 @@ function gradeCircleColor(grade: LetterGrade): string {
 }
 
 export function MockGradeCard({ boardId }: { boardId: string }) {
-  const [grade, setGrade] = useState<MockDraftGrade | null>(null);
+  const [grade, setGrade] = useState<(MockDraftGrade & { pickPositions?: Array<{ position: string }> }) | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,6 +66,12 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
             Your Mock Draft Grade
           </p>
           <p className="text-sm text-white/80 mt-0.5">{grade.summary}</p>
+          {grade.pickPositions && (() => {
+            const richSummary = generateMockSummaryCommentary(grade, grade.pickPositions);
+            return richSummary !== grade.summary ? (
+              <p className="text-xs text-white/40 mt-1 line-clamp-2">{richSummary}</p>
+            ) : null;
+          })()}
         </div>
 
         {/* Stats */}

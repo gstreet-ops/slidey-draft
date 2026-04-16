@@ -43,5 +43,9 @@ export async function GET(req: NextRequest) {
     }))
   );
 
-  return NextResponse.json(grade);
+  const pickPositions = boardData.picks.map((p) => ({
+    position: p.playerPosition,
+  }));
+
+  return NextResponse.json({ ...grade, pickPositions });
 }
