@@ -138,8 +138,8 @@ export default async function GuidePage() {
                   )}
                 </StepList>
                 {isMockOnly && (
-                  <Callout>
-                    Your pool is running <strong className="text-white">Mock Drafts only</strong>. Build at least one mock draft board and publish it — that board becomes your entry and will be scored when the real draft happens. No live activity required on draft night (but you can still watch along!).
+                  <Callout icon={"\uD83C\uDFC6"} title="Mock Drafts Only">
+                    Your pool is running Mock Drafts only. Build your mock draft boards, experiment with different strategies, then publish your best one as your official entry. Only your published board is scored — it will be graded automatically when the real draft happens. No live activity required on draft night (but you can still watch along!). Rankings are within your pool only.
                   </Callout>
                 )}
               </>
@@ -158,9 +158,13 @@ export default async function GuidePage() {
                 <strong className="text-white">Mock drafts are scored independently.</strong> Points are awarded based on how closely your predictions match the real draft: exact player + exact slot (10 pts), correct player wrong slot (5 pts), close range (3 pts), position match (1 pt).
               </Callout>
 
-              <Callout>
-                <strong className="text-white">Designate your entry:</strong> if you create multiple mock draft boards, your published board is automatically your entry. If you have multiple published boards, the one with the most picks is used.
+              <Callout title="One Entry Per Pool">
+                You can create multiple mock draft boards to test different strategies and evaluate your options. However, only ONE board counts as your official pool entry. Your most recently published board is automatically your entry. If you want to switch, unpublish your current entry and publish a different board. Only your designated entry board is scored — extra boards are just for practice and fun.
               </Callout>
+
+              <p className="mt-3 text-sm text-white/60 italic">
+                Tip: use extra boards to try out bold strategies or different positional approaches. When you are happy with your best board, make sure it is the one that is published.
+              </p>
 
               <div className="mt-6 space-y-3">
                 <InfoCard title="Making Picks">
@@ -316,9 +320,13 @@ export default async function GuidePage() {
 
             <p className="mt-4">
               {enabledScoringTracks.length === 1
-                ? `Your final rank is based entirely on ${enabledScoringTracks[0]} points.`
-                : "Your final rank is based on the combined score across all enabled scoring tracks."}
+                ? `Your pool rank is based entirely on ${enabledScoringTracks[0]} points.`
+                : "Your pool rank is based on the combined score across all enabled scoring tracks."}
             </p>
+
+            <Callout>
+              All scoring and rankings are within your pool only — there is no global leaderboard. Your pool, your competition.
+            </Callout>
 
             <div className="mt-6">
               <InlineLink href="/scoring">See the full scoring breakdown with examples &rarr;</InlineLink>
@@ -400,6 +408,12 @@ export default async function GuidePage() {
               </Faq>
             )}
 
+            {mockDraftOn && (
+              <Faq q="Can I create more than one mock draft?">
+                Yes! You can create multiple boards to test different strategies. However, only your published board counts as your official entry. Make sure your best board is the one that is published.
+              </Faq>
+            )}
+
             {triviaOn && (
               <Faq q="How does trivia work?">
                 Your commissioner builds a queue of trivia questions that fire automatically between picks. Points depend on difficulty: Easy (3 pts), Medium (5 pts), Hard (10 pts). Questions can cover anything — NFL history, pop culture, inside jokes. Your commissioner can also set a timer (15-60 seconds), no timer, or pause mid-question.
@@ -437,6 +451,10 @@ export default async function GuidePage() {
                 Click the blue info icon next to any player in the prospect pool, or click any player name on a pick card. This opens a detailed profile with their grade, combine numbers, NFL comparison, and full scouting report.
               </Faq>
             )}
+
+            <Faq q="Is there a global leaderboard?">
+              No — all scoring and rankings are within your pool only. Each pool has its own leaderboard and standings.
+            </Faq>
 
             <Faq q="Can the commissioner change which features are on?">
               Yes, your commissioner can enable or disable features from pool settings at any time before the draft.
@@ -548,9 +566,15 @@ function StepIcon({ icon, children }: { icon: string; children: React.ReactNode 
   );
 }
 
-function Callout({ children }: { children: React.ReactNode }) {
+function Callout({ icon, title, children }: { icon?: string; title?: string; children: React.ReactNode }) {
   return (
     <div className="mt-4 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-4 py-3">
+      {(icon || title) && (
+        <div className="flex items-center gap-2 mb-1.5">
+          {icon && <span className="text-lg leading-none">{icon}</span>}
+          {title && <p className="text-sm font-bold text-white">{title}</p>}
+        </div>
+      )}
       <p className="text-sm text-white/70 leading-relaxed">{children}</p>
     </div>
   );
