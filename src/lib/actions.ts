@@ -1113,3 +1113,100 @@ export async function submitPropPick(propId: string, poolId: string, answer: str
 
   revalidatePath("/props");
 }
+
+// ── Create Custom Prop ───────────────────────────
+export async function createCustomProp(
+  poolId: string,
+  data: { question: string; type: string; options?: unknown; points: number; category: string }
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  const allowed = await canManagePool(session.user.id, poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  const [prop] = await db
+    .insert(props)
+    .values({
+      poolId,
+      question: data.question.trim(),
+      type: data.type as "over_under" | "pick_player" | "pick_team" | "yes_no" | "pick_number",
+      options: data.options ?? null,
+      points: Math.max(1, Math.min(20, data.points)),
+      category: data.category.trim() || "custom",
+      createdBy: session.user.id,
+      status: "open",
+      sortOrder: 100,
+    })
+    .returning();
+
+  revalidatePath(`/pools/${poolId}/settings`);
+  revalidatePath("/props");
+  return prop;
+}
+
+// ── Delete Custom Prop ───────────────────────────
+export async function deleteCustomProp(propId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [prop] = await db.select().from(props).where(eq(props.id, propId));
+  if (!prop || !prop.poolId) throw new Error("Prop not found or is a global prop");
+
+  const allowed = await canManagePool(session.user.id, prop.poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  // Check if any picks exist
+  const [pickCount] = await db
+    .select({ c: sql<number>`count(*)` })
+    .from(propPicks)
+    .where(eq(propPicks.propId, propId));
+
+  if (Number(pickCount.c) > 0) {
+    throw new Error("Cannot delete — players have already made picks on this prop");
+  }
+
+  await db.delete(props).where(eq(props.id, propId));
+  revalidatePath(`/pools/${prop.poolId}/settings`);
+  revalidatePath("/props");
+}
+
+// ── Resolve Custom Prop ──────────────────────────
+export async function resolveCustomProp(propId: string, correctAnswer: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+
+  const [prop] = await db.select().from(props).where(eq(props.id, propId));
+  if (!prop || !prop.poolId) throw new Error("Prop not found or is a global prop");
+  if (prop.status === "resolved") throw new Error("Already resolved");
+
+  const allowed = await canManagePool(session.user.id, prop.poolId);
+  if (!allowed) throw new Error("Not authorized");
+
+  // Update prop
+  await db
+    .update(props)
+    .set({ correctAnswer: correctAnswer.trim(), status: "resolved", resolvedAt: new Date() })
+    .where(eq(props.id, propId));
+
+  // Score all picks for this prop
+  const allPicks = await db
+    .select()
+    .from(propPicks)
+    .where(eq(propPicks.propId, propId));
+
+  for (const pick of allPicks) {
+    const isCorrect = pick.answer === correctAnswer.trim();
+    const points = isCorrect ? prop.points : 0;
+    await db
+      .update(propPicks)
+      .set({ isCorrect, pointsAwarded: points })
+      .where(eq(propPicks.id, pick.id));
+  }
+
+  // Recalculate pool standings
+  const { recalculatePoolStandings } = await import("@/lib/pool-scoring");
+  await recalculatePoolStandings(prop.poolId);
+
+  revalidatePath(`/pools/${prop.poolId}/settings`);
+  revalidatePath("/props");
+}

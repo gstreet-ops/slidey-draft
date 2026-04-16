@@ -8,6 +8,10 @@ import { MemberManagement } from "./member-management";
 import { PoolThemeSettings } from "@/components/pool-theme-settings";
 import { PoolTeamManager } from "@/components/pool-team-manager";
 import { PoolLockControl } from "@/components/pool-lock-control";
+import { CustomProps } from "./custom-props";
+import { db } from "@/db";
+import { props } from "@/db/schema";
+import { eq, asc } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +33,12 @@ export default async function PoolSettingsPage({
   const myRole = await getPoolRole(session.user.id, poolId);
   const members = await getPoolMembers(poolId);
   const settings = getPoolSettings(pool.settings);
+
+  const customProps = await db
+    .select()
+    .from(props)
+    .where(eq(props.poolId, poolId))
+    .orderBy(asc(props.sortOrder));
 
   return (
     <div className="min-h-screen bg-[var(--gtown-navy)]">
@@ -57,6 +67,13 @@ export default async function PoolSettingsPage({
           settings={settings}
           isCommissioner={myRole === "commissioner"}
         />
+
+        {(myRole === "commissioner" || myRole === "admin") && (
+          <section>
+            <h2 className="text-xl font-bold text-white mb-4">Prop Bets</h2>
+            <CustomProps poolId={poolId} existingCustomProps={customProps} />
+          </section>
+        )}
 
         {myRole === "commissioner" && (
           <section>
