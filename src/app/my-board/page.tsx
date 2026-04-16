@@ -6,6 +6,7 @@ import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
 import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
+import { MockGradeCard } from "@/components/mock-grade-card";
 import { db } from "@/db";
 import { draftBoards, picks } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
@@ -90,6 +91,10 @@ export default async function MyBoardPage() {
               {boardData.board.status}
             </span>
           </div>
+
+          {boardData.picks.length > 0 && (
+            <MockGradeCard boardId={board.id} />
+          )}
 
           <PickBuilder
             boardId={board.id}

@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import { makePick, removePick, publishBoard, autoFillByRank } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { PickGradeBadge } from "@/components/pick-grade-badge";
+import { gradePick } from "@/lib/mock-grading";
 
 type DraftSlot = {
   id: string;
@@ -85,7 +87,7 @@ function gradeColor(grade: number): string {
   return "text-white/50 bg-white/5 border-white/10";
 }
 
-function InlineProspectDetail({ player, onClose }: { player: Player; onClose: () => void }) {
+function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player; onClose: () => void; pickNumber?: number }) {
   const measurables: { label: string; value: string }[] = [];
   if (player.fortyTime) measurables.push({ label: "40-YD", value: `${player.fortyTime}s` });
   if (player.vertical) measurables.push({ label: "VERTICAL", value: `${player.vertical}"` });
@@ -171,6 +173,32 @@ function InlineProspectDetail({ player, onClose }: { player: Player; onClose: ()
             </div>
           ))}
         </div>
+      )}
+
+      {/* Mock Grade breakdown */}
+      {pickNumber && (
+        (() => {
+          const pg = gradePick(pickNumber, player.grade, player.rank);
+          return (
+            <div className="mb-3">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Mock Grade</h4>
+              <div className="flex rounded-lg border border-white/10 overflow-hidden">
+                <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+                  <PickGradeBadge grade={pg.valueGrade} size="md" />
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Value</p>
+                </div>
+                <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+                  <PickGradeBadge grade={pg.consensusGrade} size="md" />
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Consensus</p>
+                </div>
+                <div className="flex-1 px-3 py-2 text-center bg-white/5">
+                  <PickGradeBadge grade={pg.letterGrade} size="md" />
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/40 mt-0.5">Combined</p>
+                </div>
+              </div>
+            </div>
+          );
+        })()
       )}
 
       {/* Pre-Draft Analysis */}
@@ -542,15 +570,23 @@ export function PickBuilder({
                       <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
                         {pick.playerPosition}
                       </span>
-                      {pick.playerGrade && (
-                        <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold sm:h-6 sm:w-6 sm:text-[10px] ${
-                          pick.playerGrade >= 90 ? "bg-green-500/20 text-green-400"
-                          : pick.playerGrade >= 80 ? "bg-blue-500/20 text-blue-400"
-                          : "bg-yellow-500/20 text-yellow-400"
-                        }`}>
-                          {pick.playerGrade}
-                        </span>
-                      )}
+                      {(() => {
+                        const pg = gradePick(slot.pickNumber, pick.playerGrade, pick.playerRank);
+                        return (
+                          <>
+                            <PickGradeBadge grade={pg.letterGrade} label={pg.pickLabel} />
+                            <span className={`text-[9px] font-semibold sm:text-[10px] ${
+                              pg.letterGrade === 'A+' || pg.letterGrade === 'A' ? 'text-green-400'
+                              : pg.letterGrade === 'B+' || pg.letterGrade === 'B' ? 'text-blue-400'
+                              : pg.letterGrade === 'C+' || pg.letterGrade === 'C' ? 'text-yellow-400'
+                              : pg.letterGrade === 'D' ? 'text-orange-400'
+                              : 'text-red-400'
+                            }`}>
+                              {pg.pickLabel}
+                            </span>
+                          </>
+                        );
+                      })()}
                       <span className="text-[10px] text-white/40 hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
@@ -600,6 +636,7 @@ export function PickBuilder({
               {isExpanded && pick && (
                 <InlineProspectDetail
                   player={pickToPlayer(pick)}
+                  pickNumber={slot.pickNumber}
                   onClose={() => setExpandedPickId(null)}
                 />
               )}
