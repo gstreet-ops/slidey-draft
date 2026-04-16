@@ -23,13 +23,19 @@ export function LeaderboardTabs({
   standings,
   currentUserId,
   scoringMode = "standard",
+  enabledFeatures,
 }: {
   poolId: string;
   standings: Standing[];
   currentUserId: string;
   scoringMode?: "standard" | "custom";
+  enabledFeatures?: string[];
 }) {
   const [tab, setTab] = useState<"individual" | "teams">("individual");
+  const enabled = new Set(enabledFeatures ?? ["mockDraft", "livePredictions", "trivia", "propBets", "watchParty"]);
+  const showMock = enabled.has("mockDraft");
+  const showLive = enabled.has("livePredictions");
+  const showTrivia = enabled.has("trivia");
 
   return (
     <div className="space-y-6">
@@ -70,9 +76,9 @@ export function LeaderboardTabs({
                   <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
                     <th className="text-left px-4 py-3">Rank</th>
                     <th className="text-left px-4 py-3">Name</th>
-                    <th className="text-right px-4 py-3">Mock</th>
-                    <th className="text-right px-4 py-3">Live</th>
-                    <th className="text-right px-4 py-3">Trivia</th>
+                    {showMock && <th className="text-right px-4 py-3">Mock</th>}
+                    {showLive && <th className="text-right px-4 py-3">Live</th>}
+                    {showTrivia && <th className="text-right px-4 py-3">Trivia</th>}
                     <th className="text-right px-4 py-3">Total</th>
                     <th className="text-right px-4 py-3">Accuracy</th>
                   </tr>
@@ -85,6 +91,11 @@ export function LeaderboardTabs({
                       s.picksPredicted > 0
                         ? Math.round((s.correctPredictions / s.picksPredicted) * 100)
                         : 0;
+                    const triviaTotal = ((s as Record<string, unknown>).triviaTotal as number) ?? 0;
+                    const displayedTotal =
+                      (showMock ? s.mockBonus : 0) +
+                      (showLive ? s.liveTotal : 0) +
+                      (showTrivia ? triviaTotal : 0);
 
                     return (
                       <tr
@@ -112,10 +123,10 @@ export function LeaderboardTabs({
                             </span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-right text-white/60">{s.mockBonus}</td>
-                        <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>
-                        <td className="px-4 py-3 text-right text-white/60">{(s as Record<string, unknown>).triviaTotal as number ?? 0}</td>
-                        <td className="px-4 py-3 text-right text-white font-bold">{s.combinedScore}</td>
+                        {showMock && <td className="px-4 py-3 text-right text-white/60">{s.mockBonus}</td>}
+                        {showLive && <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>}
+                        {showTrivia && <td className="px-4 py-3 text-right text-white/60">{triviaTotal}</td>}
+                        <td className="px-4 py-3 text-right text-white font-bold">{displayedTotal}</td>
                         <td className="px-4 py-3 text-right text-white/50">
                           {s.picksPredicted > 0 ? `${accuracy}%` : "-"}
                         </td>

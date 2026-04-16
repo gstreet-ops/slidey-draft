@@ -11,20 +11,26 @@ type Props = {
   userInitial?: string;
   teamLogoUrl?: string | null;
   teamName?: string | null;
+  enabledFeatures?: string[];
 };
 
-export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUrl, teamName }: Props) {
+export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUrl, teamName, enabledFeatures }: Props) {
   const [open, setOpen] = useState(false);
 
-  const primaryLinks = [
-    ...(isLoggedIn
-      ? [
-          { href: "/live", label: "Live" },
-          { href: "/my-board", label: "My Draft" },
-          { href: "/props", label: "Props" },
-        ]
-      : []),
-  ];
+  const enabled = new Set(enabledFeatures ?? ["mockDraft", "livePredictions", "trivia", "propBets", "watchParty"]);
+  const liveLabel = enabled.has("livePredictions")
+    ? "Live"
+    : enabled.has("trivia") || enabled.has("watchParty")
+    ? "Draft Night"
+    : null;
+
+  const primaryLinks = isLoggedIn
+    ? [
+        ...(liveLabel ? [{ href: "/live", label: liveLabel }] : []),
+        ...(enabled.has("mockDraft") ? [{ href: "/my-board", label: "My Draft" }] : []),
+        ...(enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
+      ]
+    : [];
 
   const secondaryLinks = [
     { href: "/picks", label: "Mock Drafts" },

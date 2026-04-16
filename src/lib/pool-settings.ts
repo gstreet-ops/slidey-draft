@@ -6,6 +6,7 @@ export const DEFAULT_POOL_SETTINGS = {
   mockDraftBonus: true,
   livePredictions: true,
   trivia: true,
+  propBets: true,
   watchParty: true,
   entryDeadline: null as string | null,
   maxMembers: null as number | null,

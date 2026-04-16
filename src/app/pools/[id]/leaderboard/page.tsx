@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getPoolById, getPoolStandings, isPoolMember } from "@/lib/queries";
 import { getPoolSettings } from "@/lib/pool-helpers";
+import { getEnabledFeatures } from "@/lib/feature-flags";
 import { ScoringBadge } from "@/components/scoring-badge";
 import { LeaderboardTabs } from "./leaderboard-tabs";
 
@@ -54,6 +55,7 @@ export default async function PoolLeaderboardPage({
           standings={standings}
           currentUserId={session.user.id}
           scoringMode={getPoolSettings(pool.settings).scoringMode}
+          enabledFeatures={Array.from(getEnabledFeatures(getPoolSettings(pool.settings)))}
         />
       </main>
     </div>

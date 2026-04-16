@@ -7,6 +7,9 @@ import Link from "next/link";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { MockGradeCard } from "@/components/mock-grade-card";
+import { FeatureDisabled } from "@/components/feature-disabled";
+import { getPoolSettings } from "@/lib/pool-settings";
+import { isFeatureEnabled } from "@/lib/feature-flags";
 import { db } from "@/db";
 import { draftBoards, picks } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
@@ -20,6 +23,15 @@ export default async function MyBoardPage() {
 
   const season = 2026;
   const locked = await isDraftLocked();
+
+  const userPools = await getPoolsForUser(session.user.id);
+  if (userPools.length > 0) {
+    const settings = getPoolSettings(userPools[0].settings);
+    if (!isFeatureEnabled(settings, "mockDraft")) {
+      return <FeatureDisabled featureLabel="Mock Drafts" />;
+    }
+  }
+
   let board = await getUserBoard(session.user.id, season);
 
   if (!board) {
@@ -35,7 +47,6 @@ export default async function MyBoardPage() {
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
 
   // Get pool members' boards
-  const userPools = await getPoolsForUser(session.user.id);
   type PoolmatBoard = { userId: string; userName: string; boardId: string; pickCount: number; status: string };
   const poolmateBoards: PoolmatBoard[] = [];
 

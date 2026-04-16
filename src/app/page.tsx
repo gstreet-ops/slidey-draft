@@ -14,6 +14,8 @@ import { SpectatorBanner } from "@/components/spectator-banner";
 import { InviteCodeInput } from "@/components/invite-code-input";
 import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { getPoolSettings, DEFAULT_POOL_SETTINGS } from "@/lib/pool-settings";
+import { FEATURES, getEnabledFeatures } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +108,21 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const isCommissioner = user.role === "commissioner" || isAdmin;
   const inPool = userPools.length > 0;
 
+  const poolSettings = inPool ? getPoolSettings(userPools[0].settings) : { ...DEFAULT_POOL_SETTINGS };
+  const enabled = getEnabledFeatures(poolSettings);
+  const mockDraftEnabled = enabled.has("mockDraft");
+  const liveEnabled = enabled.has("livePredictions");
+  const triviaEnabled = enabled.has("trivia");
+  const watchPartyEnabled = enabled.has("watchParty");
+  const hasDraftNight = liveEnabled || triviaEnabled || watchPartyEnabled;
+  const liveCtaLabel = liveEnabled
+    ? "GO TO LIVE"
+    : triviaEnabled
+    ? "JOIN DRAFT NIGHT"
+    : watchPartyEnabled
+    ? "JOIN WATCH PARTY"
+    : null;
+
   return (
     <main className="flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -141,7 +158,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         </div>
 
         {/* Pool Members' Mock Drafts — primary engagement */}
-        {inPool && (
+        {inPool && mockDraftEnabled && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2
@@ -204,15 +221,15 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         )}
 
         {/* Primary CTA */}
-        {inPool ? (
+        {inPool && liveCtaLabel ? (
           <Link
             href="/live"
             className="block rounded-xl border border-green-500/30 bg-green-500/10 p-6 text-center hover:border-green-400/50 transition"
           >
-            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>GO TO LIVE</p>
+            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>{liveCtaLabel}</p>
             <p className="text-xs text-white/50 mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
           </Link>
-        ) : (
+        ) : inPool && !hasDraftNight ? null : (
           <div className="rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center space-y-4">
             <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
             <p className="text-sm text-white/50 max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
@@ -222,13 +239,19 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <QuickAction
-            href="/my-board"
-            title={myBoard ? "My Mock Draft" : "Create Your Mock Draft"}
-            desc={myBoard ? "Edit your picks" : "Build your 32-pick board"}
-            icon={"\uD83D\uDCCB"}
-          />
-          <QuickAction href="/props" title="Prop Bets" desc="Side predictions for bonus points" icon={"\uD83C\uDFB2"} />
+          {FEATURES.filter((f) => f.quickAction && enabled.has(f.key)).map((f) => {
+            const qa = f.quickAction!;
+            const isMyBoard = f.key === "mockDraft";
+            return (
+              <QuickAction
+                key={f.key}
+                href={qa.href}
+                title={isMyBoard && myBoard ? "My Mock Draft" : isMyBoard ? "Create Your Mock Draft" : qa.title}
+                desc={isMyBoard && myBoard ? "Edit your picks" : qa.desc}
+                icon={qa.icon}
+              />
+            );
+          })}
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
           {isAdmin && (
             <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />

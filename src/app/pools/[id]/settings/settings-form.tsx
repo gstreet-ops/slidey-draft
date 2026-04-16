@@ -5,6 +5,7 @@ import { updatePoolSettings, lockPool, deletePool } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import type { PoolSettings } from "@/lib/pool-settings";
 import { DEFAULT_POOL_SETTINGS } from "@/lib/pool-settings";
+import { FEATURES } from "@/lib/feature-flags";
 
 export function PoolSettingsForm({
   poolId,
@@ -24,6 +25,8 @@ export function PoolSettingsForm({
   const [description, setDescription] = useState(poolDescription);
   const [mockDraftBonus, setMockDraftBonus] = useState(settings.mockDraftBonus);
   const [livePredictions, setLivePredictions] = useState(settings.livePredictions);
+  const [trivia, setTrivia] = useState(settings.trivia);
+  const [propBets, setPropBets] = useState(settings.propBets);
   const [watchParty, setWatchParty] = useState(settings.watchParty);
   const [rounds, setRounds] = useState<number[]>(settings.rounds);
   const [scoringMode, setScoringMode] = useState<"standard" | "custom">(settings.scoringMode || "standard");
@@ -44,6 +47,8 @@ export function PoolSettingsForm({
           rounds,
           mockDraftBonus,
           livePredictions,
+          trivia,
+          propBets,
           watchParty,
           scoringMode,
           mockPointValues: pointValues,
@@ -119,39 +124,61 @@ export function PoolSettingsForm({
         </div>
       </div>
 
-      {/* Toggles */}
+      {/* Features */}
       <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Features</h3>
-        <label className="flex items-center justify-between cursor-pointer">
-          <span className="text-sm text-white">Mock Draft Bonus</span>
-          <input
-            type="checkbox"
-            checked={mockDraftBonus}
-            onChange={(e) => setMockDraftBonus(e.target.checked)}
-            className="w-5 h-5 accent-[var(--gtown-highlight)]"
-          />
-        </label>
-        <label className="flex items-center justify-between cursor-pointer">
-          <span className="text-sm text-white">Live Predictions</span>
-          <input
-            type="checkbox"
-            checked={livePredictions}
-            onChange={(e) => setLivePredictions(e.target.checked)}
-            className="w-5 h-5 accent-[var(--gtown-highlight)]"
-          />
-        </label>
-        <label className="flex items-center justify-between cursor-pointer">
-          <div>
-            <span className="text-sm text-white">Watch Party (Video Chat)</span>
-            <p className="text-xs text-white/40">Jitsi video chat appears on draft night</p>
-          </div>
-          <input
-            type="checkbox"
-            checked={watchParty}
-            onChange={(e) => setWatchParty(e.target.checked)}
-            className="w-5 h-5 accent-[var(--gtown-highlight)]"
-          />
-        </label>
+        <div>
+          <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Active Features</h3>
+          <p className="mt-1 text-xs text-white/50">
+            Choose which features are available to your pool members. Disabled features are hidden from all members.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {FEATURES.map((f) => {
+            const value = f.key === "mockDraft" ? mockDraftBonus
+              : f.key === "livePredictions" ? livePredictions
+              : f.key === "trivia" ? trivia
+              : f.key === "propBets" ? propBets
+              : watchParty;
+            const setValue = f.key === "mockDraft" ? setMockDraftBonus
+              : f.key === "livePredictions" ? setLivePredictions
+              : f.key === "trivia" ? setTrivia
+              : f.key === "propBets" ? setPropBets
+              : setWatchParty;
+            return (
+              <button
+                key={f.key}
+                type="button"
+                onClick={() => setValue(!value)}
+                className={`rounded-xl border p-4 cursor-pointer transition text-left ${
+                  value
+                    ? "border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10"
+                    : "border-white/10 bg-white/[0.03] opacity-60"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl leading-none">{f.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-bold text-white">{f.label}</p>
+                      <span
+                        className={`shrink-0 mt-0.5 inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                          value ? "bg-[var(--lions-blue)]" : "bg-white/15"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            value ? "translate-x-[18px]" : "translate-x-0.5"
+                          }`}
+                        />
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs text-white/50 leading-snug">{f.description}</p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Scoring Mode */}

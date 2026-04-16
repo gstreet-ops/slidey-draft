@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getPropsForPool, getUserPropPicks, getPoolsForUser, getPlayers, getTeams } from "@/lib/queries";
 import { PropsClient } from "./props-client";
+import { FeatureDisabled } from "@/components/feature-disabled";
+import { getPoolSettings } from "@/lib/pool-settings";
+import { isFeatureEnabled } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +14,11 @@ export default async function PropsPage() {
 
   const userPools = await getPoolsForUser(session.user.id);
   if (userPools.length === 0) redirect("/");
+
+  const poolSettings = getPoolSettings(userPools[0].settings);
+  if (!isFeatureEnabled(poolSettings, "propBets")) {
+    return <FeatureDisabled featureLabel="Prop Bets" />;
+  }
 
   const poolId = userPools[0].poolId;
   const poolName = userPools[0].poolName;

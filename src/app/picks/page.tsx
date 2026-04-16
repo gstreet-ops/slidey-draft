@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getBoards, getBoardWithPicks } from "@/lib/queries";
+import { getBoards, getBoardWithPicks, getPoolsForUser } from "@/lib/queries";
 import { gradeMockDraft } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
 import { auth } from "@/lib/auth";
@@ -9,13 +9,27 @@ import { eq } from "drizzle-orm";
 import { users, teams } from "@/db/schema";
 import { SiteFooter } from "@/components/site-footer";
 import { GradeCircle } from "@/components/grade-circle";
+import { FeatureDisabled } from "@/components/feature-disabled";
+import { getPoolSettings } from "@/lib/pool-settings";
+import { isFeatureEnabled } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
 export default async function PicksPage() {
+  const session = await auth();
+
+  if (session?.user?.id) {
+    const userPools = await getPoolsForUser(session.user.id);
+    if (userPools.length > 0) {
+      const settings = getPoolSettings(userPools[0].settings);
+      if (!isFeatureEnabled(settings, "mockDraft")) {
+        return <FeatureDisabled featureLabel="Mock Drafts" />;
+      }
+    }
+  }
+
   const boards = await getBoards(2026);
   const published = boards.filter((b) => b.status === "published");
-  const session = await auth();
 
   // Enrich boards with creator info
   const enrichedBoards = await Promise.all(
