@@ -81,6 +81,19 @@ type Props = {
   readOnly?: boolean;
 };
 
+/* ── 40-time color helper ────────────────────────────────────── */
+
+const SPEED_POS = ["WR", "RB", "CB", "S", "FS", "SS"];
+const EDGE_LB_POS = ["EDGE", "LB", "OLB", "ILB"];
+
+function fortyTimeColor(position: string, time: number): string {
+  const pos = position.toUpperCase();
+  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
+  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
+  if (EDGE_LB_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
+  return "text-white/40";
+}
+
 /* ── Inline detail panel (ESPN-style) ────────────────────────── */
 
 function gradeColor(grade: number): string {
@@ -297,6 +310,7 @@ export function PickBuilder({
   const [editingNotePickId, setEditingNotePickId] = useState<string | null>(null);
   const [editingNoteText, setEditingNoteText] = useState("");
   const [needsOnly, setNeedsOnly] = useState(false);
+  const [sortBy, setSortBy] = useState<"rank" | "fastest" | "grade">("rank");
 
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
@@ -311,14 +325,34 @@ export function PickBuilder({
 
   const activeSlotData = activeSlot ? draftOrder.find((s) => s.pickNumber === activeSlot) : null;
 
-  const filteredPlayers = realAvailable.filter(
-    (p) =>
-      (posFilter === "ALL" || p.position === posFilter) &&
-      (!needsOnly || !activeSlotData?.teamNeeds || matchesAnyNeed(p.position, activeSlotData.teamNeeds)) &&
-      (p.name.toLowerCase().includes(search.toLowerCase()) ||
-       p.position.toLowerCase().includes(search.toLowerCase()) ||
-       p.school.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredPlayers = realAvailable
+    .filter(
+      (p) =>
+        (posFilter === "ALL" || p.position === posFilter) &&
+        (!needsOnly || !activeSlotData?.teamNeeds || matchesAnyNeed(p.position, activeSlotData.teamNeeds)) &&
+        (p.name.toLowerCase().includes(search.toLowerCase()) ||
+         p.position.toLowerCase().includes(search.toLowerCase()) ||
+         p.school.toLowerCase().includes(search.toLowerCase()))
+    )
+    .sort((a, b) => {
+      if (sortBy === "fastest") {
+        if (!a.fortyTime && !b.fortyTime) return 0;
+        if (!a.fortyTime) return 1;
+        if (!b.fortyTime) return -1;
+        return a.fortyTime - b.fortyTime;
+      }
+      if (sortBy === "grade") {
+        if (!a.grade && !b.grade) return 0;
+        if (!a.grade) return 1;
+        if (!b.grade) return -1;
+        return b.grade - a.grade;
+      }
+      // Default: rank
+      if (!a.rank && !b.rank) return 0;
+      if (!a.rank) return 1;
+      if (!b.rank) return -1;
+      return a.rank - b.rank;
+    });
 
   function flashSaved() {
     setSaveFlash(true);
@@ -455,6 +489,23 @@ export function PickBuilder({
         </button>
       )}
 
+      {/* Sort options */}
+      <div className="mb-2 flex gap-1">
+        {(["rank", "fastest", "grade"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setSortBy(s)}
+            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
+              sortBy === s
+                ? "bg-[var(--lions-blue)] text-white"
+                : "bg-white/5 text-white/40 hover:text-white/60"
+            }`}
+          >
+            {s === "rank" ? "Rank" : s === "fastest" ? "Fastest" : "Grade"}
+          </button>
+        ))}
+      </div>
+
       {/* Analysis text area */}
       {activeSlot && !readOnly && (
         <div className="mb-3">
@@ -505,6 +556,11 @@ export function PickBuilder({
                     </span>
                     {slot?.teamNeeds && matchesAnyNeed(player.position, slot.teamNeeds) && (
                       <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-[9px] font-bold text-green-400">Need</span>
+                    )}
+                    {player.fortyTime && (
+                      <span className={`font-mono text-[10px] ${fortyTimeColor(player.position, player.fortyTime)}`}>
+                        {player.fortyTime.toFixed(2)}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -630,6 +686,11 @@ export function PickBuilder({
                       <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
                         {pick.playerPosition}
                       </span>
+                      {pick.playerFortyTime && (
+                        <span className={`font-mono text-[9px] font-semibold sm:text-[10px] ${fortyTimeColor(pick.playerPosition, pick.playerFortyTime)}`}>
+                          {pick.playerFortyTime.toFixed(2)}s
+                        </span>
+                      )}
                       {(() => {
                         const pg = gradePick(slot.pickNumber, pick.playerGrade, pick.playerRank);
                         return (

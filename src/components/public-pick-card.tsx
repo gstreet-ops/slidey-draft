@@ -7,6 +7,17 @@ import { PlayerAvatar } from "./player-avatar";
 import { extractTraitTags } from "@/lib/trait-tags";
 import { checkNeedMatch } from "@/lib/team-needs";
 
+const SPEED_POS = ["WR", "RB", "CB", "S", "FS", "SS"];
+const EDGE_POS = ["EDGE", "LB", "OLB", "ILB"];
+
+function fortyTimeColor(position: string, time: number): string {
+  const pos = position.toUpperCase();
+  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
+  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
+  if (EDGE_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
+  return "text-white/40";
+}
+
 type Pick = {
   id: string;
   pickNumber: number;
@@ -23,6 +34,7 @@ type Pick = {
   autoFilled: boolean | null;
   analysis: string | null;
   teamNeeds?: string[] | null;
+  playerFortyTime?: number | null;
 };
 
 type ScoreInfo = {
@@ -109,6 +121,11 @@ export function PublicPickCard({
             <span className="rounded-full bg-[var(--lions-blue)]/20 px-2 py-0.5 text-[10px] font-semibold text-[var(--lions-blue)] sm:text-xs">
               {pick.playerPosition}
             </span>
+            {pick.playerFortyTime && (
+              <span className={`font-mono text-[10px] font-semibold sm:text-xs ${fortyTimeColor(pick.playerPosition, pick.playerFortyTime)}`}>
+                {pick.playerFortyTime.toFixed(2)}s
+              </span>
+            )}
           </div>
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-white/50 sm:text-sm sm:gap-2">
             <span>{pick.playerSchool}</span>
