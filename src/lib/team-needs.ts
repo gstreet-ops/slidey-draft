@@ -77,3 +77,42 @@ export function matchesAnyNeed(
   if (!teamNeeds) return false;
   return teamNeeds.some((need) => positionMatchesNeed(playerPosition, need));
 }
+
+/**
+ * Short narrative paragraph about how a pick relates to the team's needs.
+ * Returns null when there's no needs data.
+ */
+export function generateNeedsAnalysis(
+  teamName: string,
+  playerName: string,
+  playerPosition: string,
+  teamNeeds: string[] | null | undefined,
+): string | null {
+  if (!teamNeeds || teamNeeds.length === 0) return null;
+  const nm = checkNeedMatch(playerPosition, teamNeeds);
+
+  if (nm.tier === "top" && nm.needIndex === 0) {
+    const also = [teamNeeds[1], teamNeeds[2]].filter(Boolean);
+    const alsoLine = also.length > 0 ? ` Other needs include ${also.join(" and ")}.` : "";
+    return `${teamName} have ${playerPosition} as their top draft priority. ${playerName} addresses their biggest need and should contribute immediately.${alsoLine}`;
+  }
+
+  if (nm.tier === "top" && nm.needIndex === 1) {
+    const top = teamNeeds[0];
+    const third = teamNeeds[2];
+    const thirdLine = third ? ` They also need ${third}.` : "";
+    return `${playerPosition} is a key need for ${teamName}, ranked #2 on their board behind ${top}. ${playerName} fills an important gap.${thirdLine}`;
+  }
+
+  if (nm.tier === "match" && nm.needIndex !== null) {
+    const topTwo = [teamNeeds[0], teamNeeds[1]].filter(Boolean);
+    const topLine = topTwo.length > 0 ? `Top needs are ${topTwo.join(" and ")}. ` : "";
+    return `${teamName} need ${playerPosition}, but it is not among their top priorities — ranked #${nm.needIndex + 1} on their needs list. ${topLine}This pick addresses depth rather than a glaring hole.`;
+  }
+
+  if (nm.tier === "off") {
+    return `${playerPosition} is not a listed need for ${teamName}. Their top priorities are ${teamNeeds.slice(0, 3).join(", ")}. This is a best-player-available pick that ignores positional need — could be a luxury pick, or the front office sees something others do not.`;
+  }
+
+  return null;
+}

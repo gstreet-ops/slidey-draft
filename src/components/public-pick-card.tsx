@@ -5,7 +5,7 @@ import Image from "next/image";
 import { PlayerAvatar } from "./player-avatar";
 
 import { extractTraitTags } from "@/lib/trait-tags";
-import { checkNeedMatch } from "@/lib/team-needs";
+import { checkNeedMatch, generateNeedsAnalysis } from "@/lib/team-needs";
 
 const SPEED_POS = ["WR", "RB", "CB", "S", "FS", "SS"];
 const EDGE_POS = ["EDGE", "LB", "OLB", "ILB"];
@@ -216,24 +216,19 @@ export function PublicPickCard({
             </div>
           )}
           {(() => {
-            const needs = pick.teamNeeds;
-            if (!needs || needs.length === 0) return null;
-            const nm = checkNeedMatch(pick.playerPosition, needs);
-            if (nm.tier === "off") {
-              return (
-                <p className="text-xs text-amber-400/40">
-                  {pick.teamName} needs: {needs.slice(0, 3).join(", ")} — {pick.playerPosition} not a listed need
-                </p>
-              );
-            }
-            if (nm.needIndex !== null) {
-              return (
-                <p className="text-xs text-white/40">
-                  {pick.teamName} needs: {needs.slice(0, 5).join(", ")} — {pick.playerPosition} is #{nm.needIndex + 1} priority
-                </p>
-              );
-            }
-            return null;
+            const analysis = generateNeedsAnalysis(
+              pick.teamName,
+              pick.playerName,
+              pick.playerPosition,
+              pick.teamNeeds,
+            );
+            if (!analysis) return null;
+            return (
+              <div>
+                <h4 className="text-[9px] font-bold uppercase tracking-wider text-white/20 mb-1">Team Needs Analysis</h4>
+                <p className="text-sm text-white/50 leading-relaxed">{analysis}</p>
+              </div>
+            );
           })()}
           {pick.consensusLow != null && pick.consensusHigh != null && (
             <p className={`text-xs ${

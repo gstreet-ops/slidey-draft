@@ -7,7 +7,7 @@ import { PlayerAvatar } from "@/components/player-avatar";
 import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
-import { checkNeedMatch, matchesAnyNeed } from "@/lib/team-needs";
+import { checkNeedMatch, matchesAnyNeed, generateNeedsAnalysis } from "@/lib/team-needs";
 
 type DraftSlot = {
   id: string;
@@ -109,7 +109,7 @@ function gradeColor(grade: number): string {
   return "text-white/50 bg-white/8 border-white/[0.12]";
 }
 
-function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player; onClose: () => void; pickNumber?: number }) {
+function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds }: { player: Player; onClose: () => void; pickNumber?: number; teamName?: string; teamNeeds?: string[] | null }) {
   const measurables: { label: string; value: string }[] = [];
   if (player.fortyTime) measurables.push({ label: "40-YD", value: `${player.fortyTime}s` });
   if (player.vertical) measurables.push({ label: "VERTICAL", value: `${player.vertical}"` });
@@ -249,6 +249,18 @@ function InlineProspectDetail({ player, onClose, pickNumber }: { player: Player;
               <p>Value: {pg.valueGrade} — {valueExplanation(pickNumber, player.grade)}</p>
               <p>Consensus: {pg.consensusGrade} — {consensusExplanation(pickNumber, player.rank)}</p>
             </div>
+          </div>
+        );
+      })()}
+
+      {/* Team Needs Analysis */}
+      {teamName && (() => {
+        const analysis = generateNeedsAnalysis(teamName, player.name, player.position, teamNeeds);
+        if (!analysis) return null;
+        return (
+          <div className="mb-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Team Needs Analysis</h4>
+            <p className="text-xs leading-relaxed text-white/60">{analysis}</p>
           </div>
         );
       })()}
@@ -919,6 +931,8 @@ export function PickBuilder({
                 <InlineProspectDetail
                   player={pickToPlayer(pick)}
                   pickNumber={slot.pickNumber}
+                  teamName={slot.teamName}
+                  teamNeeds={slot.teamNeeds}
                   onClose={() => setExpandedPickId(null)}
                 />
               )}
