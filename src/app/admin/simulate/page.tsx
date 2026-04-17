@@ -20,7 +20,7 @@ export default async function SimulatePage() {
         </h1>
         <p className="mt-1 text-sm text-white/50">
           Run a live draft simulation. Open{" "}
-          <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">
+          <a href="/live" target="_blank" className="text-[var(--steelers-gold)] underline">
             Live
           </a>{" "}
           in another tab to watch.
@@ -34,23 +34,23 @@ export default async function SimulatePage() {
         </summary>
         <div className="px-5 pb-4 pt-1 space-y-2 text-sm text-white/50">
           <div className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">1</span>
-            <p>Go to <a href="/admin/trivia" className="text-[var(--lions-blue)] underline">Admin &rarr; Trivia</a> and build your question queue for the pool</p>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-xs font-bold">1</span>
+            <p>Go to <a href="/admin/trivia" className="text-[var(--steelers-gold)] underline">Admin &rarr; Trivia</a> and build your question queue for the pool</p>
           </div>
           <div className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">2</span>
-            <p>Open <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">Live</a> in a second tab to watch as a player would</p>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-xs font-bold">2</span>
+            <p>Open <a href="/live" target="_blank" className="text-[var(--steelers-gold)] underline">Live</a> in a second tab to watch as a player would</p>
           </div>
           <div className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">3</span>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-xs font-bold">3</span>
             <p>Come back here and click <strong className="text-white/70">Announce Next Pick</strong> or <strong className="text-white/70">Auto-Run All</strong></p>
           </div>
           <div className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">4</span>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-xs font-bold">4</span>
             <p>Each pick triggers the next trivia question automatically</p>
           </div>
           <div className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-xs font-bold">5</span>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-xs font-bold">5</span>
             <p>Watch the leaderboard update in real-time</p>
           </div>
           <p className="text-xs text-white/40 mt-3 pl-9">

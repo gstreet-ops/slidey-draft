@@ -420,7 +420,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             <select
               value={selectedPoolIdx}
               onChange={(e) => setSelectedPoolIdx(Number(e.target.value))}
-              className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white focus:border-[var(--lions-blue)] focus:outline-none"
+              className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white focus:border-[var(--steelers-gold)] focus:outline-none"
             >
               {poolContexts.map((p, i) => (
                 <option key={p.poolId} value={i} className="bg-gray-900">{p.poolName}</option>
@@ -511,7 +511,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           {!chatOpen && (
             <button
               onClick={() => setChatOpen(true)}
-              className="hidden lg:flex fixed bottom-6 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-[var(--lions-blue)] text-white shadow-lg hover:bg-[var(--lions-blue)]/80 transition"
+              className="hidden lg:flex fixed bottom-6 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-black shadow-lg hover:bg-[var(--steelers-gold)]/80 transition"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -521,7 +521,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
           {chatOpen && (
             <div
-              className="hidden lg:flex fixed z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/[0.12] bg-[var(--gtown-navy)] shadow-2xl"
+              className="hidden lg:flex fixed z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/[0.12] bg-[var(--steelers-black)] shadow-2xl"
               style={{ bottom: 24 - chatPos.y, right: 24 - chatPos.x }}
             >
               {/* Draggable header */}

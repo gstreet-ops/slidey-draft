@@ -70,8 +70,8 @@ export default async function LivePage() {
   const activePool = poolContexts[0] ?? null;
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
+    <div className="min-h-screen bg-[var(--steelers-black)]">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--steelers-gold)]/[0.04] to-transparent" />
       {/* Status bar */}
       <div className="border-b border-white/5 bg-black/10">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-1.5">

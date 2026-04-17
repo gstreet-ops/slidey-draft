@@ -190,7 +190,7 @@ export function TriviaQueue() {
         <select
           value={selectedPoolId}
           onChange={(e) => setSelectedPoolId(e.target.value)}
-          className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+          className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
         >
           {pools.map((p) => (
             <option key={p.id} value={p.id} className="bg-gray-900">{p.name}</option>
@@ -214,12 +214,12 @@ export function TriviaQueue() {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               placeholder="Search..."
-              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none flex-1 min-w-[120px]"
+              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none flex-1 min-w-[120px]"
             />
             <select
               value={filterCat}
               onChange={(e) => setFilterCat(e.target.value)}
-              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white focus:border-[#0076B6] focus:outline-none"
+              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white focus:border-[#FFB612] focus:outline-none"
             >
               <option value="" className="bg-gray-900">All Categories</option>
               {categories.map((c) => (
@@ -229,7 +229,7 @@ export function TriviaQueue() {
             <select
               value={filterDiff}
               onChange={(e) => setFilterDiff(e.target.value)}
-              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white focus:border-[#0076B6] focus:outline-none"
+              className="rounded-lg border border-white/20 bg-white/5 px-2 py-1.5 text-xs text-white focus:border-[#FFB612] focus:outline-none"
             >
               <option value="" className="bg-gray-900">All</option>
               <option value="easy" className="bg-gray-900">Easy</option>
@@ -239,7 +239,7 @@ export function TriviaQueue() {
             <button
               onClick={addAllUnused}
               disabled={busy || available.length === 0}
-              className="rounded-lg bg-[#0076B6] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0076B6]/80 transition disabled:opacity-50"
+              className="rounded-lg bg-[#FFB612] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50"
             >
               Add All Unused ({available.length})
             </button>
@@ -262,13 +262,13 @@ export function TriviaQueue() {
                   <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
                     {q.difficulty}
                   </span>
-                  <span className="shrink-0 rounded-full bg-[#0076B6]/20 px-1.5 py-0.5 text-[9px] text-[#0076B6]">
+                  <span className="shrink-0 rounded-full bg-[#FFB612]/20 px-1.5 py-0.5 text-[9px] text-[#FFB612]">
                     {q.category.replace(/_/g, " ")}
                   </span>
                   <button
                     onClick={() => addToQueue(q.id)}
                     disabled={busy}
-                    className="shrink-0 rounded-lg border border-[#0076B6]/30 px-2 py-1 text-[10px] font-semibold text-[#0076B6] hover:bg-[#0076B6]/10 transition disabled:opacity-50"
+                    className="shrink-0 rounded-lg border border-[#FFB612]/30 px-2 py-1 text-[10px] font-semibold text-[#FFB612] hover:bg-[#FFB612]/10 transition disabled:opacity-50"
                   >
                     + Add
                   </button>
@@ -331,7 +331,7 @@ export function TriviaQueue() {
                     <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
                       {q.difficulty}
                     </span>
-                    <span className="shrink-0 rounded-full bg-[#0076B6]/20 px-1.5 py-0.5 text-[9px] text-[#0076B6]">
+                    <span className="shrink-0 rounded-full bg-[#FFB612]/20 px-1.5 py-0.5 text-[9px] text-[#FFB612]">
                       {q.category.replace(/_/g, " ")}
                     </span>
                     <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${statusColor[q.status]}`}>

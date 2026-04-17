@@ -115,12 +115,12 @@ export function PublicPickCard({
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               onClick={onPlayerClick}
-              className={`text-sm font-bold text-white hover:text-[var(--lions-blue)] transition sm:text-lg ${pick.autoFilled ? "italic" : ""}`}
+              className={`text-sm font-bold text-white hover:text-[var(--steelers-gold)] transition sm:text-lg ${pick.autoFilled ? "italic" : ""}`}
             >
               {pick.playerName}
               {pick.autoFilled && <span className="ml-1.5 text-[10px] text-yellow-400/70 font-medium not-italic sm:text-xs">BPA</span>}
             </button>
-            <span className="rounded-full bg-[var(--lions-blue)]/20 px-2 py-0.5 text-[10px] font-semibold text-[var(--lions-blue)] sm:text-xs">
+            <span className="rounded-full bg-[var(--steelers-gold)]/20 px-2 py-0.5 text-[10px] font-semibold text-[var(--steelers-gold)] sm:text-xs">
               {pick.playerPosition}
             </span>
             {pick.playerFortyTime && (

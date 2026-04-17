@@ -67,7 +67,7 @@ export default async function GuidePage() {
       : "Everything you need to know about Draft Day Challenge.";
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
           className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
@@ -82,14 +82,14 @@ export default async function GuidePage() {
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--lions-blue)] hover:text-white transition"
+              className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--steelers-gold)] hover:text-white transition"
             >
               {s.label}
             </a>
           ))}
         </nav>
 
-        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-gray-900/60 [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
+        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
@@ -172,7 +172,7 @@ export default async function GuidePage() {
                 </InfoCard>
 
                 <InfoCard title="Researching Prospects">
-                  Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
+                  Every prospect has a detailed scouting profile. Click the blue <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-[10px] font-bold align-middle mx-0.5">i</span> button next to any player to see their full profile — scouting grade, NFL comparison, combine measurables, and a detailed scouting report. You can also click any player name on a completed pick card to review their profile.
                 </InfoCard>
 
                 <InfoCard title="Pick Analysis">
@@ -297,7 +297,7 @@ export default async function GuidePage() {
 
             <div className="mt-4 space-y-3">
               {mockDraftOn && (
-                <ScoreCard icon={"\uD83D\uDCCB"} title="Mock Draft" color="text-[var(--lions-blue)]">
+                <ScoreCard icon={"\uD83D\uDCCB"} title="Mock Draft" color="text-[var(--steelers-gold)]">
                   Earn bonus points for correctly predicting which players get drafted and where. Up to 10 points per pick.
                 </ScoreCard>
               )}
@@ -509,7 +509,7 @@ function PrimaryCta({ session, mockDraftOn, propBetsOn }: { session: boolean; mo
   return (
     <Link
       href={href}
-      className="rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition"
+      className="rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition"
     >
       {label}
     </Link>
@@ -521,7 +521,7 @@ function PrimaryCta({ session, mockDraftOn, propBetsOn }: { session: boolean; mo
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4">
-      <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
+      <p className="text-sm font-bold text-[var(--steelers-gold)]">{title}</p>
       <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{children}</p>
     </div>
   );
@@ -539,7 +539,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--lions-blue)]">{children}</h3>;
+  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--steelers-gold)]">{children}</h3>;
 }
 
 function StepList({ children }: { children: React.ReactNode }) {
@@ -549,7 +549,7 @@ function StepList({ children }: { children: React.ReactNode }) {
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)] text-xs font-bold text-white">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-black">
         {n}
       </span>
       <p className="text-sm text-white/60 pt-0.5">{children}</p>
@@ -568,7 +568,7 @@ function StepIcon({ icon, children }: { icon: string; children: React.ReactNode 
 
 function Callout({ icon, title, children }: { icon?: string; title?: string; children: React.ReactNode }) {
   return (
-    <div className="mt-4 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-4 py-3">
+    <div className="mt-4 rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-4 py-3">
       {(icon || title) && (
         <div className="flex items-center gap-2 mb-1.5">
           {icon && <span className="text-lg leading-none">{icon}</span>}
@@ -603,7 +603,7 @@ function BulletCard({ label, children }: { label: string; children: React.ReactN
 
 function InlineLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <Link href={href} className="text-[var(--lions-blue)] hover:underline font-medium">
+    <Link href={href} className="text-[var(--steelers-gold)] hover:underline font-medium">
       {children}
     </Link>
   );
@@ -616,7 +616,7 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
-      <p className="text-sm font-bold text-[var(--lions-blue)]">{title}</p>
+      <p className="text-sm font-bold text-[var(--steelers-gold)]">{title}</p>
       <p className="mt-0.5 text-xs text-white/60">{desc}</p>
     </div>
   );

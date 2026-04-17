@@ -31,7 +31,7 @@ export default function InviteActivationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
       <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
         <h1 className="text-2xl font-bold text-white">Activate Your Account</h1>
         <p className="text-white/60">
@@ -41,7 +41,7 @@ export default function InviteActivationPage() {
         {status === "idle" && (
           <button
             onClick={handleActivate}
-            className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+            className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
           >
             Activate Full Access
           </button>

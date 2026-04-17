@@ -288,7 +288,7 @@ export function LivePredictionWidget({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name, position, or school..."
-                  className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
+                  className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
                 />
 
                 <div className="flex gap-1 flex-wrap">
@@ -298,7 +298,7 @@ export function LivePredictionWidget({
                       onClick={() => setPosFilter(pos)}
                       className={`px-2 py-1 rounded text-xs font-semibold transition ${
                         posFilter === pos
-                          ? "bg-[var(--gtown-highlight)] text-white"
+                          ? "bg-[var(--steelers-gold)] text-black"
                           : "bg-white/5 text-white/50 hover:text-white/60"
                       }`}
                     >
@@ -314,7 +314,7 @@ export function LivePredictionWidget({
                       onClick={() => setSelectedPlayerId(p.id)}
                       className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
                         selectedPlayerId === p.id
-                          ? "bg-[var(--gtown-highlight)] text-white"
+                          ? "bg-[var(--steelers-gold)] text-black"
                           : "bg-white/5 text-white/70 hover:bg-white/10"
                       }`}
                     >
@@ -350,7 +350,7 @@ export function LivePredictionWidget({
                 <button
                   onClick={handleSubmit}
                   disabled={!selectedPlayerId || submitting}
-                  className="flex-1 rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+                  className="flex-1 rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
                 >
                   {submitting ? "Locking In..." : "Lock In Prediction"}
                 </button>

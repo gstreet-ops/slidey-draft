@@ -551,7 +551,7 @@ export const poolTeams = pgTable("pool_teams", {
     .notNull()
     .references(() => pools.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  colorHex: text("color_hex").notNull().default("#4A7AB5"),
+  colorHex: text("color_hex").notNull().default("#FFB612"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

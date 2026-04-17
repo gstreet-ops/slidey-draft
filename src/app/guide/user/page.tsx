@@ -22,7 +22,7 @@ export default async function UserGuidePage() {
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         {/* Header */}
         <h1

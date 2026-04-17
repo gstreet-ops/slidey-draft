@@ -3,19 +3,18 @@
 /* ── Draft Day Challenge — Design Tokens ─────────────── */
 
 :root {
-  /* Lions theme */
-  --lions-blue: #0076B6;
-  --lions-silver: #B0B7BC;
-  --lions-black: #000000;
+  /* Pittsburgh Steelers theme */
+  --steelers-gold: #FFB612;
+  --steelers-black: #101820;
+  --steelers-dark-gold: #CC9200;
 
-  /* Georgetown theme (app chrome) */
-  --gtown-navy: #0B2545;
-  --gtown-gray: #8D817B;
-  --gtown-accent: #5B6B80;
-  --gtown-highlight: #4A7AB5;
+  /* Surface hierarchy — darker to lighter */
+  --surface-dark: #1a2433;
+  --surface-card: #243040;
+  --surface-elevated: #2d3a4d;
 
   /* Slidey brand */
-  --slidey: #4A7AB5;
+  --slidey: #FFB612;
 
   /* Surfaces */
   --background: #ffffff;
@@ -30,10 +29,11 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
 
-  --color-lions-blue: var(--lions-blue);
-  --color-lions-silver: var(--lions-silver);
-  --color-gtown-navy: var(--gtown-navy);
-  --color-gtown-highlight: var(--gtown-highlight);
+  --color-steelers-gold: var(--steelers-gold);
+  --color-steelers-black: var(--steelers-black);
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-card: var(--surface-card);
+  --color-surface-elevated: var(--surface-elevated);
   --color-slidey: var(--slidey);
 
   --font-sans: "IBM Plex Sans", sans-serif;
@@ -43,7 +43,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #101820;
     --foreground: #ededed;
     --muted: #1a1a1a;
     --border: #2a2a2a;

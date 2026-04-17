@@ -23,12 +23,12 @@ export function InviteCodeInput() {
         onChange={(e) => setCode(e.target.value.toUpperCase())}
         placeholder="INVITE CODE"
         maxLength={10}
-        className="w-40 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-mono text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#0076B6] text-center tracking-wider"
+        className="w-40 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-mono text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#FFB612] text-center tracking-wider"
       />
       <button
         type="submit"
         disabled={!code.trim()}
-        className="rounded-lg bg-[#0076B6] px-6 py-3 text-sm font-bold text-white hover:bg-[#0076B6]/80 transition disabled:opacity-50"
+        className="rounded-lg bg-[#FFB612] px-6 py-3 text-sm font-bold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50"
       >
         Join
       </button>

@@ -25,12 +25,12 @@ export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; p
     <div className="space-y-2">
       <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
         <div className="flex items-center gap-2">
-          <code className="text-sm text-[var(--gtown-highlight)] break-all flex-1">
+          <code className="text-sm text-[var(--steelers-gold)] break-all flex-1">
             {inviteUrl}
           </code>
           <button
             onClick={handleCopyLink}
-            className="shrink-0 rounded-md bg-[var(--gtown-highlight)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-80 transition"
+            className="shrink-0 rounded-md bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-black hover:opacity-80 transition"
           >
             {copied ? "Copied!" : "Copy Link"}
           </button>

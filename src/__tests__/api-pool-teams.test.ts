@@ -118,7 +118,7 @@ describe("POST /api/pools/[poolId]/teams", () => {
   });
 
   it("creates a team when called by commissioner", async () => {
-    const newTeam = { id: "team-3", name: "Team Alpha", colorHex: "#4A7AB5", poolId: "pool-1" };
+    const newTeam = { id: "team-3", name: "Team Alpha", colorHex: "#FFB612", poolId: "pool-1" };
     mockInsert.mockReturnValue({
       values: vi.fn().mockReturnValue({
         returning: vi.fn().mockResolvedValue([newTeam]),

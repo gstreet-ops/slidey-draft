@@ -98,12 +98,12 @@ export function PoolInviteManager({
       <div className="rounded-lg border border-white/10 bg-black/20 p-4 space-y-2">
         <p className="text-xs text-white/50 font-semibold uppercase tracking-wider">Shared Pool Link (unlimited joins)</p>
         <div className="flex items-center gap-2">
-          <code className="text-sm text-[var(--gtown-highlight)] break-all flex-1">
+          <code className="text-sm text-[var(--steelers-gold)] break-all flex-1">
             https://slidey-draft.vercel.app/join/{openInviteCode}
           </code>
           <button
             onClick={() => copyToClipboard(`https://slidey-draft.vercel.app/join/${openInviteCode}`, "open")}
-            className="shrink-0 rounded-md bg-[var(--gtown-highlight)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-80 transition"
+            className="shrink-0 rounded-md bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-black hover:opacity-80 transition"
           >
             {copied === "open" ? "Copied!" : "Copy"}
           </button>

@@ -52,7 +52,7 @@ export function CollapsibleVideoSettings({
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://meet.google.com/abc-defg-hij"
-              className="flex-1 rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
+              className="flex-1 rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none"
             />
             <button
               onClick={handleSave}

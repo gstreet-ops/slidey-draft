@@ -90,7 +90,7 @@ export function PoolSettingsForm({
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)]"
+            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--steelers-gold)]"
           />
         </div>
         <div>
@@ -99,7 +99,7 @@ export function PoolSettingsForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
-            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--gtown-highlight)] resize-none"
+            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
           />
         </div>
       </div>
@@ -114,7 +114,7 @@ export function PoolSettingsForm({
               onClick={() => toggleRound(r)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                 rounds.includes(r)
-                  ? "bg-[var(--gtown-highlight)] text-white"
+                  ? "bg-[var(--steelers-gold)] text-black"
                   : "bg-white/5 text-white/50 border border-white/10"
               }`}
             >
@@ -151,7 +151,7 @@ export function PoolSettingsForm({
                 onClick={() => setValue(!value)}
                 className={`rounded-xl border p-4 cursor-pointer transition text-left ${
                   value
-                    ? "border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10"
+                    ? "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10"
                     : "border-white/10 bg-white/[0.03] opacity-60"
                 }`}
               >
@@ -162,7 +162,7 @@ export function PoolSettingsForm({
                       <p className="text-sm font-bold text-white">{f.label}</p>
                       <span
                         className={`shrink-0 mt-0.5 inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          value ? "bg-[var(--lions-blue)]" : "bg-white/15"
+                          value ? "bg-[var(--steelers-gold)]" : "bg-white/15"
                         }`}
                       >
                         <span
@@ -245,7 +245,7 @@ export function PoolSettingsForm({
                 }
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
-                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
+                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
                     : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
                 }`}
               />
@@ -266,7 +266,7 @@ export function PoolSettingsForm({
             }
             className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
               isCustom
-                ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
+                ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
                 : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
             }`}
           />
@@ -287,7 +287,7 @@ export function PoolSettingsForm({
                 }
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
-                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--gtown-highlight)]"
+                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
                     : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
                 }`}
               />
@@ -300,7 +300,7 @@ export function PoolSettingsForm({
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+        className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save Settings"}
       </button>

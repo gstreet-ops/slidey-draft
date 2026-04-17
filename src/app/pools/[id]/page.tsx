@@ -63,7 +63,7 @@ export default async function PoolDashboardPage({
   const commissioner = members.find((m) => m.role === "commissioner");
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <PoolThemeActivator primaryColor={pool.primaryColor} secondaryColor={pool.secondaryColor} />
 
       <main className="mx-auto max-w-5xl px-6 py-10">
@@ -264,7 +264,7 @@ export default async function PoolDashboardPage({
                 <div className="space-y-2">
                   {top5.map((s) => (
                     <div key={s.userId} className={`flex items-center justify-between text-sm py-1 ${
-                      s.userId === session.user.id ? "text-[var(--gtown-highlight)]" : "text-white"
+                      s.userId === session.user.id ? "text-[var(--steelers-gold)]" : "text-white"
                     }`}>
                       <span className="flex items-center gap-2">
                         {s.teamLogoUrl && <img src={s.teamLogoUrl} alt="" className="h-4 w-4 shrink-0 object-contain" />}
@@ -277,7 +277,7 @@ export default async function PoolDashboardPage({
               )}
               <Link
                 href={`/pools/${poolId}/leaderboard`}
-                className="block text-center text-xs text-[var(--gtown-highlight)] hover:underline mt-2"
+                className="block text-center text-xs text-[var(--steelers-gold)] hover:underline mt-2"
               >
                 Full Leaderboard
               </Link>
@@ -288,7 +288,7 @@ export default async function PoolDashboardPage({
               {settings.mockDraftBonus && !myBoard && (
                 <Link
                   href="/my-board"
-                  className="block w-full text-center rounded-lg bg-[var(--gtown-highlight)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+                  className="block w-full text-center rounded-lg bg-[var(--steelers-gold)] px-4 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
                 >
                   Create Your Mock Draft
                 </Link>

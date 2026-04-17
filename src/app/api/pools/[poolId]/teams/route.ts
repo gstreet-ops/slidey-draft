@@ -59,7 +59,7 @@ export async function POST(
 
   const [team] = await db
     .insert(poolTeams)
-    .values({ poolId, name: name.trim(), colorHex: colorHex ?? "#4A7AB5" })
+    .values({ poolId, name: name.trim(), colorHex: colorHex ?? "#FFB612" })
     .returning();
 
   return NextResponse.json({ team });

@@ -225,7 +225,7 @@ export default function AdminTriviaPage() {
     <div className="space-y-10">
       {/* Toast */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-lg animate-in fade-in max-w-md ${toast.startsWith("Error") || toast.startsWith("Failed") ? "bg-red-600" : "bg-[#0076B6]"}`}>
+        <div className={`fixed top-4 right-4 z-50 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-lg animate-in fade-in max-w-md ${toast.startsWith("Error") || toast.startsWith("Failed") ? "bg-red-600" : "bg-[#FFB612]"}`}>
           {toast}
           <button onClick={() => setToast("")} className="ml-3 text-white/70 hover:text-white">&times;</button>
         </div>
@@ -234,7 +234,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Pool Queue Builder
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
+      <div className="rounded-xl border border-white/[0.12] bg-[var(--surface-dark)] p-6 space-y-6">
         <h2 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
           POOL QUEUE BUILDER
         </h2>
@@ -247,7 +247,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Question Bank
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
+      <div className="rounded-xl border border-white/[0.12] bg-[var(--surface-dark)] p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
             QUESTION BANK
@@ -271,7 +271,7 @@ export default function AdminTriviaPage() {
               onChange={(e) => setCreateForm((f) => ({ ...f, question: e.target.value }))}
               placeholder="Question text..."
               rows={2}
-              className="w-full rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none resize-none"
+              className="w-full rounded-lg border border-white/[0.12] bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none resize-none"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {["A", "B", "C", "D"].map((letter, i) => (
@@ -292,7 +292,7 @@ export default function AdminTriviaPage() {
                       setCreateForm((f) => ({ ...f, options: opts }));
                     }}
                     placeholder={`Option ${letter}`}
-                    className="flex-1 rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
+                    className="flex-1 rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none"
                   />
                 </div>
               ))}
@@ -305,7 +305,7 @@ export default function AdminTriviaPage() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, category: e.target.value }))}
                   list="category-list"
                   placeholder="e.g. nfl_history, pop_culture, inside_jokes..."
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none"
+                  className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none"
                 />
                 <datalist id="category-list">
                   {categories.map((c) => <option key={c} value={c} />)}
@@ -316,7 +316,7 @@ export default function AdminTriviaPage() {
                 <select
                   value={createForm.difficulty}
                   onChange={(e) => setCreateForm((f) => ({ ...f, difficulty: e.target.value as "easy" | "medium" | "hard" }))}
-                  className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                  className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
                 >
                   {DIFFICULTIES.map((d) => (
                     <option key={d.value} value={d.value} className="bg-gray-900">{d.label}</option>
@@ -327,7 +327,7 @@ export default function AdminTriviaPage() {
                 <button
                   onClick={handleCreateQuestion}
                   disabled={creatingQuestion}
-                  className="rounded-lg bg-[#0076B6] px-6 py-2 text-sm font-semibold text-white hover:bg-[#0076B6]/80 transition disabled:opacity-50"
+                  className="rounded-lg bg-[#FFB612] px-6 py-2 text-sm font-semibold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50"
                 >
                   {creatingQuestion ? "Creating..." : "Create"}
                 </button>
@@ -342,12 +342,12 @@ export default function AdminTriviaPage() {
             value={searchText}
             onChange={(e) => { setSearchText(e.target.value); setLibraryPage(1); }}
             placeholder="Search questions..."
-            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#0076B6] focus:outline-none flex-1 min-w-[200px]"
+            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white placeholder:text-white/30 focus:border-[#FFB612] focus:outline-none flex-1 min-w-[200px]"
           />
           <select
             value={filterCategory}
             onChange={(e) => { setFilterCategory(e.target.value); setLibraryPage(1); }}
-            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white focus:border-[#FFB612] focus:outline-none"
           >
             <option value="" className="bg-gray-900">All Categories</option>
             {categories.map((c) => (
@@ -357,7 +357,7 @@ export default function AdminTriviaPage() {
           <select
             value={filterDifficulty}
             onChange={(e) => { setFilterDifficulty(e.target.value); setLibraryPage(1); }}
-            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+            className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-white focus:border-[#FFB612] focus:outline-none"
           >
             <option value="" className="bg-gray-900">All Difficulties</option>
             {DIFFICULTIES.map((d) => (
@@ -378,7 +378,7 @@ export default function AdminTriviaPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white truncate">{q.question}</p>
                 </div>
-                <span className="rounded-full bg-[#0076B6]/20 px-2 py-0.5 text-xs text-[#0076B6] shrink-0">
+                <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-xs text-[#FFB612] shrink-0">
                   {q.category.replace(/_/g, " ")}
                 </span>
                 <span className={`rounded-full px-2 py-0.5 text-xs shrink-0 ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>
@@ -444,7 +444,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           AI Generator (collapsible)
           ═══════════════════════════════════════════════════════ */}
-      <details className="rounded-xl border border-white/[0.12] bg-gray-900/60 p-6 space-y-6">
+      <details className="rounded-xl border border-white/[0.12] bg-[var(--surface-dark)] p-6 space-y-6">
         <summary className="text-xl font-bold text-white tracking-wide cursor-pointer" style={{ fontFamily: "var(--font-display)" }}>
           AI TRIVIA GENERATOR
         </summary>
@@ -457,13 +457,13 @@ export default function AdminTriviaPage() {
               <div className="flex rounded-lg border border-white/10 overflow-hidden">
                 <button
                   onClick={() => setTopicMode("topic_football")}
-                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_football" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_football" ? "bg-[#FFB612] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
                 >
                   Topic + Football
                 </button>
                 <button
                   onClick={() => setTopicMode("topic_only")}
-                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_only" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
+                  className={`px-3 py-2 text-xs font-semibold transition ${topicMode === "topic_only" ? "bg-[#FFB612] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
                 >
                   Topic Only
                 </button>
@@ -477,7 +477,7 @@ export default function AdminTriviaPage() {
                 <select
                   value={sportContext}
                   onChange={(e) => setSportContext(e.target.value)}
-                  className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                  className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
                 >
                   {SPORT_CONTEXTS.map((s) => (
                     <option key={s.value} value={s.value} className="bg-gray-900">{s.label}</option>
@@ -492,7 +492,7 @@ export default function AdminTriviaPage() {
               <select
                 value={aiCategory}
                 onChange={(e) => setAiCategory(e.target.value)}
-                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
               >
                 {AI_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value} className="bg-gray-900">{c.label}</option>
@@ -507,7 +507,7 @@ export default function AdminTriviaPage() {
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="e.g. Quarterback busts of the 2000s"
-                  className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[#0076B6] focus:outline-none"
+                  className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[#FFB612] focus:outline-none"
                 />
               </div>
             )}
@@ -518,7 +518,7 @@ export default function AdminTriviaPage() {
               <select
                 value={aiDifficulty}
                 onChange={(e) => setAiDifficulty(e.target.value)}
-                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
               >
                 {[...DIFFICULTIES, { value: "mixed", label: "Mixed" }].map((d) => (
                   <option key={d.value} value={d.value} className="bg-gray-900">{d.label}</option>
@@ -532,7 +532,7 @@ export default function AdminTriviaPage() {
               <select
                 value={aiCount}
                 onChange={(e) => setAiCount(Number(e.target.value))}
-                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+                className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#FFB612] focus:outline-none"
               >
                 {AI_COUNTS.map((n) => (
                   <option key={n} value={n} className="bg-gray-900">{n}</option>
@@ -545,7 +545,7 @@ export default function AdminTriviaPage() {
               <button
                 onClick={handleGenerate}
                 disabled={generating || (aiCategory === "custom" && !customTopic)}
-                className="rounded-lg bg-[#0076B6] px-6 py-2 text-sm font-semibold text-white hover:bg-[#0076B6]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-[#FFB612] px-6 py-2 text-sm font-semibold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {generating ? (
                   <span className="flex items-center gap-2">
@@ -578,7 +578,7 @@ export default function AdminTriviaPage() {
                   <button
                     onClick={() => handleSaveGenerated(generated.map((_, i) => i))}
                     disabled={saving}
-                    className="rounded-lg bg-[#0076B6] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#0076B6]/80 transition disabled:opacity-50"
+                    className="rounded-lg bg-[#FFB612] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50"
                   >
                     Save All
                   </button>
@@ -609,7 +609,7 @@ export default function AdminTriviaPage() {
                           e.target.checked ? next.add(i) : next.delete(i);
                           setSelectedGen(next);
                         }}
-                        className="mt-1 h-4 w-4 accent-[#0076B6]"
+                        className="mt-1 h-4 w-4 accent-[#FFB612]"
                       />
                       <div className="flex-1">
                         <p className="text-sm text-white">{q.question}</p>
@@ -621,7 +621,7 @@ export default function AdminTriviaPage() {
                           ))}
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="rounded-full bg-[#0076B6]/20 px-2 py-0.5 text-xs text-[#0076B6]">{q.category}</span>
+                          <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-xs text-[#FFB612]">{q.category}</span>
                           <span className={`rounded-full px-2 py-0.5 text-xs ${diffColor[q.difficulty] || "bg-white/10 text-white/50"}`}>{q.difficulty}</span>
                         </div>
                       </div>

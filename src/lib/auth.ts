@@ -117,7 +117,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 id: team.id,
                 name: team.name,
                 abbreviation: team.abbreviation,
-                primaryColor: team.primaryColor || "#4A7AB5",
+                primaryColor: team.primaryColor || "#FFB612",
                 secondaryColor: team.secondaryColor || "#000000",
                 logoUrl: team.logoUrl,
               }

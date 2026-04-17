@@ -27,7 +27,7 @@ export default async function PoolLeaderboardPage({
   const standings = await getPoolStandings(poolId);
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>

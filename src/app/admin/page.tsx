@@ -56,11 +56,11 @@ export default async function AdminDashboard() {
             type="text"
             required
             placeholder="e.g. Mock Draft 1.0"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-[var(--lions-blue)] px-6 py-2 text-sm font-semibold text-white hover:bg-[var(--lions-blue)]/80 transition"
+            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
           >
             + New Board
           </button>
@@ -76,9 +76,9 @@ export default async function AdminDashboard() {
               <Link
                 key={board.id}
                 href={`/admin/board/${board.id}`}
-                className="group rounded-xl border border-white/[0.12] bg-white/8 p-6 hover:border-[var(--lions-blue)]/50 hover:bg-white/10 transition"
+                className="group rounded-xl border border-white/[0.12] bg-white/8 p-6 hover:border-[var(--steelers-gold)]/50 hover:bg-white/10 transition"
               >
-                <h3 className="text-lg font-bold text-white group-hover:text-[var(--lions-blue)] transition">
+                <h3 className="text-lg font-bold text-white group-hover:text-[var(--steelers-gold)] transition">
                   {board.title}
                 </h3>
                 <div className="mt-2 flex items-center gap-3 text-sm text-white/50">
@@ -128,11 +128,11 @@ export default async function AdminDashboard() {
             type="text"
             required
             placeholder="e.g. Georgetown Draft Club"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--gtown-highlight)] focus:outline-none"
+            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-[var(--gtown-highlight)] px-6 py-2 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
           >
             + New Pool
           </button>
@@ -171,7 +171,7 @@ export default async function AdminDashboard() {
                     </Link>
                     <Link
                       href={`/pools/${pool.id}`}
-                      className="text-xs text-[var(--gtown-highlight)] hover:underline"
+                      className="text-xs text-[var(--steelers-gold)] hover:underline"
                     >
                       View
                     </Link>

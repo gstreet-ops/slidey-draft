@@ -81,10 +81,10 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
       {!isOpen && (
         <button
           onClick={toggle}
-          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-white/10 bg-[var(--gtown-navy)] px-1.5 py-3 hover:bg-white/5 transition"
+          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-white/10 bg-[var(--steelers-black)] px-1.5 py-3 hover:bg-white/5 transition"
         >
           {hasUnread && (
-            <span className="absolute -top-1 -left-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[var(--gtown-navy)]" />
+            <span className="absolute -top-1 -left-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[var(--steelers-black)]" />
           )}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/60">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -95,7 +95,7 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
 
       {/* Expanded panel — desktop */}
       {isOpen && (
-        <div className="hidden lg:flex flex-col w-[350px] shrink-0 border-l border-white/10 bg-[var(--gtown-navy)] h-[calc(100vh-60px)] sticky top-[60px]">
+        <div className="hidden lg:flex flex-col w-[350px] shrink-0 border-l border-white/10 bg-[var(--steelers-black)] h-[calc(100vh-60px)] sticky top-[60px]">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <div className="min-w-0">
@@ -129,7 +129,7 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" onClick={toggle} />
           {/* Panel */}
-          <div className="relative ml-auto w-full max-w-md h-full bg-[var(--gtown-navy)] border-l border-white/10 flex flex-col">
+          <div className="relative ml-auto w-full max-w-md h-full bg-[var(--steelers-black)] border-l border-white/10 flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
               <div>
                 <h3 className="text-sm font-semibold text-white">{poolName}</h3>

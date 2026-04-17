@@ -80,7 +80,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#0c1322] shadow-2xl md:max-w-[420px]">
+      <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[var(--surface-dark)] shadow-2xl md:max-w-[420px]">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -102,7 +102,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               {prospect.name.toUpperCase()}
             </h2>
             <div className="mt-1 flex items-center gap-2">
-              <span className="inline-block rounded-full bg-[var(--lions-blue)] px-2.5 py-0.5 text-xs font-bold text-white">
+              <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2.5 py-0.5 text-xs font-bold text-black">
                 {prospect.position}
               </span>
               {prospect.schoolLogoUrl && (
@@ -158,7 +158,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
                 {/* Range bar */}
                 <div
-                  className="absolute h-full rounded-full bg-[var(--lions-blue)]/40"
+                  className="absolute h-full rounded-full bg-[var(--steelers-gold)]/40"
                   style={{
                     left: `${((prospect.consensusLow - 1) / 63) * 100}%`,
                     width: `${Math.max(((prospect.consensusHigh - prospect.consensusLow) / 63) * 100, 2)}%`,
@@ -167,7 +167,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                 {/* Mid marker */}
                 {prospect.consensusMid != null && (
                   <div
-                    className="absolute top-0 h-full w-1 rounded-full bg-[var(--lions-blue)]"
+                    className="absolute top-0 h-full w-1 rounded-full bg-[var(--steelers-gold)]"
                     style={{ left: `${((prospect.consensusMid - 1) / 63) * 100}%` }}
                   />
                 )}
@@ -190,7 +190,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                 {measurables.map((m, i) => (
                   <div
                     key={m.label}
-                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[#0c1322]" : "bg-white/5"}`}
+                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-white/5"}`}
                   >
                     <p className="text-sm font-bold text-white">{m.value}</p>
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>

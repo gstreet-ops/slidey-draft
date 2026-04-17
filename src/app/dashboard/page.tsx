@@ -70,7 +70,7 @@ export default async function DashboardPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Summary bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 sm:px-6 sm:py-4">
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           {!userBoard && (
-            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--gtown-highlight)] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition text-center">
+            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition text-center">
               Create Your Mock Draft
             </Link>
           )}
@@ -104,9 +104,9 @@ export default async function DashboardPage() {
               {sorted.map((board) => {
                 const isUser = board.createdBy === session.user!.id;
                 return (
-                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--gtown-highlight)]/30 bg-[var(--gtown-highlight)]/5" : "border-white/[0.12] bg-white/8"}`}>
+                  <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/5" : "border-white/[0.12] bg-white/8"}`}>
                     <div className="flex items-center gap-2 mb-3">
-                      {isUser && <span className="rounded-full bg-[var(--gtown-highlight)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">You</span>}
+                      {isUser && <span className="rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-black">You</span>}
                       <span className="text-sm font-bold text-white truncate">{board.creator?.name || board.creator?.email || "Anonymous"}</span>
                     </div>
                     <h3 className="text-xs text-white/50 truncate mb-3">{board.title}</h3>

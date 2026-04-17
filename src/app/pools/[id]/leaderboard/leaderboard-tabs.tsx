@@ -45,7 +45,7 @@ export function LeaderboardTabs({
           onClick={() => setTab("individual")}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "individual"
-              ? "bg-[var(--gtown-highlight)] text-white"
+              ? "bg-[var(--steelers-gold)] text-black"
               : "text-white/50 hover:text-white/60"
           }`}
         >
@@ -55,7 +55,7 @@ export function LeaderboardTabs({
           onClick={() => setTab("teams")}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "teams"
-              ? "bg-[var(--gtown-highlight)] text-white"
+              ? "bg-[var(--steelers-gold)] text-black"
               : "text-white/50 hover:text-white/60"
           }`}
         >
@@ -101,7 +101,7 @@ export function LeaderboardTabs({
                       <tr
                         key={s.userId}
                         className={`border-b border-white/5 last:border-0 ${
-                          isMe ? "bg-[var(--gtown-highlight)]/10" : ""
+                          isMe ? "bg-[var(--steelers-gold)]/10" : ""
                         }`}
                       >
                         <td className="px-4 py-3 text-white font-semibold">
@@ -118,7 +118,7 @@ export function LeaderboardTabs({
                             {s.teamLogoUrl && (
                               <img src={s.teamLogoUrl} alt="" className="h-5 w-5 shrink-0 object-contain" />
                             )}
-                            <span className={isMe ? "text-[var(--gtown-highlight)] font-semibold" : "text-white"}>
+                            <span className={isMe ? "text-[var(--steelers-gold)] font-semibold" : "text-white"}>
                               {s.userName || s.userEmail}
                             </span>
                           </div>

@@ -27,7 +27,7 @@ export default async function SmartJoinPage({
 
   if (singleCode?.revokedAt) {
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">Invite Revoked</h1>
           <p className="text-white/60 text-sm">This invite is no longer valid.</p>
@@ -39,7 +39,7 @@ export default async function SmartJoinPage({
 
   if (singleCode?.type === "single" && singleCode.usedBy) {
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">Invite Already Used</h1>
           <p className="text-white/60 text-sm">This invite has already been claimed by another player.</p>
@@ -53,7 +53,7 @@ export default async function SmartJoinPage({
 
   if (!pool) {
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">Pool Not Found</h1>
           <p className="text-white/60 text-sm">This invite link is invalid or expired.</p>
@@ -78,7 +78,7 @@ export default async function SmartJoinPage({
   if (session?.user?.id && session.user.status === "active") {
     if (pool.status !== "open") {
       return (
-        <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+        <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
           <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
             <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
             <p className="text-white/60 text-sm">This pool is no longer accepting members.</p>
@@ -89,7 +89,7 @@ export default async function SmartJoinPage({
     }
 
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
           <h1 className="text-2xl font-bold text-white">Join {pool.name}?</h1>
           {pool.description && <p className="text-white/50 text-sm">{pool.description as string}</p>}
@@ -107,7 +107,7 @@ export default async function SmartJoinPage({
   // Signed in but spectator — need activation via pool join
   if (session?.user?.id && session.user.status !== "active") {
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
           <h1 className="text-2xl font-bold text-white">Join {pool.name}</h1>
           <p className="text-white/50 text-sm">
@@ -124,10 +124,10 @@ export default async function SmartJoinPage({
 
   // Not signed in — smart landing page
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
       <div className="max-w-md w-full space-y-8 text-center">
         <div className="space-y-3">
-          <div className="inline-block rounded-full bg-[var(--lions-blue)]/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--lions-blue)]">
+          <div className="inline-block rounded-full bg-[var(--steelers-gold)]/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--steelers-gold)]">
             Pool Invite
           </div>
           <h1
@@ -143,21 +143,21 @@ export default async function SmartJoinPage({
 
         <div className="space-y-4 text-left">
           <div className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">1</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">1</span>
             <div>
               <p className="text-sm font-semibold text-white">Sign in with Google</p>
               <p className="text-xs text-white/50">One click — no password needed</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">2</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">2</span>
             <div>
               <p className="text-sm font-semibold text-white">Make your mock draft picks</p>
               <p className="text-xs text-white/50">Predict the first round before draft night</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-xs font-bold text-[var(--lions-blue)]">3</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">3</span>
             <div>
               <p className="text-sm font-semibold text-white">Compete live on draft night</p>
               <p className="text-xs text-white/50">Predict picks, answer trivia, climb the leaderboard</p>

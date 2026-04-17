@@ -75,8 +75,8 @@ export default async function MyBoardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
-      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--steelers-gold)]/[0.04] to-transparent" />
       {locked && <DraftLockedBanner />}
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
@@ -139,7 +139,7 @@ export default async function MyBoardPage() {
                 </Link>
               ))}
             </div>
-            <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">
+            <Link href="/picks" className="text-xs text-[var(--steelers-gold)] hover:underline">
               View all mock drafts &rarr;
             </Link>
           </div>

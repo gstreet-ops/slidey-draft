@@ -106,7 +106,7 @@ export default async function PicksPage() {
   const isPublished = myStatus === "published";
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
           className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
@@ -156,11 +156,11 @@ export default async function PicksPage() {
                     </p>
                   )}
                   {isPublished && (
-                    <p className="mt-2 text-xs text-[var(--lions-blue)]">
+                    <p className="mt-2 text-xs text-[var(--steelers-gold)]">
                       This is your official pool entry.
                     </p>
                   )}
-                  <span className="mt-4 inline-block rounded-lg bg-[var(--lions-blue)] px-5 py-2 text-sm font-bold text-white group-hover:bg-[var(--lions-blue)]/80 transition">
+                  <span className="mt-4 inline-block rounded-lg bg-[var(--steelers-gold)] px-5 py-2 text-sm font-bold text-black group-hover:bg-[var(--steelers-gold)]/80 transition">
                     {isPublished ? "Edit Your Mock \u2192" : "Continue Building \u2192"}
                   </span>
                 </div>

@@ -37,17 +37,17 @@ export default async function PropsPage() {
   const totalPoints = allProps.reduce((sum, p) => sum + p.points, 0);
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
-      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--lions-blue)]/[0.04] to-transparent" />
+    <div className="min-h-screen bg-[var(--steelers-black)]">
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--steelers-gold)]/[0.04] to-transparent" />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <h1 className="text-3xl font-bold text-white tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           PROP BETS
         </h1>
-        <div className="mt-2 h-px bg-gradient-to-r from-[var(--lions-blue)] to-transparent" />
+        <div className="mt-2 h-px bg-gradient-to-r from-[var(--steelers-gold)] to-transparent" />
         <p className="mt-2 text-sm text-white/50">
           2026 NFL Draft Side Predictions &middot; {poolName}
         </p>
-        <p className="mt-1 text-xs text-[var(--lions-blue)]">
+        <p className="mt-1 text-xs text-[var(--steelers-gold)]">
           Up to {totalPoints} bonus points available
         </p>
 
@@ -65,7 +65,7 @@ export default async function PropsPage() {
           const picked = Object.keys(pickMap).length;
           const total = Math.max(allProps.length, 1);
           const pct = (picked / total) * 100;
-          const barColor = pct >= 100 ? "bg-emerald-400" : pct >= 67 ? "bg-emerald-400" : pct >= 34 ? "bg-[var(--lions-blue)]" : "bg-white/40";
+          const barColor = pct >= 100 ? "bg-emerald-400" : pct >= 67 ? "bg-emerald-400" : pct >= 34 ? "bg-[var(--steelers-gold)]" : "bg-white/40";
           return (
             <div className="mt-6 rounded-xl border border-white/[0.12] bg-white/8 p-4">
               <div className="flex items-center justify-between">

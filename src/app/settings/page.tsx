@@ -27,7 +27,7 @@ export default async function SettingsPage() {
   const currentTeam = session.user.favoriteTeam;
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <h1
           className="text-3xl font-bold text-white tracking-wider"
@@ -72,7 +72,7 @@ export default async function SettingsPage() {
           <TeamPicker
             teams={allTeams.map((t) => ({
               ...t,
-              primaryColor: t.primaryColor || "#4A7AB5",
+              primaryColor: t.primaryColor || "#FFB612",
             }))}
             selectedTeamId={currentTeam?.id}
           />

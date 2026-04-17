@@ -120,7 +120,7 @@ export function LiveResultsEntry({
 
       {/* Mobile-friendly: player search at top when a slot is active */}
       {activeSlot && (
-        <div className="rounded-xl border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/5 p-4 lg:hidden">
+        <div className="rounded-xl border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/5 p-4 lg:hidden">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-bold text-white">
               Pick #{activeSlot} —{" "}
@@ -139,7 +139,7 @@ export function LiveResultsEntry({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             autoFocus
-            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="max-h-64 overflow-y-auto space-y-1">
             {filteredPlayers.map((player) => {
@@ -149,17 +149,17 @@ export function LiveResultsEntry({
                   key={player.id}
                   disabled={isPending}
                   onClick={() => handleEnterResult(player.id, slot)}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[var(--lions-blue)]/10 transition active:bg-[var(--lions-blue)]/20"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[var(--steelers-gold)]/10 transition active:bg-[var(--steelers-gold)]/20"
                 >
                   {player.rank && (
-                    <span className="text-xs font-bold text-[var(--lions-blue)]/60 w-5 text-right shrink-0">
+                    <span className="text-xs font-bold text-[var(--steelers-gold)]/60 w-5 text-right shrink-0">
                       #{player.rank}
                     </span>
                   )}
                   <span className="text-sm font-semibold text-white">
                     {player.name}
                   </span>
-                  <span className="text-xs text-[var(--lions-blue)]">
+                  <span className="text-xs text-[var(--steelers-gold)]">
                     {player.position}
                   </span>
                   <span className="ml-auto text-xs text-white/40">
@@ -187,7 +187,7 @@ export function LiveResultsEntry({
                   result
                     ? "border-green-500/20 bg-green-500/5"
                     : isActive
-                    ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
+                    ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/10"
                     : isNext
                     ? "border-yellow-500/30 bg-yellow-500/5"
                     : "border-white/[0.12] bg-white/8 hover:border-white/20"
@@ -250,7 +250,7 @@ export function LiveResultsEntry({
             placeholder="Search name, position, school..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="mb-3 flex gap-1 flex-wrap">
             {positions.map((pos) => (
@@ -259,7 +259,7 @@ export function LiveResultsEntry({
                 onClick={() => setPosFilter(pos)}
                 className={`px-2 py-1 rounded text-xs font-semibold transition ${
                   posFilter === pos
-                    ? "bg-[var(--lions-blue)] text-white"
+                    ? "bg-[var(--steelers-gold)] text-black"
                     : "bg-white/5 text-white/50 hover:text-white/60"
                 }`}
               >
@@ -280,19 +280,19 @@ export function LiveResultsEntry({
                   onClick={() => slot && handleEnterResult(player.id, slot)}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition ${
                     activeSlot
-                      ? "hover:bg-[var(--lions-blue)]/10 cursor-pointer"
+                      ? "hover:bg-[var(--steelers-gold)]/10 cursor-pointer"
                       : "opacity-50 cursor-not-allowed"
                   }`}
                 >
                   {player.rank && (
-                    <span className="text-xs font-bold text-[var(--lions-blue)]/60 w-5 text-right shrink-0">
+                    <span className="text-xs font-bold text-[var(--steelers-gold)]/60 w-5 text-right shrink-0">
                       #{player.rank}
                     </span>
                   )}
                   <span className="text-sm font-semibold text-white">
                     {player.name}
                   </span>
-                  <span className="text-xs text-[var(--lions-blue)]">
+                  <span className="text-xs text-[var(--steelers-gold)]">
                     {player.position}
                   </span>
                   <span className="ml-auto text-xs text-white/40">

@@ -30,7 +30,7 @@ export function JoinPoolButton({ inviteCode, poolId }: { inviteCode: string; poo
       <button
         onClick={handleJoin}
         disabled={loading}
-        className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+        className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
       >
         {loading ? "Joining..." : "Join Pool"}
       </button>

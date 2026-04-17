@@ -37,7 +37,7 @@ export function SpectatorBanner() {
   }
 
   return (
-    <div className="bg-[var(--gtown-highlight)]/10 border-b border-[var(--gtown-highlight)]/20 px-6 py-3">
+    <div className="bg-[var(--steelers-gold)]/10 border-b border-[var(--steelers-gold)]/20 px-6 py-3">
       <form onSubmit={handleSubmit} className="flex items-center justify-center gap-3 flex-wrap">
         <span className="text-sm text-white/70">
           Want to compete? Enter an invite code to unlock full access.
@@ -50,12 +50,12 @@ export function SpectatorBanner() {
             if (status === "error") setStatus("idle");
           }}
           placeholder="INVITE CODE"
-          className="rounded bg-white/10 border border-white/20 px-3 py-1.5 text-sm text-white font-mono w-32 text-center placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
+          className="rounded bg-white/10 border border-white/20 px-3 py-1.5 text-sm text-white font-mono w-32 text-center placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
         />
         <button
           type="submit"
           disabled={status === "loading" || !code.trim()}
-          className="rounded bg-[var(--gtown-highlight)] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+          className="rounded bg-[var(--steelers-gold)] px-4 py-1.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
         >
           {status === "loading" ? "..." : "Activate"}
         </button>

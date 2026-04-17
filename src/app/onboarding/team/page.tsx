@@ -27,7 +27,7 @@ export default async function OnboardingTeamPage() {
     .orderBy(asc(teams.name));
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--gtown-navy)] px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--steelers-black)] px-4 py-12">
       <div className="w-full max-w-2xl text-center">
         <h1
           className="text-4xl font-bold text-white tracking-wider sm:text-5xl"
@@ -43,7 +43,7 @@ export default async function OnboardingTeamPage() {
           <TeamPicker
             teams={allTeams.map((t) => ({
               ...t,
-              primaryColor: t.primaryColor || "#4A7AB5",
+              primaryColor: t.primaryColor || "#FFB612",
             }))}
             redirectTo="/dashboard"
           />

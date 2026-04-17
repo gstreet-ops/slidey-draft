@@ -69,7 +69,7 @@ export function CollapsibleScoringSettings({
   return (
     <div className="rounded-xl border border-white/[0.12] bg-white/8">
       {toast && (
-        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#0076B6] px-5 py-3 text-sm font-semibold text-white shadow-lg">
+        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#FFB612] px-5 py-3 text-sm font-semibold text-white shadow-lg">
           {toast}
         </div>
       )}
@@ -90,13 +90,13 @@ export function CollapsibleScoringSettings({
             <div className="flex rounded-lg border border-white/10 overflow-hidden">
               <button
                 onClick={() => setMode("standard")}
-                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "standard" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
+                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "standard" ? "bg-[#FFB612] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
               >
                 Standard
               </button>
               <button
                 onClick={() => setMode("custom")}
-                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "custom" ? "bg-[#0076B6] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
+                className={`px-3 py-1.5 text-xs font-semibold transition ${config.scoringMode === "custom" ? "bg-[#FFB612] text-white" : "bg-white/5 text-white/50 hover:text-white"}`}
               >
                 Custom
               </button>
@@ -162,7 +162,7 @@ function PointInput({ label, value, onChange }: { label: string; value: number; 
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white focus:border-[#0076B6] focus:outline-none"
+        className="w-full rounded border border-white/[0.12] bg-white/8 px-2 py-1.5 text-sm text-white focus:border-[#FFB612] focus:outline-none"
       />
     </div>
   );

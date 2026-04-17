@@ -121,7 +121,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
   if (player.weight) measurables.push({ label: "WEIGHT", value: `${player.weight} lbs` });
 
   return (
-    <div className="border-t border-white/10 bg-[#0c1322] px-3 py-3">
+    <div className="border-t border-white/10 bg-[var(--surface-dark)] px-3 py-3">
       {/* Header: avatar + name + basics */}
       <div className="flex items-start gap-3 mb-3">
         <PlayerAvatar player={player} size={56} />
@@ -133,7 +133,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
             {player.name}
           </h3>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="inline-block rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white">
+            <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-black">
               {player.position}
             </span>
             <span className="text-xs text-white/50">
@@ -189,7 +189,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
       {measurables.length > 0 && (
         <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 mb-3">
           {measurables.map((m, i) => (
-            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[#0c1322]" : "bg-white/5"}`}>
+            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-white/5"}`}>
               <p className="text-xs font-bold text-white">{m.value}</p>
               <p className="text-[8px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>
             </div>
@@ -468,7 +468,7 @@ export function PickBuilder({
           </span>
         </div>
         {activeSlot && (
-          <p className="text-xs text-[var(--lions-blue)] mt-0.5">
+          <p className="text-xs text-[var(--steelers-gold)] mt-0.5">
             Select for Pick #{activeSlot} &mdash; {draftOrder.find((s) => s.pickNumber === activeSlot)?.teamName}
           </p>
         )}
@@ -478,7 +478,7 @@ export function PickBuilder({
         placeholder="Search prospects..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-2 w-full rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-xs text-white placeholder:text-white/50 focus:border-[var(--lions-blue)] focus:outline-none sm:px-3 sm:py-2 sm:text-sm"
+        className="mb-2 w-full rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-xs text-white placeholder:text-white/50 focus:border-[var(--steelers-gold)] focus:outline-none sm:px-3 sm:py-2 sm:text-sm"
       />
       <div className="mb-2 flex gap-0.5 flex-wrap overflow-x-auto scrollbar-none sm:mb-3 sm:gap-1">
         {positions.map((pos) => (
@@ -487,7 +487,7 @@ export function PickBuilder({
             onClick={() => setPosFilter(pos)}
             className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold transition sm:px-2 sm:py-1 sm:text-xs ${
               posFilter === pos
-                ? "bg-[var(--lions-blue)] text-white"
+                ? "bg-[var(--steelers-gold)] text-black"
                 : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
@@ -518,7 +518,7 @@ export function PickBuilder({
             onClick={() => setSortBy(s)}
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
               sortBy === s
-                ? "bg-[var(--lions-blue)] text-white"
+                ? "bg-[var(--steelers-gold)] text-black"
                 : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
@@ -535,7 +535,7 @@ export function PickBuilder({
             placeholder="Share your reasoning — why does this player fit here? (optional)"
             value={analysisText}
             onChange={(e) => setAnalysisText(e.target.value)}
-            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
+            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
             rows={2}
           />
           <p className="text-[10px] text-white/40 mt-1">Your notes will be visible to everyone in your pool</p>
@@ -572,7 +572,7 @@ export function PickBuilder({
                     <span className="text-xs font-semibold text-white truncate sm:text-sm">
                       {player.name}
                     </span>
-                    <span className="text-xs text-[var(--lions-blue)] shrink-0">
+                    <span className="text-xs text-[var(--steelers-gold)] shrink-0">
                       {player.position}
                     </span>
                     {slot?.teamNeeds && matchesAnyNeed(player.position, slot.teamNeeds) && (
@@ -609,8 +609,8 @@ export function PickBuilder({
                   }}
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition sm:h-6 sm:w-6 ${
                     isExpanded
-                      ? "bg-[var(--lions-blue)] text-white"
-                      : "text-white/40 hover:text-[var(--lions-blue)]"
+                      ? "bg-[var(--steelers-gold)] text-black"
+                      : "text-white/40 hover:text-[var(--steelers-gold)]"
                   }`}
                   title="View scouting report"
                 >
@@ -664,8 +664,8 @@ export function PickBuilder({
                   pick
                     ? "border-white/[0.12] bg-white/8"
                     : isActive
-                    ? "border-[var(--lions-blue)] bg-white/8 ring-2 ring-[var(--lions-blue)]/30"
-                    : "border-white/[0.12] bg-white/8 hover:border-[var(--lions-blue)]/40"
+                    ? "border-[var(--steelers-gold)] bg-white/8 ring-2 ring-[var(--steelers-gold)]/30"
+                    : "border-white/[0.12] bg-white/8 hover:border-[var(--steelers-gold)]/40"
                 }`}
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -719,7 +719,7 @@ export function PickBuilder({
                       <span className="text-xs font-semibold text-white sm:text-sm">
                         {pick.playerName}
                       </span>
-                      <span className="text-[10px] text-[var(--lions-blue)] sm:text-xs">
+                      <span className="text-[10px] text-[var(--steelers-gold)] sm:text-xs">
                         {pick.playerPosition}
                       </span>
                       {pick.playerFortyTime && (
@@ -764,7 +764,7 @@ export function PickBuilder({
                     </>
                   ) : (
                     <>
-                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/50"}`}>
+                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--steelers-gold)] font-medium" : "text-white/50"}`}>
                         {isActive ? "Select a player →" : "Click to pick"}
                       </p>
                       {slot.teamNeeds && slot.teamNeeds.length > 0 && (
@@ -793,8 +793,8 @@ export function PickBuilder({
                       }}
                       className={`flex h-6 w-6 items-center justify-center rounded-full border transition sm:h-7 sm:w-7 ${
                         isExpanded
-                          ? "border-[var(--lions-blue)] bg-[var(--lions-blue)] text-white"
-                          : "border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/25"
+                          ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)] text-black"
+                          : "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 text-[var(--steelers-gold)] hover:bg-[var(--steelers-gold)]/25"
                       }`}
                       title="View scouting report"
                     >
@@ -825,7 +825,7 @@ export function PickBuilder({
                       value={editingNoteText}
                       onChange={(e) => setEditingNoteText(e.target.value)}
                       placeholder="Why this player here? What makes this pick interesting?"
-                      className="w-full rounded-lg border border-white/15 bg-white/[0.06] p-3 text-sm text-white/80 placeholder:text-white/30 focus:border-[var(--lions-blue)] focus:outline-none resize-none"
+                      className="w-full rounded-lg border border-white/15 bg-white/[0.06] p-3 text-sm text-white/80 placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
                       rows={2}
                       autoFocus
                     />
@@ -840,7 +840,7 @@ export function PickBuilder({
                           });
                         }}
                         disabled={isPending}
-                        className="rounded-md bg-[var(--lions-blue)] px-3 py-1 text-[10px] font-semibold text-white hover:bg-[var(--lions-blue)]/80 disabled:opacity-50 transition"
+                        className="rounded-md bg-[var(--steelers-gold)] px-3 py-1 text-[10px] font-semibold text-black hover:bg-[var(--steelers-gold)]/80 disabled:opacity-50 transition"
                       >
                         Save
                       </button>
@@ -947,7 +947,7 @@ export function PickBuilder({
               <button
                 onClick={() => handleAutoFill("round")}
                 disabled={isPending}
-                className="flex-1 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 py-2 text-xs font-semibold text-[var(--lions-blue)] hover:bg-[var(--lions-blue)]/20 transition disabled:opacity-50"
+                className="flex-1 rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 py-2 text-xs font-semibold text-[var(--steelers-gold)] hover:bg-[var(--steelers-gold)]/20 transition disabled:opacity-50"
               >
                 {isPending ? "Filling..." : `Auto-Fill Rd ${currentRound} (${emptyInRound})`}
               </button>
@@ -982,7 +982,7 @@ export function PickBuilder({
             style={{ fontFamily: "var(--font-display)" }}
           >
             AVAILABLE PROSPECTS
-            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white">
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-black">
               {realAvailable.length}
             </span>
           </h3>

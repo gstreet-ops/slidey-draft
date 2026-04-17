@@ -64,7 +64,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
             placeholder="Search by name or school..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="flex-1 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="flex gap-1 flex-wrap overflow-x-auto scrollbar-none">
             {POSITIONS.map((pos) => (
@@ -73,7 +73,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                 onClick={() => setPosFilter(pos)}
                 className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   posFilter === pos
-                    ? "bg-[var(--lions-blue)] text-white"
+                    ? "bg-[var(--steelers-gold)] text-black"
                     : "bg-white/10 text-white/50 hover:text-white"
                 }`}
               >
@@ -107,7 +107,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-white truncate sm:text-base">{p.name}</span>
-                    <span className="shrink-0 rounded-full bg-[var(--lions-blue)] px-2 py-0.5 text-[10px] font-bold text-white sm:text-xs">
+                    <span className="shrink-0 rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-black sm:text-xs">
                       {p.position}
                     </span>
                   </div>
@@ -148,7 +148,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                       {p.grade}
                     </span>
                   )}
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lions-blue)]/20 text-[var(--lions-blue)] text-[10px] font-bold shrink-0 sm:h-8 sm:w-8 sm:text-xs">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)] text-[10px] font-bold shrink-0 sm:h-8 sm:w-8 sm:text-xs">
                     i
                   </span>
                 </div>

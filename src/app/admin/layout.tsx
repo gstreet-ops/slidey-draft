@@ -14,7 +14,7 @@ export default async function AdminLayout({
   if (session.user.role !== "admin") redirect("/");
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       {/* Admin secondary tab bar */}
       <div className="border-b border-white/5 bg-black/10">
         <div className="mx-auto flex max-w-7xl items-center gap-1 px-6 py-1.5 text-xs">

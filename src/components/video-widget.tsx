@@ -56,7 +56,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     return (
       <button
         onClick={openWatchParty}
-        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--gtown-navy)] border border-white/20 px-5 py-3 text-white text-sm font-semibold hover:bg-white/10 transition shadow-lg"
+        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-white/20 px-5 py-3 text-white text-sm font-semibold hover:bg-white/10 transition shadow-lg"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polygon points="23 7 16 12 23 17 23 7" />
@@ -72,7 +72,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     return (
       <button
         onClick={() => setMinimized(false)}
-        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--gtown-navy)] border border-green-500/30 px-4 py-2.5 text-white shadow-lg hover:bg-white/10 transition"
+        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-green-500/30 px-4 py-2.5 text-white shadow-lg hover:bg-white/10 transition"
       >
         <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
         <span className="text-xs font-semibold">Watch Party Live</span>
@@ -86,7 +86,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
       className="fixed bottom-4 right-4 z-[9999] rounded-xl overflow-hidden shadow-2xl border border-white/20"
       style={{ width: 260 }}
     >
-      <div className="flex items-center justify-between bg-[var(--gtown-navy)] px-4 py-3">
+      <div className="flex items-center justify-between bg-[var(--steelers-black)] px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse shrink-0" />
           <span className="text-xs font-semibold text-white truncate">{poolName}</span>
@@ -125,7 +125,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
           </button>
         </div>
       </div>
-      <div className="bg-[var(--gtown-navy)]/80 px-4 py-2 text-center">
+      <div className="bg-[var(--steelers-black)]/80 px-4 py-2 text-center">
         <p className="text-[10px] text-white/40">Video running in separate window</p>
         <button
           onClick={() => popupRef.current?.focus()}

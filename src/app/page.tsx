@@ -26,7 +26,7 @@ export default async function Home() {
   const isLoggedIn = !!session?.user && !isSpectator;
 
   return (
-    <div className="min-h-screen bg-[#1e3d5f] flex flex-col">
+    <div className="min-h-screen bg-[var(--surface-dark)] flex flex-col">
       {isSpectator && <SpectatorBanner />}
 
       {isLoggedIn ? (
@@ -123,7 +123,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   return (
     <main
       className="flex-1 px-4 py-8 sm:px-6 sm:py-12"
-      style={{ background: "linear-gradient(180deg, #234b72 0%, #1e3d5f 40%, #1a3755 100%)" }}
+      style={{ background: "linear-gradient(180deg, #2d3a4d 0%, #1a2433 40%, #101820 100%)" }}
     >
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Welcome */}
@@ -167,14 +167,14 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
               >
                 {userPools[0].poolName.toUpperCase()} MOCK DRAFTS
               </h2>
-              <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline">View All Mock Drafts &rarr;</Link>
+              <Link href="/picks" className="text-xs text-[var(--steelers-gold)] hover:underline">View All Mock Drafts &rarr;</Link>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {/* Show "Start Your Mock" card if user has no published board in pool */}
               {!poolmateBoards.some(pb => pb.userId === userId) && (
                 <Link
                   href="/my-board"
-                  className="group rounded-xl border-2 border-dashed border-[#3a6a94] bg-[#1e3d5f] p-4 hover:border-[#4a7eaa] hover:bg-[#264d73] transition flex items-center justify-center"
+                  className="group rounded-xl border-2 border-dashed border-white/10 bg-[var(--surface-dark)] p-4 hover:border-[var(--steelers-gold)]/40 hover:bg-[var(--surface-card)] transition flex items-center justify-center"
                 >
                   <div className="text-center">
                     <p className="text-sm font-bold text-white/[0.75] group-hover:text-[var(--slidey)] transition">Start Your Mock &rarr;</p>
@@ -186,7 +186,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
                 <Link
                   key={pb.boardId}
                   href={pb.userId === userId ? "/my-board" : `/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-[#3a6a94] bg-[#264d73] p-4 hover:border-[var(--slidey)]/40 hover:bg-[#2d5a85] transition"
+                  className="group rounded-xl border border-white/10 bg-[var(--surface-card)] p-4 hover:border-[var(--slidey)]/40 hover:bg-[var(--surface-elevated)] transition"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
@@ -224,13 +224,13 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         {inPool && liveCtaLabel ? (
           <Link
             href="/live"
-            className="block rounded-xl border border-green-400/50 bg-[#1a4a3a] p-6 text-center hover:border-green-400/60 transition"
+            className="block rounded-xl border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/20 p-6 text-center hover:border-[var(--steelers-gold)]/50 hover:bg-[var(--steelers-gold)]/25 transition"
           >
-            <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>{liveCtaLabel}</p>
+            <p className="text-lg font-bold text-[var(--steelers-gold)]" style={{ fontFamily: "var(--font-display)" }}>{liveCtaLabel}</p>
             <p className="text-xs text-white/[0.75] mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
           </Link>
         ) : inPool && !hasDraftNight ? null : (
-          <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-8 text-center space-y-4">
+          <div className="rounded-xl border border-white/10 bg-[var(--surface-card)] p-8 text-center space-y-4">
             <p className="text-lg font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
             <p className="text-sm text-white/[0.75] max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
             <InviteCodeInput />
@@ -267,8 +267,8 @@ function QuickAction({ href, title, desc, icon, highlight }: { href: string; tit
       href={href}
       className={`group rounded-xl border p-4 transition ${
         highlight
-          ? "border-green-500/30 bg-green-500/10 hover:border-green-400/50"
-          : "border-[#3a6a94] bg-[#264d73] hover:border-[#4a7eaa] hover:bg-[#2d5a85]"
+          ? "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 hover:border-[var(--steelers-gold)]/50"
+          : "border-white/10 bg-[var(--surface-card)] hover:border-[var(--steelers-gold)]/40 hover:bg-[var(--surface-elevated)]"
       }`}
     >
       <div className="flex items-center gap-3">
@@ -310,10 +310,10 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-4 pt-12 pb-16 text-center sm:px-6 sm:pt-20 sm:pb-24">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[500px] w-[500px] rounded-full bg-[var(--lions-blue)]/15 blur-[120px]" />
+          <div className="h-[500px] w-[500px] rounded-full bg-[var(--steelers-gold)]/15 blur-[120px]" />
         </div>
         <div className="relative z-10 mx-auto max-w-2xl space-y-5">
-          <div className="inline-block rounded-full bg-[#0076B6] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:text-xs">
+          <div className="inline-block rounded-full bg-[#FFB612] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:text-xs">
             2026 NFL Draft &middot; April 23 &middot; Pittsburgh
           </div>
           <h1
@@ -327,15 +327,15 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           </p>
           <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row sm:gap-4">
             {locked ? (
-              <Link href="/live" className="w-full rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-[var(--lions-blue)]/25 hover:bg-[var(--lions-blue)]/80 transition sm:w-auto">
+              <Link href="/live" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Watch Live
               </Link>
             ) : session?.user ? (
-              <Link href="/my-board" className="w-full rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-[var(--lions-blue)]/25 hover:bg-[var(--lions-blue)]/80 transition sm:w-auto">
+              <Link href="/my-board" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Make Your Picks
               </Link>
             ) : (
-              <Link href="/login" className="w-full rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-[var(--lions-blue)]/25 hover:bg-[var(--lions-blue)]/80 transition sm:w-auto">
+              <Link href="/login" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Sign In &amp; Draft
               </Link>
             )}
@@ -354,21 +354,21 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
             <div className="text-center space-y-3">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0076B6]/10 text-[#0076B6] text-xl font-bold">1</div>
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FFB612]/10 text-[#FFB612] text-xl font-bold">1</div>
               <h3 className="text-sm font-bold text-gray-900">Build Your Mock Draft</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 Pick who you think goes where in Round 1. Predict the board before the real draft happens — the closer you are, the more bonus points you earn.
               </p>
             </div>
             <div className="text-center space-y-3">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0076B6]/10 text-[#0076B6] text-xl font-bold">2</div>
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FFB612]/10 text-[#FFB612] text-xl font-bold">2</div>
               <h3 className="text-sm font-bold text-gray-900">Join a Pool</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 Create or join a private pool with friends. Each pool has its own leaderboard, settings, and bragging rights. Get an invite code to start.
               </p>
             </div>
             <div className="text-center space-y-3">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0076B6]/10 text-[#0076B6] text-xl font-bold">3</div>
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FFB612]/10 text-[#FFB612] text-xl font-bold">3</div>
               <h3 className="text-sm font-bold text-gray-900">Predict Live on Draft Night</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 When a team is on the clock, predict who they&apos;ll pick before the card is read. Nail it for 10 points. Compete pick-by-pick all night.
@@ -394,7 +394,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
               <InviteCodeInput />
             ) : (
               <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-center">
-                <Link href="/login" className="rounded-lg bg-[#0076B6] px-6 py-3 text-sm font-bold text-white hover:bg-[#0076B6]/80 transition">
+                <Link href="/login" className="rounded-lg bg-[#FFB612] px-6 py-3 text-sm font-bold text-white hover:bg-[#FFB612]/80 transition">
                   Sign In to Get Started
                 </Link>
               </div>
@@ -404,7 +404,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
       ) : null}
 
       {/* ── MAIN CONTENT (2-column grid) ── */}
-      <section className="bg-[#1e3d5f] px-4 py-10 sm:px-6 sm:py-14">
+      <section className="bg-[var(--surface-dark)] px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-5xl grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
           {/* Left column */}
           <div className="space-y-8">
@@ -415,9 +415,9 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                   <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
                     MOCK DRAFT GRADES
                   </h2>
-                  <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">All Boards &rarr;</Link>
+                  <Link href="/picks" className="text-xs text-[var(--steelers-gold)] hover:underline sm:text-sm">All Boards &rarr;</Link>
                 </div>
-                <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] overflow-hidden">
+                <div className="rounded-xl border border-white/10 bg-[var(--surface-card)] overflow-hidden">
                   {publishedGrades.map((entry, i) => (
                     <Link
                       key={entry.boardId}
@@ -444,11 +444,11 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                   <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
                     FEATURED PICKS
                   </h2>
-                  <Link href="/picks" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">See All Boards &rarr;</Link>
+                  <Link href="/picks" className="text-xs text-[var(--steelers-gold)] hover:underline sm:text-sm">See All Boards &rarr;</Link>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                   {featuredPicks.map((pick) => (
-                    <div key={pick.id} className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-3 text-center transition hover:border-white/20">
+                    <div key={pick.id} className="rounded-xl border border-white/10 bg-[var(--surface-card)] p-3 text-center transition hover:border-white/20">
                       <div className="mb-2 flex items-center justify-center gap-1.5">
                         {pick.teamLogoUrl && (
                           <Image src={pick.teamLogoUrl} alt="" width={20} height={20} className="object-contain" />
@@ -473,18 +473,18 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                 <h2 className="text-lg font-bold text-white tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
                   TOP PROSPECTS
                 </h2>
-                <Link href="/my-board" className="text-xs text-[var(--lions-blue)] hover:underline sm:text-sm">View All &rarr;</Link>
+                <Link href="/my-board" className="text-xs text-[var(--steelers-gold)] hover:underline sm:text-sm">View All &rarr;</Link>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 {topProspects.map((p) => (
-                  <div key={p.id} className="group relative rounded-xl border border-[#3a6a94] bg-[#264d73] p-3 text-center transition hover:border-[var(--lions-blue)]/40 hover:bg-[#2d5a85] sm:p-4">
+                  <div key={p.id} className="group relative rounded-xl border border-white/10 bg-[var(--surface-card)] p-3 text-center transition hover:border-[var(--steelers-gold)]/40 hover:bg-[var(--surface-elevated)] sm:p-4">
                     <div className="mx-auto mb-2 h-14 w-14 overflow-hidden rounded-full border-2 border-white/10 sm:h-16 sm:w-16">
                       <PlayerAvatar player={{ name: p.name, imageUrl: p.imageUrl, position: p.position }} size={64} />
                     </div>
                     <p className="text-xs font-bold text-white truncate sm:text-sm">{p.name}</p>
                     <p className="text-[10px] text-white/[0.75] sm:text-xs">{p.position} &middot; {p.school}</p>
                     <div className="mt-2 flex items-center justify-center gap-2">
-                      <span className="rounded-full bg-[var(--lions-blue)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--lions-blue)] sm:text-xs">#{p.rank}</span>
+                      <span className="rounded-full bg-[var(--steelers-gold)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--steelers-gold)] sm:text-xs">#{p.rank}</span>
                       {p.grade && <span className="text-[10px] font-semibold text-white/70 sm:text-xs">{p.grade}</span>}
                     </div>
                   </div>
@@ -497,7 +497,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           {/* Right sidebar */}
           <div className="space-y-6">
             {/* Countdown */}
-            <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-6 text-center">
+            <div className="rounded-xl border border-white/10 bg-[var(--surface-card)] p-6 text-center">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-white/[0.75] mb-2">Draft Night</p>
               <p className="text-3xl font-bold text-white">
                 {Math.max(0, Math.ceil((new Date("2026-04-23T20:00:00-04:00").getTime() - Date.now()) / (1000 * 60 * 60 * 24)))}
@@ -506,7 +506,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
             </div>
 
             {/* By The Numbers */}
-            <div className="rounded-xl border border-[#3a6a94] bg-[#264d73] p-5 space-y-3">
+            <div className="rounded-xl border border-white/10 bg-[var(--surface-card)] p-5 space-y-3">
               <h3 className="text-sm font-bold text-white/[0.75] uppercase tracking-wider">By The Numbers</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">

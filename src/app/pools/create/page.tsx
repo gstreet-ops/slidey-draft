@@ -26,7 +26,7 @@ function CreatePoolContent() {
   // Gate: only commissioners and admins can create pools
   if (session && session.user.role !== "commissioner" && session.user.role !== "admin") {
     return (
-      <div className="min-h-screen bg-[var(--gtown-navy)] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">Commissioner Access Required</h1>
           <p className="text-white/50 text-sm">
@@ -55,7 +55,7 @@ function CreatePoolContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)]">
+    <div className="min-h-screen bg-[var(--steelers-black)]">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
@@ -81,7 +81,7 @@ function CreatePoolContent() {
               required
               maxLength={50}
               defaultValue={suggestedName}
-              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)]"
+              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
               placeholder="e.g., Office Draft Pool 2026"
             />
           </div>
@@ -92,7 +92,7 @@ function CreatePoolContent() {
               name="description"
               maxLength={200}
               rows={3}
-              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gtown-highlight)] resize-none"
+              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
               placeholder="What's this pool about?"
             />
           </div>
@@ -100,7 +100,7 @@ function CreatePoolContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[var(--gtown-highlight)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition disabled:opacity-50"
+            className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
           >
             {loading ? "Creating..." : "Create Pool"}
           </button>

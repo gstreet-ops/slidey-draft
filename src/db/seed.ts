@@ -18,7 +18,7 @@ const NFL_TEAMS = [
   { name: "Cleveland Browns",       abbreviation: "CLE", conference: "AFC", division: "North", primaryColor: "#311D00", secondaryColor: "#FF3C00" },
   { name: "Dallas Cowboys",         abbreviation: "DAL", conference: "NFC", division: "East",  primaryColor: "#003594", secondaryColor: "#869397" },
   { name: "Denver Broncos",         abbreviation: "DEN", conference: "AFC", division: "West",  primaryColor: "#FB4F14", secondaryColor: "#002244" },
-  { name: "Detroit Lions",          abbreviation: "DET", conference: "NFC", division: "North", primaryColor: "#0076B6", secondaryColor: "#B0B7BC" },
+  { name: "Detroit Lions",          abbreviation: "DET", conference: "NFC", division: "North", primaryColor: "#FFB612", secondaryColor: "#B0B7BC" },
   { name: "Green Bay Packers",      abbreviation: "GB",  conference: "NFC", division: "North", primaryColor: "#203731", secondaryColor: "#FFB612" },
   { name: "Houston Texans",         abbreviation: "HOU", conference: "AFC", division: "South", primaryColor: "#03202F", secondaryColor: "#A71930" },
   { name: "Indianapolis Colts",     abbreviation: "IND", conference: "AFC", division: "South", primaryColor: "#002C5F", secondaryColor: "#A2AAAD" },

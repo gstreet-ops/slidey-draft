@@ -41,7 +41,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   ];
 
   return (
-    <header className="border-b border-white/10 bg-[var(--gtown-navy)]">
+    <header className="border-b border-white/10 bg-[var(--steelers-black)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
         <Link
@@ -68,7 +68,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
             <button className="rounded-lg px-3 py-2 text-sm text-white/50 hover:bg-white/10 hover:text-white transition">
               More
             </button>
-            <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--gtown-navy)] p-1 shadow-xl group-hover:block">
+            <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--steelers-black)] p-1 shadow-xl group-hover:block">
               {secondaryLinks.map((l) => (
                 <Link
                   key={l.href}
@@ -89,7 +89,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lions-blue)] text-xs font-bold text-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-black">
                   {userInitial || "?"}
                 </div>
               )}

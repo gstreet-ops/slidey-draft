@@ -68,7 +68,7 @@ export default async function ScoringPage() {
   })();
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <Link href="/guide" className="text-sm text-white/50 hover:text-white/60 transition">
           &larr; Back to How to Play
@@ -102,14 +102,14 @@ export default async function ScoringPage() {
                 <a
                   key={s.id}
                   href={`#${s.id}`}
-                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--lions-blue)] hover:text-white transition"
+                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--steelers-gold)] hover:text-white transition"
                 >
                   {s.label}
                 </a>
               ))}
             </nav>
 
-            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-gray-900/60 [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
+            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
 
               {/* ── Mock Draft Scoring ── */}
               {visibleIds.has("mock-draft") && (
@@ -327,7 +327,7 @@ export default async function ScoringPage() {
                     <p>Your pool score combines these tracks:</p>
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
                       {mockOn && (
-                        <ScorePill className="border-[var(--lions-blue)]/30 bg-blue-500/10 text-blue-400">
+                        <ScorePill className="border-[var(--steelers-gold)]/30 bg-blue-500/10 text-blue-400">
                           Mock Draft Bonus
                         </ScorePill>
                       )}
@@ -544,7 +544,7 @@ export default async function ScoringPage() {
           <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               href={session?.user ? (mockOn ? "/my-board" : propBetsOn ? "/props" : "/live") : "/login"}
-              className="rounded-lg bg-[var(--lions-blue)] px-8 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition"
+              className="rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition"
             >
               {session?.user
                 ? mockOn
@@ -583,7 +583,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--lions-blue)]">{children}</h3>;
+  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--steelers-gold)]">{children}</h3>;
 }
 
 function ScoreRow({ color, pts, label, desc }: { color: string; pts: number | string; label: string; desc: string }) {
@@ -602,7 +602,7 @@ function ScoreRow({ color, pts, label, desc }: { color: string; pts: number | st
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-6 rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-4 py-3">
+    <div className="mt-6 rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-4 py-3">
       <p className="text-sm text-white/70">{children}</p>
     </div>
   );

@@ -57,7 +57,7 @@ describe("TeamThemeProvider", () => {
     const root = document.documentElement;
     expect(root.style.getPropertyValue("--team-primary")).toBe("");
     expect(root.style.getPropertyValue("--team-secondary")).toBe("");
-    expect(root.style.getPropertyValue("--slidey")).toBe("#4A7AB5");
+    expect(root.style.getPropertyValue("--slidey")).toBe("#FFB612");
   });
 
   it("uses default slidey color when session is loading", () => {
@@ -70,7 +70,7 @@ describe("TeamThemeProvider", () => {
     render(<TeamThemeProvider><div>child</div></TeamThemeProvider>);
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue("--slidey")).toBe("#4A7AB5");
+    expect(root.style.getPropertyValue("--slidey")).toBe("#FFB612");
   });
 
   it("renders children correctly", () => {

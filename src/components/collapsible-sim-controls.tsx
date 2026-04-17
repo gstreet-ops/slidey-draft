@@ -100,7 +100,7 @@ export function CollapsibleSimControls() {
                 <span className="text-xs text-white/40">{progress}%</span>
               </div>
               <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                <div className="h-full rounded-full bg-[var(--lions-blue)] transition-all" style={{ width: `${progress}%` }} />
+                <div className="h-full rounded-full bg-[var(--steelers-gold)] transition-all" style={{ width: `${progress}%` }} />
               </div>
             </div>
           )}
@@ -125,7 +125,7 @@ export function CollapsibleSimControls() {
               <button
                 onClick={handleAutoRun}
                 disabled={(state?.picksAnnounced ?? 0) >= (state?.totalPicks ?? 32)}
-                className="rounded-lg bg-[var(--lions-blue)] px-4 py-2 text-xs font-bold text-white hover:opacity-80 transition disabled:opacity-40"
+                className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-xs font-bold text-black hover:opacity-80 transition disabled:opacity-40"
               >
                 Auto-Run
               </button>

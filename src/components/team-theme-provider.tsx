@@ -42,7 +42,7 @@ export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
       root.style.removeProperty("--pool-primary");
       root.style.removeProperty("--pool-secondary");
     } else {
-      root.style.setProperty("--slidey", "#4A7AB5");
+      root.style.setProperty("--slidey", "#FFB612");
       root.style.removeProperty("--pool-primary");
       root.style.removeProperty("--pool-secondary");
     }

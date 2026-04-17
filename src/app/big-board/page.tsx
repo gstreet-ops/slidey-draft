@@ -11,7 +11,7 @@ export default async function BigBoardPage() {
   const ranked = allPlayers.filter((p) => p.rank).sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
         <h1
           className="text-3xl font-bold text-white tracking-wide sm:text-4xl"

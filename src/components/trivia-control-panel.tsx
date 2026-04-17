@@ -110,7 +110,7 @@ export function TriviaControlPanel({
   return (
     <div className="space-y-4">
       {toast && (
-        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#0076B6] px-5 py-3 text-sm font-semibold text-white shadow-lg">
+        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#FFB612] px-5 py-3 text-sm font-semibold text-white shadow-lg">
           {toast}
           <button onClick={() => setToast("")} className="ml-3 text-white/70 hover:text-white">&times;</button>
         </div>
@@ -129,7 +129,7 @@ export function TriviaControlPanel({
           </div>
           <p className="text-sm text-white">{activeItem.question}</p>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#0076B6]/20 px-2 py-0.5 text-[10px] text-[#0076B6]">
+            <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-[10px] text-[#FFB612]">
               {activeItem.category.replace(/_/g, " ")}
             </span>
             {activeItem.pickNumber != null && (
@@ -159,7 +159,7 @@ export function TriviaControlPanel({
                 onClick={() => updateTimer(s)}
                 className={`px-2.5 py-1 text-xs font-semibold transition ${
                   settings.triviaTimerSeconds === s
-                    ? "bg-[#0076B6] text-white"
+                    ? "bg-[#FFB612] text-white"
                     : "bg-white/5 text-white/50 hover:text-white"
                 }`}
               >
@@ -239,7 +239,7 @@ export function TriviaControlPanel({
                   <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty]}`}>
                     {q.difficulty}
                   </span>
-                  <span className="shrink-0 rounded-full bg-[#0076B6]/20 px-1.5 py-0.5 text-[9px] text-[#0076B6]">
+                  <span className="shrink-0 rounded-full bg-[#FFB612]/20 px-1.5 py-0.5 text-[9px] text-[#FFB612]">
                     {q.category.replace(/_/g, " ")}
                   </span>
                 </div>

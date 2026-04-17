@@ -5,9 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        lions: { blue: "#0076B6", silver: "#B0B7BC", black: "#000000" },
-        gtown: { navy: "#041E42", gray: "#8D817B", accent: "#5B6B80", highlight: "#4A7AB5" },
-        slidey: "#4A7AB5",
+        steelers: {
+          gold: "#FFB612",
+          black: "#101820",
+          white: "#FFFFFF",
+          darkGold: "#CC9200",
+        },
+        surface: {
+          dark: "#1a2433",
+          card: "#243040",
+          elevated: "#2d3a4d",
+        },
+        slidey: "#FFB612",
       },
       fontFamily: {
         display: ["Bebas Neue", "sans-serif"],

@@ -31,7 +31,7 @@ const CATEGORY_ORDER = ["position", "trade", "fun", "general", "team"];
 function pointsBadgeClass(pts: number): string {
   if (pts >= 10) return "bg-emerald-500/20 text-emerald-400 font-bold";
   if (pts >= 7) return "bg-amber-500/20 text-amber-400";
-  if (pts >= 5) return "bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]";
+  if (pts >= 5) return "bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]";
   return "bg-white/10 text-white/50";
 }
 
@@ -241,7 +241,7 @@ function OverUnderInput({
           disabled={disabled || saving}
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
-              ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]"
+              ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]"
               : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
           } disabled:opacity-50`}
         >
@@ -273,7 +273,7 @@ function YesNoInput({
           disabled={disabled || saving}
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
-              ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]"
+              ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]"
               : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
           } disabled:opacity-50`}
         >
@@ -317,7 +317,7 @@ function PlayerPickInput({
 
   if (disabled && selectedPlayer) {
     return (
-      <div className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-2 text-sm text-[var(--lions-blue)] ring-1 ring-[var(--lions-blue)]/30">
+      <div className="rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-3 py-2 text-sm text-[var(--steelers-gold)] ring-1 ring-[var(--steelers-gold)]/30">
         ✓ {selectedPlayer.name} ({selectedPlayer.position}, {selectedPlayer.school})
       </div>
     );
@@ -326,7 +326,7 @@ function PlayerPickInput({
   return (
     <div className="space-y-2">
       {selectedPlayer && (
-        <div className="rounded-lg border border-[var(--lions-blue)]/30 bg-[var(--lions-blue)]/10 px-3 py-2 text-sm text-[var(--lions-blue)] flex items-center justify-between ring-1 ring-[var(--lions-blue)]/30">
+        <div className="rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-3 py-2 text-sm text-[var(--steelers-gold)] flex items-center justify-between ring-1 ring-[var(--steelers-gold)]/30">
           <span>✓ {selectedPlayer.name} ({selectedPlayer.position})</span>
           <div className="flex gap-2">
             <button onClick={() => onSearchChange("")} className="text-xs text-white/50 hover:text-white/60">
@@ -345,10 +345,10 @@ function PlayerPickInput({
             placeholder="Search players..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none"
+            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           {filtered.length > 0 && (
-            <div className="rounded-lg border border-white/10 bg-[#0c1322] max-h-48 overflow-y-auto">
+            <div className="rounded-lg border border-white/10 bg-[var(--surface-dark)] max-h-48 overflow-y-auto">
               {filtered.map((p) => (
                 <button
                   key={p.id}
@@ -360,7 +360,7 @@ function PlayerPickInput({
                   className="w-full px-3 py-2 text-left text-sm text-white/70 hover:bg-white/10 transition flex items-center gap-2"
                 >
                   <span className="font-semibold text-white">{p.name}</span>
-                  <span className="text-xs text-[var(--lions-blue)]">{p.position}</span>
+                  <span className="text-xs text-[var(--steelers-gold)]">{p.position}</span>
                   <span className="text-xs text-white/40">{p.school}</span>
                 </button>
               ))}
@@ -394,7 +394,7 @@ function TeamPickInput({
           disabled={disabled || saving}
           className={`rounded-lg border p-2 text-center transition-all duration-150 ${
             userPick === t.id
-              ? "border-[var(--lions-blue)] bg-[var(--lions-blue)]/20 ring-2 ring-[var(--lions-blue)]/40 scale-105"
+              ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 ring-2 ring-[var(--steelers-gold)]/40 scale-105"
               : "border-white/[0.12] bg-white/8 hover:border-white/20"
           } disabled:opacity-50`}
           title={t.name}
@@ -434,13 +434,13 @@ function PickNumberInput({
         onChange={(e) => setValue(e.target.value)}
         disabled={disabled}
         placeholder="Pick #"
-        className="w-24 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--lions-blue)] focus:outline-none disabled:opacity-50"
+        className="w-24 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none disabled:opacity-50"
       />
       {!disabled && (
         <button
           onClick={() => value && onSubmit(value)}
           disabled={saving || !value}
-          className="rounded-lg bg-[var(--lions-blue)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--lions-blue)]/80 transition disabled:opacity-50"
+          className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
         >
           {userPick ? "Update" : "Lock In"}
         </button>
@@ -455,7 +455,7 @@ function PickNumberInput({
         </button>
       )}
       {userPick && (
-        <span className="rounded-full bg-[var(--lions-blue)]/20 px-2.5 py-1 text-xs font-bold text-[var(--lions-blue)]">
+        <span className="rounded-full bg-[var(--steelers-gold)]/20 px-2.5 py-1 text-xs font-bold text-[var(--steelers-gold)]">
           #{userPick}
         </span>
       )}

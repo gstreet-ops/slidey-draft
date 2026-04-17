@@ -182,7 +182,7 @@ export function PoolChat({
           <button
             onClick={handleSend}
             disabled={sending || !input.trim()}
-            className="rounded-lg bg-[var(--gtown-highlight)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-30 hover:bg-[var(--gtown-highlight)]/80 transition"
+            className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-sm font-semibold text-black disabled:opacity-30 hover:bg-[var(--steelers-gold)]/80 transition"
           >
             Send
           </button>

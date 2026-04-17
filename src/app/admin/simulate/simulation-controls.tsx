@@ -93,7 +93,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         </div>
         <div className="h-3 rounded-full bg-white/10 overflow-hidden">
           <div
-            className="h-full rounded-full bg-[var(--lions-blue)] transition-all duration-500"
+            className="h-full rounded-full bg-[var(--steelers-gold)] transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -128,7 +128,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
           <button
             onClick={handleAutoRun}
             disabled={state.picksAnnounced >= state.totalPicks}
-            className="rounded-lg bg-[var(--lions-blue)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--lions-blue)]/80 transition disabled:opacity-40"
+            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-40"
           >
             Auto-Run All
           </button>
@@ -206,7 +206,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
                     {pick.pickNumber}
                   </span>
                   <span className="font-semibold text-white">{pick.playerName}</span>
-                  <span className="text-xs text-[var(--lions-blue)]">{pick.playerPosition}</span>
+                  <span className="text-xs text-[var(--steelers-gold)]">{pick.playerPosition}</span>
                 </div>
               ))}
             </div>

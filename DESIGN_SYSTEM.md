@@ -1,49 +1,55 @@
 # Slidey Draft — Design System
 
+The 2026 draft is in Pittsburgh. The app runs on a **Steelers black-and-gold** palette, with
+a tiered dark-surface hierarchy that keeps cards visibly distinct on laptop LCDs.
+
 ## Color Tokens
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--gtown-navy` | `#041E42` | Page backgrounds, app shell |
-| `--gtown-highlight` | `#4A7AB5` | Secondary accent, user-facing CTAs |
-| `--lions-blue` | `#0076B6` | Primary accent, card titles, badges, admin UI |
+| `--steelers-black` | `#101820` | Page backgrounds, nav bar, base surface |
+| `--steelers-gold` | `#FFB612` | Primary accent, links, CTAs, badges, active states |
+| `--steelers-dark-gold` | `#CC9200` | Hover/muted gold |
+| `--surface-dark` | `#1a2433` | Section containers (one step up from the page bg) |
+| `--surface-card` | `#243040` | Content cards (noticeably lighter than section containers) |
+| `--surface-elevated` | `#2d3a4d` | Hover states, elevated panels |
+| `--slidey` | `#FFB612` | Brand accent — aliased to gold |
+
+Gold text on dark is the **primary accent pattern**. Gold buttons use **black text** for contrast.
 
 ## Typography
 
 | Role | Font | Weight | Tracking |
 |------|------|--------|----------|
 | Display headings | `var(--font-display)` (Bebas Neue) | Bold | `tracking-wide` or `tracking-wider` |
-| Body text | System sans (Geist) | Normal | Default |
+| Body text | IBM Plex Sans | Normal | Default |
 | Code/mono | JetBrains Mono | Normal | Default |
 
 ## Core Layout Pattern
 
-The app uses a **dark shell + light content cards** pattern:
+Dark base + lifted surface cards. Each level up is visibly lighter:
 
 ```
 ┌─────────────────────────────────────────┐
-│ Dark navy page bg (--gtown-navy)        │
+│ Page bg: var(--steelers-black) #101820  │
 │                                         │
 │  ┌───────────────────────────────────┐  │
-│  │ Section card (bg-gray-900/60)     │  │
-│  │ border border-white/10 rounded-xl │  │
+│  │ Section: var(--surface-dark)      │  │
+│  │ border-white/10 rounded-xl p-5    │  │
 │  │                                   │  │
 │  │  ┌─────────────────────────────┐  │  │
-│  │  │ Content card (bg-white)     │  │  │
-│  │  │ rounded-lg shadow-sm        │  │  │
+│  │  │ Card: var(--surface-card)   │  │  │
+│  │  │ border-white/[0.12]         │  │  │
 │  │  │                             │  │  │
-│  │  │ Title: text-[var(--lions-   │  │  │
-│  │  │        blue)] font-bold     │  │  │
-│  │  │ Body: text-gray-600         │  │  │
+│  │  │ Title: text-[var(--         │  │  │
+│  │  │        steelers-gold)]      │  │  │
+│  │  │ Body: text-white/60         │  │  │
 │  │  └─────────────────────────────┘  │  │
 │  │                                   │  │
 │  │  ┌─────────────────────────────┐  │  │
-│  │  │ Another content card        │  │  │
+│  │  │ Hover lifts to              │  │  │
+│  │  │ var(--surface-elevated)     │  │  │
 │  │  └─────────────────────────────┘  │  │
-│  └───────────────────────────────────┘  │
-│                                         │
-│  ┌───────────────────────────────────┐  │
-│  │ Next section card                 │  │
 │  └───────────────────────────────────┘  │
 └─────────────────────────────────────────┘
 ```
@@ -51,40 +57,41 @@ The app uses a **dark shell + light content cards** pattern:
 ## Component Patterns
 
 ### Section Container
-Used to group related content on dark backgrounds.
+Groups related content inside a page.
 ```
-className="rounded-xl bg-gray-900/60 border border-white/10 p-5 sm:p-8"
+className="rounded-xl bg-[var(--surface-dark)] border border-white/10 p-5 sm:p-8"
 ```
-- White headings: `text-white` + `font-display`
-- White/60 body text between cards
+- Headings: `text-white` + `font-display`
+- Body text: `text-white/60`
 
-### Content Card (White)
-Individual content items inside section containers.
+### Content Card (Dark)
+A card inside a section — one tier lighter than the section bg.
 ```
-className="rounded-lg bg-white px-4 py-3 shadow-sm"
+className="rounded-lg bg-[var(--surface-card)] border border-white/[0.12] px-4 py-3"
 ```
-- Title: `text-sm font-bold text-[var(--lions-blue)]`
-- Body: `text-sm text-gray-600 leading-relaxed`
-- Description: `text-xs text-gray-500`
+- Title: `text-sm font-bold text-[var(--steelers-gold)]`
+- Body: `text-sm text-white/70`
+- Desc: `text-xs text-white/50`
 
-### Accent Card (Colored)
-For emphasis — scoring rules, key info.
+### Accent Card (Gold)
+For emphasis — CTAs, featured callouts.
 ```
-className="rounded-xl border-2 border-[var(--lions-blue)]/30 bg-blue-50 p-5"
+className="rounded-xl border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 p-5"
 ```
 Variants:
-- Blue: `border-[var(--lions-blue)]/30 bg-blue-50` — mock draft scoring
-- Green: `border-green-300 bg-green-50` — live predictions
-- Gray: `border-gray-200 bg-gray-50` — summary/formula
+- Gold (primary): `border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10`
+- Success: `border-green-500/30 bg-green-500/10`
+- Warning: `border-yellow-500/30 bg-yellow-500/10`
+- Danger: `border-red-500/30 bg-red-500/10`
 
 ### Score Row
-Points + label inside scoring tables.
+Points + label in scoring tables.
 ```
-className="rounded-lg bg-white px-4 py-3 shadow-sm"
+className="flex items-center gap-3 rounded-lg bg-[var(--surface-card)] px-4 py-3"
 ```
 - Points: `text-lg font-bold` with color by type (green/yellow/orange/red)
-- Label: `text-sm font-semibold text-gray-900`
-- Desc: `text-xs text-gray-500`
+- Label: `text-sm font-semibold text-white`
+- Desc: `text-xs text-white/50`
 
 ### Pick Card (Board View)
 Draft board pick slots on dark backgrounds.
@@ -93,30 +100,46 @@ Draft board pick slots on dark backgrounds.
 className="border-white/10 bg-white/5 hover:border-white/20"
 
 // Filled slot
-className="border-white/10 bg-white/5"
+className="border-white/10 bg-[var(--surface-card)]"
 
 // Active slot
-className="border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
+className="border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/10"
 ```
 
 ### Navigation
-- Desktop: horizontal links, `text-white/60 hover:text-white`
-- Mobile (<768px): hamburger menu, slide-down panel
-- Admin: separate header with `bg-black/20`
+- Background: `bg-[var(--steelers-black)]` with `border-b border-white/10`
+- Logo: `DRAFT DAY` white, `CHALLENGE` in `text-[var(--slidey)]` (gold)
+- Desktop links: `text-white/60 hover:text-white`
+- "More" dropdown: `bg-[var(--steelers-black)]` panel
+- Mobile: hamburger → flat vertical list
 
 ### Buttons
-- Primary: `bg-[var(--lions-blue)] text-white hover:bg-[var(--lions-blue)]/80`
-- Secondary: `border border-white/20 text-white/70 hover:border-white/40`
-- Danger: `border border-red-500/30 text-red-400 hover:bg-red-500/10`
-- Success: `bg-green-600 text-white hover:bg-green-500`
+
+| Kind | Classes |
+|------|---------|
+| **Primary (gold)** | `bg-[var(--steelers-gold)] text-black hover:bg-[var(--steelers-dark-gold)]` |
+| Secondary | `border border-white/20 text-white/70 hover:border-white/40 hover:text-white` |
+| Danger | `border border-red-500/30 text-red-400 hover:bg-red-500/10` |
+| Success | `bg-green-600 text-white hover:bg-green-500` |
+
+**Rule:** solid gold background → `text-black`, not `text-white`. Gold/20 tinted surfaces can
+still use `text-white` because the background is mostly the underlying dark surface.
 
 ### Badges / Pills
-- Position: `bg-[var(--lions-blue)]/20 text-[var(--lions-blue)]`
-- Status published: `bg-green-500/20 text-green-400`
-- Status draft: `bg-yellow-500/20 text-yellow-400`
-- BPA tag: `text-yellow-400/70`
+
+| Role | Classes |
+|------|---------|
+| Position pill | `bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]` |
+| Status: Published | `bg-green-500/20 text-green-400` |
+| Status: Draft | `bg-yellow-500/20 text-yellow-400` |
+| Admin role | `bg-red-500/20 text-red-400` |
+| Commissioner role | `bg-yellow-500/20 text-yellow-400` |
+| BPA tag | `text-yellow-400/70` |
+
+Status colors (green/yellow/red) are semantic, not brand — leave them even on the Steelers theme.
 
 ### Match Type Colors
+
 | Type | Border/BG | Text |
 |------|-----------|------|
 | Exact | `green-500/30`, `green-500/10` | `green-400` |
@@ -124,8 +147,17 @@ className="border-[var(--lions-blue)] bg-[var(--lions-blue)]/10"
 | Far | `orange-500/30`, `orange-500/10` | `orange-400` |
 | Miss | `red-500/30`, `red-500/10` | `red-400` |
 
+### Team Needs Labels
+
+| Tier | Classes | Label |
+|------|---------|-------|
+| Top Need (index 0) | `text-green-400` | `● Top Need` |
+| Key Need (index 1) | `text-green-400/80` | `● Key Need` |
+| Fits Need (index 2+) | `text-sky-400/60` | `● Fits Need` |
+| Off-need | `text-amber-400/60` | `○ Off-need` |
+
 ### Prospect Detail Drawer
-- Light theme: `bg-white` with `text-gray-900` headers, `text-gray-600` body
+- Light theme: `bg-white` with `text-[var(--steelers-black)]` headers, `text-gray-600` body
 - Full-screen on mobile, 420px panel on desktop
 - Stats bar with dividers, combine measurables grid
 - Backdrop: `bg-black/60 backdrop-blur-sm`

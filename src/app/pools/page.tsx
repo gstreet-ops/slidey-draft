@@ -17,14 +17,14 @@ export default async function PoolsPage() {
   const pools = await getPoolsForUser(session.user.id);
 
   return (
-    <div className="min-h-screen bg-[var(--gtown-navy)] flex flex-col">
+    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Your Pools</h1>
           {(session.user.role === "commissioner" || session.user.role === "admin") && (
             <Link
               href="/pools/create"
-              className="rounded-lg bg-[var(--gtown-highlight)] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[var(--gtown-highlight)]/80 transition"
+              className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
             >
               Create Pool
             </Link>
