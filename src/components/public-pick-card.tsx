@@ -136,8 +136,10 @@ export function PublicPickCard({
             <span className="text-[10px] text-white/40 sm:text-xs">({pick.teamAbbreviation})</span>
             {(() => {
               const nm = checkNeedMatch(pick.playerPosition, pick.teamNeeds);
-              if (nm === "top") return <span className="text-[9px] font-semibold text-green-400">● Need</span>;
-              if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
+              if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-400">● Top Need</span>;
+              if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-400/80">● Key Need</span>;
+              if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-400/60">● Fits Need</span>;
+              if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
               return null;
             })()}
           </div>
@@ -208,6 +210,26 @@ export function PublicPickCard({
               <p className="text-[10px] text-amber-400/40 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
             </div>
           )}
+          {(() => {
+            const needs = pick.teamNeeds;
+            if (!needs || needs.length === 0) return null;
+            const nm = checkNeedMatch(pick.playerPosition, needs);
+            if (nm.tier === "off") {
+              return (
+                <p className="text-xs text-amber-400/40">
+                  {pick.teamName} needs: {needs.slice(0, 3).join(", ")} — {pick.playerPosition} not a listed need
+                </p>
+              );
+            }
+            if (nm.needIndex !== null) {
+              return (
+                <p className="text-xs text-white/40">
+                  {pick.teamName} needs: {needs.slice(0, 5).join(", ")} — {pick.playerPosition} is #{nm.needIndex + 1} priority
+                </p>
+              );
+            }
+            return null;
+          })()}
           {pick.consensusLow != null && pick.consensusHigh != null && (
             <p className={`text-xs ${
               pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :

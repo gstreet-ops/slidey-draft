@@ -736,8 +736,10 @@ export function PickBuilder({
                       </span>
                       {(() => {
                         const nm = checkNeedMatch(pick.playerPosition, slot.teamNeeds);
-                        if (nm === "top") return <span className="text-[9px] font-semibold text-green-400 sm:text-[10px]">● Need</span>;
-                        if (nm === "off") return <span className="text-[9px] font-semibold text-amber-400/60 sm:text-[10px]">○ Off-need</span>;
+                        if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-400 sm:text-[10px]">● Top Need</span>;
+                        if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-400/80 sm:text-[10px]">● Key Need</span>;
+                        if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-400/60 sm:text-[10px]">● Fits Need</span>;
+                        if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-400/60 sm:text-[10px]">○ Off-need</span>;
                         return null;
                       })()}
                     </div>

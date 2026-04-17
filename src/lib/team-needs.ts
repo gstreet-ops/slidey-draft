@@ -32,26 +32,39 @@ function positionMatchesNeed(playerPosition: string, need: string): boolean {
   return false;
 }
 
-export type NeedMatch = "top" | "match" | "off";
+export type NeedMatchTier = "top" | "match" | "off";
+
+export type NeedMatch = {
+  tier: NeedMatchTier;
+  needIndex: number | null;
+  matchedNeed: string | null;
+};
 
 /**
  * Check how a player position matches team needs.
- * - "top": matches top 2 needs
- * - "match": matches needs 3+
+ * - "top": matches top 2 needs (indices 0-1)
+ * - "match": matches needs 3+ (indices 2+)
  * - "off": doesn't match any need
+ * When teamNeeds is empty/null, returns tier "match" with no index — there's nothing to match against.
  */
 export function checkNeedMatch(
   playerPosition: string,
   teamNeeds: string[] | null | undefined
 ): NeedMatch {
-  if (!teamNeeds || teamNeeds.length === 0) return "match";
+  if (!teamNeeds || teamNeeds.length === 0) {
+    return { tier: "match", needIndex: null, matchedNeed: null };
+  }
 
   for (let i = 0; i < teamNeeds.length; i++) {
     if (positionMatchesNeed(playerPosition, teamNeeds[i])) {
-      return i < 2 ? "top" : "match";
+      return {
+        tier: i < 2 ? "top" : "match",
+        needIndex: i,
+        matchedNeed: teamNeeds[i],
+      };
     }
   }
-  return "off";
+  return { tier: "off", needIndex: null, matchedNeed: null };
 }
 
 /**
