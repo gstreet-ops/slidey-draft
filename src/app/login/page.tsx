@@ -25,9 +25,6 @@ export default function LoginPage() {
             <Link href="/picks" className="text-white/60 hover:text-white transition">
               Mock Drafts
             </Link>
-            <Link href="/leaderboard" className="text-white/60 hover:text-white transition">
-              Leaderboard
-            </Link>
           </nav>
         </div>
       </header>

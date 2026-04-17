@@ -179,7 +179,10 @@ export async function getActualResults(season: number) {
     .orderBy(asc(actualResults.pickNumber));
 }
 
-// ── Leaderboard (new scores table) ────────────────
+// ── Leaderboard (pool-scoped) ─────────────────────
+// Global leaderboard was removed — this is now only used by the pool-scoped
+// API route (src/app/api/pools/[poolId]/leaderboard/route.ts) with groupMemberIds
+// filtering to return a single pool's standings.
 export async function getLeaderboard(season: number, groupMemberIds?: string[]) {
   const rows = await db
     .select({

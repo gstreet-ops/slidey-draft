@@ -210,7 +210,6 @@ export async function enterActualResult(
   }
 
   revalidatePath("/admin/live");
-  revalidatePath("/leaderboard");
   revalidatePath("/pools");
   return result;
 }
@@ -235,7 +234,6 @@ export async function undoLastResult(season: number) {
   await scoreAllBoards(season);
 
   revalidatePath("/admin/live");
-  revalidatePath("/leaderboard");
   revalidatePath("/live");
   return last;
 }

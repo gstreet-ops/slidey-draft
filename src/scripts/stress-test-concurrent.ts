@@ -13,7 +13,6 @@ const CONCURRENT_USERS = 15;
 // These don't require auth for GET (most return 401 which still tests server capacity)
 const ENDPOINTS = [
   { name: "Pool Dashboard", method: "GET", path: "/api/pools" },
-  { name: "Leaderboard", method: "GET", path: "/api/leaderboard?season=2026" },
   { name: "Draft Results", method: "GET", path: "/api/draft/results?season=2026" },
 ];
 
@@ -47,7 +46,7 @@ async function runStressTest() {
 
   // First check if server is up
   try {
-    await fetch(`${BASE_URL}/api/leaderboard?season=2026`, { signal: AbortSignal.timeout(5000) });
+    await fetch(`${BASE_URL}/api/draft/results?season=2026`, { signal: AbortSignal.timeout(5000) });
   } catch {
     console.error("ERROR: Dev server not reachable at " + BASE_URL);
     console.error("Start the dev server first: npm run dev");

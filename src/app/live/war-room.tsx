@@ -135,9 +135,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const prevRanksRef = useRef<Map<string, number>>(new Map());
 
   const { data: lbData, lastUpdated: lbUpdated, failCount: lbFailCount, refresh: lbRefresh } = useLiveUpdates<LeaderboardData>({
-    endpoints: [`/api/leaderboard?season=${season}`],
+    endpoints: poolId ? [`/api/pools/${poolId}/leaderboard?season=${season}`] : [],
     interval: 30_000,
-    enabled: true,
+    enabled: !!poolId,
   });
 
   const { lastUpdated: syncUpdated, failCount: syncFailCount, refresh: syncRefresh } = useLiveUpdates<{ totalPicks: number }>({

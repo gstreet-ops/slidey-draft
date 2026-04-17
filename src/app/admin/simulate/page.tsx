@@ -23,10 +23,6 @@ export default async function SimulatePage() {
           <a href="/live" target="_blank" className="text-[var(--lions-blue)] underline">
             Live
           </a>{" "}
-          or{" "}
-          <a href="/leaderboard" target="_blank" className="text-[var(--lions-blue)] underline">
-            Leaderboard
-          </a>{" "}
           in another tab to watch.
         </p>
       </div>

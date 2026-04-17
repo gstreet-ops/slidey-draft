@@ -263,7 +263,6 @@ export async function simulateNextPick(): Promise<{ done: boolean; pickNumber: n
     await advanceTriviaQueues(slot.pickNumber);
 
     revalidatePath("/admin/simulate");
-    revalidatePath("/leaderboard");
     revalidatePath("/live");
 
     return { done: false, pickNumber: slot.pickNumber, playerName: player.name };
@@ -375,6 +374,5 @@ export async function resetSimulation() {
   }
 
   revalidatePath("/admin/simulate");
-  revalidatePath("/leaderboard");
   revalidatePath("/live");
 }
