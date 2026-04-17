@@ -702,6 +702,7 @@ export function PickBuilder({
                     )}
                   </div>
                   {pick ? (
+                    <>
                     <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
                       <span className="text-xs font-semibold text-white sm:text-sm">
                         {pick.playerName}
@@ -743,6 +744,12 @@ export function PickBuilder({
                         return null;
                       })()}
                     </div>
+                    {slot.teamNeeds && slot.teamNeeds.length > 0 && (
+                      <p className="text-[10px] text-white/35 mt-0.5">
+                        Needs: {slot.teamNeeds.slice(0, 4).join(", ")}
+                      </p>
+                    )}
+                    </>
                   ) : (
                     <>
                       <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--lions-blue)] font-medium" : "text-white/50"}`}>

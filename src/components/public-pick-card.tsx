@@ -143,6 +143,11 @@ export function PublicPickCard({
               return null;
             })()}
           </div>
+          {pick.teamNeeds && pick.teamNeeds.length > 0 && (
+            <span className="mt-0.5 block text-[9px] text-white/30">
+              Needs: {pick.teamNeeds.slice(0, 3).join(", ")}
+            </span>
+          )}
           {/* Trait tags on mobile */}
           {tags.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-1 sm:hidden">
