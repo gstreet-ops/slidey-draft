@@ -17,10 +17,19 @@ import { eq, and, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-export default async function MyBoardPage() {
+type MobileLayout = "tabs" | "drawer";
+
+export default async function MyBoardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ layout?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   if (session.user.status !== "active") redirect("/");
+
+  const params = await searchParams;
+  const mobileLayout: MobileLayout = params.layout === "drawer" ? "drawer" : "tabs";
 
   const season = 2026;
   const locked = await isDraftLocked();
@@ -87,9 +96,36 @@ export default async function MyBoardPage() {
 
       <main className="mx-auto max-w-7xl w-full px-4 py-6 sm:px-6 sm:py-8">
         <div className="space-y-4 sm:space-y-6">
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between gap-3">
+            {/* Mobile-only layout toggle (Tabs vs Drawer) */}
+            <div className="md:hidden inline-flex rounded-full border border-gray-200 bg-gray-100 p-0.5 text-[11px] font-semibold">
+              <Link
+                href="/my-board?layout=tabs"
+                replace
+                scroll={false}
+                className={`rounded-full px-3 py-1 transition ${
+                  mobileLayout === "tabs"
+                    ? "bg-[var(--accent-primary)] text-[var(--accent-text)] shadow-sm"
+                    : "text-[var(--text-muted)]"
+                }`}
+              >
+                Tabs
+              </Link>
+              <Link
+                href="/my-board?layout=drawer"
+                replace
+                scroll={false}
+                className={`rounded-full px-3 py-1 transition ${
+                  mobileLayout === "drawer"
+                    ? "bg-[var(--accent-primary)] text-[var(--accent-text)] shadow-sm"
+                    : "text-[var(--text-muted)]"
+                }`}
+              >
+                Drawer
+              </Link>
+            </div>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
+              className={`rounded-full px-3 py-1 text-xs font-medium ml-auto ${
                 boardData.board.status === "published"
                   ? "bg-green-100 text-green-700"
                   : "bg-yellow-100 text-yellow-700"
@@ -111,6 +147,7 @@ export default async function MyBoardPage() {
             availablePlayers={availablePlayers}
             readOnly={locked}
             favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
+            mobileLayout={mobileLayout}
           />
         </div>
 

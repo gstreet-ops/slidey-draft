@@ -87,6 +87,8 @@ type Props = {
   readOnly?: boolean;
   /** User's favorite NFL team abbreviation (e.g. "PIT") — slots for this team get a YOUR TEAM accent. */
   favoriteTeamAbbr?: string | null;
+  /** Mobile-only layout style. "tabs" splits picks/prospects into a tab bar; "drawer" uses a sticky bottom CTA + slide-up drawer. Desktop is unaffected. */
+  mobileLayout?: "tabs" | "drawer";
 };
 
 /* ── 40-time color helper ────────────────────────────────────── */
@@ -316,6 +318,7 @@ export function PickBuilder({
   availablePlayers,
   readOnly = false,
   favoriteTeamAbbr,
+  mobileLayout = "tabs",
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -335,6 +338,11 @@ export function PickBuilder({
   const [editingNoteText, setEditingNoteText] = useState("");
   const [needsOnly, setNeedsOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"rank" | "fastest" | "grade">("rank");
+
+  // Mobile-only UI state
+  const [mobileTab, setMobileTab] = useState<"picks" | "prospects">("picks");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [flashedSlot, setFlashedSlot] = useState<number | null>(null);
 
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
@@ -394,6 +402,11 @@ export function PickBuilder({
         setSearch("");
         setAnalysisText("");
         flashSaved();
+        // Mobile UX: bounce back to picks view + flash the slot we just filled
+        setMobileTab("picks");
+        setDrawerOpen(false);
+        setFlashedSlot(slot.pickNumber);
+        setTimeout(() => setFlashedSlot((s) => (s === slot.pickNumber ? null : s)), 1500);
       } catch (err) {
         setLocalPickedIds((prev) => {
           const next = new Set(prev);
@@ -404,6 +417,18 @@ export function PickBuilder({
         setTimeout(() => setPickError(null), 4000);
       }
     });
+  }
+
+  /** Smart-pick from mobile prospect view: use activeSlot if set, else first empty slot. */
+  function handleSelectProspect(playerId: string) {
+    const slot = activeSlotData
+      ?? draftOrder.find((s) => !pickMap.has(s.pickNumber));
+    if (!slot) {
+      setPickError("All 32 picks are filled.");
+      setTimeout(() => setPickError(null), 3000);
+      return;
+    }
+    handleMakePick(playerId, slot);
   }
 
   function handleRemovePick(pickId: string, playerId: string) {
@@ -551,7 +576,9 @@ export function PickBuilder({
             ? draftOrder.find((s) => s.pickNumber === activeSlot)
             : null;
           const isExpanded = expandedProspectId === player.id;
-          const canPick = !!activeSlot && !readOnly;
+          // Tap-to-pick is always available off the active-slot path; the smart
+          // handler picks first-empty when no slot is explicitly active.
+          const canPick = !readOnly;
 
           return (
             <div key={player.id} className="rounded-md overflow-hidden sm:rounded-lg">
@@ -562,7 +589,14 @@ export function PickBuilder({
                     ? "hover:bg-gray-50 cursor-pointer"
                     : "cursor-default"
                 }`}
-                onClick={() => canPick && slot && handleMakePick(player.id, slot)}
+                onClick={() => {
+                  if (!canPick) return;
+                  if (slot) {
+                    handleMakePick(player.id, slot);
+                  } else {
+                    handleSelectProspect(player.id);
+                  }
+                }}
               >
                 {player.rank && (
                   <span className="text-xs font-bold text-[var(--text-muted)] w-5 text-right shrink-0">
@@ -642,10 +676,47 @@ export function PickBuilder({
     </>
   );
 
+  const filledCount = existingPicks.length;
+  const totalSlots = draftOrder.length;
+  const remaining = totalSlots - filledCount;
+  const showTabsBar = mobileLayout === "tabs";
+  const showDrawerUI = mobileLayout === "drawer";
+  const picksHiddenOnMobile = showTabsBar && mobileTab !== "picks";
+  const prospectsHiddenOnMobile = showDrawerUI || (showTabsBar && mobileTab !== "prospects");
+
   return (
+    <div className={showDrawerUI ? "pb-24 md:pb-0" : undefined}>
+      {/* Mobile tab bar (Option A) */}
+      {showTabsBar && (
+        <div className="md:hidden sticky top-0 z-30 -mx-4 mb-3 flex border-b border-gray-200 bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={() => setMobileTab("picks")}
+            className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition border-b-2 ${
+              mobileTab === "picks"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
+                : "border-transparent text-[var(--text-muted)]"
+            }`}
+          >
+            My Picks ({filledCount}/{totalSlots})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("prospects")}
+            className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition border-b-2 ${
+              mobileTab === "prospects"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
+                : "border-transparent text-[var(--text-muted)]"
+            }`}
+          >
+            Prospects ({realAvailable.length})
+          </button>
+        </div>
+      )}
+
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.2fr_1fr] md:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
       {/* Draft board column */}
-      <div className="space-y-1 sm:space-y-1.5">
+      <div className={`space-y-1 sm:space-y-1.5 ${picksHiddenOnMobile ? "hidden md:block" : ""}`}>
         {/* Auto-save indicator */}
         <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-700">
@@ -662,12 +733,16 @@ export function PickBuilder({
             !!favoriteTeamAbbr &&
             slot.teamAbbreviation.toUpperCase() === favoriteTeamAbbr.toUpperCase();
 
+          const isFlashed = flashedSlot === slot.pickNumber;
+
           return (
             <div key={slot.pickNumber} className="rounded-md overflow-hidden sm:rounded-lg">
               {/* Pick row */}
               <div
                 className={`flex items-center gap-1.5 border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:px-3 sm:py-2 ${
-                  isUserTeam
+                  isFlashed
+                    ? "ring-2 ring-[var(--accent-primary)] bg-[var(--accent-light)] border-[var(--accent-primary)]"
+                    : isUserTeam
                     ? "border-l-4 border-l-[var(--accent-primary)] border-y border-r border-y-[var(--border)] border-r-[var(--border)] bg-[var(--accent-light)]"
                     : pick
                     ? "border-[var(--border)] bg-[var(--bg-card)]"
@@ -990,8 +1065,8 @@ export function PickBuilder({
         )}
       </div>
 
-      {/* Prospect pool column (always visible) */}
-      <div className="max-h-[calc(100vh-100px)] overflow-y-auto">
+      {/* Prospect pool column (always visible on desktop; mobile visibility depends on layout) */}
+      <div className={`${prospectsHiddenOnMobile ? "hidden md:block" : ""} md:max-h-[calc(100vh-100px)] md:overflow-y-auto`}>
         <div className="md:hidden mb-3">
           <h3
             className="text-sm font-bold text-[var(--text-primary)] tracking-wide uppercase"
@@ -1005,6 +1080,67 @@ export function PickBuilder({
         </div>
         {prospectPoolContent}
       </div>
+    </div>
+
+    {/* Mobile sticky bottom bar (Option B) */}
+    {showDrawerUI && (
+      <>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-[var(--text-primary)] truncate">
+              {filledCount}/{totalSlots} picks made
+            </p>
+            <p className="text-[11px] text-[var(--text-muted)]">
+              {remaining > 0 ? `${remaining} ${remaining === 1 ? "slot" : "slots"} open` : "Board complete"}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="shrink-0 rounded-full bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] shadow-md hover:bg-[var(--accent-secondary)] transition"
+          >
+            Browse Prospects
+          </button>
+        </div>
+
+        {/* Drawer + backdrop */}
+        <div
+          className={`md:hidden fixed inset-0 z-50 transition-opacity ${drawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          aria-hidden={!drawerOpen}
+        >
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={() => setDrawerOpen(false)}
+          />
+          <div
+            className={`absolute inset-x-0 bottom-0 h-[85vh] bg-white rounded-t-2xl shadow-2xl flex flex-col transition-transform duration-300 ${drawerOpen ? "translate-y-0" : "translate-y-full"}`}
+          >
+            <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-gray-300" />
+            <div className="flex items-center justify-between px-4 pt-2 pb-3 border-b border-gray-200">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+                Available Prospects
+                <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--accent-primary)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-text)]">
+                  {realAvailable.length}
+                </span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] hover:bg-gray-100 transition"
+                aria-label="Close prospects drawer"
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M3 3l10 10M13 3L3 13" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 pb-4 pt-2">
+              {prospectPoolContent}
+            </div>
+          </div>
+        </div>
+      </>
+    )}
     </div>
   );
 }
