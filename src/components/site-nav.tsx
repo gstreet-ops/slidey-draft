@@ -14,7 +14,7 @@ type Props = {
   enabledFeatures?: string[];
 };
 
-export function SiteNav({ isLoggedIn, isAdmin, userInitial, teamLogoUrl, teamName, enabledFeatures }: Props) {
+export function SiteNav({ isLoggedIn, userInitial, teamLogoUrl, teamName, enabledFeatures }: Props) {
   const [open, setOpen] = useState(false);
 
   const enabled = new Set(enabledFeatures ?? ["mockDraft", "livePredictions", "trivia", "propBets", "watchParty"]);
@@ -36,8 +36,6 @@ export function SiteNav({ isLoggedIn, isAdmin, userInitial, teamLogoUrl, teamNam
     ...(isLoggedIn && enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
     { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
-    ...(isLoggedIn ? [{ href: "/pools", label: "Pools" }] : []),
-    ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
     ...(isLoggedIn ? [{ href: "/settings", label: "⚙ Settings" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];

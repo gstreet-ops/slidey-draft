@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
@@ -8,6 +9,7 @@ import { DisplayNameForm } from "@/components/display-name-form";
 import { TeamImage } from "@/components/team-image";
 import { InnerPageHeader } from "@/components/inner-page-header";
 import { getTeamTheme } from "@/lib/team-themes";
+import { getPoolsForUser } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +32,13 @@ export default async function SettingsPage() {
   const currentName = session.user.name ?? "";
   const teamCode = currentTeam?.abbreviation ?? null;
   const theme = getTeamTheme(teamCode);
+
+  const isAdmin = session.user.role === "admin";
+  const isCommissioner = session.user.role === "commissioner" || isAdmin;
+  const userPools = isCommissioner ? await getPoolsForUser(session.user.id) : [];
+  const myCommissionerPools = userPools.filter(
+    (p) => p.role === "commissioner" || p.role === "admin"
+  );
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)]">
@@ -144,6 +153,91 @@ export default async function SettingsPage() {
             />
           </div>
         </section>
+
+        {/* Your Pools (commissioner+) */}
+        {isCommissioner && (
+          <section className="mt-6 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
+            <h2
+              className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              YOUR POOLS
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Manage your pools and invite players.
+            </p>
+            {myCommissionerPools.length > 0 ? (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {myCommissionerPools.map((p) => (
+                  <div
+                    key={p.poolId}
+                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-semibold text-[var(--text-primary)] truncate">{p.poolName}</h3>
+                      <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">{p.role}</span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link
+                        href={`/pools/${p.poolId}`}
+                        className="rounded-md border border-gray-200 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:border-[var(--accent-primary)]/50 hover:text-[var(--text-primary)] transition"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        href={`/pools/${p.poolId}/settings`}
+                        className="rounded-md border border-gray-200 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:border-[var(--accent-primary)]/50 hover:text-[var(--text-primary)] transition"
+                      >
+                        Manage
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-[var(--text-secondary)]">
+                You haven&apos;t created or joined any pools as commissioner yet.
+              </p>
+            )}
+            <div className="mt-4">
+              <Link
+                href="/pools/create"
+                className="inline-block rounded-lg bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
+              >
+                + Create New Pool
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Administration (admin only) */}
+        {isAdmin && (
+          <section className="mt-6 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
+            <h2
+              className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              ADMINISTRATION
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Pool management, commissioner tools, and app settings.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
+              >
+                Go to Admin Dashboard <span aria-hidden>→</span>
+              </Link>
+              <Link
+                href="/admin/trivia"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:border-[var(--accent-primary)]/50 hover:text-[var(--text-primary)] transition"
+              >
+                Trivia Manager
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

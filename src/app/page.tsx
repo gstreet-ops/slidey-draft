@@ -108,8 +108,6 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const isDraftHere = now >= draftDate;
 
   const firstName = user.name?.split(" ")[0] || user.email?.split("@")[0] || "there";
-  const isAdmin = user.role === "admin";
-  const isCommissioner = user.role === "commissioner" || isAdmin;
   const inPool = userPools.length > 0;
 
   const poolSettings = inPool ? getPoolSettings(userPools[0].settings) : { ...DEFAULT_POOL_SETTINGS };
@@ -157,13 +155,6 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
                   {daysUntilDraft} day{daysUntilDraft !== 1 ? "s" : ""} until Draft Night
                 </span>
               )}
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                isAdmin ? "bg-red-100 text-red-700"
-                : isCommissioner ? "bg-yellow-100 text-yellow-700"
-                : "bg-green-100 text-green-700"
-              }`}>
-                {isAdmin ? "admin" : isCommissioner ? "commissioner" : "active"}
-              </span>
             </div>
           </div>
         </div>
@@ -267,9 +258,6 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
             );
           })}
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />
-          {isAdmin && (
-            <QuickAction href="/admin" title="Admin Panel" desc="Manage the platform" icon={"\uD83D\uDD27"} />
-          )}
         </div>
       </div>
     </main>
