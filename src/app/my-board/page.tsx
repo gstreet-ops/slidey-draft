@@ -9,6 +9,7 @@ import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { MockGradeCard } from "@/components/mock-grade-card";
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { InnerPageHeader } from "@/components/inner-page-header";
+import { MobilePicksShell } from "@/components/mobile-picks-shell";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { db } from "@/db";
@@ -135,20 +136,46 @@ export default async function MyBoardPage({
             </span>
           </div>
 
-          {boardData.picks.length > 0 && (
-            <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
+          {mobileLayout === "tabs" ? (
+            <MobilePicksShell
+              filledCount={boardData.picks.length}
+              totalSlots={draftOrder.length}
+              prospectsCount={availablePlayers.length}
+              gradeCard={
+                boardData.picks.length > 0 ? (
+                  <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
+                ) : null
+              }
+              builder={
+                <PickBuilder
+                  boardId={board.id}
+                  boardStatus={boardData.board.status}
+                  draftOrder={draftOrder}
+                  existingPicks={boardData.picks}
+                  availablePlayers={availablePlayers}
+                  readOnly={locked}
+                  favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
+                  mobileLayout={mobileLayout}
+                />
+              }
+            />
+          ) : (
+            <>
+              {boardData.picks.length > 0 && (
+                <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
+              )}
+              <PickBuilder
+                boardId={board.id}
+                boardStatus={boardData.board.status}
+                draftOrder={draftOrder}
+                existingPicks={boardData.picks}
+                availablePlayers={availablePlayers}
+                readOnly={locked}
+                favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
+                mobileLayout={mobileLayout}
+              />
+            </>
           )}
-
-          <PickBuilder
-            boardId={board.id}
-            boardStatus={boardData.board.status}
-            draftOrder={draftOrder}
-            existingPicks={boardData.picks}
-            availablePlayers={availablePlayers}
-            readOnly={locked}
-            favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
-            mobileLayout={mobileLayout}
-          />
         </div>
 
         {/* Pool Members' Boards */}

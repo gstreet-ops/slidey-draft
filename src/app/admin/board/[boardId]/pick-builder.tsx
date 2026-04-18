@@ -8,6 +8,7 @@ import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
 import { checkNeedMatch, matchesAnyNeed, generateNeedsAnalysis } from "@/lib/team-needs";
+import { useMobilePicksTab } from "@/components/mobile-picks-shell";
 
 type DraftSlot = {
   id: string;
@@ -339,8 +340,13 @@ export function PickBuilder({
   const [needsOnly, setNeedsOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"rank" | "fastest" | "grade">("rank");
 
-  // Mobile-only UI state
-  const [mobileTab, setMobileTab] = useState<"picks" | "prospects">("picks");
+  // Mobile-only UI state. When MobilePicksShell wraps us, it owns the tab and
+  // we read it via context; otherwise we fall back to local state + render our
+  // own tab bar (used by /admin/board, where there's no shell).
+  const shell = useMobilePicksTab();
+  const [localMobileTab, setLocalMobileTab] = useState<"picks" | "prospects">("picks");
+  const mobileTab = shell?.tab ?? localMobileTab;
+  const setMobileTab = shell ? shell.setTab : setLocalMobileTab;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [flashedSlot, setFlashedSlot] = useState<number | null>(null);
 
@@ -679,37 +685,39 @@ export function PickBuilder({
   const filledCount = existingPicks.length;
   const totalSlots = draftOrder.length;
   const remaining = totalSlots - filledCount;
-  const showTabsBar = mobileLayout === "tabs";
+  // When the shell is present, the shell renders the tab bar; we just react to its tab.
+  const showTabsBar = mobileLayout === "tabs" && !shell;
+  const tabsModeActive = mobileLayout === "tabs" || !!shell;
   const showDrawerUI = mobileLayout === "drawer";
-  const picksHiddenOnMobile = showTabsBar && mobileTab !== "picks";
-  const prospectsHiddenOnMobile = showDrawerUI || (showTabsBar && mobileTab !== "prospects");
+  const picksHiddenOnMobile = tabsModeActive && mobileTab !== "picks";
+  const prospectsHiddenOnMobile = showDrawerUI || (tabsModeActive && mobileTab !== "prospects");
 
   return (
     <div className={showDrawerUI ? "pb-24 md:pb-0" : undefined}>
       {/* Mobile tab bar (Option A) */}
       {showTabsBar && (
-        <div className="md:hidden sticky top-0 z-30 -mx-4 mb-3 flex border-b border-gray-200 bg-white shadow-sm">
+        <div className="md:hidden sticky top-0 z-30 mb-3 flex w-full border-b border-gray-200 bg-white shadow-sm">
           <button
             type="button"
             onClick={() => setMobileTab("picks")}
-            className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition border-b-2 ${
+            className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
               mobileTab === "picks"
                 ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
                 : "border-transparent text-[var(--text-muted)]"
             }`}
           >
-            My Picks ({filledCount}/{totalSlots})
+            My Picks <span className="font-medium opacity-80">({filledCount}/{totalSlots})</span>
           </button>
           <button
             type="button"
             onClick={() => setMobileTab("prospects")}
-            className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition border-b-2 ${
+            className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
               mobileTab === "prospects"
                 ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
                 : "border-transparent text-[var(--text-muted)]"
             }`}
           >
-            Prospects ({realAvailable.length})
+            Prospects <span className="font-medium opacity-80">({realAvailable.length})</span>
           </button>
         </div>
       )}
