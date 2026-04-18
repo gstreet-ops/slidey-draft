@@ -137,7 +137,7 @@ export default async function UserGuidePage() {
           <section className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 sm:p-8">
             <SectionHeading>Pool Teams</SectionHeading>
             <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed">
-              Your commissioner can split the pool into teams. You&apos;ll compete as an individual <em>and</em> as part of a team — both standings are tracked separately.
+              If your commissioner has turned on <strong className="text-[var(--text-primary)]">Team Draft</strong>, the pool is split into teams. You&apos;ll compete as an individual <em>and</em> as part of a team — both standings are tracked separately. If you don&apos;t see a Teams tab on the leaderboard, this is off in your pool and only individual rankings count.
             </p>
 
             <div className="mt-4 space-y-3">

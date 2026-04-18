@@ -60,14 +60,18 @@ export default async function CommissionerGuidePage() {
             <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed">
               Teams are optional — best for pools with 6+ people. Skip them if you have a small group where individual competition is enough. If you do create teams, individual scores roll up to team totals and both standings are tracked on the leaderboard.
             </p>
+            <p className="mt-2 text-sm text-[var(--text-secondary)] leading-relaxed">
+              <strong className="text-[var(--text-primary)]">Heads up — Team Draft is off by default.</strong> Flip it on in <strong className="text-[var(--text-primary)]">Pool Settings → Active Features → Team Draft</strong> before any of the team controls below show up. With it off, the Teams tab on the leaderboard and the Team Scoring section on /scoring also stay hidden for everyone in the pool.
+            </p>
 
             <h3 className="mt-6 mb-3 text-sm font-bold uppercase tracking-wider text-[var(--slidey)]">How to Create Teams</h3>
             <div className="space-y-3">
-              <Step n={1}>Go to your pool dashboard → <strong className="text-[var(--text-primary)]">Pool Settings → Team Management</strong></Step>
-              <Step n={2}>Click <strong className="text-[var(--text-primary)]">Create Team</strong> — give it a name and pick a color from the palette (8 preset colors)</Step>
-              <Step n={3}>Create as many teams as you want — 2, 3, 4+ — flexible, not locked to two</Step>
-              <Step n={4}>Assign members by clicking their name under <strong className="text-[var(--text-primary)]">Unassigned Members</strong> and selecting a team</Step>
-              <Step n={5}>Watch for the warning if any members are still unassigned — <strong className="text-[var(--text-primary)]">unassigned members&apos; scores won&apos;t count toward any team</strong></Step>
+              <Step n={1}>Enable <strong className="text-[var(--text-primary)]">Team Draft</strong> under Pool Settings → Active Features (it&apos;s off by default)</Step>
+              <Step n={2}>Go to your pool dashboard → <strong className="text-[var(--text-primary)]">Pool Settings → Team Management</strong></Step>
+              <Step n={3}>Click <strong className="text-[var(--text-primary)]">Create Team</strong> — give it a name and pick a color from the palette (8 preset colors)</Step>
+              <Step n={4}>Create as many teams as you want — 2, 3, 4+ — flexible, not locked to two</Step>
+              <Step n={5}>Assign members by clicking their name under <strong className="text-[var(--text-primary)]">Unassigned Members</strong> and selecting a team</Step>
+              <Step n={6}>Watch for the warning if any members are still unassigned — <strong className="text-[var(--text-primary)]">unassigned members&apos; scores won&apos;t count toward any team</strong></Step>
             </div>
 
             <div className="mt-6 space-y-3">
