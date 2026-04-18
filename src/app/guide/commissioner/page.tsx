@@ -94,10 +94,10 @@ export default async function CommissionerGuidePage() {
                 Go to <strong className="text-white">Pool Settings → Pool Theme</strong> and pick primary and secondary colors.
               </InfoCard>
               <InfoCard title="Pool-Scoped Overrides">
-                Your pool&apos;s colors will override the default accent on all pool pages — standings, live view, and leaderboard.
+                Your pool&apos;s colors will override every member&apos;s personal team accent on pool pages — standings, live view, and leaderboard. Off-pool pages still use each member&apos;s personal team theme.
               </InfoCard>
-              <InfoCard title="Member Logos">
-                Members keep their personal team logo in the nav bar regardless of pool theme — it&apos;s their individual identity.
+              <InfoCard title="Member Logos & Personal Theme">
+                Members pick their own NFL team in <Link href="/settings" className="text-[var(--slidey)] hover:underline">Settings</Link>, which sets the accent color throughout the app for them. Their team logo also shows next to their name in the nav. Your pool theme overrides the accent only on pool pages.
               </InfoCard>
             </div>
           </section>

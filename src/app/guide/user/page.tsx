@@ -51,7 +51,7 @@ export default async function UserGuidePage() {
             </p>
             <div className="mt-4 space-y-3">
               <Step n={1}>Join a pool using an <strong className="text-white">invite code</strong> from your commissioner</Step>
-              <Step n={2}>Pick your <strong className="text-white">favorite NFL team</strong> to personalize your experience</Step>
+              <Step n={2}>Pick your <strong className="text-white">favorite NFL team</strong> in <Link href="/settings" className="text-[var(--slidey)] hover:underline">Settings</Link> — accent colors across the app switch to match your team</Step>
               <Step n={3}>Build a <strong className="text-white">32-pick mock draft</strong> before draft night</Step>
               <Step n={4}>On draft night, go live — <strong className="text-white">predict every pick</strong>, answer trivia, watch the leaderboard</Step>
             </div>
@@ -149,6 +149,28 @@ export default async function UserGuidePage() {
               </TipCard>
               <TipCard>
                 <strong className="text-white">You don&apos;t create teams</strong> — only the commissioner sets up teams. You just play — your scores automatically roll up to your team.
+              </TipCard>
+            </div>
+          </section>
+
+          {/* ── Personalize Your Profile ── */}
+          <section className="rounded-xl border border-white/[0.12] bg-white/8 p-6 sm:p-8">
+            <SectionHeading>Personalize Your Profile</SectionHeading>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              Make the app yours. Open <Link href="/settings" className="text-[var(--slidey)] hover:underline">Settings</Link> from the &quot;More&quot; menu in the top nav (or the Settings link in mobile menu).
+            </p>
+            <div className="mt-4 space-y-3">
+              <TipCard>
+                <strong className="text-white">Display Name</strong> — change how you show up on leaderboards, chat, and pick cards. Save once and it updates everywhere.
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">Team Theme</strong> — pick any of the 32 NFL teams. The app&apos;s accent color (buttons, links, highlights) instantly switches to your team&apos;s primary color. Default is the Pittsburgh Steelers (host city of the 2026 draft).
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">Background stays dark</strong> — only accent colors change with your team pick. The dark surfaces and semantic colors (green for correct, red for miss) stay consistent for readability.
+              </TipCard>
+              <TipCard>
+                <strong className="text-white">Reset anytime</strong> — pick a different team or click &quot;Reset to draft default (Steelers)&quot; to go back. Your team logo also shows next to your name in the nav.
               </TipCard>
             </div>
           </section>

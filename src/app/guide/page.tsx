@@ -337,8 +337,8 @@ export default async function GuidePage() {
             <SectionHeading>FAQ</SectionHeading>
 
             {mockDraftOn && (
-              <Faq q="When does my board lock?">
-                Your board locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Draft indicating the draft is locked.
+              <Faq q="When does my draft lock?">
+                Your draft locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Draft indicating the draft is locked.
               </Faq>
             )}
 
@@ -406,6 +406,14 @@ export default async function GuidePage() {
 
             <Faq q="Is there a global leaderboard?">
               No — all scoring and rankings are within your pool only. Each pool has its own leaderboard and standings.
+            </Faq>
+
+            <Faq q="How do I change my display name or team colors?">
+              Open <InlineLink href="/settings">Settings</InlineLink> from the &quot;More&quot; menu in the top nav. Update your display name in the Profile section, or pick any of the 32 NFL teams in Team Theme — accent colors across the app switch to match your pick. Default is the Pittsburgh Steelers.
+            </Faq>
+
+            <Faq q="How do I create my own pool?">
+              Anyone logged in can see the &quot;Create Your Own Pool&quot; section on the <InlineLink href="/admin">/admin</InlineLink> page. Commissioners get a Create Pool button there; if you&apos;re not a commissioner yet, redeem a commissioner code (ask an admin) and you&apos;re set.
             </Faq>
 
             <Faq q="Can the commissioner change which features are on?">
