@@ -167,6 +167,9 @@ export default async function UserGuidePage() {
                 <strong className="text-[var(--text-primary)]">Team Theme</strong> — pick any of the 32 NFL teams. The home page hero, team info bar (with this year&apos;s draft needs), accent buttons, links, and highlights all switch to your team&apos;s colors. Default is the Pittsburgh Steelers (host city of the 2026 draft).
               </TipCard>
               <TipCard>
+                <strong className="text-[var(--text-primary)]">See your team before you pick</strong> — when you have a team selected, the top of Settings shows a preview panel with the logo, hero player shot (for teams that have one), color swatches with hex codes, and stadium/division info. Switching teams updates the preview instantly so you can audition the look.
+              </TipCard>
+              <TipCard>
                 <strong className="text-[var(--text-primary)]">Your team is highlighted on the board</strong> — every slot belonging to your favorite team gets a colored left border, a tinted background, and a &quot;YOUR TEAM&quot; badge so you can find your picks at a glance.
               </TipCard>
               <TipCard>
