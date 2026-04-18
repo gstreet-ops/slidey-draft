@@ -157,10 +157,10 @@ export function PublicPickCard({
             </div>
           )}
           {pick.analysis && (
-            <div className="mt-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
-              <span className="text-lg text-amber-700/40 leading-none font-serif">{"\u201C"}</span>
-              <p className="text-xs text-amber-900/85 italic line-clamp-2">{pick.analysis}</p>
-              <p className="text-[10px] text-amber-700 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
+            <div className="mt-2 rounded-md bg-[var(--accent-primary)]/10 border-l-4 border-l-[var(--accent-primary)] border-y border-r border-y-[var(--border-light)] border-r-[var(--border-light)] px-3 py-2">
+              <span className="text-lg text-[var(--accent-primary)]/40 leading-none font-serif">{"\u201C"}</span>
+              <p className="text-xs text-[var(--text-secondary)] italic line-clamp-2">{pick.analysis}</p>
+              <p className="text-[10px] text-[var(--accent-primary)] uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
             </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
@@ -209,10 +209,10 @@ export function PublicPickCard({
       {expanded && hasExpandContent && (
         <div className="border-t border-[var(--border)] px-4 py-3 space-y-3 sm:px-5 sm:py-4">
           {pick.analysis && (
-            <div className="rounded-lg bg-amber-950/40 border border-amber-200 px-4 py-3">
-              <span className="text-2xl text-amber-700/25 font-serif leading-none">{"\u201C"}</span>
-              <p className="text-sm text-amber-100/80 italic leading-relaxed">{pick.analysis}</p>
-              <p className="text-[10px] text-amber-700/40 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
+            <div className="rounded-lg bg-[var(--accent-primary)]/10 border-l-4 border-l-[var(--accent-primary)] border-y border-r border-y-[var(--border-light)] border-r-[var(--border-light)] px-4 py-3">
+              <span className="text-2xl text-[var(--accent-primary)]/40 font-serif leading-none">{"\u201C"}</span>
+              <p className="text-sm text-[var(--text-secondary)] italic leading-relaxed">{pick.analysis}</p>
+              <p className="text-[10px] text-[var(--accent-primary)] uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
             </div>
           )}
           {(() => {

@@ -144,11 +144,16 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
             >
               Welcome back, {firstName}
             </h1>
+            {user.favoriteTeam?.name && (
+              <p className="mt-0.5 text-xs font-semibold uppercase tracking-widest text-[var(--accent-secondary)]">
+                {user.favoriteTeam.name}
+              </p>
+            )}
             <div className="mt-1 flex items-center gap-3 text-sm">
               {isDraftHere ? (
                 <span className="text-green-700 font-semibold">Draft Night is HERE!</span>
               ) : (
-                <span className="text-[var(--slidey)]">
+                <span className="text-[var(--accent-primary)]">
                   {daysUntilDraft} day{daysUntilDraft !== 1 ? "s" : ""} until Draft Night
                 </span>
               )}

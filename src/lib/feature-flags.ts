@@ -1,6 +1,6 @@
 import type { PoolSettings } from "./pool-settings";
 
-export type FeatureKey = "mockDraft" | "livePredictions" | "trivia" | "propBets" | "watchParty";
+export type FeatureKey = "mockDraft" | "livePredictions" | "trivia" | "propBets" | "watchParty" | "teams";
 
 export type FeatureConfig = {
   key: FeatureKey;
@@ -52,6 +52,13 @@ export const FEATURES: FeatureConfig[] = [
     description: "Video call so your pool can watch the draft together",
     icon: "\uD83C\uDFA5",
     settingsKey: "watchParty",
+  },
+  {
+    key: "teams",
+    label: "Team Draft",
+    description: "Assign members to NFL teams — each team has a captain who owns that team's picks",
+    icon: "\uD83C\uDFC8",
+    settingsKey: "teams",
   },
 ];
 

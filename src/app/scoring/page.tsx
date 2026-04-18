@@ -15,8 +15,7 @@ const allSections: SectionDef[] = [
   { id: "prop-bets", label: "Prop Bets", feature: "propBets" },
   { id: "combined", label: "Combined Score", always: true },
   { id: "examples", label: "Examples", always: true },
-  { id: "commissioner", label: "Commissioner", always: true },
-  { id: "team-scoring", label: "Team Scoring", always: true },
+  { id: "team-scoring", label: "Team Scoring", feature: "teams" },
 ];
 
 export default async function ScoringPage() {
@@ -432,59 +431,8 @@ export default async function ScoringPage() {
                 )}
               </section>
 
-              {/* ── Commissioner Controls ── */}
-              <section id="commissioner">
-                <SectionHeading>Commissioner Controls</SectionHeading>
-
-                <SubHeading>Standard Scoring (Default)</SubHeading>
-                <p>
-                  Most pools use Standard Scoring — the official point values. Standard pools get a <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">Standard Scoring</span> badge.
-                </p>
-
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
-                        <th className="pb-2 pr-3">Track</th>
-                        <th className="pb-2 pr-3">Tier</th>
-                        <th className="pb-2 text-right">Points</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-[var(--text-secondary)]">
-                      {mockOn && (
-                        <>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Player Called</td><td className="py-1.5 text-right font-bold">3</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Close Range (±3 picks)</td><td className="py-1.5 text-right font-bold">+2</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Far Range (±7 picks)</td><td className="py-1.5 text-right font-bold">+1</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Exact Slot</td><td className="py-1.5 text-right font-bold">+5</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Position Match</td><td className="py-1.5 text-right font-bold">1</td></tr>
-                        </>
-                      )}
-                      {liveOn && (
-                        <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-green-700">Live</td><td className="py-1.5 pr-3">Correct Prediction</td><td className="py-1.5 text-right font-bold">10</td></tr>
-                      )}
-                      {triviaOn && (
-                        <>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Easy</td><td className="py-1.5 text-right font-bold">3</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Medium</td><td className="py-1.5 text-right font-bold">5</td></tr>
-                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Hard</td><td className="py-1.5 text-right font-bold">10</td></tr>
-                        </>
-                      )}
-                      {propBetsOn && (
-                        <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-amber-700">Prop</td><td className="py-1.5 pr-3">Correct (per-prop value)</td><td className="py-1.5 text-right font-bold">3-20</td></tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <SubHeading>Custom Scoring</SubHeading>
-                <p>
-                  Commissioners can switch to Custom Scoring to set their own point values. Custom pools show a <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Custom Rules</span> badge and use their own scale — great for experimenting or tailoring the experience to your group.
-                </p>
-                <p>Commissioners can also toggle entire scoring tracks on or off and choose which rounds count.</p>
-              </section>
-
               {/* ── Team Scoring ── */}
+              {visibleIds.has("team-scoring") && (
               <section id="team-scoring">
                 <SectionHeading>Team Scoring</SectionHeading>
                 <p>
@@ -529,6 +477,7 @@ export default async function ScoringPage() {
                   Not on a team? If your commissioner hasn&apos;t set up teams, you&apos;ll only see the Individual leaderboard. Your scores still count — teams are an optional layer on top.
                 </Callout>
               </section>
+              )}
             </div>
           </>
         )}

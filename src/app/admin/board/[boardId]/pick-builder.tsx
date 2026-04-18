@@ -773,7 +773,7 @@ export function PickBuilder({
                       })()}
                     </div>
                     {slot.teamNeeds && slot.teamNeeds.length > 0 && (
-                      <p className="text-[10px] text-white/35 mt-0.5">
+                      <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
                         Needs: {slot.teamNeeds.slice(0, 4).join(", ")}
                       </p>
                     )}
@@ -791,7 +791,7 @@ export function PickBuilder({
                             </span>
                           ))}
                           {slot.teamNeeds.length > 3 && (
-                            <span className="text-[10px] text-white/20">+{slot.teamNeeds.length - 3} more</span>
+                            <span className="text-[10px] text-[var(--text-muted)]/60">+{slot.teamNeeds.length - 3} more</span>
                           )}
                         </div>
                       )}
@@ -870,16 +870,16 @@ export function PickBuilder({
                   </div>
                 ) : pick.analysis ? (
                   <div
-                    className="ml-10 mt-2 rounded-md bg-amber-950/40 border border-amber-200 px-3 py-2 cursor-pointer hover:bg-amber-950/50 transition group relative"
+                    className="ml-10 mt-2 rounded-md bg-[var(--accent-primary)]/10 border-l-4 border-l-[var(--accent-primary)] border-y border-r border-y-[var(--border-light)] border-r-[var(--border-light)] px-3 py-2 cursor-pointer hover:bg-[var(--accent-primary)]/15 transition group relative"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingNotePickId(pick.id);
                       setEditingNoteText(pick.analysis || "");
                     }}
                   >
-                    <span className="text-sm text-amber-700/30 font-serif leading-none">{"\u201C"}</span>
-                    <p className="text-[11px] text-amber-100/70 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
-                    <p className="text-[9px] text-amber-700/40 uppercase tracking-wider font-semibold mt-1">Your Take</p>
+                    <span className="text-sm text-[var(--accent-primary)]/40 font-serif leading-none">{"\u201C"}</span>
+                    <p className="text-[11px] text-[var(--text-secondary)] italic leading-relaxed line-clamp-2">{pick.analysis}</p>
+                    <p className="text-[9px] text-[var(--accent-primary)] uppercase tracking-wider font-semibold mt-1">Your Take</p>
                     <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-[var(--text-muted)]">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
@@ -931,7 +931,7 @@ export function PickBuilder({
                 );
                 return (
                   <div className="ml-10 mt-1 hidden sm:block">
-                    <p className="text-[9px] text-white/20 uppercase tracking-wider font-semibold mb-0.5">AI Analysis</p>
+                    <p className="text-[9px] text-[var(--text-muted)]/60 uppercase tracking-wider font-semibold mb-0.5">AI Analysis</p>
                     <div
                       className="border-l-2 pl-2 text-[11px] italic text-[var(--text-muted)]"
                       style={{ borderColor: gradeColorHex(pg.letterGrade) }}

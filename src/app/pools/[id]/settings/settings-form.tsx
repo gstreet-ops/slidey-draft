@@ -28,6 +28,7 @@ export function PoolSettingsForm({
   const [trivia, setTrivia] = useState(settings.trivia);
   const [propBets, setPropBets] = useState(settings.propBets);
   const [watchParty, setWatchParty] = useState(settings.watchParty);
+  const [teams, setTeams] = useState(settings.teams ?? false);
   const [rounds, setRounds] = useState<number[]>(settings.rounds);
   const [scoringMode, setScoringMode] = useState<"standard" | "custom">(settings.scoringMode || "standard");
   const [pointValues, setPointValues] = useState(settings.mockPointValues);
@@ -50,6 +51,7 @@ export function PoolSettingsForm({
           trivia,
           propBets,
           watchParty,
+          teams,
           scoringMode,
           mockPointValues: pointValues,
           livePointValues,
@@ -138,12 +140,14 @@ export function PoolSettingsForm({
               : f.key === "livePredictions" ? livePredictions
               : f.key === "trivia" ? trivia
               : f.key === "propBets" ? propBets
-              : watchParty;
+              : f.key === "watchParty" ? watchParty
+              : teams;
             const setValue = f.key === "mockDraft" ? setMockDraftBonus
               : f.key === "livePredictions" ? setLivePredictions
               : f.key === "trivia" ? setTrivia
               : f.key === "propBets" ? setPropBets
-              : setWatchParty;
+              : f.key === "watchParty" ? setWatchParty
+              : setTeams;
             return (
               <button
                 key={f.key}

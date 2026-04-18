@@ -54,11 +54,11 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
   if (!grade) return null;
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+    <div className="rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-4 shadow-sm">
       <div className="flex items-center gap-4">
         {/* Large grade circle */}
         <div
-          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 ${gradeCircleColor(grade.letterGrade)}`}
+          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 ring-2 ring-[var(--accent-primary)]/20 ${gradeCircleColor(grade.letterGrade)}`}
         >
           <span
             className="text-2xl font-bold"

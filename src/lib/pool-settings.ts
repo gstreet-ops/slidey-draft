@@ -8,6 +8,7 @@ export const DEFAULT_POOL_SETTINGS = {
   trivia: true,
   propBets: true,
   watchParty: true,
+  teams: false,
   entryDeadline: null as string | null,
   maxMembers: null as number | null,
   scoringMode: "standard" as "standard" | "custom",
