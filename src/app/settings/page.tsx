@@ -119,6 +119,34 @@ export default async function SettingsPage() {
                   <dd className="mt-0.5 text-[var(--text-primary)] font-medium">{theme.division}</dd>
                 </div>
               </dl>
+
+              {/* Wordmark */}
+              {theme.wordmark && (
+                <div className="mt-6">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Wordmark</p>
+                  <div className="mt-2 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={theme.wordmark} alt={`${theme.name} wordmark`} className="h-8 w-auto object-contain" />
+                  </div>
+                </div>
+              )}
+
+              {/* Alt Logo */}
+              {theme.altLogo && (
+                <div className="mt-6">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Alternate Logo</p>
+                  <div className="mt-2 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-4">
+                    <TeamImage teamCode={teamCode} variant="altLogo" size={56} />
+                  </div>
+                </div>
+              )}
+
+              {/* Image gallery — only sections with mapped images render */}
+              <GalleryTile teamCode={teamCode} variant="heroPlayer" label="Roster Highlight" present={!!theme.heroPlayer} accent={theme.primary} />
+              <GalleryTile teamCode={teamCode} variant="legendPlayer" label="Franchise Legend" present={!!theme.legendPlayer} accent={theme.primary} />
+              <GalleryTile teamCode={teamCode} variant="historyImage" label="Team History" present={!!theme.historyImage} accent={theme.primary} />
+              <GalleryTile teamCode={teamCode} variant="actionShot" label="Game Day" present={!!theme.actionShot} accent={theme.primary} />
+              <GalleryTile teamCode={teamCode} variant="funImage" label="Fan Culture" present={!!theme.funImage} accent={theme.primary} />
             </div>
           </section>
         )}
@@ -144,6 +172,40 @@ export default async function SettingsPage() {
             />
           </div>
         </section>
+      </div>
+    </div>
+  );
+}
+
+function GalleryTile({
+  teamCode,
+  variant,
+  label,
+  present,
+  accent,
+}: {
+  teamCode: string | null;
+  variant: "heroPlayer" | "legendPlayer" | "historyImage" | "actionShot" | "funImage";
+  label: string;
+  present: boolean;
+  accent: string;
+}) {
+  if (!present) return null;
+  return (
+    <div className="mt-6">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+        {label}
+      </p>
+      <div
+        className="mt-2 max-h-[180px] rounded-lg overflow-hidden border-2"
+        style={{ borderColor: accent }}
+      >
+        <TeamImage
+          teamCode={teamCode}
+          variant={variant}
+          size={500}
+          className="!h-[180px] !w-full !object-cover"
+        />
       </div>
     </div>
   );
