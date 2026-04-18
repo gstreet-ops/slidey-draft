@@ -32,10 +32,10 @@ export default function InviteActivationPage() {
 
   return (
     <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
-        <h1 className="text-2xl font-bold text-white">Activate Your Account</h1>
-        <p className="text-white/60">
-          Invite code: <span className="font-mono text-white">{code}</span>
+      <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-6">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Activate Your Account</h1>
+        <p className="text-[var(--text-secondary)]">
+          Invite code: <span className="font-mono text-[var(--text-primary)]">{code}</span>
         </p>
 
         {status === "idle" && (
@@ -48,13 +48,13 @@ export default function InviteActivationPage() {
         )}
 
         {status === "loading" && (
-          <p className="text-white/60 animate-pulse">Activating...</p>
+          <p className="text-[var(--text-secondary)] animate-pulse">Activating...</p>
         )}
 
         {status === "success" && (
           <div className="space-y-2">
             <p className="text-green-400 font-semibold">{message}</p>
-            <p className="text-white/50 text-sm">Redirecting...</p>
+            <p className="text-[var(--text-muted)] text-sm">Redirecting...</p>
           </div>
         )}
 
@@ -63,7 +63,7 @@ export default function InviteActivationPage() {
             <p className="text-red-400">{message}</p>
             <Link
               href="/"
-              className="inline-block text-sm text-white/60 hover:text-white transition"
+              className="inline-block text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
             >
               Go Home
             </Link>

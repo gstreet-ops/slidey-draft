@@ -21,7 +21,7 @@ function TeamLogo({ slot, size = "md" }: { slot: DraftSlot; size?: "sm" | "md" |
   if (!slot.teamLogoUrl) {
     return (
       <div
-        className={`${sizeClass} rounded-lg shrink-0 flex items-center justify-center text-white font-bold text-xs`}
+        className={`${sizeClass} rounded-lg shrink-0 flex items-center justify-center text-[var(--text-primary)] font-bold text-xs`}
         style={{ backgroundColor: slot.teamPrimaryColor || "#444" }}
       >
         {slot.teamAbbreviation.slice(0, 3)}
@@ -47,14 +47,14 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
     const lastSlot = draftOrder.find(s => s.pickNumber === totalPicks);
     const lastResult = results.find(r => r.pickNumber === totalPicks);
     return (
-      <div className="rounded-xl border border-white/[0.12] bg-white/8 px-6 py-5 flex items-center gap-4">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-6 py-5 flex items-center gap-4">
         <div className="flex-1 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">DRAFT COMPLETE</p>
-          <p className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-1">DRAFT COMPLETE</p>
+          <p className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
             All {totalPicks} picks are in
           </p>
           {lastResult && lastSlot && (
-            <p className="text-sm text-white/50 mt-1">
+            <p className="text-sm text-[var(--text-muted)] mt-1">
               Final pick: {lastResult.playerName} · {lastResult.playerPosition} · {lastSlot.teamAbbreviation}
             </p>
           )}
@@ -81,31 +81,31 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
       {/* Previous Pick */}
       {hasPrev ? (
-        <div className="flex-1 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 opacity-70">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
+        <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 opacity-70">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">
             PICK #{prevResult!.pickNumber}
           </p>
           <div className="flex items-center gap-3">
             <TeamLogo slot={prevSlot!} size="sm" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-white/80 truncate" style={{ fontFamily: "var(--font-display)" }}>
+              <p className="text-sm font-bold text-[var(--text-primary)] truncate" style={{ fontFamily: "var(--font-display)" }}>
                 {prevSlot!.teamName}
               </p>
-              <p className="text-xs text-white/50 truncate">
+              <p className="text-xs text-[var(--text-muted)] truncate">
                 {prevResult!.playerName}
-                <span className="ml-1 text-white/40">{prevResult!.playerPosition}</span>
+                <span className="ml-1 text-[var(--text-muted)]">{prevResult!.playerPosition}</span>
               </p>
             </div>
           </div>
           {(exactCallers.length > 0 || closeCallers.length > 0) && (
             <div className="mt-2 flex flex-wrap gap-1">
               {exactCallers.map((c, i) => (
-                <span key={i} className="text-[10px] bg-green-500/25 text-green-300 rounded-full px-2 py-0.5 font-semibold">
+                <span key={i} className="text-[10px] bg-green-500/25 text-green-700 rounded-full px-2 py-0.5 font-semibold">
                   {c.userName} nailed it!
                 </span>
               ))}
               {closeCallers.map((c, i) => (
-                <span key={i} className="text-[10px] bg-yellow-500/20 text-yellow-200 rounded-full px-2 py-0.5">
+                <span key={i} className="text-[10px] bg-yellow-100 text-yellow-200 rounded-full px-2 py-0.5">
                   {c.userName} close (+{c.pointsAwarded})
                 </span>
               ))}
@@ -130,18 +130,18 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
               className="inline-block h-2 w-2 rounded-full bg-green-400"
               style={{ animation: "pulse 1.5s ease-in-out infinite" }}
             />
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)]">
               ON THE CLOCK
             </p>
-            <span className="ml-auto text-xs font-bold text-white/50">#{currentSlot.pickNumber}</span>
+            <span className="ml-auto text-xs font-bold text-[var(--text-muted)]">#{currentSlot.pickNumber}</span>
           </div>
           <div className="flex items-center gap-3">
             <TeamLogo slot={currentSlot} size="lg" />
             <div className="min-w-0 flex-1">
-              <p className="text-lg font-bold text-white truncate" style={{ fontFamily: "var(--font-display)" }}>
+              <p className="text-lg font-bold text-[var(--text-primary)] truncate" style={{ fontFamily: "var(--font-display)" }}>
                 {currentSlot.teamName}
               </p>
-              <p className="text-xs text-white/50 mt-0.5">Prediction window open</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Prediction window open</p>
             </div>
           </div>
         </div>
@@ -149,17 +149,17 @@ export function OnTheClock({ draftOrder, results, previousPickContext }: OnTheCl
 
       {/* Next Up */}
       {hasNext ? (
-        <div className="flex-1 rounded-xl border border-white/[0.12] bg-white/8 px-4 py-3 opacity-60">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
+        <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 opacity-60">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">
             UP NEXT · #{nextSlot!.pickNumber}
           </p>
           <div className="flex items-center gap-3">
             <TeamLogo slot={nextSlot!} size="sm" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-white/80 truncate" style={{ fontFamily: "var(--font-display)" }}>
+              <p className="text-sm font-bold text-[var(--text-primary)] truncate" style={{ fontFamily: "var(--font-display)" }}>
                 {nextSlot!.teamName}
               </p>
-              <p className="text-xs text-white/40">{nextSlot!.teamAbbreviation}</p>
+              <p className="text-xs text-[var(--text-muted)]">{nextSlot!.teamAbbreviation}</p>
             </div>
           </div>
         </div>

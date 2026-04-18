@@ -55,16 +55,16 @@ export function ScoreCascade({ targetScore, pointsEarned, matchType, animate }: 
   return (
     <div className="relative text-right">
       <span
-        className="text-2xl font-bold text-white"
+        className="text-2xl font-bold text-[var(--text-primary)]"
         style={pulsing ? { animation: "score-pulse 0.6s ease-in-out" } : undefined}
       >
         {displayScore}
       </span>
-      <span className="text-sm text-white/50 ml-1">pts</span>
+      <span className="text-sm text-[var(--text-muted)] ml-1">pts</span>
 
       {showBadge && pointsEarned > 0 && (
         <span
-          className={`absolute -top-4 right-0 text-sm font-bold ${MATCH_COLORS[matchType] || "text-white"}`}
+          className={`absolute -top-4 right-0 text-sm font-bold ${MATCH_COLORS[matchType] || "text-[var(--text-primary)]"}`}
           style={{ animation: "points-pop 2s ease-out forwards" }}
         >
           +{pointsEarned}

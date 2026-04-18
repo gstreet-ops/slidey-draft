@@ -160,11 +160,11 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   // No active question
   if (!question && !done) {
     return (
-      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Draft Trivia</h3>
-            <p className="text-xs text-white/40 mt-0.5">Questions fire automatically during the draft</p>
+            <h3 className="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">Draft Trivia</h3>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">Questions fire automatically during the draft</p>
           </div>
           {triviaScore > 0 && (
             <span className="text-sm text-[var(--slidey)] font-bold">{triviaScore}pts</span>
@@ -176,9 +176,9 @@ export function TriviaCard({ poolId }: { poolId: string }) {
 
   if (done) {
     return (
-      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 text-center">
-        <p className="text-white/60 text-sm">No more trivia questions</p>
-        <p className="text-white font-bold mt-1">Trivia Score: {triviaScore}pts</p>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 text-center">
+        <p className="text-[var(--text-secondary)] text-sm">No more trivia questions</p>
+        <p className="text-[var(--text-primary)] font-bold mt-1">Trivia Score: {triviaScore}pts</p>
       </div>
     );
   }
@@ -196,47 +196,47 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const isTimedOut = result && selected === null;
 
   return (
-    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 space-y-3">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/60">
+          <span className="rounded-full bg-[var(--bg-card)] px-2 py-0.5 text-[10px] text-[var(--text-secondary)]">
             {categoryEmoji} {categoryLabel}
           </span>
           <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-            question!.difficulty === "easy" ? "bg-green-500/20 text-green-400" :
-            question!.difficulty === "hard" ? "bg-red-500/20 text-red-400" :
-            "bg-yellow-500/20 text-yellow-400"
+            question!.difficulty === "easy" ? "bg-green-100 text-green-700" :
+            question!.difficulty === "hard" ? "bg-red-100 text-red-700" :
+            "bg-yellow-100 text-yellow-700"
           }`}>
             {question!.difficulty}
           </span>
           {question!.live && (
-            <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-400 animate-pulse">LIVE</span>
+            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700 animate-pulse">LIVE</span>
           )}
         </div>
         <div className="flex items-center gap-2">
           {question!.sortOrder && question!.totalQueued && (
-            <span className="text-[10px] text-white/40">Q{question!.sortOrder} of {question!.totalQueued}</span>
+            <span className="text-[10px] text-[var(--text-muted)]">Q{question!.sortOrder} of {question!.totalQueued}</span>
           )}
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
           )}
           {!result && timerTotal > 0 && !paused && (
-            <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-400" : "text-white/60"}`}>
+            <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-700" : "text-[var(--text-secondary)]"}`}>
               {timeLeft}s
             </span>
           )}
           {!result && paused && (
-            <span className="text-[10px] font-bold text-yellow-400 animate-pulse">PAUSED</span>
+            <span className="text-[10px] font-bold text-yellow-700 animate-pulse">PAUSED</span>
           )}
           {!result && timerTotal === 0 && !paused && (
-            <span className="text-[10px] text-white/40">No timer</span>
+            <span className="text-[10px] text-[var(--text-muted)]">No timer</span>
           )}
         </div>
       </div>
 
       {/* Timer bar */}
       {!result && timerTotal > 0 && (
-        <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-1 rounded-full bg-[var(--bg-card)] overflow-hidden">
           <div
             className={`h-full ${timerColor} transition-all duration-1000 ease-linear`}
             style={{ width: `${timerPct}%` }}
@@ -244,22 +244,22 @@ export function TriviaCard({ poolId }: { poolId: string }) {
         </div>
       )}
 
-      <p className="text-sm font-semibold text-white">{question!.question}</p>
+      <p className="text-sm font-semibold text-[var(--text-primary)]">{question!.question}</p>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((opt) => {
-          let style = "border-white/[0.12] bg-white/8 hover:bg-white/10 text-white/80";
+          let style = "border-[var(--border)] bg-[var(--bg-card)] hover:bg-[var(--bg-card)] text-[var(--text-primary)]";
 
           if (result) {
             if (opt.index === result.correctAnswer) {
-              style = "border-green-500/50 bg-green-500/20 text-green-300";
+              style = "border-green-200 bg-green-100 text-green-700";
             } else if (opt.index === selected && !result.correct) {
-              style = "border-red-500/50 bg-red-500/20 text-red-300";
+              style = "border-red-200 bg-red-100 text-red-700";
             } else {
-              style = "border-white/8 bg-white/[0.02] text-white/40";
+              style = "border-[var(--border-light)] bg-[var(--bg-card)] text-[var(--text-muted)]";
             }
           } else if (opt.index === selected) {
-            style = "border-[var(--slidey)]/50 bg-[var(--slidey)]/20 text-white";
+            style = "border-[var(--slidey)]/50 bg-[var(--slidey)]/20 text-[var(--text-primary)]";
           }
 
           return (
@@ -279,7 +279,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
       {result && (
         <div className="pt-1">
           <span
-            className={`text-sm font-bold ${result.correct ? "text-green-400" : "text-red-400"}`}
+            className={`text-sm font-bold ${result.correct ? "text-green-700" : "text-red-700"}`}
           >
             {isTimedOut ? "Time's up!" : result.correct ? `Correct! +${result.pointsAwarded}pts` : "Wrong!"}
           </span>

@@ -40,11 +40,11 @@ export default async function PropsPage() {
     <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--steelers-gold)]/[0.04] to-transparent" />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        <h1 className="text-3xl font-bold text-white tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
           PROP BETS
         </h1>
         <div className="mt-2 h-px bg-gradient-to-r from-[var(--steelers-gold)] to-transparent" />
-        <p className="mt-2 text-sm text-white/50">
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
           2026 NFL Draft Side Predictions &middot; {poolName}
         </p>
         <p className="mt-1 text-xs text-[var(--steelers-gold)]">
@@ -67,15 +67,15 @@ export default async function PropsPage() {
           const pct = (picked / total) * 100;
           const barColor = pct >= 100 ? "bg-emerald-400" : pct >= 67 ? "bg-emerald-400" : pct >= 34 ? "bg-[var(--steelers-gold)]" : "bg-white/40";
           return (
-            <div className="mt-6 rounded-xl border border-white/[0.12] bg-white/8 p-4">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white/60">Your picks</span>
-                <span className="text-sm font-bold text-white">
+                <span className="text-sm text-[var(--text-secondary)]">Your picks</span>
+                <span className="text-sm font-bold text-[var(--text-primary)]">
                   {picked}/{allProps.length} submitted
                   {pct >= 100 && " \u2728 All picks in!"}
                 </span>
               </div>
-              <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="mt-2 h-2 rounded-full bg-[var(--bg-card)] overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${barColor}`}
                   style={{ width: `${pct}%` }}

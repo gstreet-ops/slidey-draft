@@ -14,12 +14,12 @@ export default async function BigBoardPage() {
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
         <h1
-          className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           PROSPECTS
         </h1>
-        <p className="mt-1 text-sm text-white/50 mb-6">
+        <p className="mt-1 text-sm text-[var(--text-muted)] mb-6">
           2026 NFL Draft prospect rankings &middot; {ranked.length} prospects
         </p>
 

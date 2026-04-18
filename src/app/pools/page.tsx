@@ -20,7 +20,7 @@ export default async function PoolsPage() {
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <main className="mx-auto max-w-5xl px-4 py-8 space-y-8 sm:px-6 sm:py-10">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Your Pools</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Your Pools</h1>
           {(session.user.role === "commissioner" || session.user.role === "admin") && (
             <Link
               href="/pools/create"
@@ -36,9 +36,9 @@ export default async function PoolsPage() {
 
         {/* Pool list */}
         {pools.length === 0 ? (
-          <div className="rounded-xl bg-white/10 p-12 text-center space-y-4">
-            <p className="text-white/60">You haven&apos;t joined any pools yet.</p>
-            <p className="text-white/50 text-sm">Create a pool or join one with an invite code.</p>
+          <div className="rounded-xl bg-[var(--bg-card)] p-12 text-center space-y-4">
+            <p className="text-[var(--text-secondary)]">You haven&apos;t joined any pools yet.</p>
+            <p className="text-[var(--text-muted)] text-sm">Create a pool or join one with an invite code.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -46,26 +46,26 @@ export default async function PoolsPage() {
               <Link
                 key={pool.poolId}
                 href={`/pools/${pool.poolId}`}
-                className="rounded-xl bg-white/8 border border-white/[0.12] p-6 hover:bg-white/10 transition space-y-3"
+                className="rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-6 hover:bg-[var(--bg-card)] transition space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">{pool.poolName}</h3>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">{pool.poolName}</h3>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                       pool.poolStatus === "open"
-                        ? "bg-green-500/20 text-green-400"
+                        ? "bg-green-100 text-green-700"
                         : pool.poolStatus === "locked"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-white/10 text-white/50"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-[var(--bg-card)] text-[var(--text-muted)]"
                     }`}
                   >
                     {pool.poolStatus}
                   </span>
                 </div>
                 {pool.description && (
-                  <p className="text-sm text-white/50 line-clamp-2">{pool.description}</p>
+                  <p className="text-sm text-[var(--text-muted)] line-clamp-2">{pool.description}</p>
                 )}
-                <div className="flex items-center gap-3 text-xs text-white/50">
+                <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
                   <span className="capitalize">{pool.role}</span>
                   <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
                 </div>

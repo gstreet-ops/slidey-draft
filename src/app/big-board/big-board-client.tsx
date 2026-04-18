@@ -34,10 +34,10 @@ type Prospect = {
 const POSITIONS = ["ALL", "QB", "RB", "WR", "TE", "OT", "OG", "C", "EDGE", "DT", "LB", "CB", "S"];
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "bg-green-500/20 text-green-400 border-green-500/30";
-  if (grade >= 80) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-  if (grade >= 70) return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-  return "bg-white/8 text-white/50 border-white/[0.12]";
+  if (grade >= 90) return "bg-green-100 text-green-700 border-green-200";
+  if (grade >= 80) return "bg-blue-100 text-blue-700 border-blue-200";
+  if (grade >= 70) return "bg-yellow-100 text-yellow-700 border-yellow-200";
+  return "bg-[var(--bg-card)] text-[var(--text-muted)] border-[var(--border)]";
 }
 
 export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[]; isLoggedIn: boolean }) {
@@ -64,7 +64,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
             placeholder="Search by name or school..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="flex gap-1 flex-wrap overflow-x-auto scrollbar-none">
             {POSITIONS.map((pos) => (
@@ -74,7 +74,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                 className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   posFilter === pos
                     ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                    : "bg-white/10 text-white/50 hover:text-white"
+                    : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {pos}
@@ -83,7 +83,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
           </div>
         </div>
 
-        <p className="text-xs text-white/50">{filtered.length} prospects</p>
+        <p className="text-xs text-[var(--text-muted)]">{filtered.length} prospects</p>
 
         {/* Prospect list */}
         <div className="space-y-2">
@@ -93,10 +93,10 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
               <button
                 key={p.id}
                 onClick={() => setDrawerProspect(p)}
-                className="flex w-full items-center gap-3 rounded-xl bg-white/8 border border-white/[0.12] px-4 py-3 text-left transition hover:bg-white/10 sm:gap-4 sm:px-5 sm:py-4"
+                className="flex w-full items-center gap-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3 text-left transition hover:bg-[var(--bg-card)] sm:gap-4 sm:px-5 sm:py-4"
               >
                 {/* Rank */}
-                <span className="w-8 text-center text-sm font-bold text-white/50 shrink-0 sm:w-10 sm:text-base">
+                <span className="w-8 text-center text-sm font-bold text-[var(--text-muted)] shrink-0 sm:w-10 sm:text-base">
                   {p.rank}
                 </span>
 
@@ -106,7 +106,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-white truncate sm:text-base">{p.name}</span>
+                    <span className="text-sm font-bold text-[var(--text-primary)] truncate sm:text-base">{p.name}</span>
                     <span className="shrink-0 rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-text)] sm:text-xs">
                       {p.position}
                     </span>
@@ -115,12 +115,12 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
                     {p.schoolLogoUrl && (
                       <Image src={p.schoolLogoUrl} alt="" width={14} height={14} className="shrink-0 object-contain" />
                     )}
-                    <span className="text-xs text-white/50 truncate">{p.school}</span>
+                    <span className="text-xs text-[var(--text-muted)] truncate">{p.school}</span>
                     {p.nflComparison && (
-                      <span className="hidden text-xs text-white/50 sm:inline">· Comp: {p.nflComparison}</span>
+                      <span className="hidden text-xs text-[var(--text-muted)] sm:inline">· Comp: {p.nflComparison}</span>
                     )}
                     {p.consensusLow != null && p.consensusHigh != null && (
-                      <span className="text-[10px] text-white/40 font-mono sm:text-xs">
+                      <span className="text-[10px] text-[var(--text-muted)] font-mono sm:text-xs">
                         · Range {p.consensusLow}-{p.consensusHigh}
                       </span>
                     )}

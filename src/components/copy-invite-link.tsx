@@ -23,7 +23,7 @@ export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; p
 
   return (
     <div className="space-y-2">
-      <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+      <div className="rounded-lg border border-[var(--border)] bg-black/20 px-3 py-2">
         <div className="flex items-center gap-2">
           <code className="text-sm text-[var(--steelers-gold)] break-all flex-1">
             {inviteUrl}
@@ -39,12 +39,12 @@ export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; p
       <div className="flex items-center gap-2">
         <button
           onClick={handleCopyMessage}
-          className="text-xs text-white/50 hover:text-white/60 transition"
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
         >
           {msgCopied ? "Message copied!" : "Copy share message"}
         </button>
         <span className="text-xs text-white/20">&middot;</span>
-        <span className="text-xs text-white/40 font-mono">Code: {inviteCode}</span>
+        <span className="text-xs text-[var(--text-muted)] font-mono">Code: {inviteCode}</span>
       </div>
     </div>
   );

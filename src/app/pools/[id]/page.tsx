@@ -70,18 +70,18 @@ export default async function PoolDashboardPage({
         {/* Pool Header */}
         <div className="space-y-2 mb-8">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-white">{pool.name}</h1>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">{pool.name}</h1>
             <ScoringBadge mode={settings.scoringMode} />
             <span className={`text-xs px-2 py-0.5 rounded-full ${
-              pool.status === "open" ? "bg-green-500/20 text-green-400"
-              : pool.status === "locked" ? "bg-yellow-500/20 text-yellow-400"
-              : "bg-white/10 text-white/50"
+              pool.status === "open" ? "bg-green-100 text-green-700"
+              : pool.status === "locked" ? "bg-yellow-100 text-yellow-700"
+              : "bg-[var(--bg-card)] text-[var(--text-muted)]"
             }`}>
               {pool.status}
             </span>
           </div>
-          {pool.description && <p className="text-white/50">{pool.description as string}</p>}
-          <div className="flex items-center gap-4 text-sm text-white/50">
+          {pool.description && <p className="text-[var(--text-muted)]">{pool.description as string}</p>}
+          <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
             <span>{members.length} member{members.length !== 1 ? "s" : ""}</span>
             {commissioner && (
               <span>Commissioner: {commissioner.userName || commissioner.userEmail}</span>
@@ -92,7 +92,7 @@ export default async function PoolDashboardPage({
           {canManage && (
             <div className="flex gap-3 text-xs mt-1">
               <Link href={`/pools/${poolId}/settings`} className="text-[var(--slidey)] hover:underline">Settings</Link>
-              <Link href="/guide/commissioner" className="text-white/50 hover:text-white/60">Commissioner Guide</Link>
+              <Link href="/guide/commissioner" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">Commissioner Guide</Link>
             </div>
           )}
 
@@ -108,27 +108,27 @@ export default async function PoolDashboardPage({
           {/* Left: Main content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Settings summary */}
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Pool Settings</h3>
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-3">
+              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Pool Settings</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
                 <div>
-                  <span className="text-white/50">Rounds: </span>
-                  <span className="text-white">{settings.rounds.join(", ")}</span>
+                  <span className="text-[var(--text-muted)]">Rounds: </span>
+                  <span className="text-[var(--text-primary)]">{settings.rounds.join(", ")}</span>
                 </div>
                 <div>
-                  <span className="text-white/50">Mock Bonus: </span>
-                  <span className="text-white">{settings.mockDraftBonus ? "On" : "Off"}</span>
+                  <span className="text-[var(--text-muted)]">Mock Bonus: </span>
+                  <span className="text-[var(--text-primary)]">{settings.mockDraftBonus ? "On" : "Off"}</span>
                 </div>
                 <div>
-                  <span className="text-white/50">Live Predictions: </span>
-                  <span className="text-white">{settings.livePredictions ? "On" : "Off"}</span>
+                  <span className="text-[var(--text-muted)]">Live Predictions: </span>
+                  <span className="text-[var(--text-primary)]">{settings.livePredictions ? "On" : "Off"}</span>
                 </div>
               </div>
             </div>
 
             {/* Commissioner: Invite management */}
             {canManage && pool.status === "open" && (
-              <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6">
                 <PoolInviteManager
                   poolId={poolId}
                   poolName={pool.name}
@@ -140,8 +140,8 @@ export default async function PoolDashboardPage({
 
             {/* Commissioner: Trivia control */}
             {canManage && settings.trivia && (
-              <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Trivia Control</h3>
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Trivia Control</h3>
                 <TriviaControlPanel
                   poolId={poolId}
                   initialSettings={{
@@ -153,19 +153,19 @@ export default async function PoolDashboardPage({
 
             {/* Pre-draft: member roster */}
             {!isDraftOver && (
-              <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Members</h3>
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Members</h3>
                 <div className="space-y-2">
                   {members.map((m) => (
-                    <div key={m.userId} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                    <div key={m.userId} className="flex items-center justify-between py-2 border-b border-[var(--border-light)] last:border-0">
                       <div className="flex items-center gap-3">
                         {m.userImage && (
                           <Image src={m.userImage} alt="" width={24} height={24} className="rounded-full" />
                         )}
-                        <span className="text-white text-sm">{m.userName || m.userEmail}</span>
+                        <span className="text-[var(--text-primary)] text-sm">{m.userName || m.userEmail}</span>
                         {m.role !== "member" && (
                           <span className={`text-xs px-1.5 py-0.5 rounded ${
-                            m.role === "commissioner" ? "bg-yellow-500/20 text-yellow-400" : "bg-blue-500/20 text-blue-400"
+                            m.role === "commissioner" ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"
                           }`}>
                             {m.role}
                           </span>
@@ -178,25 +178,25 @@ export default async function PoolDashboardPage({
             )}
 
             {/* Announcements */}
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Announcements</h3>
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Announcements</h3>
 
               {canManage && <AnnouncementForm poolId={poolId} />}
 
               {announcements.length === 0 ? (
-                <p className="text-white/40 text-sm">No announcements yet.</p>
+                <p className="text-[var(--text-muted)] text-sm">No announcements yet.</p>
               ) : (
                 <div className="space-y-3">
                   {announcements.map((a) => (
                     <div
                       key={a.id}
                       className={`p-4 rounded-lg ${
-                        a.pinned ? "bg-yellow-500/5 border border-yellow-500/20" : "bg-white/5"
+                        a.pinned ? "bg-yellow-500/5 border border-yellow-200" : "bg-[var(--bg-card)]"
                       }`}
                     >
-                      {a.pinned && <span className="text-xs text-yellow-400 mb-1 block">Pinned</span>}
-                      <p className="text-white text-sm">{a.content}</p>
-                      <p className="text-white/40 text-xs mt-2">
+                      {a.pinned && <span className="text-xs text-yellow-700 mb-1 block">Pinned</span>}
+                      <p className="text-[var(--text-primary)] text-sm">{a.content}</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-2">
                         {a.authorName || a.authorEmail} &middot;{" "}
                         {new Date(a.createdAt).toLocaleDateString()}
                       </p>
@@ -212,16 +212,16 @@ export default async function PoolDashboardPage({
           <div className="space-y-6">
             {/* Countdown */}
             {!isDraftOver && daysUntilDraft > 0 && (
-              <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 text-center">
-                <p className="text-4xl font-bold text-white">{daysUntilDraft}</p>
-                <p className="text-white/50 text-sm">days until the draft</p>
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 text-center">
+                <p className="text-4xl font-bold text-[var(--text-primary)]">{daysUntilDraft}</p>
+                <p className="text-[var(--text-muted)] text-sm">days until the draft</p>
               </div>
             )}
 
             {/* Your stats */}
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Your Stats</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Your Stats</h3>
                 {myTeam && (
                   <span
                     className="text-xs font-bold px-2.5 py-1 rounded-full"
@@ -234,37 +234,37 @@ export default async function PoolDashboardPage({
               {myStanding ? (
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-white/50">Rank</span>
-                    <span className="text-white font-semibold">#{myStanding.rank}</span>
+                    <span className="text-[var(--text-muted)]">Rank</span>
+                    <span className="text-[var(--text-primary)] font-semibold">#{myStanding.rank}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/50">Mock Bonus</span>
-                    <span className="text-white">{myStanding.mockBonus}</span>
+                    <span className="text-[var(--text-muted)]">Mock Bonus</span>
+                    <span className="text-[var(--text-primary)]">{myStanding.mockBonus}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/50">Live Score</span>
-                    <span className="text-white">{myStanding.liveTotal}</span>
+                    <span className="text-[var(--text-muted)]">Live Score</span>
+                    <span className="text-[var(--text-primary)]">{myStanding.liveTotal}</span>
                   </div>
-                  <div className="flex justify-between border-t border-white/10 pt-2">
-                    <span className="text-white/60 font-semibold">Combined</span>
-                    <span className="text-white font-bold">{myStanding.combinedScore}</span>
+                  <div className="flex justify-between border-t border-[var(--border)] pt-2">
+                    <span className="text-[var(--text-secondary)] font-semibold">Combined</span>
+                    <span className="text-[var(--text-primary)] font-bold">{myStanding.combinedScore}</span>
                   </div>
                 </div>
               ) : (
-                <p className="text-white/40 text-sm">No scores yet.</p>
+                <p className="text-[var(--text-muted)] text-sm">No scores yet.</p>
               )}
             </div>
 
             {/* Mini leaderboard */}
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Leaderboard</h3>
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-3">
+              <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Leaderboard</h3>
               {top5.length === 0 ? (
-                <p className="text-white/40 text-sm">No scores yet.</p>
+                <p className="text-[var(--text-muted)] text-sm">No scores yet.</p>
               ) : (
                 <div className="space-y-2">
                   {top5.map((s) => (
                     <div key={s.userId} className={`flex items-center justify-between text-sm py-1 ${
-                      s.userId === session.user.id ? "text-[var(--steelers-gold)]" : "text-white"
+                      s.userId === session.user.id ? "text-[var(--steelers-gold)]" : "text-[var(--text-primary)]"
                     }`}>
                       <span className="flex items-center gap-2">
                         {s.teamLogoUrl && <img src={s.teamLogoUrl} alt="" className="h-4 w-4 shrink-0 object-contain" />}
@@ -295,7 +295,7 @@ export default async function PoolDashboardPage({
               )}
               <Link
                 href="/live"
-                className="block w-full text-center rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold text-white/70 hover:border-white/40 transition"
+                className="block w-full text-center rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:border-white/40 transition"
               >
                 Go to My Draft
               </Link>

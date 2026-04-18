@@ -103,10 +103,10 @@ type Props = {
 };
 
 const MATCH_COLORS: Record<string, string> = {
-  exact: "border-green-500/40 bg-green-500/10",
-  close: "border-yellow-500/40 bg-yellow-500/10",
-  far: "border-orange-500/40 bg-orange-500/10",
-  miss: "border-red-500/40 bg-red-500/10",
+  exact: "border-green-200 bg-green-50",
+  close: "border-yellow-200 bg-yellow-50",
+  far: "border-orange-200 bg-orange-50",
+  miss: "border-red-200 bg-red-50",
 };
 
 const MATCH_LABELS: Record<string, string> = {
@@ -254,7 +254,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const picksColumn = (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>YOUR PICKS VS ACTUAL</h2>
+        <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>YOUR PICKS VS ACTUAL</h2>
         {userPicks.length > 0 && (
           <ScoreCascade
             targetScore={runningTotal}
@@ -265,8 +265,8 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         )}
       </div>
       {!userBoardId ? (
-        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
-          <p className="text-white/50 text-sm">You don&apos;t have a mock draft to score.</p>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
+          <p className="text-[var(--text-muted)] text-sm">You don&apos;t have a mock draft to score.</p>
         </div>
       ) : (
         <div className="space-y-1.5 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
@@ -277,27 +277,27 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             const matchType = score?.matchType || (result ? "miss" : null);
             return (
               <div key={slot.pickNumber}
-                   className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${matchType ? MATCH_COLORS[matchType] || "border-white/[0.12] bg-white/8" : "border-white/[0.12] bg-white/8"}`}
+                   className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${matchType ? MATCH_COLORS[matchType] || "border-[var(--border)] bg-[var(--bg-card)]" : "border-[var(--border)] bg-[var(--bg-card)]"}`}
                    style={result && slot.pickNumber === results.length ? { animation: "fade-in 0.5s ease-out" } : undefined}>
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded text-xs font-bold text-white" style={{ backgroundColor: slot.teamPrimaryColor || "#333" }}>{slot.pickNumber}</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[9px] font-bold text-[var(--slidey)]/70 uppercase tracking-widest mb-0.5">You</p>
                   {pick ? (
-                    <p className={`text-sm text-white truncate ${pick.autoFilled ? "italic" : ""}`}>
+                    <p className={`text-sm text-[var(--text-primary)] truncate ${pick.autoFilled ? "italic" : ""}`}>
                       {pick.playerName}
-                      <span className="text-xs text-white/50 ml-1">{pick.playerPosition}</span>
-                      {pick.autoFilled && <span className="ml-1 text-[9px] text-yellow-400/70 font-medium">BPA</span>}
+                      <span className="text-xs text-[var(--text-muted)] ml-1">{pick.playerPosition}</span>
+                      {pick.autoFilled && <span className="ml-1 text-[9px] text-yellow-700/70 font-medium">BPA</span>}
                     </p>
                   ) : (
                     <p className="text-xs text-white/20">&mdash;</p>
                   )}
                 </div>
                 <div className="flex-1 min-w-0 text-right">
-                  <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mb-0.5">Actual</p>
+                  <p className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-0.5">Actual</p>
                   {result ? (
-                    <p className="text-sm text-white/60 truncate">
+                    <p className="text-sm text-[var(--text-secondary)] truncate">
                       {result.playerName}
-                      <span className="text-xs text-white/40 ml-1">{result.playerPosition}</span>
+                      <span className="text-xs text-[var(--text-muted)] ml-1">{result.playerPosition}</span>
                     </p>
                   ) : (
                     <p className="text-xs text-white/20">pending</p>
@@ -305,7 +305,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                 </div>
                 <div className="w-10 shrink-0 text-right">
                   {matchType && (
-                    <span className={`text-xs font-bold whitespace-nowrap ${matchType === "exact" ? "text-green-400" : matchType === "close" ? "text-yellow-400" : matchType === "far" ? "text-orange-400" : "text-red-400"}`}>
+                    <span className={`text-xs font-bold whitespace-nowrap ${matchType === "exact" ? "text-green-700" : matchType === "close" ? "text-yellow-700" : matchType === "far" ? "text-orange-700" : "text-red-700"}`}>
                       {MATCH_LABELS[matchType]}
                     </span>
                   )}
@@ -321,7 +321,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   // ── Column 2: Trivia + Commissioner Controls ──
   const triviaColumn = (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>TRIVIA</h2>
+      <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>TRIVIA</h2>
 
       {poolId && <TriviaCard key={`trivia-${poolId}`} poolId={poolId} />}
 
@@ -355,12 +355,12 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         </div>
       )}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-display)" }}>LEADERBOARD</h2>
-        <span className="text-xs text-white/50">{picksScored} of 32 picks in</span>
+        <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>LEADERBOARD</h2>
+        <span className="text-xs text-[var(--text-muted)]">{picksScored} of 32 picks in</span>
       </div>
       <div className="space-y-1.5 lg:max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
         {leaderboard.length === 0 ? (
-          <p className="text-white/40 text-sm py-8 text-center">Scores will appear as picks come in</p>
+          <p className="text-[var(--text-muted)] text-sm py-8 text-center">Scores will appear as picks come in</p>
         ) : (
           leaderboard.map((entry) => {
             const isUser = entry.userId === userId;
@@ -368,25 +368,25 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
             return (
               <div
                 key={entry.boardId}
-                className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-all ${isUser ? "border-[var(--slidey)]/30 bg-[var(--slidey)]/10" : "border-white/[0.12] bg-white/8"}`}
+                className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-all ${isUser ? "border-[var(--slidey)]/30 bg-[var(--slidey)]/10" : "border-[var(--border)] bg-[var(--bg-card)]"}`}
                 style={{
                   borderLeftWidth: entry.teamPrimaryColor ? 3 : undefined,
                   borderLeftColor: entry.teamPrimaryColor || undefined,
                   ...getRowGlowStyle(entry.boardId),
                 }}
               >
-                <span className="w-5 text-center text-sm font-bold text-white/60">{entry.currentRank}</span>
+                <span className="w-5 text-center text-sm font-bold text-[var(--text-secondary)]">{entry.currentRank}</span>
                 {entry.teamLogoUrl && (
                   <img src={entry.teamLogoUrl} alt="" className="h-6 w-6 shrink-0 object-contain" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm font-semibold text-white truncate block">{entry.userName}</span>
-                  <p className="text-xs text-white/40">{entry.accuracyPct?.toFixed(1)}% accuracy</p>
+                  <span className="text-sm font-semibold text-[var(--text-primary)] truncate block">{entry.userName}</span>
+                  <p className="text-xs text-[var(--text-muted)]">{entry.accuracyPct?.toFixed(1)}% accuracy</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-lg font-bold text-white">{entry.totalScore}</span>
+                  <span className="text-lg font-bold text-[var(--text-primary)]">{entry.totalScore}</span>
                   {rankDelta !== 0 && (
-                    <p className={`text-[10px] font-medium ${rankDelta > 0 ? "text-green-400" : "text-red-400"}`}
+                    <p className={`text-[10px] font-medium ${rankDelta > 0 ? "text-green-700" : "text-red-700"}`}
                        style={{ animation: "fade-in 0.5s ease-out" }}>
                       {rankDelta > 0 ? `\u2191${rankDelta}` : `\u2193${Math.abs(rankDelta)}`}
                     </p>
@@ -415,22 +415,22 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       {/* Pool context bar */}
       {pool && (
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs text-white/50">Playing in:</span>
+          <span className="text-xs text-[var(--text-muted)]">Playing in:</span>
           {poolContexts.length > 1 ? (
             <select
               value={selectedPoolIdx}
               onChange={(e) => setSelectedPoolIdx(Number(e.target.value))}
-              className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm font-semibold text-white focus:border-[var(--steelers-gold)] focus:outline-none"
+              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm font-semibold text-[var(--text-primary)] focus:border-[var(--steelers-gold)] focus:outline-none"
             >
               {poolContexts.map((p, i) => (
-                <option key={p.poolId} value={i} className="bg-gray-900">{p.poolName}</option>
+                <option key={p.poolId} value={i} className="bg-[var(--bg-card)]">{p.poolName}</option>
               ))}
             </select>
           ) : (
-            <span className="text-sm font-bold text-white">{pool.poolName}</span>
+            <span className="text-sm font-bold text-[var(--text-primary)]">{pool.poolName}</span>
           )}
           {pool.isCommissioner && (
-            <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-semibold text-yellow-400">Commissioner</span>
+            <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold text-yellow-700">Commissioner</span>
           )}
           {/* Video call button */}
           {pool.videoCallUrl && (
@@ -438,14 +438,14 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
               href={pool.videoCallUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-500 transition"
+              className="ml-auto flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-[var(--text-primary)] hover:bg-green-500 transition"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
               Join Video Call
             </a>
           )}
           {!pool.videoCallUrl && pool.isCommissioner && (
-            <span className="ml-auto text-[10px] text-white/40">Add a video call link in settings</span>
+            <span className="ml-auto text-[10px] text-[var(--text-muted)]">Add a video call link in settings</span>
           )}
         </div>
       )}
@@ -521,12 +521,12 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
 
           {chatOpen && (
             <div
-              className="hidden lg:flex fixed z-40 w-[340px] h-[480px] flex-col rounded-xl border border-white/[0.12] bg-[var(--steelers-black)] shadow-2xl"
+              className="hidden lg:flex fixed z-40 w-[340px] h-[480px] flex-col rounded-xl border border-[var(--border)] bg-[var(--steelers-black)] shadow-2xl"
               style={{ bottom: 24 - chatPos.y, right: 24 - chatPos.x }}
             >
               {/* Draggable header */}
               <div
-                className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 cursor-grab active:cursor-grabbing select-none"
+                className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)] cursor-grab active:cursor-grabbing select-none"
                 onMouseDown={(e) => {
                   dragRef.current = { startX: e.clientX, startY: e.clientY, origX: chatPos.x, origY: chatPos.y };
                   function onMove(ev: MouseEvent) {
@@ -545,8 +545,8 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                   window.addEventListener("mouseup", onUp);
                 }}
               >
-                <span className="text-sm font-semibold text-white">Live Feed</span>
-                <button onClick={() => setChatOpen(false)} className="rounded p-1 text-white/50 hover:bg-white/10 hover:text-white transition">
+                <span className="text-sm font-semibold text-[var(--text-primary)]">Live Feed</span>
+                <button onClick={() => setChatOpen(false)} className="rounded p-1 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
                 </button>
               </div>

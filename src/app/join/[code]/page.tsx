@@ -29,8 +29,8 @@ export default async function SmartJoinPage({
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Invite Revoked</h1>
-          <p className="text-white/60 text-sm">This invite is no longer valid.</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Invite Revoked</h1>
+          <p className="text-[var(--text-secondary)] text-sm">This invite is no longer valid.</p>
           <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
         </div>
       </div>
@@ -41,8 +41,8 @@ export default async function SmartJoinPage({
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Invite Already Used</h1>
-          <p className="text-white/60 text-sm">This invite has already been claimed by another player.</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Invite Already Used</h1>
+          <p className="text-[var(--text-secondary)] text-sm">This invite has already been claimed by another player.</p>
           <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
         </div>
       </div>
@@ -55,8 +55,8 @@ export default async function SmartJoinPage({
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Pool Not Found</h1>
-          <p className="text-white/60 text-sm">This invite link is invalid or expired.</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Pool Not Found</h1>
+          <p className="text-[var(--text-secondary)] text-sm">This invite link is invalid or expired.</p>
           <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
         </div>
       </div>
@@ -79,9 +79,9 @@ export default async function SmartJoinPage({
     if (pool.status !== "open") {
       return (
         <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-          <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
-            <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
-            <p className="text-white/60 text-sm">This pool is no longer accepting members.</p>
+          <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-4">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{pool.name}</h1>
+            <p className="text-[var(--text-secondary)] text-sm">This pool is no longer accepting members.</p>
             <Link href="/" className="text-[var(--slidey)] hover:underline text-sm">Go Home</Link>
           </div>
         </div>
@@ -90,10 +90,10 @@ export default async function SmartJoinPage({
 
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
-          <h1 className="text-2xl font-bold text-white">Join {pool.name}?</h1>
-          {pool.description && <p className="text-white/50 text-sm">{pool.description as string}</p>}
-          <div className="flex items-center justify-center gap-4 text-sm text-white/50">
+        <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-6">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Join {pool.name}?</h1>
+          {pool.description && <p className="text-[var(--text-muted)] text-sm">{pool.description as string}</p>}
+          <div className="flex items-center justify-center gap-4 text-sm text-[var(--text-muted)]">
             <span>{commissionerName}</span>
             <span>&middot;</span>
             <span>{memberCount} member{memberCount !== 1 ? "s" : ""}</span>
@@ -108,12 +108,12 @@ export default async function SmartJoinPage({
   if (session?.user?.id && session.user.status !== "active") {
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
-          <h1 className="text-2xl font-bold text-white">Join {pool.name}</h1>
-          <p className="text-white/50 text-sm">
+        <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-6">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Join {pool.name}</h1>
+          <p className="text-[var(--text-muted)] text-sm">
             Joining this pool will activate your account and give you full access.
           </p>
-          <div className="text-sm text-white/50">
+          <div className="text-sm text-[var(--text-muted)]">
             {memberCount} member{memberCount !== 1 ? "s" : ""} &middot; {commissionerName}
           </div>
           <JoinPoolButton inviteCode={code} poolId={pool.id} />
@@ -131,12 +131,12 @@ export default async function SmartJoinPage({
             Pool Invite
           </div>
           <h1
-            className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
+            className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
             YOU&apos;RE INVITED TO<br /><span className="text-[var(--slidey)]">{pool.name.toUpperCase()}</span>
           </h1>
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-[var(--text-muted)]">
             {commissionerName} and {memberCount > 1 ? `${memberCount - 1} other${memberCount > 2 ? "s" : ""}` : "others"} are waiting for you
           </p>
         </div>
@@ -145,22 +145,22 @@ export default async function SmartJoinPage({
           <div className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">1</span>
             <div>
-              <p className="text-sm font-semibold text-white">Sign in with Google</p>
-              <p className="text-xs text-white/50">One click — no password needed</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Sign in with Google</p>
+              <p className="text-xs text-[var(--text-muted)]">One click — no password needed</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">2</span>
             <div>
-              <p className="text-sm font-semibold text-white">Make your mock draft picks</p>
-              <p className="text-xs text-white/50">Predict the first round before draft night</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Make your mock draft picks</p>
+              <p className="text-xs text-[var(--text-muted)]">Predict the first round before draft night</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)]/20 text-xs font-bold text-[var(--steelers-gold)]">3</span>
             <div>
-              <p className="text-sm font-semibold text-white">Compete live on draft night</p>
-              <p className="text-xs text-white/50">Predict picks, answer trivia, climb the leaderboard</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Compete live on draft night</p>
+              <p className="text-xs text-[var(--text-muted)]">Predict picks, answer trivia, climb the leaderboard</p>
             </div>
           </div>
         </div>
@@ -168,10 +168,10 @@ export default async function SmartJoinPage({
         <SmartSignInButton code={code} />
 
         <div className="space-y-2">
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-[var(--text-muted)]">
             What is Slidey Draft? A fantasy draft competition where you predict NFL Draft picks, compete in trivia, and race your friends up the leaderboard — all live on draft night.
           </p>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-[var(--text-muted)]">
             Want to explore first?{" "}
             <Link href="/" className="text-[var(--slidey)] hover:underline">Visit the home page</Link>
           </p>

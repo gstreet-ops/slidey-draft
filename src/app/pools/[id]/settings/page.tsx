@@ -42,19 +42,19 @@ export default async function PoolSettingsPage({
 
   return (
     <div className="min-h-screen bg-[var(--steelers-black)]">
-      <header className="border-b border-white/10">
+      <header className="border-b border-[var(--border)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+          <Link href="/" className="text-2xl font-bold text-[var(--text-primary)] tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
             DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
           <nav className="flex gap-4 text-sm">
-            <Link href={`/pools/${poolId}`} className="text-white/60 hover:text-white transition">Dashboard</Link>
+            <Link href={`/pools/${poolId}`} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">Dashboard</Link>
           </nav>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-6 py-10 space-y-10">
-        <h1 className="text-3xl font-bold text-white">Pool Settings</h1>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)]">Pool Settings</h1>
 
         {myRole === "commissioner" && (
           <PoolLockControl poolId={poolId} status={pool.status} />
@@ -70,14 +70,14 @@ export default async function PoolSettingsPage({
 
         {(myRole === "commissioner" || myRole === "admin") && (
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Prop Bets</h2>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Prop Bets</h2>
             <CustomProps poolId={poolId} existingCustomProps={customProps} />
           </section>
         )}
 
         {myRole === "commissioner" && (
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Pool Theme</h2>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Pool Theme</h2>
             <PoolThemeSettings
               poolId={poolId}
               currentPrimary={pool.primaryColor}
@@ -88,7 +88,7 @@ export default async function PoolSettingsPage({
 
         {myRole === "commissioner" && (
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">Teams</h2>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Teams</h2>
             <PoolTeamManager
               poolId={poolId}
               poolMembers={members.map((m) => ({

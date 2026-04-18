@@ -91,14 +91,14 @@ export function LiveResultsEntry({
     <div className="space-y-4">
       {/* Confirmation toast */}
       {lastConfirm && (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 flex items-center justify-between">
-          <span className="text-sm font-medium text-green-400">
+        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 flex items-center justify-between">
+          <span className="text-sm font-medium text-green-700">
             &#10003; {lastConfirm}
           </span>
           <button
             onClick={handleUndo}
             disabled={isPending}
-            className="rounded px-3 py-1 text-xs font-medium text-yellow-400 bg-yellow-500/10 hover:bg-yellow-500/20 transition"
+            className="rounded px-3 py-1 text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition"
           >
             Undo
           </button>
@@ -111,7 +111,7 @@ export function LiveResultsEntry({
           <button
             onClick={handleUndo}
             disabled={isPending}
-            className="rounded-lg px-4 py-2 text-xs font-medium text-yellow-400 border border-yellow-500/20 hover:bg-yellow-500/10 transition disabled:opacity-50"
+            className="rounded-lg px-4 py-2 text-xs font-medium text-yellow-700 border border-yellow-200 hover:bg-yellow-50 transition disabled:opacity-50"
           >
             Undo Last Pick
           </button>
@@ -122,13 +122,13 @@ export function LiveResultsEntry({
       {activeSlot && (
         <div className="rounded-xl border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/5 p-4 lg:hidden">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-white">
+            <h3 className="text-sm font-bold text-[var(--text-primary)]">
               Pick #{activeSlot} —{" "}
               {draftOrder.find((s) => s.pickNumber === activeSlot)?.teamAbbreviation}
             </h3>
             <button
               onClick={() => setActiveSlot(null)}
-              className="text-xs text-white/50 hover:text-white"
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             >
               Cancel
             </button>
@@ -139,7 +139,7 @@ export function LiveResultsEntry({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             autoFocus
-            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="mb-2 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="max-h-64 overflow-y-auto space-y-1">
             {filteredPlayers.map((player) => {
@@ -156,13 +156,13 @@ export function LiveResultsEntry({
                       #{player.rank}
                     </span>
                   )}
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">
                     {player.name}
                   </span>
                   <span className="text-xs text-[var(--steelers-gold)]">
                     {player.position}
                   </span>
-                  <span className="ml-auto text-xs text-white/40">
+                  <span className="ml-auto text-xs text-[var(--text-muted)]">
                     {player.school}
                   </span>
                 </button>
@@ -185,12 +185,12 @@ export function LiveResultsEntry({
                 key={slot.pickNumber}
                 className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 transition cursor-pointer ${
                   result
-                    ? "border-green-500/20 bg-green-500/5"
+                    ? "border-green-200 bg-green-500/5"
                     : isActive
                     ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/10"
                     : isNext
-                    ? "border-yellow-500/30 bg-yellow-500/5"
-                    : "border-white/[0.12] bg-white/8 hover:border-white/20"
+                    ? "border-yellow-200 bg-yellow-500/5"
+                    : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border)]"
                 }`}
                 onClick={() => !result && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -202,25 +202,25 @@ export function LiveResultsEntry({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-white/50">
+                    <span className="text-xs font-semibold text-[var(--text-muted)]">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-xs text-white/40">{slot.teamName}</span>
+                    <span className="text-xs text-[var(--text-muted)]">{slot.teamName}</span>
                   </div>
                   {result ? (
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-sm font-semibold text-green-400">
+                      <span className="text-sm font-semibold text-green-700">
                         {result.playerName}
                       </span>
-                      <span className="text-xs text-green-400/70">
+                      <span className="text-xs text-green-700/70">
                         {result.playerPosition}
                       </span>
-                      <span className="text-xs text-white/40">
+                      <span className="text-xs text-[var(--text-muted)]">
                         {result.playerSchool}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-xs text-white/40 mt-0.5">
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       {isActive
                         ? "Select player below →"
                         : isNext
@@ -238,9 +238,9 @@ export function LiveResultsEntry({
         </div>
 
         {/* Desktop sidebar: player search */}
-        <div className="hidden lg:block rounded-xl border border-white/[0.12] bg-white/8 p-4 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="hidden lg:block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sticky top-4 max-h-[calc(100vh-120px)] overflow-y-auto">
           <h2
-            className="mb-3 text-lg font-bold text-white tracking-wide"
+            className="mb-3 text-lg font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {activeSlot ? `PICK #${activeSlot}` : "SELECT A SLOT"}
@@ -250,7 +250,7 @@ export function LiveResultsEntry({
             placeholder="Search name, position, school..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-2 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="mb-2 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           <div className="mb-3 flex gap-1 flex-wrap">
             {positions.map((pos) => (
@@ -260,7 +260,7 @@ export function LiveResultsEntry({
                 className={`px-2 py-1 rounded text-xs font-semibold transition ${
                   posFilter === pos
                     ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                    : "bg-white/5 text-white/50 hover:text-white/60"
+                    : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 }`}
               >
                 {pos}
@@ -289,20 +289,20 @@ export function LiveResultsEntry({
                       #{player.rank}
                     </span>
                   )}
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">
                     {player.name}
                   </span>
                   <span className="text-xs text-[var(--steelers-gold)]">
                     {player.position}
                   </span>
-                  <span className="ml-auto text-xs text-white/40">
+                  <span className="ml-auto text-xs text-[var(--text-muted)]">
                     {player.school}
                   </span>
                 </button>
               );
             })}
             {filteredPlayers.length === 0 && (
-              <p className="py-4 text-center text-sm text-white/40">
+              <p className="py-4 text-center text-sm text-[var(--text-muted)]">
                 No available players
               </p>
             )}

@@ -56,7 +56,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     return (
       <button
         onClick={openWatchParty}
-        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-white/20 px-5 py-3 text-white text-sm font-semibold hover:bg-white/10 transition shadow-lg"
+        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-[var(--border)] px-5 py-3 text-[var(--text-primary)] text-sm font-semibold hover:bg-[var(--bg-card)] transition shadow-lg"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polygon points="23 7 16 12 23 17 23 7" />
@@ -72,7 +72,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
     return (
       <button
         onClick={() => setMinimized(false)}
-        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-green-500/30 px-4 py-2.5 text-white shadow-lg hover:bg-white/10 transition"
+        className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 rounded-full bg-[var(--steelers-black)] border border-green-500/30 px-4 py-2.5 text-[var(--text-primary)] shadow-lg hover:bg-[var(--bg-card)] transition"
       >
         <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
         <span className="text-xs font-semibold">Watch Party Live</span>
@@ -83,13 +83,13 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
   // Joined — show control bar
   return (
     <div
-      className="fixed bottom-4 right-4 z-[9999] rounded-xl overflow-hidden shadow-2xl border border-white/20"
+      className="fixed bottom-4 right-4 z-[9999] rounded-xl overflow-hidden shadow-2xl border border-[var(--border)]"
       style={{ width: 260 }}
     >
       <div className="flex items-center justify-between bg-[var(--steelers-black)] px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse shrink-0" />
-          <span className="text-xs font-semibold text-white truncate">{poolName}</span>
+          <span className="text-xs font-semibold text-[var(--text-primary)] truncate">{poolName}</span>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button
@@ -98,7 +98,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
                 popupRef.current.focus();
               }
             }}
-            className="p-1.5 text-white/50 hover:text-white transition"
+            className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
             title="Focus video window"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -107,7 +107,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
           </button>
           <button
             onClick={() => setMinimized(true)}
-            className="p-1.5 text-white/50 hover:text-white transition"
+            className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
             title="Minimize"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -116,7 +116,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
           </button>
           <button
             onClick={closeWatchParty}
-            className="p-1.5 text-white/50 hover:text-red-400 transition"
+            className="p-1.5 text-[var(--text-muted)] hover:text-red-400 transition"
             title="Leave watch party"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -126,7 +126,7 @@ export function VideoWidget({ poolId, poolName }: VideoWidgetProps) {
         </div>
       </div>
       <div className="bg-[var(--steelers-black)]/80 px-4 py-2 text-center">
-        <p className="text-[10px] text-white/40">Video running in separate window</p>
+        <p className="text-[10px] text-[var(--text-muted)]">Video running in separate window</p>
         <button
           onClick={() => popupRef.current?.focus()}
           className="text-xs text-[var(--slidey)] font-semibold hover:opacity-80 mt-1"

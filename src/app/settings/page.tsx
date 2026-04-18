@@ -31,19 +31,19 @@ export default async function SettingsPage() {
     <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <h1
-          className="text-3xl font-bold text-white tracking-wider"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wider"
           style={{ fontFamily: "var(--font-display)" }}
         >
           SETTINGS
         </h1>
-        <p className="mt-2 text-sm text-white/50">
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
           Manage how you appear and which team colors light up the app for you.
         </p>
 
         {/* Profile */}
-        <section className="mt-8 rounded-xl border border-white/10 bg-[var(--surface-dark)] p-5 sm:p-8">
+        <section className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-5 sm:p-8">
           <h2
-            className="text-lg font-bold text-white tracking-wide"
+            className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
           >
             PROFILE
@@ -54,16 +54,16 @@ export default async function SettingsPage() {
         </section>
 
         {/* Team Theme */}
-        <section className="mt-6 rounded-xl border border-white/10 bg-[var(--surface-dark)] p-5 sm:p-8">
+        <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-5 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2
-                className="text-lg font-bold text-white tracking-wide"
+                className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 TEAM THEME
               </h2>
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
                 Pick your team — accents across the app will switch to its colors. Default is Pittsburgh (this year&apos;s host city).
               </p>
             </div>
@@ -85,7 +85,7 @@ export default async function SettingsPage() {
                     {currentTeam.abbreviation}
                   </div>
                 )}
-                <span className="text-xs font-semibold text-white">{currentTeam.abbreviation}</span>
+                <span className="text-xs font-semibold text-[var(--text-primary)]">{currentTeam.abbreviation}</span>
               </div>
             )}
           </div>

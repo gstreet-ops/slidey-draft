@@ -1,176 +1,232 @@
 # Slidey Draft — Design System
 
-The 2026 draft is in Pittsburgh. The app runs on a **Steelers black-and-gold** palette, with
-a tiered dark-surface hierarchy that keeps cards visibly distinct on laptop LCDs.
+The 2026 NFL Draft is in Pittsburgh, but every fan in the app sees the experience in
+**their own team's colors**. The app runs in **light mode** with a fixed neutral surface
+hierarchy and a single team-driven accent that swaps at runtime via CSS custom properties.
+
+---
 
 ## Color Tokens
 
+### Surfaces (fixed — never change with team theme)
+
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--steelers-black` | `#101820` | Page backgrounds, nav bar, base surface |
-| `--steelers-gold` | `#FFB612` | Primary accent, links, CTAs, badges, active states |
-| `--steelers-dark-gold` | `#CC9200` | Hover/muted gold |
-| `--surface-dark` | `#1a2433` | Section containers (one step up from the page bg) |
-| `--surface-card` | `#243040` | Content cards (noticeably lighter than section containers) |
-| `--surface-elevated` | `#2d3a4d` | Hover states, elevated panels |
-| `--slidey` | `#FFB612` | Brand accent — aliased to gold |
+| `--bg-page` | `#F5F6FA` | Page background |
+| `--bg-card` | `#FFFFFF` | Content cards, inputs, dropdowns |
+| `--bg-section` | `#EDF0F7` | Section containers (one step from page) |
+| `--bg-nav` | `#101820` | Top nav bar — the only fixed-dark surface |
 
-Gold text on dark is the **primary accent pattern**. Gold buttons use **black text** for contrast.
+### Text (fixed)
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--text-primary` | `#1a1a2e` | Headings, primary copy |
+| `--text-secondary` | `#4a4a68` | Body, descriptions |
+| `--text-muted` | `#8888a0` | Hints, labels, captions, timestamps |
+
+### Borders
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--border` | `#D8DCE6` | Cards, inputs, dividers |
+| `--border-light` | `#E8ECF4` | Subtle separators |
+
+### Accent (team-switchable — set by `TeamThemeProvider`)
+
+| Token | Default (PIT) | Usage |
+|-------|---------------|-------|
+| `--accent-primary` | `#FFB612` | Primary buttons, links, active states, badges |
+| `--accent-secondary` | `#CC9200` | Hover states, gradients, tags |
+| `--accent-text` | `black` | Text **on** accent backgrounds (per-team contrast pick) |
+| `--accent-light` | `rgba(255,182,18,0.12)` | Tinted backgrounds, "your team" highlights |
+
+`--accent-text` is **not** always white. The team-themes lookup decides per team:
+PIT/LV/NO use `black`; the other 29 teams use `white`. Use `text-[var(--accent-text)]`
+on every accent button.
+
+### Legacy aliases (kept for migration)
+
+These are aliased to the new tokens so existing utility classes still compile:
+
+```
+--steelers-gold     → var(--accent-primary)
+--steelers-dark-gold→ var(--accent-secondary)
+--slidey            → var(--accent-primary)
+--steelers-black    → var(--bg-page)
+--surface-dark      → var(--bg-section)
+--surface-card      → var(--bg-card)
+--surface-elevated  → var(--bg-card)
+```
+
+---
 
 ## Typography
 
 | Role | Font | Weight | Tracking |
 |------|------|--------|----------|
-| Display headings | `var(--font-display)` (Bebas Neue) | Bold | `tracking-wide` or `tracking-wider` |
-| Body text | IBM Plex Sans | Normal | Default |
-| Code/mono | JetBrains Mono | Normal | Default |
+| Display headings | `var(--font-display)` (Bebas Neue) | Bold | `tracking-wide` / `tracking-wider` |
+| Body | IBM Plex Sans | Normal | Default |
+| Mono | JetBrains Mono | Normal | Default |
 
-## Core Layout Pattern
+---
 
-Dark base + lifted surface cards. Each level up is visibly lighter:
+## Layout Pattern
+
+Light page + lifted white cards on a faint section tint. Nav is the only dark anchor.
 
 ```
-┌─────────────────────────────────────────┐
-│ Page bg: var(--steelers-black) #101820  │
-│                                         │
-│  ┌───────────────────────────────────┐  │
-│  │ Section: var(--surface-dark)      │  │
-│  │ border-white/10 rounded-xl p-5    │  │
-│  │                                   │  │
-│  │  ┌─────────────────────────────┐  │  │
-│  │  │ Card: var(--surface-card)   │  │  │
-│  │  │ border-white/[0.12]         │  │  │
-│  │  │                             │  │  │
-│  │  │ Title: text-[var(--         │  │  │
-│  │  │        steelers-gold)]      │  │  │
-│  │  │ Body: text-white/60         │  │  │
-│  │  └─────────────────────────────┘  │  │
-│  │                                   │  │
-│  │  ┌─────────────────────────────┐  │  │
-│  │  │ Hover lifts to              │  │  │
-│  │  │ var(--surface-elevated)     │  │  │
-│  │  └─────────────────────────────┘  │  │
-│  └───────────────────────────────────┘  │
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  Nav: bg-[var(--bg-nav)]  (dark, always)         │
+│  ────────── accent gradient line ─────────────── │
+├──────────────────────────────────────────────────┤
+│  HeroBanner: gradient(team primary→secondary)    │
+│  ────── TeamStripe (4px team color stripes) ──── │
+│  TeamInfoBar (white card, –mt-6 lifted, needs)   │
+├──────────────────────────────────────────────────┤
+│ Page: var(--bg-page) #F5F6FA                     │
+│                                                  │
+│  ┌────────────────────────────────────────────┐  │
+│  │ Section: var(--bg-section) #EDF0F7         │  │
+│  │ border-[var(--border)] rounded-xl p-5      │  │
+│  │                                            │  │
+│  │  ┌──────────────────────────────────────┐  │  │
+│  │  │ Card: var(--bg-card) #FFFFFF         │  │  │
+│  │  │ border + shadow-sm                   │  │  │
+│  │  │                                      │  │  │
+│  │  │ Title: text-[var(--text-primary)]    │  │  │
+│  │  │ Body:  text-[var(--text-secondary)]  │  │  │
+│  │  │ Hint:  text-[var(--text-muted)]      │  │  │
+│  │  │ Link:  text-[var(--accent-primary)]  │  │  │
+│  │  └──────────────────────────────────────┘  │  │
+│  └────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────┘
 ```
+
+---
 
 ## Component Patterns
 
-### Section Container
-Groups related content inside a page.
-```
-className="rounded-xl bg-[var(--surface-dark)] border border-white/10 p-5 sm:p-8"
-```
-- Headings: `text-white` + `font-display`
-- Body text: `text-white/60`
+### Page wrapper
 
-### Content Card (Dark)
-A card inside a section — one tier lighter than the section bg.
-```
-className="rounded-lg bg-[var(--surface-card)] border border-white/[0.12] px-4 py-3"
-```
-- Title: `text-sm font-bold text-[var(--steelers-gold)]`
-- Body: `text-sm text-white/70`
-- Desc: `text-xs text-white/50`
-
-### Accent Card (Gold)
-For emphasis — CTAs, featured callouts.
-```
-className="rounded-xl border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 p-5"
-```
-Variants:
-- Gold (primary): `border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10`
-- Success: `border-green-500/30 bg-green-500/10`
-- Warning: `border-yellow-500/30 bg-yellow-500/10`
-- Danger: `border-red-500/30 bg-red-500/10`
-
-### Score Row
-Points + label in scoring tables.
-```
-className="flex items-center gap-3 rounded-lg bg-[var(--surface-card)] px-4 py-3"
-```
-- Points: `text-lg font-bold` with color by type (green/yellow/orange/red)
-- Label: `text-sm font-semibold text-white`
-- Desc: `text-xs text-white/50`
-
-### Pick Card (Board View)
-Draft board pick slots on dark backgrounds.
-```
-// Empty slot
-className="border-white/10 bg-white/5 hover:border-white/20"
-
-// Filled slot
-className="border-white/10 bg-[var(--surface-card)]"
-
-// Active slot
-className="border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/10"
+```tsx
+<div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
+  <HeroBanner teamCode={teamCode} />
+  <TeamStripe />
+  <TeamInfoBar teamCode={teamCode} />
+  {/* content */}
+</div>
 ```
 
-### Navigation
-- Background: `bg-[var(--steelers-black)]` with `border-b border-white/10`
-- Logo: `DRAFT DAY` white, `CHALLENGE` in `text-[var(--slidey)]` (gold)
-- Desktop links: `text-white/60 hover:text-white`
-- "More" dropdown: `bg-[var(--steelers-black)]` panel
-- Mobile: hamburger → flat vertical list
+### Section container
 
-### Buttons
+```tsx
+<section className="rounded-xl border border-[var(--border)] bg-[var(--bg-section)] p-5 sm:p-8">
+  ...
+</section>
+```
 
-| Kind | Classes |
-|------|---------|
-| **Primary (gold)** | `bg-[var(--steelers-gold)] text-black hover:bg-[var(--steelers-dark-gold)]` |
-| Secondary | `border border-white/20 text-white/70 hover:border-white/40 hover:text-white` |
-| Danger | `border border-red-500/30 text-red-400 hover:bg-red-500/10` |
-| Success | `bg-green-600 text-white hover:bg-green-500` |
+### Content card
 
-**Rule:** solid gold background → `text-black`, not `text-white`. Gold/20 tinted surfaces can
-still use `text-white` because the background is mostly the underlying dark surface.
+```tsx
+<div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-sm">
+  ...
+</div>
+```
 
-### Badges / Pills
+### Primary button
 
-| Role | Classes |
-|------|---------|
-| Position pill | `bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]` |
-| Status: Published | `bg-green-500/20 text-green-400` |
-| Status: Draft | `bg-yellow-500/20 text-yellow-400` |
-| Admin role | `bg-red-500/20 text-red-400` |
-| Commissioner role | `bg-yellow-500/20 text-yellow-400` |
-| BPA tag | `text-yellow-400/70` |
+```tsx
+<button className="rounded-lg bg-[var(--accent-primary)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition">
+  Save
+</button>
+```
 
-Status colors (green/yellow/red) are semantic, not brand — leave them even on the Steelers theme.
+### Secondary button
 
-### Match Type Colors
+```tsx
+<button className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-6 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] transition">
+  Cancel
+</button>
+```
 
-| Type | Border/BG | Text |
-|------|-----------|------|
-| Exact | `green-500/30`, `green-500/10` | `green-400` |
-| Close | `yellow-500/30`, `yellow-500/10` | `yellow-400` |
-| Far | `orange-500/30`, `orange-500/10` | `orange-400` |
-| Miss | `red-500/30`, `red-500/10` | `red-400` |
+### Status pills (light-mode semantic)
 
-### Team Needs Labels
+```tsx
+// success
+<span className="bg-green-100 text-green-700 rounded-full px-2 py-0.5 text-xs font-medium">Published</span>
+// pending
+<span className="bg-yellow-100 text-yellow-700 rounded-full px-2 py-0.5 text-xs font-medium">Draft</span>
+// alert
+<span className="bg-red-100 text-red-700 rounded-full px-2 py-0.5 text-xs font-medium">Locked</span>
+```
 
-| Tier | Classes | Label |
-|------|---------|-------|
-| Top Need (index 0) | `text-green-400` | `● Top Need` |
-| Key Need (index 1) | `text-green-400/80` | `● Key Need` |
-| Fits Need (index 2+) | `text-sky-400/60` | `● Fits Need` |
-| Off-need | `text-amber-400/60` | `○ Off-need` |
+### Match-type pick badges
 
-### Prospect Detail Drawer
-- Light theme: `bg-white` with `text-[var(--steelers-black)]` headers, `text-gray-600` body
-- Full-screen on mobile, 420px panel on desktop
-- Stats bar with dividers, combine measurables grid
-- Backdrop: `bg-black/60 backdrop-blur-sm`
+```
+exact: bg-green-100 text-green-700 border-green-200
+close: bg-yellow-100 text-yellow-700 border-yellow-200
+far:   bg-orange-100 text-orange-700 border-orange-200
+miss:  bg-red-100 text-red-700 border-red-200
+```
 
-## Spacing Scale
-- Page padding: `px-4 sm:px-6`
-- Section gaps: `space-y-6`
-- Card inner padding: `p-5 sm:p-8` (sections), `px-4 py-3` (content cards)
-- Card gaps: `space-y-3` (between content cards)
+### "YOUR TEAM" pick highlight
 
-## Responsive Breakpoints
-- Mobile: default (< 640px)
-- `sm`: 640px
-- `md`: 768px (hamburger breakpoint)
-- `lg`: 1024px (two-panel layouts)
-- Max widths: `max-w-4xl` (content), `max-w-5xl` (nav), `max-w-7xl` (dashboard)
+In the pick builder, the user's favorite NFL team gets a left accent border + tint:
+
+```tsx
+<div className="border-l-4 border-l-[var(--accent-primary)] bg-[var(--accent-light)] ...">
+  ...
+  <span className="bg-[var(--accent-primary)] text-[var(--accent-text)] uppercase tracking-widest">
+    Your Team
+  </span>
+</div>
+```
+
+---
+
+## Team Theme System
+
+`src/lib/team-themes.ts` exports static metadata for all 32 NFL teams. The
+`TeamThemeProvider` component (mounted at `app/layout.tsx`) reads
+`session.user.favoriteTeam.abbreviation` and writes the matching `--accent-*`
+properties on `document.documentElement` at runtime.
+
+### How team selection flows
+
+1. User picks a team in `/settings`
+2. `updateFavoriteTeam` server action persists `favoriteTeamId` (FK to `teams` table)
+3. NextAuth session callback re-attaches the team's primary/secondary/abbreviation
+4. `TeamThemeProvider` reads from session → writes CSS vars
+5. Every component using `var(--accent-primary)` repaints — no per-component changes needed
+
+### Pool theme override
+
+`PoolThemeContext` lets a pool theme override the personal accent only on pool pages.
+When set, it takes precedence over the user's team accent for the duration of the
+pool view, then clears on unmount.
+
+### Team codes
+
+`ARI` `ATL` `BAL` `BUF` `CAR` `CHI` `CIN` `CLE` `DAL` `DEN` `DET` `GB` `HOU` `IND`
+`JAX` `KC` `LV` `LAC` `LAR` `MIA` `MIN` `NE` `NO` `NYG` `NYJ` `PHI` `PIT` `SF` `SEA`
+`TB` `TEN` `WAS`
+
+Default: **PIT** (Pittsburgh hosts the 2026 draft).
+
+---
+
+## Don'ts
+
+- Don't reintroduce dark page backgrounds. The nav is the only dark surface.
+- Don't hardcode `text-white` for body text. Use `text-[var(--text-primary)]`.
+  The exception is text *on* a team-color element (use `text-white` literally
+  for that — most team primaries are dark; the four light-primary teams handle
+  contrast through the static lookup).
+- Don't use `--steelers-gold` directly in new code — write `var(--accent-primary)`.
+  The legacy alias remains only so old code keeps rendering correctly.
+- Don't use `bg-{color}-900/X` or `bg-{color}-500/N` for status pills — those are
+  dark-mode artifacts. Use `bg-{color}-100 text-{color}-700` for light-mode badges.
+- Don't load external image URLs for hero banners. The `HeroBanner` component
+  builds team imagery from CSS gradients so there are no broken-image surprises
+  and no third-party dependencies.

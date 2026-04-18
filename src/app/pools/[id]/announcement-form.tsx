@@ -28,7 +28,7 @@ export function AnnouncementForm({ poolId }: { poolId: string }) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Post an announcement..."
-        className="flex-1 rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
+        className="flex-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)]"
       />
       <button
         type="submit"

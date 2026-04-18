@@ -1,65 +1,81 @@
 @import "tailwindcss";
 
-/* ── Draft Day Challenge — Design Tokens ─────────────── */
+/* ── Draft Day Challenge — Light Mode Design Tokens ─────────────── */
 
 :root {
+  /* Base surfaces — FIXED, do not change with team theme */
+  --bg-page: #F5F6FA;
+  --bg-card: #FFFFFF;
+  --bg-section: #EDF0F7;
+  --bg-nav: #101820;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a68;
+  --text-muted: #8888a0;
+  --border: #D8DCE6;
+  --border-light: #E8ECF4;
+
   /* Personal team accent — overridden by ThemeProvider when user picks a team.
      Defaults match the Pittsburgh Steelers (host city of the 2026 draft). */
   --accent-primary: #FFB612;
   --accent-secondary: #CC9200;
   --accent-text: black;
+  --accent-light: rgba(255, 182, 18, 0.12);
 
-  /* Dark surfaces — fixed regardless of team theme */
-  --steelers-black: #101820;
-  --surface-dark: #1a2433;
-  --surface-card: #243040;
-  --surface-elevated: #2d3a4d;
+  /* Legacy aliases — map old dark surface tokens onto the new light system so
+     every existing utility class adopts light mode without per-file edits.
+     The nav bar uses --bg-nav explicitly to stay dark. */
+  --steelers-black: var(--bg-page);
+  --surface-dark: var(--bg-section);
+  --surface-card: var(--bg-card);
+  --surface-elevated: var(--bg-card);
 
-  /* Legacy aliases — follow the active accent so existing component styles theme automatically */
   --steelers-gold: var(--accent-primary);
   --steelers-dark-gold: var(--accent-secondary);
   --slidey: var(--accent-primary);
 
-  /* Surfaces */
-  --background: #ffffff;
-  --foreground: #171717;
-  --muted: #f5f5f5;
-  --border: #e5e5e5;
+  --background: var(--bg-page);
+  --foreground: var(--text-primary);
+  --muted: var(--bg-section);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
+  --color-background: var(--bg-page);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--bg-section);
   --color-border: var(--border);
 
-  --color-steelers-gold: var(--steelers-gold);
-  --color-steelers-black: var(--steelers-black);
-  --color-surface-dark: var(--surface-dark);
-  --color-surface-card: var(--surface-card);
-  --color-surface-elevated: var(--surface-elevated);
-  --color-slidey: var(--slidey);
+  --color-bg-page: var(--bg-page);
+  --color-bg-card: var(--bg-card);
+  --color-bg-section: var(--bg-section);
+  --color-bg-nav: var(--bg-nav);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
   --color-accent-primary: var(--accent-primary);
   --color-accent-secondary: var(--accent-secondary);
   --color-accent-text: var(--accent-text);
+  --color-accent-light: var(--accent-light);
+
+  --color-border-light: var(--border-light);
+
+  /* Legacy color aliases for components that still reference the old names */
+  --color-steelers-gold: var(--accent-primary);
+  --color-steelers-black: var(--bg-page);
+  --color-surface-dark: var(--bg-section);
+  --color-surface-card: var(--bg-card);
+  --color-surface-elevated: var(--bg-card);
+  --color-slidey: var(--accent-primary);
 
   --font-sans: "IBM Plex Sans", sans-serif;
   --font-display: "Bebas Neue", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #101820;
-    --foreground: #ededed;
-    --muted: #1a1a1a;
-    --border: #2a2a2a;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-sans);
 }
 

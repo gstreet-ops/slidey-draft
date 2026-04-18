@@ -85,6 +85,8 @@ type Props = {
   existingPicks: ExistingPick[];
   availablePlayers: Player[];
   readOnly?: boolean;
+  /** User's favorite NFL team abbreviation (e.g. "PIT") — slots for this team get a YOUR TEAM accent. */
+  favoriteTeamAbbr?: string | null;
 };
 
 /* ── 40-time color helper ────────────────────────────────────── */
@@ -94,19 +96,19 @@ const EDGE_LB_POS = ["EDGE", "LB", "OLB", "ILB"];
 
 function fortyTimeColor(position: string, time: number): string {
   const pos = position.toUpperCase();
-  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
-  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
-  if (EDGE_LB_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
-  return "text-white/50";
+  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-700/70";
+  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-700/70";
+  if (EDGE_LB_POS.includes(pos) && time <= 4.60) return "text-green-700/70";
+  return "text-[var(--text-muted)]";
 }
 
 /* ── Inline detail panel (ESPN-style) ────────────────────────── */
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "text-green-400 bg-green-500/20 border-green-500/30";
-  if (grade >= 80) return "text-blue-400 bg-blue-500/20 border-blue-500/30";
-  if (grade >= 70) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30";
-  return "text-white/50 bg-white/8 border-white/[0.12]";
+  if (grade >= 90) return "text-green-700 bg-green-100 border-green-200";
+  if (grade >= 80) return "text-blue-700 bg-blue-100 border-blue-200";
+  if (grade >= 70) return "text-yellow-700 bg-yellow-100 border-yellow-200";
+  return "text-[var(--text-muted)] bg-[var(--bg-card)] border-[var(--border)]";
 }
 
 function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds }: { player: Player; onClose: () => void; pickNumber?: number; teamName?: string; teamNeeds?: string[] | null }) {
@@ -121,13 +123,13 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
   if (player.weight) measurables.push({ label: "WEIGHT", value: `${player.weight} lbs` });
 
   return (
-    <div className="border-t border-white/10 bg-[var(--surface-dark)] px-3 py-3">
+    <div className="border-t border-[var(--border)] bg-[var(--surface-dark)] px-3 py-3">
       {/* Header: avatar + name + basics */}
       <div className="flex items-start gap-3 mb-3">
         <PlayerAvatar player={player} size={56} />
         <div className="flex-1 min-w-0">
           <h3
-            className="text-sm font-bold text-white tracking-wide sm:text-base"
+            className="text-sm font-bold text-[var(--text-primary)] tracking-wide sm:text-base"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {player.name}
@@ -136,22 +138,22 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
             <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-text)]">
               {player.position}
             </span>
-            <span className="text-xs text-white/50">
+            <span className="text-xs text-[var(--text-muted)]">
               {player.height && `${player.height}`}
               {player.height && player.weight && " · "}
               {player.weight && `${player.weight} lbs`}
             </span>
-            <span className="text-xs text-white/50">{player.school}</span>
+            <span className="text-xs text-[var(--text-muted)]">{player.school}</span>
           </div>
           {player.nflComparison && (
-            <p className="mt-1 text-[11px] text-white/50">
-              NFL Comp: <span className="font-semibold text-white/60">{player.nflComparison}</span>
+            <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+              NFL Comp: <span className="font-semibold text-[var(--text-secondary)]">{player.nflComparison}</span>
             </p>
           )}
         </div>
         <button
           onClick={onClose}
-          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/50 hover:bg-white/20 hover:text-white/60 transition"
+          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-secondary)] transition"
         >
           <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -161,25 +163,25 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
 
       {/* Stats bar: POS RK / OVR RK / GRADE */}
       {(player.positionRank || player.rank || player.grade) && (
-        <div className="flex rounded-lg border border-white/10 overflow-hidden mb-3">
+        <div className="flex rounded-lg border border-[var(--border)] overflow-hidden mb-3">
           {player.positionRank && (
-            <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
-              <p className="text-lg font-bold text-white">{player.positionRank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">POS RK</p>
+            <div className="flex-1 border-r border-[var(--border)] px-3 py-2 text-center bg-[var(--bg-card)]">
+              <p className="text-lg font-bold text-[var(--text-primary)]">{player.positionRank}</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">POS RK</p>
             </div>
           )}
           {player.rank && (
-            <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
-              <p className="text-lg font-bold text-white">{player.rank}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">OVR RK</p>
+            <div className="flex-1 border-r border-[var(--border)] px-3 py-2 text-center bg-[var(--bg-card)]">
+              <p className="text-lg font-bold text-[var(--text-primary)]">{player.rank}</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">OVR RK</p>
             </div>
           )}
           {player.grade && (
-            <div className="flex-1 px-3 py-2 text-center bg-white/5">
+            <div className="flex-1 px-3 py-2 text-center bg-[var(--bg-card)]">
               <p className={`inline-flex items-center justify-center rounded border px-2 py-0.5 text-lg font-bold ${gradeColor(player.grade)}`}>
                 {player.grade}
               </p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">GRADE</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">GRADE</p>
             </div>
           )}
         </div>
@@ -187,11 +189,11 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
 
       {/* Measurables mini-grid */}
       {measurables.length > 0 && (
-        <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 mb-3">
+        <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] mb-3">
           {measurables.map((m, i) => (
-            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-white/5"}`}>
-              <p className="text-xs font-bold text-white">{m.value}</p>
-              <p className="text-[8px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>
+            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-[var(--bg-card)]"}`}>
+              <p className="text-xs font-bold text-[var(--text-primary)]">{m.value}</p>
+              <p className="text-[8px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">{m.label}</p>
             </div>
           ))}
         </div>
@@ -203,19 +205,19 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
           const pg = gradePick(pickNumber, player.grade, player.rank);
           return (
             <div className="mb-3">
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Mock Grade</h4>
-              <div className="flex rounded-lg border border-white/10 overflow-hidden">
-                <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Mock Grade</h4>
+              <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
+                <div className="flex-1 border-r border-[var(--border)] px-3 py-2 text-center bg-[var(--bg-card)]">
                   <PickGradeBadge grade={pg.valueGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Value</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">Value</p>
                 </div>
-                <div className="flex-1 border-r border-white/10 px-3 py-2 text-center bg-white/5">
+                <div className="flex-1 border-r border-[var(--border)] px-3 py-2 text-center bg-[var(--bg-card)]">
                   <PickGradeBadge grade={pg.consensusGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Consensus</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">Consensus</p>
                 </div>
-                <div className="flex-1 px-3 py-2 text-center bg-white/5">
+                <div className="flex-1 px-3 py-2 text-center bg-[var(--bg-card)]">
                   <PickGradeBadge grade={pg.letterGrade} size="md" />
-                  <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">Combined</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">Combined</p>
                 </div>
               </div>
             </div>
@@ -243,9 +245,9 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
         );
         return (
           <div className="mb-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Draft Analysis</h4>
-            <p className="text-xs italic leading-relaxed text-white/60">{commentary}</p>
-            <div className="mt-1.5 text-[10px] text-white/50 space-y-0.5">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Draft Analysis</h4>
+            <p className="text-xs italic leading-relaxed text-[var(--text-secondary)]">{commentary}</p>
+            <div className="mt-1.5 text-[10px] text-[var(--text-muted)] space-y-0.5">
               <p>Value: {pg.valueGrade} — {valueExplanation(pickNumber, player.grade)}</p>
               <p>Consensus: {pg.consensusGrade} — {consensusExplanation(pickNumber, player.rank)}</p>
             </div>
@@ -259,8 +261,8 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
         if (!analysis) return null;
         return (
           <div className="mb-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Team Needs Analysis</h4>
-            <p className="text-xs leading-relaxed text-white/60">{analysis}</p>
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Team Needs Analysis</h4>
+            <p className="text-xs leading-relaxed text-[var(--text-secondary)]">{analysis}</p>
           </div>
         );
       })()}
@@ -268,8 +270,8 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
       {/* Pre-Draft Analysis */}
       {player.notes && (
         <div>
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">Pre-Draft Analysis</h4>
-          <p className="text-xs leading-relaxed text-white/60">{player.notes}</p>
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Pre-Draft Analysis</h4>
+          <p className="text-xs leading-relaxed text-[var(--text-secondary)]">{player.notes}</p>
         </div>
       )}
     </div>
@@ -313,6 +315,7 @@ export function PickBuilder({
   existingPicks,
   availablePlayers,
   readOnly = false,
+  favoriteTeamAbbr,
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -451,19 +454,19 @@ export function PickBuilder({
   const prospectPoolContent = (
     <>
       {pickError && (
-        <div className="mb-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+        <div className="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
           {pickError}
         </div>
       )}
       <div className="mb-2">
         <div className="flex items-center gap-2">
           <h2
-            className="text-sm font-bold text-white tracking-wide sm:text-lg"
+            className="text-sm font-bold text-[var(--text-primary)] tracking-wide sm:text-lg"
             style={{ fontFamily: "var(--font-display)" }}
           >
             PROSPECT POOL
           </h2>
-          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/50">
+          <span className="rounded bg-[var(--bg-card)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Next Best Prospect
           </span>
         </div>
@@ -478,7 +481,7 @@ export function PickBuilder({
         placeholder="Search prospects..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-2 w-full rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-xs text-white placeholder:text-white/50 focus:border-[var(--steelers-gold)] focus:outline-none sm:px-3 sm:py-2 sm:text-sm"
+        className="mb-2 w-full rounded-lg border border-white/30 bg-[var(--bg-card)] px-2 py-1.5 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none sm:px-3 sm:py-2 sm:text-sm"
       />
       <div className="mb-2 flex gap-0.5 flex-wrap overflow-x-auto scrollbar-none sm:mb-3 sm:gap-1">
         {positions.map((pos) => (
@@ -488,7 +491,7 @@ export function PickBuilder({
             className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold transition sm:px-2 sm:py-1 sm:text-xs ${
               posFilter === pos
                 ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                : "bg-white/5 text-white/50 hover:text-white/60"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             {pos}
@@ -502,8 +505,8 @@ export function PickBuilder({
           onClick={() => setNeedsOnly(!needsOnly)}
           className={`mb-2 rounded-full px-3 py-1 text-[10px] font-semibold transition ${
             needsOnly
-              ? "bg-green-500/20 text-green-400 border border-green-500/30"
-              : "bg-white/5 text-white/50 border border-white/10 hover:text-white/60"
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] hover:text-[var(--text-secondary)]"
           }`}
         >
           {needsOnly ? "✓ Needs Only" : "Needs Only"}
@@ -519,7 +522,7 @@ export function PickBuilder({
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
               sortBy === s
                 ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                : "bg-white/5 text-white/50 hover:text-white/60"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             {s === "rank" ? "Rank" : s === "fastest" ? "Fastest" : "Grade"}
@@ -530,15 +533,15 @@ export function PickBuilder({
       {/* Analysis text area */}
       {activeSlot && !readOnly && (
         <div className="mb-3">
-          <label className="block text-xs font-semibold text-white/50 mb-1">Why this pick?</label>
+          <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Why this pick?</label>
           <textarea
             placeholder="Share your reasoning — why does this player fit here? (optional)"
             value={analysisText}
             onChange={(e) => setAnalysisText(e.target.value)}
-            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
             rows={2}
           />
-          <p className="text-[10px] text-white/40 mt-1">Your notes will be visible to everyone in your pool</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Your notes will be visible to everyone in your pool</p>
         </div>
       )}
 
@@ -554,29 +557,29 @@ export function PickBuilder({
             <div key={player.id} className="rounded-md overflow-hidden sm:rounded-lg">
               {/* Row */}
               <div
-                className={`flex items-center gap-1.5 bg-white/5 px-1.5 py-1 text-left transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
+                className={`flex items-center gap-1.5 bg-[var(--bg-card)] px-1.5 py-1 text-left transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
                   canPick
-                    ? "hover:bg-white/10 cursor-pointer"
+                    ? "hover:bg-[var(--bg-card)] cursor-pointer"
                     : "cursor-default"
                 }`}
                 onClick={() => canPick && slot && handleMakePick(player.id, slot)}
               >
                 {player.rank && (
-                  <span className="text-xs font-bold text-white/50 w-5 text-right shrink-0">
+                  <span className="text-xs font-bold text-[var(--text-muted)] w-5 text-right shrink-0">
                     #{player.rank}
                   </span>
                 )}
                 <PlayerAvatar player={player} size={28} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-white truncate sm:text-sm">
+                    <span className="text-xs font-semibold text-[var(--text-primary)] truncate sm:text-sm">
                       {player.name}
                     </span>
                     <span className="text-xs text-[var(--steelers-gold)] shrink-0">
                       {player.position}
                     </span>
                     {slot?.teamNeeds && matchesAnyNeed(player.position, slot.teamNeeds) && (
-                      <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-[9px] font-bold text-green-400">Need</span>
+                      <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-[9px] font-bold text-green-700">Need</span>
                     )}
                     {player.fortyTime && (
                       <span className={`font-mono text-[10px] ${fortyTimeColor(player.position, player.fortyTime)}`}>
@@ -584,7 +587,7 @@ export function PickBuilder({
                       </span>
                     )}
                     {player.consensusLow != null && player.consensusHigh != null && (
-                      <span className="text-[10px] text-white/40 font-mono hidden sm:inline">
+                      <span className="text-[10px] text-[var(--text-muted)] font-mono hidden sm:inline">
                         {player.consensusLow === player.consensusHigh
                           ? `Pick ${player.consensusLow}`
                           : `${player.consensusLow}-${player.consensusHigh}`}
@@ -592,10 +595,10 @@ export function PickBuilder({
                     )}
                     {activeSlot && player.consensusLow != null && player.consensusHigh != null && (
                       activeSlot < player.consensusLow
-                        ? <span className="text-[9px] font-semibold text-blue-400/70 hidden sm:inline">Reach</span>
+                        ? <span className="text-[9px] font-semibold text-blue-700/70 hidden sm:inline">Reach</span>
                         : activeSlot > player.consensusHigh
-                        ? <span className="text-[9px] font-semibold text-amber-400/70 hidden sm:inline">Steal</span>
-                        : <span className="text-[9px] font-semibold text-green-400/70 hidden sm:inline">In range</span>
+                        ? <span className="text-[9px] font-semibold text-amber-700/70 hidden sm:inline">Steal</span>
+                        : <span className="text-[9px] font-semibold text-green-700/70 hidden sm:inline">In range</span>
                     )}
                   </div>
                 </div>
@@ -610,7 +613,7 @@ export function PickBuilder({
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition sm:h-6 sm:w-6 ${
                     isExpanded
                       ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                      : "text-white/40 hover:text-[var(--steelers-gold)]"
+                      : "text-[var(--text-muted)] hover:text-[var(--steelers-gold)]"
                   }`}
                   title="View scouting report"
                 >
@@ -631,7 +634,7 @@ export function PickBuilder({
           );
         })}
         {filteredPlayers.length === 0 && (
-          <p className="py-4 text-center text-sm text-white/50">
+          <p className="py-4 text-center text-sm text-[var(--text-muted)]">
             No players match your search
           </p>
         )}
@@ -645,27 +648,32 @@ export function PickBuilder({
       <div className="space-y-1 sm:space-y-1.5 max-h-[50vh] md:max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
         {/* Auto-save indicator */}
         <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-400">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-700">
             <path d="M2 7l3.5 3.5L12 3" />
           </svg>
-          <span className="text-green-400 font-medium">Saved</span>
+          <span className="text-green-700 font-medium">Saved</span>
         </div>
 
         {draftOrder.map((slot) => {
           const pick = pickMap.get(slot.pickNumber);
           const isActive = activeSlot === slot.pickNumber;
           const isExpanded = pick && expandedPickId === pick.playerId;
+          const isUserTeam =
+            !!favoriteTeamAbbr &&
+            slot.teamAbbreviation.toUpperCase() === favoriteTeamAbbr.toUpperCase();
 
           return (
             <div key={slot.pickNumber} className="rounded-md overflow-hidden sm:rounded-lg">
               {/* Pick row */}
               <div
                 className={`flex items-center gap-1.5 border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:px-3 sm:py-2 ${
-                  pick
-                    ? "border-white/[0.12] bg-white/8"
+                  isUserTeam
+                    ? "border-l-4 border-l-[var(--accent-primary)] border-y border-r border-y-[var(--border)] border-r-[var(--border)] bg-[var(--accent-light)]"
+                    : pick
+                    ? "border-[var(--border)] bg-[var(--bg-card)]"
                     : isActive
-                    ? "border-[var(--steelers-gold)] bg-white/8 ring-2 ring-[var(--steelers-gold)]/30"
-                    : "border-white/[0.12] bg-white/8 hover:border-[var(--steelers-gold)]/40"
+                    ? "border-[var(--steelers-gold)] bg-[var(--bg-card)] ring-2 ring-[var(--steelers-gold)]/30"
+                    : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--steelers-gold)]/40"
                 }`}
                 onClick={() => !pick && !readOnly && setActiveSlot(isActive ? null : slot.pickNumber)}
               >
@@ -686,6 +694,14 @@ export function PickBuilder({
                       className="shrink-0 hidden sm:block"
                     />
                   )}
+                  {isUserTeam && (
+                    <span
+                      className="hidden sm:inline-block rounded-sm bg-[var(--accent-primary)] px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-[var(--accent-text)]"
+                      title="Your team"
+                    >
+                      Your Team
+                    </span>
+                  )}
                 </div>
 
                 {/* Player headshot (when picked) */}
@@ -705,10 +721,10 @@ export function PickBuilder({
                 {/* Team + pick info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-[10px] font-semibold text-white/50 sm:text-xs">
+                    <span className="text-[10px] font-semibold text-[var(--text-muted)] sm:text-xs">
                       {slot.teamAbbreviation}
                     </span>
-                    <span className="text-[10px] text-white/50 hidden sm:inline sm:text-xs">{slot.teamName}</span>
+                    <span className="text-[10px] text-[var(--text-muted)] hidden sm:inline sm:text-xs">{slot.teamName}</span>
                     {slot.note && (
                       <span className="text-[9px] text-amber-600/70 sm:text-[10px]">({slot.note})</span>
                     )}
@@ -716,7 +732,7 @@ export function PickBuilder({
                   {pick ? (
                     <>
                     <div className="flex flex-wrap items-center gap-1 mt-0.5 sm:gap-2">
-                      <span className="text-xs font-semibold text-white sm:text-sm">
+                      <span className="text-xs font-semibold text-[var(--text-primary)] sm:text-sm">
                         {pick.playerName}
                       </span>
                       <span className="text-[10px] text-[var(--steelers-gold)] sm:text-xs">
@@ -733,26 +749,26 @@ export function PickBuilder({
                           <>
                             <PickGradeBadge grade={pg.letterGrade} label={pg.pickLabel} />
                             <span className={`text-[9px] font-semibold sm:text-[10px] ${
-                              pg.letterGrade === 'A+' || pg.letterGrade === 'A' ? 'text-green-400'
-                              : pg.letterGrade === 'B+' || pg.letterGrade === 'B' ? 'text-blue-400'
-                              : pg.letterGrade === 'C+' || pg.letterGrade === 'C' ? 'text-yellow-400'
-                              : pg.letterGrade === 'D' ? 'text-orange-400'
-                              : 'text-red-400'
+                              pg.letterGrade === 'A+' || pg.letterGrade === 'A' ? 'text-green-700'
+                              : pg.letterGrade === 'B+' || pg.letterGrade === 'B' ? 'text-blue-700'
+                              : pg.letterGrade === 'C+' || pg.letterGrade === 'C' ? 'text-yellow-700'
+                              : pg.letterGrade === 'D' ? 'text-orange-700'
+                              : 'text-red-700'
                             }`}>
                               {pg.pickLabel}
                             </span>
                           </>
                         );
                       })()}
-                      <span className="text-[10px] text-white/50 hidden sm:inline sm:text-xs">
+                      <span className="text-[10px] text-[var(--text-muted)] hidden sm:inline sm:text-xs">
                         {pick.playerSchool}
                       </span>
                       {(() => {
                         const nm = checkNeedMatch(pick.playerPosition, slot.teamNeeds);
-                        if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-400 sm:text-[10px]">● Top Need</span>;
-                        if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-400/80 sm:text-[10px]">● Key Need</span>;
-                        if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-400/60 sm:text-[10px]">● Fits Need</span>;
-                        if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-400/60 sm:text-[10px]">○ Off-need</span>;
+                        if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-700 sm:text-[10px]">● Top Need</span>;
+                        if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-700/80 sm:text-[10px]">● Key Need</span>;
+                        if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-700/60 sm:text-[10px]">● Fits Need</span>;
+                        if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-700/60 sm:text-[10px]">○ Off-need</span>;
                         return null;
                       })()}
                     </div>
@@ -764,13 +780,13 @@ export function PickBuilder({
                     </>
                   ) : (
                     <>
-                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--steelers-gold)] font-medium" : "text-white/50"}`}>
+                      <p className={`text-[10px] mt-0.5 sm:text-xs ${isActive ? "text-[var(--steelers-gold)] font-medium" : "text-[var(--text-muted)]"}`}>
                         {isActive ? "Select a player →" : "Click to pick"}
                       </p>
                       {slot.teamNeeds && slot.teamNeeds.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                           {slot.teamNeeds.slice(0, 3).map((pos) => (
-                            <span key={pos} className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/50">
+                            <span key={pos} className="rounded-full bg-[var(--bg-card)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
                               {pos}
                             </span>
                           ))}
@@ -808,7 +824,7 @@ export function PickBuilder({
                           e.stopPropagation();
                           handleRemovePick(pick.id, pick.playerId);
                         }}
-                        className="flex h-6 w-6 items-center justify-center rounded text-xs text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition sm:h-7 sm:w-7"
+                        className="flex h-6 w-6 items-center justify-center rounded text-xs text-red-700/60 hover:bg-red-50 hover:text-red-700 transition sm:h-7 sm:w-7"
                       >
                         ✕
                       </button>
@@ -825,7 +841,7 @@ export function PickBuilder({
                       value={editingNoteText}
                       onChange={(e) => setEditingNoteText(e.target.value)}
                       placeholder="Why this player here? What makes this pick interesting?"
-                      className="w-full rounded-lg border border-white/15 bg-white/[0.06] p-3 text-sm text-white/80 placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
                       rows={2}
                       autoFocus
                     />
@@ -846,7 +862,7 @@ export function PickBuilder({
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setEditingNotePickId(null); }}
-                        className="text-[10px] text-white/50 hover:text-white/60"
+                        className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                       >
                         Cancel
                       </button>
@@ -854,17 +870,17 @@ export function PickBuilder({
                   </div>
                 ) : pick.analysis ? (
                   <div
-                    className="ml-10 mt-2 rounded-md bg-amber-950/40 border border-amber-500/20 px-3 py-2 cursor-pointer hover:bg-amber-950/50 transition group relative"
+                    className="ml-10 mt-2 rounded-md bg-amber-950/40 border border-amber-200 px-3 py-2 cursor-pointer hover:bg-amber-950/50 transition group relative"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingNotePickId(pick.id);
                       setEditingNoteText(pick.analysis || "");
                     }}
                   >
-                    <span className="text-sm text-amber-400/30 font-serif leading-none">{"\u201C"}</span>
+                    <span className="text-sm text-amber-700/30 font-serif leading-none">{"\u201C"}</span>
                     <p className="text-[11px] text-amber-100/70 italic leading-relaxed line-clamp-2">{pick.analysis}</p>
-                    <p className="text-[9px] text-amber-400/40 uppercase tracking-wider font-semibold mt-1">Your Take</p>
-                    <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-white/40">
+                    <p className="text-[9px] text-amber-700/40 uppercase tracking-wider font-semibold mt-1">Your Take</p>
+                    <span className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-[var(--text-muted)]">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
                       </svg>
@@ -872,14 +888,14 @@ export function PickBuilder({
                   </div>
                 ) : (
                   <div
-                    className="ml-10 mt-2 rounded-md border border-dashed border-white/15 px-3 py-2 cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all"
+                    className="ml-10 mt-2 rounded-md border border-dashed border-[var(--border)] px-3 py-2 cursor-pointer hover:bg-[var(--bg-card)] hover:border-[var(--border)] transition-all"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingNotePickId(pick.id);
                       setEditingNoteText("");
                     }}
                   >
-                    <p className="text-[11px] text-white/40 italic hover:text-white/50 flex items-center gap-1.5">
+                    <p className="text-[11px] text-[var(--text-muted)] italic hover:text-[var(--text-muted)] flex items-center gap-1.5">
                       <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="shrink-0">
                         <path d="M12.15 2.15a1.5 1.5 0 0 1 2.12 2.12l-8.5 8.5-3 .88.88-3 8.5-8.5z" />
                       </svg>
@@ -917,7 +933,7 @@ export function PickBuilder({
                   <div className="ml-10 mt-1 hidden sm:block">
                     <p className="text-[9px] text-white/20 uppercase tracking-wider font-semibold mb-0.5">AI Analysis</p>
                     <div
-                      className="border-l-2 pl-2 text-[11px] italic text-white/50"
+                      className="border-l-2 pl-2 text-[11px] italic text-[var(--text-muted)]"
                       style={{ borderColor: gradeColorHex(pg.letterGrade) }}
                     >
                       {commentary}
@@ -955,7 +971,7 @@ export function PickBuilder({
             <button
               onClick={() => handleAutoFill("all")}
               disabled={isPending}
-              className="flex-1 rounded-lg border border-white/20 bg-white/5 py-2 text-xs font-semibold text-gray-400 hover:text-white hover:bg-white/10 transition disabled:opacity-50"
+              className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 text-xs font-semibold text-gray-400 hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition disabled:opacity-50"
             >
               {isPending ? "Filling..." : `Auto-Fill All (${totalEmpty})`}
             </button>
@@ -967,7 +983,7 @@ export function PickBuilder({
           <button
             onClick={handlePublish}
             disabled={isPending}
-            className="mt-4 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-white hover:bg-green-500 transition disabled:opacity-50"
+            className="mt-4 w-full rounded-lg bg-green-600 py-3 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-500 transition disabled:opacity-50"
           >
             {isPending ? "Publishing..." : "Publish Board"}
           </button>
@@ -978,7 +994,7 @@ export function PickBuilder({
       <div className="max-h-[calc(100vh-100px)] overflow-y-auto">
         <div className="md:hidden mb-3">
           <h3
-            className="text-sm font-bold text-white tracking-wide uppercase"
+            className="text-sm font-bold text-[var(--text-primary)] tracking-wide uppercase"
             style={{ fontFamily: "var(--font-display)" }}
           >
             AVAILABLE PROSPECTS

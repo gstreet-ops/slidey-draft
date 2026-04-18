@@ -18,7 +18,7 @@ export function MobileNav({ links, logo, trailing }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="border-b border-white/10">
+    <header className="border-b border-[var(--border)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
         {logo}
@@ -29,7 +29,7 @@ export function MobileNav({ links, logo, trailing }: Props) {
             <Link
               key={l.href}
               href={l.href}
-              className="text-white/60 hover:text-white transition"
+              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
             >
               {l.label}
             </Link>
@@ -43,7 +43,7 @@ export function MobileNav({ links, logo, trailing }: Props) {
           {/* Hamburger — mobile only */}
           <button
             onClick={() => setOpen(!open)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition md:hidden"
             aria-label="Toggle menu"
           >
             {open ? (
@@ -61,14 +61,14 @@ export function MobileNav({ links, logo, trailing }: Props) {
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="border-t border-white/10 bg-black/30 px-4 py-3 md:hidden">
+        <nav className="border-t border-[var(--border)] bg-black/30 px-4 py-3 md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
+                className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
               >
                 {l.label}
               </Link>

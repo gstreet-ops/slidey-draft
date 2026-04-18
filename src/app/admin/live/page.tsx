@@ -23,17 +23,17 @@ export default async function LivePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-3xl font-bold text-white tracking-wide"
+            className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
           >
             DRAFT NIGHT LIVE
           </h1>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             {results.length}/32 picks entered &middot; 2026 NFL Draft
           </p>
         </div>
         {results.length > 0 && (
-          <div className="rounded-full bg-red-500/20 px-4 py-1.5 text-sm font-bold text-red-400 animate-pulse">
+          <div className="rounded-full bg-red-100 px-4 py-1.5 text-sm font-bold text-red-700 animate-pulse">
             LIVE
           </div>
         )}

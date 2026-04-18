@@ -27,9 +27,9 @@ function CreatePoolContent() {
   if (session && session.user.role !== "commissioner" && session.user.role !== "admin") {
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Commissioner Access Required</h1>
-          <p className="text-white/50 text-sm">
+        <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-4">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Commissioner Access Required</h1>
+          <p className="text-[var(--text-muted)] text-sm">
             Only commissioners can create pools. Ask the site admin for a commissioner invite.
           </p>
           <Link href="/pools" className="text-[var(--slidey)] hover:underline text-sm">
@@ -56,43 +56,43 @@ function CreatePoolContent() {
 
   return (
     <div className="min-h-screen bg-[var(--steelers-black)]">
-      <header className="border-b border-white/10">
+      <header className="border-b border-[var(--border)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+          <Link href="/" className="text-2xl font-bold text-[var(--text-primary)] tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
             DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
         </div>
       </header>
 
       <main className="mx-auto max-w-lg px-6 py-10">
-        <h1 className="text-3xl font-bold text-white mb-8">Create a Pool</h1>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-8">Create a Pool</h1>
 
         {error && (
-          <div className="mb-6 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+            <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm text-white/60 mb-2">Pool Name</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">Pool Name</label>
             <input
               name="name"
               required
               maxLength={50}
               defaultValue={suggestedName}
-              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
+              className="w-full rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)]"
               placeholder="e.g., Office Draft Pool 2026"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-white/60 mb-2">Description (optional)</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">Description (optional)</label>
             <textarea
               name="description"
               maxLength={200}
               rows={3}
-              className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
+              className="w-full rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
               placeholder="What's this pool about?"
             />
           </div>

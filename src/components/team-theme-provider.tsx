@@ -38,7 +38,7 @@ export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
     // Resolve which palette drives the accent: pool overrides team, team overrides default.
     let accentPrimary = "#FFB612";
     let accentSecondary = "#CC9200";
-    let accentText = "black";
+    let accentText: "white" | "black" = "black";
 
     if (poolTheme) {
       accentPrimary = poolTheme.primaryColor;
@@ -55,6 +55,7 @@ export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
     root.style.setProperty("--accent-primary", accentPrimary);
     root.style.setProperty("--accent-secondary", accentSecondary);
     root.style.setProperty("--accent-text", accentText);
+    root.style.setProperty("--accent-light", toAlpha(accentPrimary, 0.12));
 
     if (poolTheme) {
       root.style.setProperty("--pool-primary", poolTheme.primaryColor);
@@ -64,7 +65,6 @@ export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
       root.style.removeProperty("--pool-secondary");
     }
 
-    // Team colors always set when a team is picked (user identity persists even under pool theme)
     if (team) {
       root.style.setProperty("--team-primary", team.primaryColor);
       root.style.setProperty("--team-secondary", team.secondaryColor);
@@ -81,7 +81,6 @@ export function TeamThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Quick contrast pick for pool themes that don't ship a pre-decided text color.
 function pickContrast(hex: string): "white" | "black" {
   const m = hex.replace("#", "");
   if (m.length !== 6) return "white";
@@ -90,4 +89,13 @@ function pickContrast(hex: string): "white" | "black" {
   const b = parseInt(m.slice(4, 6), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.6 ? "black" : "white";
+}
+
+function toAlpha(hex: string, alpha: number): string {
+  const m = hex.replace("#", "");
+  if (m.length !== 6) return `rgba(255, 182, 18, ${alpha})`;
+  const r = parseInt(m.slice(0, 2), 16);
+  const g = parseInt(m.slice(2, 4), 16);
+  const b = parseInt(m.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

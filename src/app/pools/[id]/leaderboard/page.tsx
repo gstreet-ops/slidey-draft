@@ -28,13 +28,13 @@ export default async function PoolLeaderboardPage({
 
   return (
     <div className="min-h-screen bg-[var(--steelers-black)]">
-      <header className="border-b border-white/10">
+      <header className="border-b border-[var(--border)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-white tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+          <Link href="/" className="text-2xl font-bold text-[var(--text-primary)] tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
             DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
           <nav className="flex gap-4 text-sm">
-            <Link href={`/pools/${poolId}`} className="text-white/60 hover:text-white transition">Dashboard</Link>
+            <Link href={`/pools/${poolId}`} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">Dashboard</Link>
           </nav>
         </div>
       </header>
@@ -42,10 +42,10 @@ export default async function PoolLeaderboardPage({
       <main className="mx-auto max-w-3xl px-6 py-10 space-y-8">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-white">{pool.name} Leaderboard</h1>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">{pool.name} Leaderboard</h1>
             <ScoringBadge mode={getPoolSettings(pool.settings).scoringMode} />
           </div>
-          <p className="text-white/50 text-sm mt-1">
+          <p className="text-[var(--text-muted)] text-sm mt-1">
             {pool.status === "completed" ? "Final Standings" : "Live Standings"}
           </p>
         </div>

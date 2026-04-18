@@ -101,7 +101,7 @@ export function PoolTeamManager({ poolId, poolMembers }: Props) {
         {!showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-[var(--text-primary)] text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >
             + Create Team
           </button>
@@ -145,7 +145,7 @@ export function PoolTeamManager({ poolId, poolMembers }: Props) {
             <button
               onClick={createTeam}
               disabled={creating || !newName.trim()}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-[var(--text-primary)] text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               {creating ? "Creating…" : "Create"}
             </button>
@@ -188,7 +188,7 @@ export function PoolTeamManager({ poolId, poolMembers }: Props) {
                     {team.members.map((m) => (
                       <span
                         key={m.userId}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-white"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-[var(--text-primary)]"
                         style={{ backgroundColor: team.colorHex }}
                       >
                         {m.userName || "Unknown"}
@@ -224,7 +224,7 @@ export function PoolTeamManager({ poolId, poolMembers }: Props) {
                     <button
                       onClick={() => assignMember(team.id)}
                       disabled={!assignSelections[team.id]}
-                      className="px-3 py-1.5 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-colors"
+                      className="px-3 py-1.5 bg-gray-800 text-[var(--text-primary)] text-sm rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-colors"
                     >
                       Add
                     </button>

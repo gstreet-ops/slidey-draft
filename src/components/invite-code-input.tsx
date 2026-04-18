@@ -28,7 +28,7 @@ export function InviteCodeInput() {
       <button
         type="submit"
         disabled={!code.trim()}
-        className="rounded-lg bg-[#FFB612] px-6 py-3 text-sm font-bold text-white hover:bg-[#FFB612]/80 transition disabled:opacity-50"
+        className="rounded-lg bg-[#FFB612] px-6 py-3 text-sm font-bold text-[var(--text-primary)] hover:bg-[#FFB612]/80 transition disabled:opacity-50"
       >
         Join
       </button>

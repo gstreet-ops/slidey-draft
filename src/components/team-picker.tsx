@@ -62,7 +62,7 @@ export function TeamPicker({
               className={`group relative flex flex-col items-center gap-2 rounded-lg bg-[var(--surface-card)] p-3 transition overflow-hidden ${
                 isSelected
                   ? "ring-2 ring-[var(--accent-primary)] scale-[1.02]"
-                  : "border border-white/10 hover:border-white/20 hover:bg-[var(--surface-elevated)]"
+                  : "border border-[var(--border)] hover:border-[var(--border)] hover:bg-[var(--surface-elevated)]"
               } ${saving ? "opacity-50 cursor-wait" : ""}`}
             >
               <span
@@ -86,10 +86,10 @@ export function TeamPicker({
                   {team.abbreviation}
                 </div>
               )}
-              <span className="text-[11px] font-semibold text-white/70 leading-tight tracking-wide">
+              <span className="text-[11px] font-semibold text-[var(--text-secondary)] leading-tight tracking-wide">
                 {team.abbreviation}
               </span>
-              <span className="text-[10px] text-white/40 leading-tight text-center line-clamp-1">
+              <span className="text-[10px] text-[var(--text-muted)] leading-tight text-center line-clamp-1">
                 {team.name.split(" ").slice(0, -1).join(" ")}
               </span>
             </button>
@@ -102,7 +102,7 @@ export function TeamPicker({
           type="button"
           onClick={() => persist(null)}
           disabled={saving}
-          className="text-xs text-white/50 underline-offset-2 hover:text-white hover:underline transition"
+          className="text-xs text-[var(--text-muted)] underline-offset-2 hover:text-[var(--text-primary)] hover:underline transition"
         >
           Reset to draft default (Steelers)
         </button>

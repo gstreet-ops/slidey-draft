@@ -200,30 +200,30 @@ export function LivePredictionWidget({
   function statusLine() {
     switch (state.type) {
       case "waiting_for_draft":
-        return <span className="text-white/50">Draft not started</span>;
+        return <span className="text-[var(--text-muted)]">Draft not started</span>;
       case "on_the_clock":
         return (
-          <span className="text-yellow-400 font-semibold">
+          <span className="text-yellow-700 font-semibold">
             Pick #{state.pickNumber} — {state.teamName} on the clock
           </span>
         );
       case "submitted":
         return (
-          <span className="text-green-400 font-semibold">
+          <span className="text-green-700 font-semibold">
             {state.isAutoFilled ? "Auto-filled: " : "Locked in: "}
             {state.playerName}
           </span>
         );
       case "result":
         return (
-          <span className={state.correct ? "text-green-400 font-semibold" : "text-white/50"}>
+          <span className={state.correct ? "text-green-700 font-semibold" : "text-[var(--text-muted)]"}>
             Pick #{state.pickNumber}:{" "}
             {state.correct ? `+${state.points}pts — Correct!` : `+0pts — Missed (${state.actualPlayer})`}
           </span>
         );
       case "missed":
         return (
-          <span className="text-white/50">
+          <span className="text-[var(--text-muted)]">
             Pick #{state.pickNumber}: Missed — {state.actualPlayer}
           </span>
         );
@@ -233,14 +233,14 @@ export function LivePredictionWidget({
   const canCollapse = state.type !== "on_the_clock";
 
   return (
-    <div className="bg-white/8 border border-white/[0.12] rounded-xl overflow-hidden">
+    <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
       {/* Header bar — always visible */}
       <button
         onClick={() => canCollapse && setExpanded((v) => !v)}
-        className={`w-full flex items-center justify-between px-5 py-3 ${canCollapse ? "cursor-pointer hover:bg-white/5" : "cursor-default"} transition`}
+        className={`w-full flex items-center justify-between px-5 py-3 ${canCollapse ? "cursor-pointer hover:bg-[var(--bg-card)]" : "cursor-default"} transition`}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xs font-semibold text-white/50 uppercase tracking-wider shrink-0">
+          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider shrink-0">
             Prediction
           </span>
           <span className="text-sm truncate">{statusLine()}</span>
@@ -249,7 +249,7 @@ export function LivePredictionWidget({
           <span className="text-xs text-white/20">{poolName}</span>
           {canCollapse && (
             <svg
-              className={`w-4 h-4 text-white/40 transition-transform ${expanded ? "rotate-180" : ""}`}
+              className={`w-4 h-4 text-[var(--text-muted)] transition-transform ${expanded ? "rotate-180" : ""}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -263,20 +263,20 @@ export function LivePredictionWidget({
 
       {/* Expanded body */}
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-white/10 pt-4">
+        <div className="px-5 pb-5 space-y-4 border-t border-[var(--border)] pt-4">
           {state.type === "waiting_for_draft" && (
-            <p className="text-white/50 text-sm">
+            <p className="text-[var(--text-muted)] text-sm">
               The draft hasn&apos;t started yet. Predictions open when Pick #1 goes on the clock.
             </p>
           )}
 
           {state.type === "on_the_clock" && (
             <div className="space-y-4">
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-center">
-                <p className="text-yellow-400 font-bold">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                <p className="text-yellow-700 font-bold">
                   Pick #{state.pickNumber} — {state.teamName} is on the clock
                 </p>
-                <p className="text-yellow-400/50 text-xs mt-0.5">
+                <p className="text-yellow-700/50 text-xs mt-0.5">
                   Submit before the pick is announced to earn points
                 </p>
               </div>
@@ -288,7 +288,7 @@ export function LivePredictionWidget({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name, position, or school..."
-                  className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
+                  className="w-full rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)]"
                 />
 
                 <div className="flex gap-1 flex-wrap">
@@ -299,7 +299,7 @@ export function LivePredictionWidget({
                       className={`px-2 py-1 rounded text-xs font-semibold transition ${
                         posFilter === pos
                           ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                          : "bg-white/5 text-white/50 hover:text-white/60"
+                          : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                       }`}
                     >
                       {pos}
@@ -315,7 +315,7 @@ export function LivePredictionWidget({
                       className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
                         selectedPlayerId === p.id
                           ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                          : "bg-white/5 text-white/70 hover:bg-white/10"
+                          : "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)]"
                       }`}
                     >
                       {p.rank && (
@@ -324,7 +324,7 @@ export function LivePredictionWidget({
                         </span>
                       )}
                       <span className="font-semibold">{p.name}</span>
-                      <span className="text-white/50">
+                      <span className="text-[var(--text-muted)]">
                         {p.position} &middot; {p.school}
                       </span>
                     </button>
@@ -342,7 +342,7 @@ export function LivePredictionWidget({
                       setSearch("");
                       setPosFilter("ALL");
                     }}
-                    className="rounded-lg border border-white/[0.12] bg-white/8 px-4 py-3 text-sm text-white/50 hover:text-white/80 hover:bg-white/10 transition"
+                    className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition"
                   >
                     Cancel
                   </button>
@@ -355,7 +355,7 @@ export function LivePredictionWidget({
                   {submitting ? "Locking In..." : "Lock In Prediction"}
                 </button>
               </div>
-              <p className="text-xs text-white/40 text-center">
+              <p className="text-xs text-[var(--text-muted)] text-center">
                 10 pts for correct &middot; 0 pts for wrong &middot; auto-filled with BPA if no pick
               </p>
             </div>
@@ -364,28 +364,28 @@ export function LivePredictionWidget({
           {state.type === "submitted" && (
             <div className="space-y-3">
               {state.isAutoFilled ? (
-                <div className="bg-white/8 border border-white/[0.12] rounded-lg p-3 text-center">
-                  <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-3 text-center">
+                  <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">
                     Auto-filled (BPA)
                   </p>
-                  <p className="text-white/70 font-semibold">{state.playerName}</p>
-                  <p className="text-white/40 text-xs mt-0.5">
+                  <p className="text-[var(--text-secondary)] font-semibold">{state.playerName}</p>
+                  <p className="text-[var(--text-muted)] text-xs mt-0.5">
                     {state.playerPosition} &middot; {state.playerSchool}
                   </p>
                 </div>
               ) : (
                 <div className="text-center space-y-2">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-green-400 text-lg">&#10003;</span>
-                    <span className="text-white font-semibold">Locked in:</span>
+                    <span className="text-green-700 text-lg">&#10003;</span>
+                    <span className="text-[var(--text-primary)] font-semibold">Locked in:</span>
                   </div>
-                  <p className="text-white text-lg font-bold">{state.playerName}</p>
-                  <p className="text-white/50 text-sm">
+                  <p className="text-[var(--text-primary)] text-lg font-bold">{state.playerName}</p>
+                  <p className="text-[var(--text-muted)] text-sm">
                     {state.playerPosition} &middot; {state.playerSchool}
                   </p>
                 </div>
               )}
-              <p className="text-white/40 text-sm text-center animate-pulse">
+              <p className="text-[var(--text-muted)] text-sm text-center animate-pulse">
                 Waiting for pick to be announced...
               </p>
               <button
@@ -405,7 +405,7 @@ export function LivePredictionWidget({
                     teamAbbreviation: team?.teamAbbreviation || "",
                   });
                 }}
-                className="w-full rounded-lg border border-white/[0.12] bg-white/8 px-4 py-2 text-sm text-white/50 hover:text-white/80 hover:bg-white/10 transition"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition"
               >
                 Change Pick
               </button>
@@ -415,26 +415,26 @@ export function LivePredictionWidget({
           {state.type === "result" && (
             <div className="space-y-3">
               {state.correct ? (
-                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-                  <p className="text-green-400 font-bold text-lg">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                  <p className="text-green-700 font-bold text-lg">
                     Correct! +{state.points} pts
                   </p>
-                  <p className="text-green-400/70 text-sm mt-1">{state.actualPlayer}</p>
+                  <p className="text-green-700/70 text-sm mt-1">{state.actualPlayer}</p>
                 </div>
               ) : (
-                <div className="bg-white/8 border border-white/[0.12] rounded-lg p-4 text-center space-y-1">
-                  <p className="text-white/50 text-sm">
+                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 text-center space-y-1">
+                  <p className="text-[var(--text-muted)] text-sm">
                     Actual pick:{" "}
-                    <span className="text-white font-semibold">{state.actualPlayer}</span>
+                    <span className="text-[var(--text-primary)] font-semibold">{state.actualPlayer}</span>
                   </p>
-                  <p className="text-white/40 text-xs">
+                  <p className="text-[var(--text-muted)] text-xs">
                     {state.isAutoFilled ? "Auto-filled: " : "You predicted: "}
                     {state.predictedPlayer}
                   </p>
                   <p className="text-white/20 text-xs">+0 pts</p>
                 </div>
               )}
-              <p className="text-white/40 text-xs text-center">
+              <p className="text-[var(--text-muted)] text-xs text-center">
                 {state.correctCount} of {state.totalPredictions} members correct
               </p>
             </div>
@@ -442,11 +442,11 @@ export function LivePredictionWidget({
 
           {state.type === "missed" && (
             <div className="text-center space-y-2">
-              <p className="text-white/60 text-sm">
+              <p className="text-[var(--text-secondary)] text-sm">
                 Pick #{state.pickNumber}:{" "}
-                <span className="text-white">{state.actualPlayer}</span> to {state.teamName}
+                <span className="text-[var(--text-primary)]">{state.actualPlayer}</span> to {state.teamName}
               </p>
-              <p className="text-white/40 text-xs">Window closed — no prediction submitted.</p>
+              <p className="text-[var(--text-muted)] text-xs">Window closed — no prediction submitted.</p>
             </div>
           )}
         </div>

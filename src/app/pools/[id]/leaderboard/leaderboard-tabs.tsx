@@ -40,13 +40,13 @@ export function LeaderboardTabs({
   return (
     <div className="space-y-6">
       {/* Tab bar */}
-      <div className="flex gap-1 bg-white/5 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-[var(--bg-card)] rounded-lg p-1 w-fit">
         <button
           onClick={() => setTab("individual")}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "individual"
               ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-              : "text-white/50 hover:text-white/60"
+              : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
           Individual
@@ -56,7 +56,7 @@ export function LeaderboardTabs({
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "teams"
               ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-              : "text-white/50 hover:text-white/60"
+              : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
           Teams
@@ -66,14 +66,14 @@ export function LeaderboardTabs({
       {tab === "individual" && (
         <>
           {standings.length === 0 ? (
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl p-12 text-center">
-              <p className="text-white/50">No scores yet. Standings will appear once the draft begins.</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-12 text-center">
+              <p className="text-[var(--text-muted)]">No scores yet. Standings will appear once the draft begins.</p>
             </div>
           ) : (
-            <div className="bg-white/8 border border-white/[0.12] rounded-xl overflow-hidden">
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-white/50 text-xs uppercase tracking-wider">
+                  <tr className="border-b border-[var(--border)] text-[var(--text-muted)] text-xs uppercase tracking-wider">
                     <th className="text-left px-4 py-3">Rank</th>
                     <th className="text-left px-4 py-3">Name</th>
                     {showMock && <th className="text-right px-4 py-3">Mock</th>}
@@ -100,11 +100,11 @@ export function LeaderboardTabs({
                     return (
                       <tr
                         key={s.userId}
-                        className={`border-b border-white/5 last:border-0 ${
+                        className={`border-b border-[var(--border-light)] last:border-0 ${
                           isMe ? "bg-[var(--steelers-gold)]/10" : ""
                         }`}
                       >
-                        <td className="px-4 py-3 text-white font-semibold">
+                        <td className="px-4 py-3 text-[var(--text-primary)] font-semibold">
                           <span className="mr-1">#{s.rank}</span>
                           {rankDelta > 0 && (
                             <span className="text-green-400 text-xs">+{rankDelta}</span>
@@ -118,16 +118,16 @@ export function LeaderboardTabs({
                             {s.teamLogoUrl && (
                               <img src={s.teamLogoUrl} alt="" className="h-5 w-5 shrink-0 object-contain" />
                             )}
-                            <span className={isMe ? "text-[var(--steelers-gold)] font-semibold" : "text-white"}>
+                            <span className={isMe ? "text-[var(--steelers-gold)] font-semibold" : "text-[var(--text-primary)]"}>
                               {s.userName || s.userEmail}
                             </span>
                           </div>
                         </td>
-                        {showMock && <td className="px-4 py-3 text-right text-white/60">{s.mockBonus}</td>}
-                        {showLive && <td className="px-4 py-3 text-right text-white/60">{s.liveTotal}</td>}
-                        {showTrivia && <td className="px-4 py-3 text-right text-white/60">{triviaTotal}</td>}
-                        <td className="px-4 py-3 text-right text-white font-bold">{displayedTotal}</td>
-                        <td className="px-4 py-3 text-right text-white/50">
+                        {showMock && <td className="px-4 py-3 text-right text-[var(--text-secondary)]">{s.mockBonus}</td>}
+                        {showLive && <td className="px-4 py-3 text-right text-[var(--text-secondary)]">{s.liveTotal}</td>}
+                        {showTrivia && <td className="px-4 py-3 text-right text-[var(--text-secondary)]">{triviaTotal}</td>}
+                        <td className="px-4 py-3 text-right text-[var(--text-primary)] font-bold">{displayedTotal}</td>
+                        <td className="px-4 py-3 text-right text-[var(--text-muted)]">
                           {s.picksPredicted > 0 ? `${accuracy}%` : "-"}
                         </td>
                       </tr>

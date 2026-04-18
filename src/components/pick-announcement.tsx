@@ -87,7 +87,7 @@ export function PickAnnouncement({
         </div>
         {matchType && (
           <div className="shrink-0 text-right">
-            <p className={`text-lg font-bold ${matchType === "exact" ? "text-green-300" : "text-white/80"}`}
+            <p className={`text-lg font-bold ${matchType === "exact" ? "text-green-700" : "text-white/80"}`}
                style={{ fontFamily: "var(--font-display)" }}>
               {MATCH_MESSAGES[matchType] || ""}
             </p>
@@ -99,12 +99,12 @@ export function PickAnnouncement({
       {context && context.length > 0 && (
         <div className="relative z-10 px-6 pb-3 flex flex-wrap gap-2">
           {context.filter(c => c.matchType === "exact").map((c, i) => (
-            <span key={i} className="text-xs bg-green-500/30 text-green-200 rounded-full px-2.5 py-0.5 font-semibold">
+            <span key={i} className="text-xs bg-green-100 text-green-200 rounded-full px-2.5 py-0.5 font-semibold">
               {c.userName} nailed it!
             </span>
           ))}
           {context.filter(c => c.matchType === "close").map((c, i) => (
-            <span key={i} className="text-xs bg-yellow-500/20 text-yellow-200 rounded-full px-2.5 py-0.5">
+            <span key={i} className="text-xs bg-yellow-100 text-yellow-200 rounded-full px-2.5 py-0.5">
               {c.userName} had him close (+{c.pointsAwarded})
             </span>
           ))}

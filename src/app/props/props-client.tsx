@@ -19,20 +19,20 @@ type Player = { id: string; name: string; position: string; school: string };
 type Team = { id: string; name: string; abbreviation: string; logoUrl: string | null };
 
 const CATEGORY_LABELS: Record<string, { label: string; emoji: string; color: string; border: string; cardBorder: string; cardBg: string }> = {
-  position: { label: "POSITION PROPS", emoji: "\uD83C\uDFC8", color: "text-emerald-400", border: "border-emerald-500/30", cardBorder: "border-emerald-500/15", cardBg: "bg-emerald-500/[0.03]" },
-  trade: { label: "TRADE PROPS", emoji: "\uD83D\uDD04", color: "text-amber-400", border: "border-amber-500/30", cardBorder: "border-amber-500/15", cardBg: "bg-amber-500/[0.03]" },
-  fun: { label: "FUN PROPS", emoji: "\uD83C\uDF89", color: "text-pink-400", border: "border-pink-500/30", cardBorder: "border-pink-500/15", cardBg: "bg-pink-500/[0.03]" },
-  general: { label: "GENERAL", emoji: "", color: "text-sky-400", border: "border-sky-500/30", cardBorder: "border-white/[0.12]", cardBg: "bg-white/8" },
-  team: { label: "TEAM PROPS", emoji: "\uD83D\uDEE1\uFE0F", color: "text-orange-400", border: "border-orange-500/30", cardBorder: "border-orange-500/15", cardBg: "bg-orange-500/[0.03]" },
+  position: { label: "POSITION PROPS", emoji: "\uD83C\uDFC8", color: "text-emerald-700", border: "border-emerald-200", cardBorder: "border-emerald-200", cardBg: "bg-emerald-500/[0.03]" },
+  trade: { label: "TRADE PROPS", emoji: "\uD83D\uDD04", color: "text-amber-700", border: "border-amber-200", cardBorder: "border-amber-200", cardBg: "bg-amber-500/[0.03]" },
+  fun: { label: "FUN PROPS", emoji: "\uD83C\uDF89", color: "text-pink-700", border: "border-pink-200", cardBorder: "border-pink-200", cardBg: "bg-pink-500/[0.03]" },
+  general: { label: "GENERAL", emoji: "", color: "text-sky-700", border: "border-sky-200", cardBorder: "border-[var(--border)]", cardBg: "bg-[var(--bg-card)]" },
+  team: { label: "TEAM PROPS", emoji: "\uD83D\uDEE1\uFE0F", color: "text-orange-700", border: "border-orange-200", cardBorder: "border-orange-200", cardBg: "bg-orange-500/[0.03]" },
 };
 
 const CATEGORY_ORDER = ["position", "trade", "fun", "general", "team"];
 
 function pointsBadgeClass(pts: number): string {
-  if (pts >= 10) return "bg-emerald-500/20 text-emerald-400 font-bold";
-  if (pts >= 7) return "bg-amber-500/20 text-amber-400";
+  if (pts >= 10) return "bg-emerald-100 text-emerald-700 font-bold";
+  if (pts >= 7) return "bg-amber-100 text-amber-700";
   if (pts >= 5) return "bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]";
-  return "bg-white/10 text-white/50";
+  return "bg-[var(--bg-card)] text-[var(--text-muted)]";
 }
 
 function getCatStyle(cat: string) {
@@ -131,9 +131,9 @@ export function PropsClient({
 
                 const cardClass = isResolved
                   ? isCorrect
-                    ? "border-green-500/30 bg-green-500/5"
-                    : "border-red-500/20 bg-red-500/5"
-                  : `${style.cardBorder} ${style.cardBg} ${isOpen ? "hover:border-white/20 hover:bg-white/[0.06]" : ""}`;
+                    ? "border-green-200 bg-green-500/5"
+                    : "border-red-200 bg-red-500/5"
+                  : `${style.cardBorder} ${style.cardBg} ${isOpen ? "hover:border-[var(--border)] hover:bg-[var(--bg-card)]" : ""}`;
 
                 return (
                   <div
@@ -142,9 +142,9 @@ export function PropsClient({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-white">{prop.question}</p>
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">{prop.question}</p>
                         {isResolved && (
-                          <p className="mt-1 text-xs text-white/50">
+                          <p className="mt-1 text-xs text-[var(--text-muted)]">
                             {isCorrect ? "\u2713 Correct!" : "\u2717 Incorrect"}{" "}
                             {isCorrect && `(+${prop.points} pts)`}
                           </p>
@@ -242,7 +242,7 @@ function OverUnderInput({
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
               ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]"
-              : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
+              : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)]"
           } disabled:opacity-50`}
         >
           {userPick === choice && "\u2713 "}
@@ -274,7 +274,7 @@ function YesNoInput({
           className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
             userPick === choice
               ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]"
-              : "border-white/[0.12] bg-white/8 text-white/60 hover:border-white/20 hover:text-white"
+              : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)]"
           } disabled:opacity-50`}
         >
           {userPick === choice && "\u2713 "}
@@ -329,10 +329,10 @@ function PlayerPickInput({
         <div className="rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-3 py-2 text-sm text-[var(--steelers-gold)] flex items-center justify-between ring-1 ring-[var(--steelers-gold)]/30">
           <span>✓ {selectedPlayer.name} ({selectedPlayer.position})</span>
           <div className="flex gap-2">
-            <button onClick={() => onSearchChange("")} className="text-xs text-white/50 hover:text-white/60">
+            <button onClick={() => onSearchChange("")} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
               Change
             </button>
-            <button onClick={onClear} className="text-xs text-red-400/60 hover:text-red-400">
+            <button onClick={onClear} className="text-xs text-red-700/60 hover:text-red-700">
               ✗
             </button>
           </div>
@@ -345,10 +345,10 @@ function PlayerPickInput({
             placeholder="Search players..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           {filtered.length > 0 && (
-            <div className="rounded-lg border border-white/10 bg-[var(--surface-dark)] max-h-48 overflow-y-auto">
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-dark)] max-h-48 overflow-y-auto">
               {filtered.map((p) => (
                 <button
                   key={p.id}
@@ -357,11 +357,11 @@ function PlayerPickInput({
                     onSearchChange("");
                   }}
                   disabled={saving}
-                  className="w-full px-3 py-2 text-left text-sm text-white/70 hover:bg-white/10 transition flex items-center gap-2"
+                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card)] transition flex items-center gap-2"
                 >
-                  <span className="font-semibold text-white">{p.name}</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{p.name}</span>
                   <span className="text-xs text-[var(--steelers-gold)]">{p.position}</span>
-                  <span className="text-xs text-white/40">{p.school}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{p.school}</span>
                 </button>
               ))}
             </div>
@@ -395,14 +395,14 @@ function TeamPickInput({
           className={`rounded-lg border p-2 text-center transition-all duration-150 ${
             userPick === t.id
               ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 ring-2 ring-[var(--steelers-gold)]/40 scale-105"
-              : "border-white/[0.12] bg-white/8 hover:border-white/20"
+              : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border)]"
           } disabled:opacity-50`}
           title={t.name}
         >
           {t.logoUrl ? (
             <Image src={t.logoUrl} alt={t.abbreviation} width={24} height={24} className="mx-auto" />
           ) : (
-            <span className="text-[10px] font-bold text-white/50">{t.abbreviation}</span>
+            <span className="text-[10px] font-bold text-[var(--text-muted)]">{t.abbreviation}</span>
           )}
         </button>
       ))}
@@ -434,7 +434,7 @@ function PickNumberInput({
         onChange={(e) => setValue(e.target.value)}
         disabled={disabled}
         placeholder="Pick #"
-        className="w-24 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none disabled:opacity-50"
+        className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none disabled:opacity-50"
       />
       {!disabled && (
         <button
@@ -449,7 +449,7 @@ function PickNumberInput({
         <button
           onClick={onClear}
           disabled={saving}
-          className="text-xs text-red-400/60 hover:text-red-400 transition disabled:opacity-50"
+          className="text-xs text-red-700/60 hover:text-red-700 transition disabled:opacity-50"
         >
           Clear
         </button>

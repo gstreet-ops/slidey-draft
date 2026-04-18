@@ -81,30 +81,30 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
       {!isOpen && (
         <button
           onClick={toggle}
-          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-white/10 bg-[var(--steelers-black)] px-1.5 py-3 hover:bg-white/5 transition"
+          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-[var(--border)] bg-[var(--steelers-black)] px-1.5 py-3 hover:bg-[var(--bg-card)] transition"
         >
           {hasUnread && (
             <span className="absolute -top-1 -left-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[var(--steelers-black)]" />
           )}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/60">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
           </svg>
-          <span className="text-[10px] text-white/50 font-semibold [writing-mode:vertical-lr]">Chat</span>
+          <span className="text-[10px] text-[var(--text-muted)] font-semibold [writing-mode:vertical-lr]">Chat</span>
         </button>
       )}
 
       {/* Expanded panel — desktop */}
       {isOpen && (
-        <div className="hidden lg:flex flex-col w-[350px] shrink-0 border-l border-white/10 bg-[var(--steelers-black)] h-[calc(100vh-60px)] sticky top-[60px]">
+        <div className="hidden lg:flex flex-col w-[350px] shrink-0 border-l border-[var(--border)] bg-[var(--steelers-black)] h-[calc(100vh-60px)] sticky top-[60px]">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-white truncate">{poolName}</h3>
-              <span className="text-[10px] text-white/50">Chat</span>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">{poolName}</h3>
+              <span className="text-[10px] text-[var(--text-muted)]">Chat</span>
             </div>
             <button
               onClick={toggle}
-              className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white transition"
+              className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M1 1l12 12M13 1L1 13" />
@@ -129,15 +129,15 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" onClick={toggle} />
           {/* Panel */}
-          <div className="relative ml-auto w-full max-w-md h-full bg-[var(--steelers-black)] border-l border-white/10 flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <div className="relative ml-auto w-full max-w-md h-full bg-[var(--steelers-black)] border-l border-[var(--border)] flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
               <div>
-                <h3 className="text-sm font-semibold text-white">{poolName}</h3>
-                <span className="text-[10px] text-white/50">Chat</span>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)]">{poolName}</h3>
+                <span className="text-[10px] text-[var(--text-muted)]">Chat</span>
               </div>
               <button
                 onClick={toggle}
-                className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white transition"
+                className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 1l12 12M13 1L1 13" />

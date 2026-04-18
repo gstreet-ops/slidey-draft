@@ -24,9 +24,9 @@ const TYPE_OPTIONS = [
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  open: "bg-green-500/20 text-green-400",
-  locked: "bg-yellow-500/20 text-yellow-400",
-  resolved: "bg-white/10 text-white/50",
+  open: "bg-green-100 text-green-700",
+  locked: "bg-yellow-100 text-yellow-700",
+  resolved: "bg-[var(--bg-card)] text-[var(--text-muted)]",
 };
 
 export function CustomProps({
@@ -98,9 +98,9 @@ export function CustomProps({
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-6 space-y-4">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-white">Custom Prop Bets</h3>
+        <h3 className="text-lg font-bold text-[var(--text-primary)]">Custom Prop Bets</h3>
         <button
           onClick={() => setShowForm(!showForm)}
           className="rounded-lg bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
@@ -110,32 +110,32 @@ export function CustomProps({
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
           {error}
         </div>
       )}
 
       {/* Create form */}
       {showForm && (
-        <div className="space-y-3 rounded-lg border border-white/10 bg-white/[0.03] p-4">
+        <div className="space-y-3 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4">
           <div>
-            <label className="block text-xs font-semibold text-white/50 mb-1">Question</label>
+            <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Question</label>
             <textarea
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="e.g. Will Dan yell at the TV during the first pick?"
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none resize-none"
               rows={2}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-white/50 mb-1">Type</label>
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Type</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[var(--steelers-gold)] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--steelers-gold)] focus:outline-none"
               >
                 {TYPE_OPTIONS.map((t) => (
                   <option key={t.value} value={t.value} className="bg-[var(--surface-dark)]">
@@ -145,40 +145,40 @@ export function CustomProps({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-white/50 mb-1">Points</label>
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Points</label>
               <input
                 type="number"
                 min={1}
                 max={20}
                 value={points}
                 onChange={(e) => setPoints(Number(e.target.value))}
-                className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white focus:border-[var(--steelers-gold)] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--steelers-gold)] focus:outline-none"
               />
             </div>
           </div>
 
           {type === "over_under" && (
             <div>
-              <label className="block text-xs font-semibold text-white/50 mb-1">Over/Under Line</label>
+              <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Over/Under Line</label>
               <input
                 type="number"
                 step="0.5"
                 value={ouLine}
                 onChange={(e) => setOuLine(e.target.value)}
                 placeholder="e.g. 3.5"
-                className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-white/50 mb-1">Category</label>
+            <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1">Category</label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Custom"
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
             />
           </div>
 
@@ -198,28 +198,28 @@ export function CustomProps({
           {existingCustomProps.map((prop) => (
             <div
               key={prop.id}
-              className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3"
+              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white">{prop.question}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">{prop.question}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[prop.status] || "bg-white/10 text-white/50"}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[prop.status] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>
                       {prop.status}
                     </span>
-                    <span className="text-[10px] text-white/40">
+                    <span className="text-[10px] text-[var(--text-muted)]">
                       {TYPE_OPTIONS.find((t) => t.value === prop.type)?.label} · {prop.points} pts · {prop.category}
                     </span>
                   </div>
                   {prop.correctAnswer && (
-                    <p className="text-xs text-green-400/70 mt-1">Answer: {prop.correctAnswer}</p>
+                    <p className="text-xs text-green-700/70 mt-1">Answer: {prop.correctAnswer}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 gap-1">
                   {prop.status !== "resolved" && (
                     <button
                       onClick={() => { setResolvingId(resolvingId === prop.id ? null : prop.id); setResolveAnswer(""); }}
-                      className="rounded-md bg-green-500/10 px-2 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/20 transition"
+                      className="rounded-md bg-green-50 px-2 py-1 text-[10px] font-semibold text-green-700 hover:bg-green-100 transition"
                     >
                       Resolve
                     </button>
@@ -228,7 +228,7 @@ export function CustomProps({
                     <button
                       onClick={() => handleDelete(prop.id)}
                       disabled={isPending}
-                      className="rounded-md bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/20 transition disabled:opacity-50"
+                      className="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-red-700 hover:bg-red-100 transition disabled:opacity-50"
                     >
                       Delete
                     </button>
@@ -243,13 +243,13 @@ export function CustomProps({
                     <>
                       <button
                         onClick={() => { setResolveAnswer("yes"); }}
-                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "yes" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-white/10 text-white/50"}`}
+                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "yes" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-[var(--border)] text-[var(--text-muted)]"}`}
                       >
                         Yes
                       </button>
                       <button
                         onClick={() => { setResolveAnswer("no"); }}
-                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "no" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-white/10 text-white/50"}`}
+                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "no" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-[var(--border)] text-[var(--text-muted)]"}`}
                       >
                         No
                       </button>
@@ -258,13 +258,13 @@ export function CustomProps({
                     <>
                       <button
                         onClick={() => { setResolveAnswer("over"); }}
-                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "over" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-white/10 text-white/50"}`}
+                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "over" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-[var(--border)] text-[var(--text-muted)]"}`}
                       >
                         Over
                       </button>
                       <button
                         onClick={() => { setResolveAnswer("under"); }}
-                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "under" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-white/10 text-white/50"}`}
+                        className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition ${resolveAnswer === "under" ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)]/20 text-[var(--steelers-gold)]" : "border-[var(--border)] text-[var(--text-muted)]"}`}
                       >
                         Under
                       </button>
@@ -275,13 +275,13 @@ export function CustomProps({
                       value={resolveAnswer}
                       onChange={(e) => setResolveAnswer(e.target.value)}
                       placeholder="Correct answer..."
-                      className="flex-1 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-white placeholder:text-white/30 focus:border-[var(--steelers-gold)] focus:outline-none"
+                      className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
                     />
                   )}
                   <button
                     onClick={() => handleResolve(prop.id)}
                     disabled={isPending || !resolveAnswer.trim()}
-                    className="rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-500 transition disabled:opacity-50"
+                    className="rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-green-500 transition disabled:opacity-50"
                   >
                     Confirm
                   </button>
@@ -291,7 +291,7 @@ export function CustomProps({
           ))}
         </div>
       ) : !showForm ? (
-        <p className="text-xs text-white/40">No custom props yet. Create fun pool-specific predictions for your group.</p>
+        <p className="text-xs text-[var(--text-muted)]">No custom props yet. Create fun pool-specific predictions for your group.</p>
       ) : null}
     </div>
   );

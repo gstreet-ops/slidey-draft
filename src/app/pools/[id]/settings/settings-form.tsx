@@ -83,30 +83,30 @@ export function PoolSettingsForm({
   return (
     <div className="space-y-8">
       {/* Name & Description */}
-      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">General</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">General</h3>
         <div>
-          <label className="block text-sm text-white/50 mb-1">Pool Name</label>
+          <label className="block text-sm text-[var(--text-muted)] mb-1">Pool Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--steelers-gold)]"
+            className="w-full rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2 text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--steelers-gold)]"
           />
         </div>
         <div>
-          <label className="block text-sm text-white/50 mb-1">Description</label>
+          <label className="block text-sm text-[var(--text-muted)] mb-1">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
-            className="w-full rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2 text-white text-sm focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
+            className="w-full rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2 text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--steelers-gold)] resize-none"
           />
         </div>
       </div>
 
       {/* Rounds */}
-      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Rounds</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Rounds</h3>
         <div className="flex gap-2 flex-wrap">
           {[1, 2, 3, 4, 5, 6, 7].map((r) => (
             <button
@@ -115,7 +115,7 @@ export function PoolSettingsForm({
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                 rounds.includes(r)
                   ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                  : "bg-white/5 text-white/50 border border-white/10"
+                  : "bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)]"
               }`}
             >
               Round {r}
@@ -125,10 +125,10 @@ export function PoolSettingsForm({
       </div>
 
       {/* Features */}
-      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
         <div>
-          <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Active Features</h3>
-          <p className="mt-1 text-xs text-white/50">
+          <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Active Features</h3>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">
             Choose which features are available to your pool members. Disabled features are hidden from all members.
           </p>
         </div>
@@ -152,17 +152,17 @@ export function PoolSettingsForm({
                 className={`rounded-xl border p-4 cursor-pointer transition text-left ${
                   value
                     ? "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10"
-                    : "border-white/10 bg-white/[0.03] opacity-60"
+                    : "border-[var(--border)] bg-[var(--bg-card)] opacity-60"
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl leading-none">{f.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-bold text-white">{f.label}</p>
+                      <p className="text-sm font-bold text-[var(--text-primary)]">{f.label}</p>
                       <span
                         className={`shrink-0 mt-0.5 inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          value ? "bg-[var(--steelers-gold)]" : "bg-white/15"
+                          value ? "bg-[var(--steelers-gold)]" : "bg-[var(--bg-card)]"
                         }`}
                       >
                         <span
@@ -172,7 +172,7 @@ export function PoolSettingsForm({
                         />
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-white/50 leading-snug">{f.description}</p>
+                    <p className="mt-1 text-xs text-[var(--text-muted)] leading-snug">{f.description}</p>
                   </div>
                 </div>
               </button>
@@ -182,9 +182,9 @@ export function PoolSettingsForm({
       </div>
 
       {/* Scoring Mode */}
-      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Scoring Mode</h3>
-        <div className="flex rounded-lg overflow-hidden border border-white/10">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Scoring Mode</h3>
+        <div className="flex rounded-lg overflow-hidden border border-[var(--border)]">
           <button
             onClick={() => {
               if (scoringMode === "custom") {
@@ -197,8 +197,8 @@ export function PoolSettingsForm({
             }}
             className={`flex-1 px-4 py-2.5 text-sm font-semibold transition ${
               scoringMode === "standard"
-                ? "bg-blue-500/20 text-blue-400"
-                : "bg-white/5 text-white/50 hover:text-white/60"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             Standard Scoring
@@ -212,14 +212,14 @@ export function PoolSettingsForm({
             }}
             className={`flex-1 px-4 py-2.5 text-sm font-semibold transition ${
               scoringMode === "custom"
-                ? "bg-amber-500/20 text-amber-400"
-                : "bg-white/5 text-white/50 hover:text-white/60"
+                ? "bg-amber-100 text-amber-700"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             Custom Scoring
           </button>
         </div>
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-[var(--text-muted)]">
           {scoringMode === "standard"
             ? "Using official point values. Your pool is eligible for cross-pool comparison."
             : "Custom point values active. Your pool will show a Custom Rules badge."}
@@ -227,12 +227,12 @@ export function PoolSettingsForm({
       </div>
 
       {/* Point values */}
-      <div className="bg-white/8 border border-white/[0.12] rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Mock Draft Points</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Mock Draft Points</h3>
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(pointValues).map(([key, val]) => (
             <div key={key}>
-              <label className="block text-xs text-white/50 mb-1 capitalize">
+              <label className="block text-xs text-[var(--text-muted)] mb-1 capitalize">
                 {key.replace(/([A-Z])/g, " $1")}
               </label>
               <input
@@ -245,17 +245,17 @@ export function PoolSettingsForm({
                 }
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
-                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
-                    : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
+                    ? "bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--steelers-gold)]"
+                    : "bg-[var(--bg-card)] border-[var(--border-light)] text-[var(--text-muted)] cursor-not-allowed"
                 }`}
               />
             </div>
           ))}
         </div>
 
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider pt-4">Live Prediction Points</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider pt-4">Live Prediction Points</h3>
         <div>
-          <label className="block text-xs text-white/50 mb-1">Correct Player</label>
+          <label className="block text-xs text-[var(--text-muted)] mb-1">Correct Player</label>
           <input
             type="number"
             min={0}
@@ -266,17 +266,17 @@ export function PoolSettingsForm({
             }
             className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
               isCustom
-                ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
-                : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
+                ? "bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--steelers-gold)]"
+                : "bg-[var(--bg-card)] border-[var(--border-light)] text-[var(--text-muted)] cursor-not-allowed"
             }`}
           />
         </div>
 
-        <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider pt-4">Trivia Points</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider pt-4">Trivia Points</h3>
         <div className="grid grid-cols-3 gap-4">
           {(["easy", "medium", "hard"] as const).map((diff) => (
             <div key={diff}>
-              <label className="block text-xs text-white/50 mb-1 capitalize">{diff}</label>
+              <label className="block text-xs text-[var(--text-muted)] mb-1 capitalize">{diff}</label>
               <input
                 type="number"
                 min={0}
@@ -287,8 +287,8 @@ export function PoolSettingsForm({
                 }
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
                   isCustom
-                    ? "bg-white/5 border-white/10 text-white focus:border-[var(--steelers-gold)]"
-                    : "bg-white/[0.02] border-white/8 text-white/40 cursor-not-allowed"
+                    ? "bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--steelers-gold)]"
+                    : "bg-[var(--bg-card)] border-[var(--border-light)] text-[var(--text-muted)] cursor-not-allowed"
                 }`}
               />
             </div>
@@ -306,19 +306,19 @@ export function PoolSettingsForm({
       </button>
 
       {/* Danger zone */}
-      <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-red-400 uppercase tracking-wider">Danger Zone</h3>
+      <div className="bg-red-500/5 border border-red-200 rounded-xl p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-red-700 uppercase tracking-wider">Danger Zone</h3>
         <div className="flex gap-3 flex-wrap">
           <button
             onClick={handleLock}
-            className="rounded-lg border border-yellow-500/30 px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-500/10 transition"
+            className="rounded-lg border border-yellow-200 px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 transition"
           >
             Lock Pool
           </button>
           {isCommissioner && (
             <button
               onClick={handleDelete}
-              className="rounded-lg border border-red-500/30 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition"
+              className="rounded-lg border border-red-200 px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition"
             >
               Delete Pool
             </button>

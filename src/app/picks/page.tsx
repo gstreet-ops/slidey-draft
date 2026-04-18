@@ -109,19 +109,19 @@ export default async function PicksPage() {
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
-          className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           MOCK DRAFTS
         </h1>
-        <p className="mt-2 text-sm text-white/50">
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
           {poolName ? `${poolName} \u2014 2026 NFL Mock Draft` : "2026 NFL Mock Draft"}
         </p>
 
         {/* Your Mock Draft */}
         <section className="mt-8">
           <h2
-            className="text-lg font-bold text-white tracking-wide mb-3"
+            className="text-lg font-bold text-[var(--text-primary)] tracking-wide mb-3"
             style={{ fontFamily: "var(--font-display)" }}
           >
             YOUR MOCK DRAFT
@@ -130,7 +130,7 @@ export default async function PicksPage() {
           {myBoard && myBoardData ? (
             <Link
               href="/my-board"
-              className="group block rounded-xl border border-white/[0.12] bg-white/8 p-5 hover:border-[var(--slidey)]/40 hover:bg-white/10 transition sm:p-6"
+              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 hover:border-[var(--slidey)]/40 hover:bg-[var(--bg-card)] transition sm:p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
@@ -138,19 +138,19 @@ export default async function PicksPage() {
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
                         isPublished
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-yellow-500/20 text-yellow-400"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
                       {isPublished ? "Published" : "Draft"}
                     </span>
-                    <span className="text-xs text-white/50">{myPickCount}/32 picks</span>
+                    <span className="text-xs text-[var(--text-muted)]">{myPickCount}/32 picks</span>
                   </div>
-                  <p className="mt-2 text-base font-bold text-white sm:text-lg">
+                  <p className="mt-2 text-base font-bold text-[var(--text-primary)] sm:text-lg">
                     {myBoardData.board.title || "Your Mock Draft"}
                   </p>
                   {myGrade && (
-                    <p className="mt-1 text-xs text-white/50">
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">
                       {myGrade.steals} steal{myGrade.steals !== 1 ? "s" : ""} &middot;{" "}
                       {myGrade.reaches} reach{myGrade.reaches !== 1 ? "es" : ""}
                     </p>
@@ -174,12 +174,12 @@ export default async function PicksPage() {
           ) : (
             <Link
               href="/my-board"
-              className="group block rounded-xl border-2 border-dashed border-white/20 bg-white/[0.02] p-6 text-center hover:border-[var(--slidey)]/50 hover:bg-white/[0.05] transition sm:p-8"
+              className="group block rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--bg-card)] p-6 text-center hover:border-[var(--slidey)]/50 hover:bg-[var(--bg-card)] transition sm:p-8"
             >
-              <p className="text-base font-bold text-white/80 group-hover:text-[var(--slidey)] transition sm:text-lg">
+              <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition sm:text-lg">
                 + Start Your Mock Draft
               </p>
-              <p className="mt-2 text-sm text-white/50">
+              <p className="mt-2 text-sm text-[var(--text-muted)]">
                 Build your 32-pick board and publish it as your pool entry.
               </p>
             </Link>
@@ -189,7 +189,7 @@ export default async function PicksPage() {
         {/* Pool Mock Drafts */}
         <section className="mt-10">
           <h2
-            className="text-lg font-bold text-white tracking-wide mb-3"
+            className="text-lg font-bold text-[var(--text-primary)] tracking-wide mb-3"
             style={{ fontFamily: "var(--font-display)" }}
           >
             POOL MOCK DRAFTS
@@ -201,27 +201,27 @@ export default async function PicksPage() {
                 <Link
                   key={pb.boardId}
                   href={`/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-white/[0.12] bg-white/8 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/10 transition"
+                  className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 hover:border-[var(--slidey)]/40 hover:bg-[var(--bg-card)] transition"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">
+                      <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition truncate">
                         {pb.userName}
                       </p>
-                      <p className="text-xs text-white/50 mt-1">{pb.pickCount}/32 picks</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-1">{pb.pickCount}/32 picks</p>
                       {pb.grade && (
-                        <p className="mt-0.5 text-[10px] text-white/50">
+                        <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
                           {pb.grade.steals} steal{pb.grade.steals !== 1 ? "s" : ""} &middot;{" "}
                           {pb.grade.reaches} reach{pb.grade.reaches !== 1 ? "es" : ""}
                         </p>
                       )}
                       {pb.latestNote && (
-                        <p className="mt-2 text-xs italic text-white/60 line-clamp-2">
+                        <p className="mt-2 text-xs italic text-[var(--text-secondary)] line-clamp-2">
                           &ldquo;{pb.latestNote.length > 100 ? pb.latestNote.slice(0, 100) + "\u2026" : pb.latestNote}&rdquo;
                         </p>
                       )}
                       {pb.noteCount > 0 && !pb.latestNote && (
-                        <p className="mt-0.5 text-[10px] text-white/50">
+                        <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
                           {"\uD83D\uDCAC"} {pb.noteCount} note{pb.noteCount !== 1 ? "s" : ""}
                         </p>
                       )}
@@ -236,8 +236,8 @@ export default async function PicksPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-white/[0.12] bg-white/8 p-6 text-center">
-              <p className="text-sm text-white/60">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 text-center">
+              <p className="text-sm text-[var(--text-secondary)]">
                 {userPools.length === 0
                   ? "Join a pool to see your friends' mock drafts here."
                   : "No one in your pool has published a mock yet. Be the first!"}

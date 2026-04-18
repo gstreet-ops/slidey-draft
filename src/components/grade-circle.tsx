@@ -6,27 +6,27 @@ function gradeCircleColor(grade: LetterGrade): string {
   switch (grade) {
     case "A+":
     case "A":
-      return "border-green-500/30 bg-green-500/20 text-green-400";
+      return "border-green-200 bg-green-100 text-green-700";
     case "B+":
     case "B":
-      return "border-blue-400/30 bg-blue-400/20 text-blue-400";
+      return "border-blue-200 bg-blue-100 text-blue-700";
     case "C+":
     case "C":
-      return "border-yellow-400/30 bg-yellow-400/20 text-yellow-400";
+      return "border-yellow-200 bg-yellow-100 text-yellow-700";
     case "D":
-      return "border-orange-400/30 bg-orange-400/20 text-orange-400";
+      return "border-orange-200 bg-orange-100 text-orange-700";
     case "F":
-      return "border-red-500/30 bg-red-500/20 text-red-400";
+      return "border-red-200 bg-red-100 text-red-700";
   }
 }
 
 function gradeLabelColor(grade: LetterGrade): string {
   switch (grade) {
-    case "A+": case "A": return "text-green-400/70";
-    case "B+": case "B": return "text-blue-400/70";
-    case "C+": case "C": return "text-yellow-400/70";
-    case "D": return "text-orange-400/70";
-    case "F": return "text-red-400/70";
+    case "A+": case "A": return "text-green-700/70";
+    case "B+": case "B": return "text-blue-700/70";
+    case "C+": case "C": return "text-yellow-700/70";
+    case "D": return "text-orange-700/70";
+    case "F": return "text-red-700/70";
   }
 }
 

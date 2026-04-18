@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/5 px-4 py-4 sm:px-6">
+    <footer className="mt-auto border-t border-[var(--border-light)] px-4 py-4 sm:px-6">
       <div className="mx-auto max-w-5xl flex items-center justify-between">
         <p className="text-xs text-white/20">
           &copy; {new Date().getFullYear()} Draft Day Challenge
         </p>
-        <Link href="/guide" className="text-xs text-white/20 hover:text-white/50 transition">
+        <Link href="/guide" className="text-xs text-white/20 hover:text-[var(--text-muted)] transition">
           How to Play
         </Link>
       </div>

@@ -5,18 +5,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        steelers: {
-          gold: "#FFB612",
-          black: "#101820",
-          white: "#FFFFFF",
-          darkGold: "#CC9200",
+        accent: {
+          primary: "var(--accent-primary)",
+          secondary: "var(--accent-secondary)",
+          text: "var(--accent-text)",
+          light: "var(--accent-light)",
         },
         surface: {
-          dark: "#1a2433",
-          card: "#243040",
-          elevated: "#2d3a4d",
+          page: "var(--bg-page)",
+          card: "var(--bg-card)",
+          section: "var(--bg-section)",
+          nav: "var(--bg-nav)",
+          // Legacy keys retained so existing utilities like `bg-surface-dark` keep compiling
+          dark: "var(--bg-section)",
+          elevated: "var(--bg-card)",
         },
-        slidey: "#FFB612",
+        content: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+        },
+        border: {
+          DEFAULT: "var(--border)",
+          light: "var(--border-light)",
+        },
+        // Steelers/slidey legacy aliases — kept so any leftover `bg-steelers-gold`
+        // or `text-slidey` still compiles and renders the active accent.
+        steelers: {
+          gold: "var(--accent-primary)",
+          black: "var(--bg-page)",
+          white: "#FFFFFF",
+          darkGold: "var(--accent-secondary)",
+        },
+        slidey: "var(--accent-primary)",
       },
       fontFamily: {
         display: ["Bebas Neue", "sans-serif"],

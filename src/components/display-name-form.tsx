@@ -34,7 +34,7 @@ export function DisplayNameForm({ initialName }: { initialName: string }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">
-      <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider">
+      <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
         Display Name
       </label>
       <div className="flex flex-col gap-2 sm:flex-row">
@@ -44,7 +44,7 @@ export function DisplayNameForm({ initialName }: { initialName: string }) {
           onChange={(e) => setName(e.target.value)}
           maxLength={80}
           required
-          className="flex-1 rounded-lg border border-white/[0.12] bg-white/5 px-4 py-2.5 text-white placeholder:text-white/40 focus:border-[var(--accent-primary)] focus:outline-none"
+          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
         />
         <button
           type="submit"

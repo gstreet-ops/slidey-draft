@@ -35,7 +35,7 @@ export function PoolThemeSettings({ poolId, currentPrimary, currentSecondary }: 
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-semibold text-white/50 uppercase tracking-wider block mb-2">
+        <label className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider block mb-2">
           Primary Color
         </label>
         <div className="flex flex-wrap gap-2">
@@ -51,8 +51,8 @@ export function PoolThemeSettings({ poolId, currentPrimary, currentSecondary }: 
           ))}
           <button
             onClick={() => setPrimary("")}
-            className={`h-8 w-8 rounded-full border-2 transition flex items-center justify-center text-xs text-white/50 ${
-              !primary ? "border-white" : "border-white/10 hover:border-white/30"
+            className={`h-8 w-8 rounded-full border-2 transition flex items-center justify-center text-xs text-[var(--text-muted)] ${
+              !primary ? "border-white" : "border-[var(--border)] hover:border-white/30"
             }`}
             style={{ backgroundColor: "#333" }}
           >
@@ -62,13 +62,13 @@ export function PoolThemeSettings({ poolId, currentPrimary, currentSecondary }: 
         {primary && (
           <div className="mt-2 flex items-center gap-2">
             <div className="h-5 w-5 rounded" style={{ backgroundColor: primary }} />
-            <span className="text-xs text-white/50">{primary}</span>
+            <span className="text-xs text-[var(--text-muted)]">{primary}</span>
           </div>
         )}
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-white/50 uppercase tracking-wider block mb-2">
+        <label className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider block mb-2">
           Secondary Color
         </label>
         <div className="flex flex-wrap gap-2">
@@ -84,8 +84,8 @@ export function PoolThemeSettings({ poolId, currentPrimary, currentSecondary }: 
           ))}
           <button
             onClick={() => setSecondary("")}
-            className={`h-8 w-8 rounded-full border-2 transition flex items-center justify-center text-xs text-white/50 ${
-              !secondary ? "border-white" : "border-white/10 hover:border-white/30"
+            className={`h-8 w-8 rounded-full border-2 transition flex items-center justify-center text-xs text-[var(--text-muted)] ${
+              !secondary ? "border-white" : "border-[var(--border)] hover:border-white/30"
             }`}
             style={{ backgroundColor: "#333" }}
           >
@@ -97,7 +97,7 @@ export function PoolThemeSettings({ poolId, currentPrimary, currentSecondary }: 
       <button
         onClick={handleSave}
         disabled={saving}
-        className="rounded-lg bg-[var(--slidey)] px-6 py-2.5 text-sm font-semibold text-white hover:opacity-80 transition disabled:opacity-50"
+        className="rounded-lg bg-[var(--slidey)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-80 transition disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save Theme"}
       </button>

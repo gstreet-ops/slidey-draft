@@ -39,7 +39,7 @@ export function PlayerAvatar({
   if (!player.imageUrl || imgError) {
     return (
       <div
-        className="flex shrink-0 items-center justify-center rounded-full font-semibold text-white"
+        className="flex shrink-0 items-center justify-center rounded-full font-semibold text-[var(--text-primary)]"
         style={{
           width: size,
           height: size,

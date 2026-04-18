@@ -84,31 +84,31 @@ export function SimulationControls({ initialState }: { initialState: SimState })
   return (
     <div className="space-y-6">
       {/* Progress bar */}
-      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-white">
+          <span className="text-sm font-semibold text-[var(--text-primary)]">
             {state.picksAnnounced} / {state.totalPicks} picks announced
           </span>
-          <span className="text-sm text-white/50">{progress}%</span>
+          <span className="text-sm text-[var(--text-muted)]">{progress}%</span>
         </div>
-        <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-3 rounded-full bg-[var(--bg-card)] overflow-hidden">
           <div
             className="h-full rounded-full bg-[var(--steelers-gold)] transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
         {error && (
-          <div className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+          <div className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
             Error: {error}
           </div>
         )}
         {lastPick && (
-          <p className="mt-2 text-sm text-green-400">
+          <p className="mt-2 text-sm text-green-700">
             Last announced: {lastPick}
           </p>
         )}
         {state.nextProspect && (
-          <p className="mt-1 text-xs text-white/50">
+          <p className="mt-1 text-xs text-[var(--text-muted)]">
             Next up: Pick #{state.nextPickNumber} &mdash; {state.nextProspect.name} ({state.nextProspect.position})
           </p>
         )}
@@ -119,7 +119,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         <button
           onClick={handleNextPick}
           disabled={running || state.picksAnnounced >= state.totalPicks}
-          className="rounded-lg bg-green-600 px-6 py-3 text-sm font-bold text-white hover:bg-green-500 transition disabled:opacity-40"
+          className="rounded-lg bg-green-600 px-6 py-3 text-sm font-bold text-[var(--text-primary)] hover:bg-green-500 transition disabled:opacity-40"
         >
           Announce Next Pick
         </button>
@@ -135,18 +135,18 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         ) : (
           <button
             onClick={handleStop}
-            className="rounded-lg bg-red-600 px-6 py-3 text-sm font-bold text-white hover:bg-red-500 transition"
+            className="rounded-lg bg-red-600 px-6 py-3 text-sm font-bold text-[var(--text-primary)] hover:bg-red-500 transition"
           >
             Stop
           </button>
         )}
 
         <div className="flex items-center gap-2">
-          <label className="text-xs text-white/50">Speed:</label>
+          <label className="text-xs text-[var(--text-muted)]">Speed:</label>
           <select
             value={speed}
             onChange={(e) => setSpeed(Number(e.target.value))}
-            className="rounded bg-white/10 border border-white/20 px-2 py-1.5 text-sm text-white"
+            className="rounded bg-[var(--bg-card)] border border-[var(--border)] px-2 py-1.5 text-sm text-[var(--text-primary)]"
           >
             <option value={1}>1s (fast)</option>
             <option value={3}>3s</option>
@@ -158,7 +158,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         <button
           onClick={handleReset}
           disabled={running}
-          className="rounded-lg border border-red-500/30 px-4 py-3 text-sm font-semibold text-red-400 hover:bg-red-500/10 transition disabled:opacity-40"
+          className="rounded-lg border border-red-200 px-4 py-3 text-sm font-semibold text-red-700 hover:bg-red-50 transition disabled:opacity-40"
         >
           Reset
         </button>
@@ -166,27 +166,27 @@ export function SimulationControls({ initialState }: { initialState: SimState })
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Leaderboard */}
-        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white/50 mb-3">Leaderboard</h2>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Leaderboard</h2>
           {state.leaderboard.length === 0 ? (
-            <p className="text-sm text-white/40">No scores yet — announce a pick to start.</p>
+            <p className="text-sm text-[var(--text-muted)]">No scores yet — announce a pick to start.</p>
           ) : (
             <div className="space-y-2">
               {state.leaderboard.map((entry, i) => (
-                <div key={entry.title} className="flex items-center gap-3 rounded-lg bg-white/8 px-3 py-2">
+                <div key={entry.title} className="flex items-center gap-3 rounded-lg bg-[var(--bg-card)] px-3 py-2">
                   <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-                    i === 0 ? "bg-yellow-500/20 text-yellow-400" :
+                    i === 0 ? "bg-yellow-100 text-yellow-700" :
                     i === 1 ? "bg-gray-400/20 text-gray-300" :
-                    i === 2 ? "bg-orange-500/20 text-orange-400" :
-                    "bg-white/5 text-white/50"
+                    i === 2 ? "bg-orange-100 text-orange-700" :
+                    "bg-[var(--bg-card)] text-[var(--text-muted)]"
                   }`}>
                     {i + 1}
                   </span>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">{entry.title}</p>
-                    <p className="text-xs text-white/50">{entry.correctExact} exact &middot; {entry.correctPlayer} correct</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{entry.title}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{entry.correctExact} exact &middot; {entry.correctPlayer} correct</p>
                   </div>
-                  <span className="text-lg font-bold text-white">{entry.totalScore}</span>
+                  <span className="text-lg font-bold text-[var(--text-primary)]">{entry.totalScore}</span>
                 </div>
               ))}
             </div>
@@ -194,18 +194,18 @@ export function SimulationControls({ initialState }: { initialState: SimState })
         </div>
 
         {/* Announce log */}
-        <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white/50 mb-3">Draft Feed</h2>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Draft Feed</h2>
           {state.announceLog.length === 0 ? (
-            <p className="text-sm text-white/40">No picks announced yet.</p>
+            <p className="text-sm text-[var(--text-muted)]">No picks announced yet.</p>
           ) : (
             <div className="space-y-1 max-h-[400px] overflow-y-auto">
               {[...state.announceLog].reverse().map((pick) => (
                 <div key={pick.pickNumber} className="flex items-center gap-2 rounded px-2 py-1.5 text-sm">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-white/10 text-xs font-bold text-white">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-[var(--bg-card)] text-xs font-bold text-[var(--text-primary)]">
                     {pick.pickNumber}
                   </span>
-                  <span className="font-semibold text-white">{pick.playerName}</span>
+                  <span className="font-semibold text-[var(--text-primary)]">{pick.playerName}</span>
                   <span className="text-xs text-[var(--steelers-gold)]">{pick.playerPosition}</span>
                 </div>
               ))}

@@ -12,10 +12,10 @@ const EDGE_POS = ["EDGE", "LB", "OLB", "ILB"];
 
 function fortyTimeColor(position: string, time: number): string {
   const pos = position.toUpperCase();
-  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-400/70";
-  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-400/70";
-  if (EDGE_POS.includes(pos) && time <= 4.60) return "text-green-400/70";
-  return "text-white/50";
+  if (SPEED_POS.includes(pos) && time <= 4.40) return "text-green-700/70";
+  if (SPEED_POS.includes(pos) && time <= 4.50) return "text-blue-700/70";
+  if (EDGE_POS.includes(pos) && time <= 4.60) return "text-green-700/70";
+  return "text-[var(--text-muted)]";
 }
 
 type Pick = {
@@ -47,17 +47,17 @@ type ScoreInfo = {
 };
 
 const MATCH_BG: Record<string, string> = {
-  exact: "border-green-500/30 bg-green-500/10",
-  close: "border-yellow-500/30 bg-yellow-500/10",
-  far: "border-orange-500/30 bg-orange-500/10",
-  miss: "border-red-500/30 bg-red-500/10",
+  exact: "border-green-200 bg-green-50",
+  close: "border-yellow-200 bg-yellow-50",
+  far: "border-orange-200 bg-orange-50",
+  miss: "border-red-200 bg-red-50",
 };
 
 const MATCH_BADGE: Record<string, { text: string; color: string }> = {
-  exact: { text: "+10", color: "text-green-400" },
-  close: { text: "+5", color: "text-yellow-400" },
-  far: { text: "+3", color: "text-orange-400" },
-  miss: { text: "0", color: "text-red-400" },
+  exact: { text: "+10", color: "text-green-700" },
+  close: { text: "+5", color: "text-yellow-700" },
+  far: { text: "+3", color: "text-orange-700" },
+  miss: { text: "0", color: "text-red-700" },
 };
 
 export function PublicPickCard({
@@ -70,7 +70,7 @@ export function PublicPickCard({
   onPlayerClick?: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const bgClass = score?.matchType ? MATCH_BG[score.matchType] : "border-white/[0.12] bg-white/8";
+  const bgClass = score?.matchType ? MATCH_BG[score.matchType] : "border-[var(--border)] bg-[var(--bg-card)]";
   const badge = score?.matchType ? MATCH_BADGE[score.matchType] : null;
   const tags = extractTraitTags(pick.playerNotes, pick.playerPosition);
   const hasExpandContent = pick.playerNotes || pick.analysis;
@@ -115,10 +115,10 @@ export function PublicPickCard({
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               onClick={onPlayerClick}
-              className={`text-sm font-bold text-white hover:text-[var(--steelers-gold)] transition sm:text-lg ${pick.autoFilled ? "italic" : ""}`}
+              className={`text-sm font-bold text-[var(--text-primary)] hover:text-[var(--steelers-gold)] transition sm:text-lg ${pick.autoFilled ? "italic" : ""}`}
             >
               {pick.playerName}
-              {pick.autoFilled && <span className="ml-1.5 text-[10px] text-yellow-400/70 font-medium not-italic sm:text-xs">BPA</span>}
+              {pick.autoFilled && <span className="ml-1.5 text-[10px] text-yellow-700/70 font-medium not-italic sm:text-xs">BPA</span>}
             </button>
             <span className="rounded-full bg-[var(--steelers-gold)]/20 px-2 py-0.5 text-[10px] font-semibold text-[var(--steelers-gold)] sm:text-xs">
               {pick.playerPosition}
@@ -129,22 +129,22 @@ export function PublicPickCard({
               </span>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-1.5 text-xs text-white/50 sm:text-sm sm:gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--text-muted)] sm:text-sm sm:gap-2">
             <span>{pick.playerSchool}</span>
             <span className="text-white/20">&rarr;</span>
             <span>{pick.teamName}</span>
-            <span className="text-[10px] text-white/40 sm:text-xs">({pick.teamAbbreviation})</span>
+            <span className="text-[10px] text-[var(--text-muted)] sm:text-xs">({pick.teamAbbreviation})</span>
             {(() => {
               const nm = checkNeedMatch(pick.playerPosition, pick.teamNeeds);
-              if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-400">● Top Need</span>;
-              if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-400/80">● Key Need</span>;
-              if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-400/60">● Fits Need</span>;
-              if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-400/60">○ Off-need</span>;
+              if (nm.tier === "top" && nm.needIndex === 0) return <span className="text-[9px] font-semibold text-green-700">● Top Need</span>;
+              if (nm.tier === "top") return <span className="text-[9px] font-semibold text-green-700/80">● Key Need</span>;
+              if (nm.tier === "match" && nm.needIndex !== null) return <span className="text-[9px] font-semibold text-sky-700/60">● Fits Need</span>;
+              if (nm.tier === "off") return <span className="text-[9px] font-semibold text-amber-700/60">○ Off-need</span>;
               return null;
             })()}
           </div>
           {pick.teamNeeds && pick.teamNeeds.length > 0 && (
-            <span className="mt-0.5 block text-[9px] text-white/30">
+            <span className="mt-0.5 block text-[9px] text-[var(--text-muted)]">
               Needs: {pick.teamNeeds.slice(0, 3).join(", ")}
             </span>
           )}
@@ -157,15 +157,15 @@ export function PublicPickCard({
             </div>
           )}
           {pick.analysis && (
-            <div className="mt-2 rounded-md bg-amber-950/40 border border-amber-500/20 px-3 py-2">
-              <span className="text-lg text-amber-400/30 leading-none font-serif">{"\u201C"}</span>
+            <div className="mt-2 rounded-md bg-amber-950/40 border border-amber-200 px-3 py-2">
+              <span className="text-lg text-amber-700/30 leading-none font-serif">{"\u201C"}</span>
               <p className="text-xs text-amber-100/80 italic line-clamp-2">{pick.analysis}</p>
-              <p className="text-[10px] text-amber-400/40 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
+              <p className="text-[10px] text-amber-700/40 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
             </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
-            <p className="mt-0.5 text-[10px] text-white/50 sm:text-xs">
-              Actual: <span className="text-white/60">{score.actualPlayerName}</span> ({score.actualPlayerPosition}, {score.actualPlayerSchool})
+            <p className="mt-0.5 text-[10px] text-[var(--text-muted)] sm:text-xs">
+              Actual: <span className="text-[var(--text-secondary)]">{score.actualPlayerName}</span> ({score.actualPlayerPosition}, {score.actualPlayerSchool})
             </p>
           )}
         </div>
@@ -179,7 +179,7 @@ export function PublicPickCard({
                 <span key={t.label} className={`rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${t.color}`}>{t.label}</span>
               ))}
               {tags.length > 2 && (
-                <span className="text-xs text-white/50">+{tags.length - 2}</span>
+                <span className="text-xs text-[var(--text-muted)]">+{tags.length - 2}</span>
               )}
             </div>
           )}
@@ -187,7 +187,7 @@ export function PublicPickCard({
           {hasExpandContent && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-white/50 hover:bg-white/10 hover:text-white transition"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
             >
               <svg
                 width="16"
@@ -207,12 +207,12 @@ export function PublicPickCard({
 
       {/* Expanded content */}
       {expanded && hasExpandContent && (
-        <div className="border-t border-white/10 px-4 py-3 space-y-3 sm:px-5 sm:py-4">
+        <div className="border-t border-[var(--border)] px-4 py-3 space-y-3 sm:px-5 sm:py-4">
           {pick.analysis && (
-            <div className="rounded-lg bg-amber-950/40 border border-amber-500/20 px-4 py-3">
-              <span className="text-2xl text-amber-400/25 font-serif leading-none">{"\u201C"}</span>
+            <div className="rounded-lg bg-amber-950/40 border border-amber-200 px-4 py-3">
+              <span className="text-2xl text-amber-700/25 font-serif leading-none">{"\u201C"}</span>
               <p className="text-sm text-amber-100/80 italic leading-relaxed">{pick.analysis}</p>
-              <p className="text-[10px] text-amber-400/40 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
+              <p className="text-[10px] text-amber-700/40 uppercase tracking-wider font-semibold mt-2">Author&apos;s Take</p>
             </div>
           )}
           {(() => {
@@ -226,15 +226,15 @@ export function PublicPickCard({
             return (
               <div>
                 <h4 className="text-[9px] font-bold uppercase tracking-wider text-white/20 mb-1">Team Needs Analysis</h4>
-                <p className="text-sm text-white/50 leading-relaxed">{analysis}</p>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">{analysis}</p>
               </div>
             );
           })()}
           {pick.consensusLow != null && pick.consensusHigh != null && (
             <p className={`text-xs ${
-              pick.pickNumber > pick.consensusHigh ? "text-green-400/60" :
-              pick.pickNumber < pick.consensusLow ? "text-amber-400/60" :
-              "text-white/40"
+              pick.pickNumber > pick.consensusHigh ? "text-green-700/60" :
+              pick.pickNumber < pick.consensusLow ? "text-amber-700/60" :
+              "text-[var(--text-muted)]"
             }`}>
               Consensus range: {pick.consensusLow}-{pick.consensusHigh}
               {pick.pickNumber > pick.consensusHigh && " — Steal at #" + pick.pickNumber}
@@ -244,7 +244,7 @@ export function PublicPickCard({
           {pick.playerNotes && (
             <div>
               <h4 className="text-[9px] font-bold uppercase tracking-wider text-white/20 mb-1">Scouting Report</h4>
-              <p className="text-sm text-white/50 leading-relaxed">{pick.playerNotes}</p>
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed">{pick.playerNotes}</p>
             </div>
           )}
         </div>

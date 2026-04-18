@@ -39,12 +39,12 @@ export function JoinPoolForm() {
           setError("");
         }}
         placeholder="Enter pool invite code"
-        className="rounded-lg bg-white/8 border border-white/[0.12] px-4 py-2.5 text-sm text-white font-mono placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)] w-48"
+        className="rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text-primary)] font-mono placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)] w-48"
       />
       <button
         type="submit"
         disabled={loading || !code.trim()}
-        className="rounded-lg border border-white/20 px-5 py-2.5 text-sm font-semibold text-white hover:border-white/40 transition disabled:opacity-50"
+        className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:border-white/40 transition disabled:opacity-50"
       >
         {loading ? "..." : "Join Pool"}
       </button>

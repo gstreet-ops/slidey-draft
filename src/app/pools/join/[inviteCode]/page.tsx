@@ -19,8 +19,8 @@ export default async function JoinPoolPage({
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">Pool Not Found</h1>
-          <p className="text-white/60">This invite link is invalid.</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Pool Not Found</h1>
+          <p className="text-[var(--text-secondary)]">This invite link is invalid.</p>
           <Link href="/" className="text-[var(--steelers-gold)] hover:underline text-sm">
             Go Home
           </Link>
@@ -36,9 +36,9 @@ export default async function JoinPoolPage({
   if (session.user.status !== "active") {
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
-          <p className="text-white/60">
+        <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-4">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{pool.name}</h1>
+          <p className="text-[var(--text-secondary)]">
             You need an invite to participate. Enter your invite code or ask a friend for one.
           </p>
           <Link href="/" className="text-[var(--steelers-gold)] hover:underline text-sm">
@@ -60,8 +60,8 @@ export default async function JoinPoolPage({
     return (
       <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
-          <p className="text-white/60">This pool is no longer accepting members.</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{pool.name}</h1>
+          <p className="text-[var(--text-secondary)]">This pool is no longer accepting members.</p>
         </div>
       </div>
     );
@@ -69,10 +69,10 @@ export default async function JoinPoolPage({
 
   return (
     <div className="min-h-screen bg-[var(--steelers-black)] flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white/8 border border-white/[0.12] rounded-xl p-8 text-center space-y-6">
-        <h1 className="text-2xl font-bold text-white">{pool.name}</h1>
-        {pool.description && <p className="text-white/50 text-sm">{pool.description as string}</p>}
-        <p className="text-white/50 text-sm">{memberCount} member{memberCount !== 1 ? "s" : ""}</p>
+      <div className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-8 text-center space-y-6">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">{pool.name}</h1>
+        {pool.description && <p className="text-[var(--text-muted)] text-sm">{pool.description as string}</p>}
+        <p className="text-[var(--text-muted)] text-sm">{memberCount} member{memberCount !== 1 ? "s" : ""}</p>
         <JoinPoolButton inviteCode={inviteCode} poolId={pool.id} />
       </div>
     </div>

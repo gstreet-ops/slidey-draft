@@ -14,7 +14,7 @@ type Props = {
   enabledFeatures?: string[];
 };
 
-export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUrl, teamName, enabledFeatures }: Props) {
+export function SiteNav({ isLoggedIn, isAdmin, userInitial, teamLogoUrl, teamName, enabledFeatures }: Props) {
   const [open, setOpen] = useState(false);
 
   const enabled = new Set(enabledFeatures ?? ["mockDraft", "livePredictions", "trivia", "propBets", "watchParty"]);
@@ -43,39 +43,36 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
   ];
 
   return (
-    <header className="border-b border-white/10 bg-[var(--steelers-black)]">
+    <header className="bg-[var(--bg-nav)] relative">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-        {/* Logo */}
         <Link
           href="/"
           className="text-lg font-bold text-white tracking-wider sm:text-xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
+          DRAFT DAY <span className="text-[var(--accent-primary)]">CHALLENGE</span>
         </Link>
 
-        {/* Desktop nav — primary links only */}
         <nav className="hidden items-center gap-1 md:flex">
           {primaryLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
+              className="rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition"
             >
               {l.label}
             </Link>
           ))}
-          {/* More dropdown for secondary */}
           <div className="relative group">
-            <button className="rounded-lg px-3 py-2 text-sm text-white/50 hover:bg-white/10 hover:text-white transition">
+            <button className="rounded-lg px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition">
               More
             </button>
-            <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--steelers-black)] p-1 shadow-xl group-hover:block">
+            <div className="absolute right-0 top-full z-50 hidden min-w-[160px] rounded-lg border border-white/10 bg-[var(--bg-nav)] p-1 shadow-xl group-hover:block">
               {secondaryLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="block rounded-md px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition"
+                  className="block rounded-md px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition"
                 >
                   {l.label}
                 </Link>
@@ -85,23 +82,21 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* User avatar / team logo */}
           {isLoggedIn && (
             <Link href="/pools" className="hidden sm:block">
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-[var(--accent-text)]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent-primary)] text-xs font-bold text-[var(--accent-text)]">
                   {userInitial || "?"}
                 </div>
               )}
             </Link>
           )}
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setOpen(!open)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition md:hidden"
             aria-label="Toggle menu"
           >
             {open ? (
@@ -117,7 +112,16 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Accent gradient line under nav */}
+      <div
+        className="h-px w-full"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-primary) 40%, transparent), transparent)",
+        }}
+        aria-hidden
+      />
+
       {open && (
         <nav className="border-t border-white/10 bg-black/30 px-4 py-3 md:hidden">
           <div className="flex flex-col gap-0.5">
@@ -126,7 +130,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
                 key={l.href + l.label}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm text-white/60 hover:bg-white/10 hover:text-white transition min-h-[44px] flex items-center"
+                className="rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition min-h-[44px] flex items-center"
               >
                 {l.label}
               </Link>

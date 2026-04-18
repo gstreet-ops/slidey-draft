@@ -6,21 +6,21 @@ import { generateMockSummaryCommentary } from "@/lib/pick-commentary";
 
 function gradeCircleColor(grade: LetterGrade): string {
   switch (grade) {
-    case 'A+': case 'A': return "border-green-500/30 bg-green-500/20 text-green-400";
-    case 'B+': case 'B': return "border-blue-400/30 bg-blue-400/20 text-blue-400";
-    case 'C+': case 'C': return "border-yellow-400/30 bg-yellow-400/20 text-yellow-400";
-    case 'D': return "border-orange-400/30 bg-orange-400/20 text-orange-400";
-    case 'F': return "border-red-500/30 bg-red-500/20 text-red-400";
+    case 'A+': case 'A': return "border-green-200 bg-green-100 text-green-700";
+    case 'B+': case 'B': return "border-blue-200 bg-blue-100 text-blue-700";
+    case 'C+': case 'C': return "border-yellow-200 bg-yellow-100 text-yellow-700";
+    case 'D': return "border-orange-200 bg-orange-100 text-orange-700";
+    case 'F': return "border-red-200 bg-red-100 text-red-700";
   }
 }
 
 function gradeSummaryColor(grade: LetterGrade): string {
   switch (grade) {
-    case 'A+': case 'A': return "text-green-400/70";
-    case 'B+': case 'B': return "text-blue-400/70";
-    case 'C+': case 'C': return "text-yellow-400/70";
-    case 'D': return "text-orange-400/70";
-    case 'F': return "text-red-400/70";
+    case 'A+': case 'A': return "text-green-700/70";
+    case 'B+': case 'B': return "text-blue-700/70";
+    case 'C+': case 'C': return "text-yellow-700/70";
+    case 'D': return "text-orange-700/70";
+    case 'F': return "text-red-700/70";
   }
 }
 
@@ -39,12 +39,12 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4 animate-pulse">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 animate-pulse">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-full bg-white/10" />
+          <div className="h-16 w-16 rounded-full bg-[var(--bg-card)]" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-48 rounded bg-white/10" />
-            <div className="h-3 w-32 rounded bg-white/10" />
+            <div className="h-4 w-48 rounded bg-[var(--bg-card)]" />
+            <div className="h-3 w-32 rounded bg-[var(--bg-card)]" />
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
   if (!grade) return null;
 
   return (
-    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-4">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
       <div className="flex items-center gap-4">
         {/* Large grade circle */}
         <div
@@ -71,7 +71,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
         {/* Summary */}
         <div className="flex-1 min-w-0">
           <p
-            className="text-[10px] font-bold uppercase tracking-wider text-white/50"
+            className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]"
           >
             Your Mock Draft Grade
           </p>
@@ -79,7 +79,7 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
           {grade.pickPositions && (() => {
             const richSummary = generateMockSummaryCommentary(grade, grade.pickPositions);
             return richSummary !== grade.summary ? (
-              <p className="text-xs text-white/50 mt-1 line-clamp-2">{richSummary}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-2">{richSummary}</p>
             ) : null;
           })()}
         </div>
@@ -87,45 +87,45 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
         {/* Stats */}
         <div className="hidden sm:flex items-center gap-3 text-center shrink-0">
           <div>
-            <p className="text-sm font-bold text-green-400">{grade.steals}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Steals</p>
+            <p className="text-sm font-bold text-green-700">{grade.steals}</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Steals</p>
           </div>
           <div>
-            <p className="text-sm font-bold text-blue-400">{grade.solid}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Solid</p>
+            <p className="text-sm font-bold text-blue-700">{grade.solid}</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Solid</p>
           </div>
           <div>
-            <p className="text-sm font-bold text-yellow-400">{grade.reaches}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Reaches</p>
+            <p className="text-sm font-bold text-yellow-700">{grade.reaches}</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Reaches</p>
           </div>
           <div>
-            <p className="text-sm font-bold text-red-400">{grade.busts}</p>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Busts</p>
+            <p className="text-sm font-bold text-red-700">{grade.busts}</p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Busts</p>
           </div>
         </div>
       </div>
 
       {/* Mobile stats row */}
-      <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-white/10">
+      <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-[var(--border)]">
         <div className="text-center">
-          <p className="text-sm font-bold text-green-400">{grade.steals}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Steals</p>
+          <p className="text-sm font-bold text-green-700">{grade.steals}</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Steals</p>
         </div>
         <div className="text-center">
-          <p className="text-sm font-bold text-blue-400">{grade.solid}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Solid</p>
+          <p className="text-sm font-bold text-blue-700">{grade.solid}</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Solid</p>
         </div>
         <div className="text-center">
-          <p className="text-sm font-bold text-yellow-400">{grade.reaches}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Reaches</p>
+          <p className="text-sm font-bold text-yellow-700">{grade.reaches}</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Reaches</p>
         </div>
         <div className="text-center">
-          <p className="text-sm font-bold text-red-400">{grade.busts}</p>
-          <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">Busts</p>
+          <p className="text-sm font-bold text-red-700">{grade.busts}</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Busts</p>
         </div>
       </div>
 
-      <p className="text-[10px] text-white/40 mt-2">
+      <p className="text-[10px] text-[var(--text-muted)] mt-2">
         Based on ESPN prospect grades and consensus rankings
       </p>
     </div>

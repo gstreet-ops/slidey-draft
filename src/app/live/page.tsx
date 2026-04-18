@@ -73,7 +73,7 @@ export default async function LivePage() {
     <div className="min-h-screen bg-[var(--steelers-black)]">
       <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[var(--steelers-gold)]/[0.04] to-transparent" />
       {/* Status bar */}
-      <div className="border-b border-white/5 bg-black/10">
+      <div className="border-b border-[var(--border-light)] bg-black/10">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-1.5">
           <span className="flex items-center gap-1.5 text-xs">
             {locked ? (
@@ -90,7 +90,7 @@ export default async function LivePage() {
           </span>
           <div className="flex items-center gap-3">
             <SoundToggle />
-            {session?.user && <span className="text-xs text-white/50">{session.user.name || session.user.email}</span>}
+            {session?.user && <span className="text-xs text-[var(--text-muted)]">{session.user.name || session.user.email}</span>}
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default async function LivePage() {
         <div className="mx-auto max-w-[1400px] px-4 pt-4">
           <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-5 py-4">
             <h2 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Draft hasn&apos;t started yet</h2>
-            <p className="text-xs text-white/50 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               {activePool?.isCommissioner
                 ? "Use the simulation and trivia controls below to set up and test. Trivia auto-advances with each pick."
                 : "Come back when the draft is live to see picks, make predictions, and answer trivia."}
@@ -112,9 +112,9 @@ export default async function LivePage() {
       {/* No pool state */}
       {poolContexts.length === 0 && userId && (
         <div className="mx-auto max-w-[1400px] px-4 pt-8">
-          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
-            <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO PLAY</h2>
-            <p className="mt-2 text-sm text-white/50">You need to join a pool to participate. Ask your commissioner for an invite link.</p>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-12 text-center">
+            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO PLAY</h2>
+            <p className="mt-2 text-sm text-[var(--text-muted)]">You need to join a pool to participate. Ask your commissioner for an invite link.</p>
           </div>
         </div>
       )}
@@ -122,9 +122,9 @@ export default async function LivePage() {
       {/* Not logged in */}
       {!userId && (
         <div className="mx-auto max-w-[1400px] px-4 pt-8">
-          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
-            <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>SIGN IN TO PLAY</h2>
-            <p className="mt-2 text-sm text-white/50">Sign in to join a pool and compete on draft night.</p>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-12 text-center">
+            <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>SIGN IN TO PLAY</h2>
+            <p className="mt-2 text-sm text-[var(--text-muted)]">Sign in to join a pool and compete on draft night.</p>
           </div>
         </div>
       )}

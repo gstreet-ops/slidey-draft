@@ -12,17 +12,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       {/* Nav */}
-      <header className="border-b border-white/10">
+      <header className="border-b border-[var(--border)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link
             href="/"
-            className="text-2xl font-bold text-white tracking-wider"
+            className="text-2xl font-bold text-[var(--text-primary)] tracking-wider"
             style={{ fontFamily: "var(--font-display)" }}
           >
             DRAFT DAY <span className="text-[var(--slidey)]">CHALLENGE</span>
           </Link>
           <nav className="flex gap-4 text-sm">
-            <Link href="/picks" className="text-white/60 hover:text-white transition">
+            <Link href="/picks" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
               Mock Drafts
             </Link>
           </nav>
@@ -33,17 +33,17 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-white/50 hover:text-white/70 transition mb-6"
+            className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition mb-6"
           >
             &larr; Back to home
           </Link>
           <h1
-            className="text-4xl font-bold text-white tracking-wide text-center mb-2"
+            className="text-4xl font-bold text-[var(--text-primary)] tracking-wide text-center mb-2"
             style={{ fontFamily: "var(--font-display)" }}
           >
             SIGN IN
           </h1>
-          <p className="text-center text-white/50 mb-8">
+          <p className="text-center text-[var(--text-muted)] mb-8">
             Sign in to make your mock draft picks
           </p>
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
             Sign in with Google
           </button>
 
-          <p className="mt-6 text-center text-xs text-white/40">
+          <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
             We&apos;ll create your account automatically on first sign-in.
           </p>
         </div>

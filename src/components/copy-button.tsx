@@ -14,7 +14,7 @@ export function CopyButton({ text, label }: { text: string; label?: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="rounded-lg bg-[var(--slidey)] px-6 py-3 text-sm font-semibold text-white hover:opacity-80 transition"
+      className="rounded-lg bg-[var(--slidey)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] hover:opacity-80 transition"
     >
       {copied ? "✓ Copied!" : label || "Copy to Clipboard"}
     </button>

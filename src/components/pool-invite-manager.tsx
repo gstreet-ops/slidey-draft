@@ -76,9 +76,9 @@ export function PoolInviteManager({
   const pendingCount = codes.filter((c) => !c.usedBy && !c.revokedAt).length;
 
   function getStatus(code: InviteCode) {
-    if (code.usedBy) return { label: "Used", color: "bg-green-500/20 text-green-400" };
-    if (code.revokedAt) return { label: "Revoked", color: "bg-red-500/20 text-red-400" };
-    return { label: "Pending", color: "bg-yellow-500/20 text-yellow-400" };
+    if (code.usedBy) return { label: "Used", color: "bg-green-100 text-green-700" };
+    if (code.revokedAt) return { label: "Revoked", color: "bg-red-100 text-red-700" };
+    return { label: "Pending", color: "bg-yellow-100 text-yellow-700" };
   }
 
   return (
@@ -87,16 +87,16 @@ export function PoolInviteManager({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-lg">👥</span>
-          <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Invite Players</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Invite Players</h3>
         </div>
-        <span className="text-xs text-white/40">
+        <span className="text-xs text-[var(--text-muted)]">
           {usedCount} of {codes.length} invites used · {memberCount} member{memberCount !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Open invite link */}
-      <div className="rounded-lg border border-white/10 bg-black/20 p-4 space-y-2">
-        <p className="text-xs text-white/50 font-semibold uppercase tracking-wider">Shared Pool Link (unlimited joins)</p>
+      <div className="rounded-lg border border-[var(--border)] bg-black/20 p-4 space-y-2">
+        <p className="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-wider">Shared Pool Link (unlimited joins)</p>
         <div className="flex items-center gap-2">
           <code className="text-sm text-[var(--steelers-gold)] break-all flex-1">
             https://slidey-draft.vercel.app/join/{openInviteCode}
@@ -115,7 +115,7 @@ export function PoolInviteManager({
               "open-msg"
             )
           }
-          className="text-xs text-white/50 hover:text-white/60 transition"
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
         >
           {copied === "open-msg" ? "Message copied!" : "Copy share message"}
         </button>
@@ -123,21 +123,21 @@ export function PoolInviteManager({
 
       {/* Generate personal invite codes */}
       <div className="space-y-3">
-        <p className="text-xs text-white/50">
+        <p className="text-xs text-[var(--text-muted)]">
           Personal invites are single-use — each code works for one player only.
         </p>
         <div className="flex gap-3">
           <button
             onClick={handleGenerate}
             disabled={generating}
-            className="rounded-lg bg-[var(--slidey)] px-5 py-2 text-sm font-semibold text-white hover:opacity-80 transition disabled:opacity-50"
+            className="rounded-lg bg-[var(--slidey)] px-5 py-2 text-sm font-semibold text-[var(--text-primary)] hover:opacity-80 transition disabled:opacity-50"
           >
             {generating ? "..." : "Generate Invite Link"}
           </button>
           <button
             onClick={handleBulkGenerate}
             disabled={bulkGenerating}
-            className="rounded-lg border border-white/20 px-5 py-2 text-sm font-semibold text-white/60 hover:border-white/40 hover:text-white transition disabled:opacity-50"
+            className="rounded-lg border border-[var(--border)] px-5 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:border-white/40 hover:text-[var(--text-primary)] transition disabled:opacity-50"
           >
             {bulkGenerating ? "..." : "Generate 5 Codes"}
           </button>
@@ -147,12 +147,12 @@ export function PoolInviteManager({
       {/* Generated link display */}
       {generatedLink && (
         <div className="rounded-lg border border-[var(--slidey)]/30 bg-[var(--slidey)]/10 p-4 space-y-2">
-          <p className="text-xs text-white/50">Share this link (single-use):</p>
+          <p className="text-xs text-[var(--text-muted)]">Share this link (single-use):</p>
           <code className="block text-sm text-[var(--slidey)] break-all">{generatedLink}</code>
           <div className="flex gap-4">
             <button
               onClick={() => copyToClipboard(generatedLink, "gen")}
-              className="text-xs text-white/60 hover:text-white transition"
+              className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
             >
               {copied === "gen" ? "Copied!" : "Copy link"}
             </button>
@@ -163,7 +163,7 @@ export function PoolInviteManager({
                   "gen-msg"
                 )
               }
-              className="text-xs text-white/60 hover:text-white transition"
+              className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
             >
               {copied === "gen-msg" ? "Copied!" : "Copy message"}
             </button>
@@ -174,11 +174,11 @@ export function PoolInviteManager({
       {/* Invite codes table */}
       {codes.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-bold text-white">Personal Invite Codes</h4>
+          <h4 className="text-sm font-bold text-[var(--text-primary)]">Personal Invite Codes</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                   <th className="pb-2 pr-3">Code</th>
                   <th className="pb-2 pr-3">Status</th>
                   <th className="pb-2 pr-3">Used By</th>
@@ -186,12 +186,12 @@ export function PoolInviteManager({
                   <th className="pb-2"></th>
                 </tr>
               </thead>
-              <tbody className="text-white/70">
+              <tbody className="text-[var(--text-secondary)]">
                 {codes.map((c) => {
                   const status = getStatus(c);
                   const link = `https://slidey-draft.vercel.app/join/${c.code}`;
                   return (
-                    <tr key={c.id} className={`border-t border-white/5 ${c.usedBy || c.revokedAt ? "opacity-50" : ""}`}>
+                    <tr key={c.id} className={`border-t border-[var(--border-light)] ${c.usedBy || c.revokedAt ? "opacity-50" : ""}`}>
                       <td className="py-2 pr-3 font-mono text-xs">{c.code}</td>
                       <td className="py-2 pr-3">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status.color}`}>
@@ -199,7 +199,7 @@ export function PoolInviteManager({
                         </span>
                       </td>
                       <td className="py-2 pr-3 text-xs">{c.usedByName || c.usedByEmail || "—"}</td>
-                      <td className="py-2 pr-3 text-xs text-white/40">{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td className="py-2 pr-3 text-xs text-[var(--text-muted)]">{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td className="py-2 text-right">
                         {!c.usedBy && !c.revokedAt && (
                           <div className="flex items-center gap-3 justify-end">
@@ -211,7 +211,7 @@ export function PoolInviteManager({
                             </button>
                             <button
                               onClick={() => handleRevoke(c.id)}
-                              className="text-xs text-red-400 hover:text-red-300 transition"
+                              className="text-xs text-red-700 hover:text-red-700 transition"
                             >
                               Revoke
                             </button>

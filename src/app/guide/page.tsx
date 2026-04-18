@@ -69,26 +69,26 @@ export default async function GuidePage() {
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <h1
-          className="text-3xl font-bold text-white tracking-wide sm:text-4xl"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           HOW TO PLAY
         </h1>
-        <p className="mt-2 text-sm text-white/50">{subtitle}</p>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">{subtitle}</p>
 
         <nav className="mt-6 flex flex-wrap gap-2">
           {sections.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
-              className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--steelers-gold)] hover:text-white transition"
+              className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:border-[var(--steelers-gold)] hover:text-[var(--text-primary)] transition"
             >
               {s.label}
             </a>
           ))}
         </nav>
 
-        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
+        <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-[var(--border)] [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-[var(--text-secondary)]">
           {/* ── Overview ── */}
           <section id="overview">
             <SectionHeading>Overview</SectionHeading>
@@ -112,27 +112,27 @@ export default async function GuidePage() {
                 <StepList>
                   {mockDraftOn && (
                     <StepIcon icon={"\uD83D\uDCCB"}>
-                      <span className="text-white font-semibold">Build your mock draft</span> — predict which players go where in Round 1. Publish your board before draft night to earn mock bonus points.
+                      <span className="text-[var(--text-primary)] font-semibold">Build your mock draft</span> — predict which players go where in Round 1. Publish your board before draft night to earn mock bonus points.
                     </StepIcon>
                   )}
                   {propBetsOn && (
                     <StepIcon icon={"\uD83C\uDFB2"}>
-                      <span className="text-white font-semibold">Make your prop bets</span> — side predictions on draft outcomes for bonus points.
+                      <span className="text-[var(--text-primary)] font-semibold">Make your prop bets</span> — side predictions on draft outcomes for bonus points.
                     </StepIcon>
                   )}
                   {liveOn && (
                     <StepIcon icon={"\u26A1"}>
-                      <span className="text-white font-semibold">Predict live picks</span> — on draft night, call each pick before the card is read for 10 points each.
+                      <span className="text-[var(--text-primary)] font-semibold">Predict live picks</span> — on draft night, call each pick before the card is read for 10 points each.
                     </StepIcon>
                   )}
                   {triviaOn && (
                     <StepIcon icon={"\uD83E\uDDE0"}>
-                      <span className="text-white font-semibold">Play trivia</span> — answer NFL draft questions between picks for 3-10 bonus points.
+                      <span className="text-[var(--text-primary)] font-semibold">Play trivia</span> — answer NFL draft questions between picks for 3-10 bonus points.
                     </StepIcon>
                   )}
                   {watchPartyOn && (
                     <StepIcon icon={"\uD83C\uDFA5"}>
-                      <span className="text-white font-semibold">Join the watch party</span> — video call with your pool while the draft unfolds.
+                      <span className="text-[var(--text-primary)] font-semibold">Join the watch party</span> — video call with your pool while the draft unfolds.
                     </StepIcon>
                   )}
                 </StepList>
@@ -154,14 +154,14 @@ export default async function GuidePage() {
               </p>
 
               <Callout>
-                <strong className="text-white">Mock drafts are scored independently.</strong> Points are awarded based on how closely your predictions match the real draft: exact player + exact slot (10 pts), correct player wrong slot (5 pts), close range (3 pts), position match (1 pt).
+                <strong className="text-[var(--text-primary)]">Mock drafts are scored independently.</strong> Points are awarded based on how closely your predictions match the real draft: exact player + exact slot (10 pts), correct player wrong slot (5 pts), close range (3 pts), position match (1 pt).
               </Callout>
 
               <Callout title="One Entry Per Pool">
                 You can create multiple mock draft boards to test different strategies and evaluate your options. However, only ONE board counts as your official pool entry. Your most recently published board is automatically your entry. If you want to switch, unpublish your current entry and publish a different board. Only your designated entry board is scored — extra boards are just for practice and fun.
               </Callout>
 
-              <p className="mt-3 text-sm text-white/60 italic">
+              <p className="mt-3 text-sm text-[var(--text-secondary)] italic">
                 Tip: use extra boards to try out bold strategies or different positional approaches. When you are happy with your best board, make sure it is the one that is published.
               </p>
 
@@ -276,7 +276,7 @@ export default async function GuidePage() {
               </p>
               <div className="mt-4 space-y-3">
                 <InfoCard title="Joining">
-                  Look for the green <strong className="text-white">Join Video Call</strong> button at the top of the Live page. Works great with split screen or picture-in-picture.
+                  Look for the green <strong className="text-[var(--text-primary)]">Join Video Call</strong> button at the top of the Live page. Works great with split screen or picture-in-picture.
                 </InfoCard>
                 <InfoCard title="Live Feed">
                   The in-app Live Feed tracks pick announcements, trivia questions, and leaderboard changes automatically. Use the video call for conversation and the Live Feed to follow the action.
@@ -423,11 +423,11 @@ export default async function GuidePage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
-          <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+        <div className="mt-16 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
             READY TO DRAFT?
           </h2>
-          <p className="mt-2 text-sm text-white/50">
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             {mockDraftOn
               ? "Build your mock draft and compete with friends."
               : propBetsOn
@@ -439,7 +439,7 @@ export default async function GuidePage() {
             {mockDraftOn && (
               <Link
                 href="/picks"
-                className="rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white/70 hover:border-white/40 hover:text-white transition"
+                className="rounded-lg border border-[var(--border)] px-8 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:border-white/40 hover:text-[var(--text-primary)] transition"
               >
                 View Mock Drafts
               </Link>
@@ -480,9 +480,9 @@ function PrimaryCta({ session, mockDraftOn, propBetsOn }: { session: boolean; mo
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4">
+    <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-5 py-4">
       <p className="text-sm font-bold text-[var(--steelers-gold)]">{title}</p>
-      <p className="mt-1.5 text-sm text-white/60 leading-relaxed">{children}</p>
+      <p className="mt-1.5 text-sm text-[var(--text-secondary)] leading-relaxed">{children}</p>
     </div>
   );
 }
@@ -490,7 +490,7 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-xl font-bold text-white tracking-wide sm:text-2xl"
+      className="text-xl font-bold text-[var(--text-primary)] tracking-wide sm:text-2xl"
       style={{ fontFamily: "var(--font-display)" }}
     >
       {children}
@@ -504,20 +504,20 @@ function StepList({ children }: { children: React.ReactNode }) {
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-[var(--accent-text)]">
         {n}
       </span>
-      <p className="text-sm text-white/60 pt-0.5">{children}</p>
+      <p className="text-sm text-[var(--text-secondary)] pt-0.5">{children}</p>
     </div>
   );
 }
 
 function StepIcon({ icon, children }: { icon: string; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
+    <div className="flex gap-3 items-start rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3">
       <span className="text-xl leading-none pt-0.5 shrink-0">{icon}</span>
-      <p className="text-sm text-white/60 pt-0.5">{children}</p>
+      <p className="text-sm text-[var(--text-secondary)] pt-0.5">{children}</p>
     </div>
   );
 }
@@ -528,21 +528,21 @@ function Callout({ icon, title, children }: { icon?: string; title?: string; chi
       {(icon || title) && (
         <div className="flex items-center gap-2 mb-1.5">
           {icon && <span className="text-lg leading-none">{icon}</span>}
-          {title && <p className="text-sm font-bold text-white">{title}</p>}
+          {title && <p className="text-sm font-bold text-[var(--text-primary)]">{title}</p>}
         </div>
       )}
-      <p className="text-sm text-white/70 leading-relaxed">{children}</p>
+      <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{children}</p>
     </div>
   );
 }
 
 function ScoreCard({ icon, title, color, children }: { icon: string; title: string; color: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-5 py-4 flex items-start gap-3">
+    <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-5 py-4 flex items-start gap-3">
       <span className="text-lg shrink-0">{icon}</span>
       <div>
         <p className={`text-sm font-bold ${color}`}>{title}</p>
-        <p className="mt-0.5 text-sm text-white/60">{children}</p>
+        <p className="mt-0.5 text-sm text-[var(--text-secondary)]">{children}</p>
       </div>
     </div>
   );
@@ -562,18 +562,18 @@ function FeatureGrid({ children }: { children: React.ReactNode }) {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className="rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
+    <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3">
       <p className="text-sm font-bold text-[var(--steelers-gold)]">{title}</p>
-      <p className="mt-0.5 text-xs text-white/60">{desc}</p>
+      <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{desc}</p>
     </div>
   );
 }
 
 function Faq({ q, children }: { q: string; children: React.ReactNode }) {
   return (
-    <div className="mt-4 rounded-lg bg-white/8 border border-white/[0.12] px-4 py-4">
-      <p className="text-sm font-semibold text-white">{q}</p>
-      <p className="mt-1.5 text-sm text-white/50">{children}</p>
+    <div className="mt-4 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] px-4 py-4">
+      <p className="text-sm font-semibold text-[var(--text-primary)]">{q}</p>
+      <p className="mt-1.5 text-sm text-[var(--text-muted)]">{children}</p>
     </div>
   );
 }

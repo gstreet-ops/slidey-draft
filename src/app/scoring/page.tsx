@@ -70,27 +70,27 @@ export default async function ScoringPage() {
   return (
     <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        <Link href="/guide" className="text-sm text-white/50 hover:text-white/60 transition">
+        <Link href="/guide" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition">
           &larr; Back to How to Play
         </Link>
 
         <h1
-          className="mt-4 text-3xl font-bold text-white tracking-wide sm:text-4xl"
+          className="mt-4 text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           HOW SCORING WORKS
         </h1>
-        <p className="mt-2 text-sm text-white/50">{subtitle}</p>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">{subtitle}</p>
 
         {enabledFeatures === null && session?.user && (
-          <p className="mt-2 text-xs text-white/50 italic">
+          <p className="mt-2 text-xs text-[var(--text-muted)] italic">
             Join a pool to see your pool&apos;s specific scoring configuration.
           </p>
         )}
 
         {noFeatures ? (
-          <div className="mt-8 rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
-            <p className="text-sm text-white/70">
+          <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
+            <p className="text-sm text-[var(--text-secondary)]">
               Your commissioner hasn&apos;t enabled any scoring features yet. Check back when your pool is set up.
             </p>
           </div>
@@ -102,14 +102,14 @@ export default async function ScoringPage() {
                 <a
                   key={s.id}
                   href={`#${s.id}`}
-                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-[var(--steelers-gold)] hover:text-white transition"
+                  className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:border-[var(--steelers-gold)] hover:text-[var(--text-primary)] transition"
                 >
                   {s.label}
                 </a>
               ))}
             </nav>
 
-            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-white/10 [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-white/60">
+            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-[var(--border)] [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-[var(--text-secondary)]">
 
               {/* ── Mock Draft Scoring ── */}
               {visibleIds.has("mock-draft") && (
@@ -135,7 +135,7 @@ export default async function ScoringPage() {
                   <div className="mt-3 overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                        <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                           <th className="pb-2 pr-3">Pick</th>
                           <th className="pb-2 pr-3">You Predicted</th>
                           <th className="pb-2 pr-3">Actual</th>
@@ -143,40 +143,40 @@ export default async function ScoringPage() {
                           <th className="pb-2 text-right">Pts</th>
                         </tr>
                       </thead>
-                      <tbody className="text-white/70">
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#1</td>
+                      <tbody className="text-[var(--text-secondary)]">
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#1</td>
                           <td className="py-2 pr-3">Fernando Mendoza, QB</td>
                           <td className="py-2 pr-3">Fernando Mendoza, QB</td>
-                          <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2) + Exact (5)</td>
-                          <td className="py-2 text-right font-bold text-green-400">10</td>
+                          <td className="py-2 pr-3 text-xs text-[var(--text-muted)]">Player Called (3) + Close (2) + Exact (5)</td>
+                          <td className="py-2 text-right font-bold text-green-700">10</td>
                         </tr>
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#5</td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#5</td>
                           <td className="py-2 pr-3">Sonny Styles, LB</td>
                           <td className="py-2 pr-3">Sonny Styles at #3</td>
-                          <td className="py-2 pr-3 text-xs text-white/50">Player Called (3) + Close (2)</td>
-                          <td className="py-2 text-right font-bold text-yellow-400">5</td>
+                          <td className="py-2 pr-3 text-xs text-[var(--text-muted)]">Player Called (3) + Close (2)</td>
+                          <td className="py-2 text-right font-bold text-yellow-700">5</td>
                         </tr>
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#8</td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#8</td>
                           <td className="py-2 pr-3">Makai Lemon, WR</td>
                           <td className="py-2 pr-3">Carnell Tate, WR</td>
-                          <td className="py-2 pr-3 text-xs text-white/50">Position Match (1)</td>
-                          <td className="py-2 text-right font-bold text-purple-400">1</td>
+                          <td className="py-2 pr-3 text-xs text-[var(--text-muted)]">Position Match (1)</td>
+                          <td className="py-2 text-right font-bold text-purple-700">1</td>
                         </tr>
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#12</td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#12</td>
                           <td className="py-2 pr-3">Spencer Fano, OT</td>
                           <td className="py-2 pr-3">Caleb Downs, S</td>
-                          <td className="py-2 pr-3 text-xs text-white/50">Wrong player, wrong position</td>
-                          <td className="py-2 text-right font-bold text-red-400">0</td>
+                          <td className="py-2 pr-3 text-xs text-[var(--text-muted)]">Wrong player, wrong position</td>
+                          <td className="py-2 text-right font-bold text-red-700">0</td>
                         </tr>
                       </tbody>
                       <tfoot>
-                        <tr className="border-t border-white/20">
-                          <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Total mock bonus (4 picks)</td>
-                          <td className="py-2 text-right font-bold text-white">16</td>
+                        <tr className="border-t border-[var(--border)]">
+                          <td colSpan={4} className="py-2 pr-3 text-right text-xs text-[var(--text-muted)] uppercase">Total mock bonus (4 picks)</td>
+                          <td className="py-2 text-right font-bold text-[var(--text-primary)]">16</td>
                         </tr>
                       </tfoot>
                     </table>
@@ -194,7 +194,7 @@ export default async function ScoringPage() {
 
                   <div className="mt-4 space-y-1.5">
                     <ScoreRow color="text-green-600" pts={10} label="Correct Prediction" desc="You named the exact player who was selected" />
-                    <ScoreRow color="text-red-400" pts={0} label="Wrong / No Prediction" desc="Wrong player, or you didn't submit a prediction" />
+                    <ScoreRow color="text-red-700" pts={0} label="Wrong / No Prediction" desc="Wrong player, or you didn't submit a prediction" />
                   </div>
 
                   <p>One prediction per pick — once you lock it in, it&apos;s final.</p>
@@ -203,7 +203,7 @@ export default async function ScoringPage() {
                   <div className="mt-3 overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                        <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                           <th className="pb-2 pr-3">Pick</th>
                           <th className="pb-2 pr-3">Your Prediction</th>
                           <th className="pb-2 pr-3">Actual</th>
@@ -211,33 +211,33 @@ export default async function ScoringPage() {
                           <th className="pb-2 text-right">Pts</th>
                         </tr>
                       </thead>
-                      <tbody className="text-white/70">
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#1</td>
+                      <tbody className="text-[var(--text-secondary)]">
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#1</td>
                           <td className="py-2 pr-3">Fernando Mendoza</td>
                           <td className="py-2 pr-3">Fernando Mendoza</td>
-                          <td className="py-2 pr-3 text-green-400">Correct!</td>
-                          <td className="py-2 text-right font-bold text-green-400">+10</td>
+                          <td className="py-2 pr-3 text-green-700">Correct!</td>
+                          <td className="py-2 text-right font-bold text-green-700">+10</td>
                         </tr>
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#2</td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#2</td>
                           <td className="py-2 pr-3">Jeremiyah Love</td>
                           <td className="py-2 pr-3">Arvell Reese</td>
-                          <td className="py-2 pr-3 text-red-400">Wrong</td>
-                          <td className="py-2 text-right font-bold text-red-400">0</td>
+                          <td className="py-2 pr-3 text-red-700">Wrong</td>
+                          <td className="py-2 text-right font-bold text-red-700">0</td>
                         </tr>
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3 text-white/50">#3</td>
-                          <td className="py-2 pr-3 text-white/40">— (didn&apos;t predict)</td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">#3</td>
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">— (didn&apos;t predict)</td>
                           <td className="py-2 pr-3">Jeremiyah Love</td>
-                          <td className="py-2 pr-3 text-white/40">Missed</td>
-                          <td className="py-2 text-right font-bold text-red-400">0</td>
+                          <td className="py-2 pr-3 text-[var(--text-muted)]">Missed</td>
+                          <td className="py-2 text-right font-bold text-red-700">0</td>
                         </tr>
                       </tbody>
                       <tfoot>
-                        <tr className="border-t border-white/20">
-                          <td colSpan={4} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Live total</td>
-                          <td className="py-2 text-right font-bold text-white">10</td>
+                        <tr className="border-t border-[var(--border)]">
+                          <td colSpan={4} className="py-2 pr-3 text-right text-xs text-[var(--text-muted)] uppercase">Live total</td>
+                          <td className="py-2 text-right font-bold text-[var(--text-primary)]">10</td>
                         </tr>
                       </tfoot>
                     </table>
@@ -255,34 +255,34 @@ export default async function ScoringPage() {
                   <p>Points depend on question difficulty:</p>
 
                   <div className="mt-4 space-y-1.5">
-                    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
-                      <span className="text-lg font-bold w-12 text-center text-green-400">+3</span>
+                    <div className="flex items-center gap-3 rounded-lg bg-[var(--bg-card)] px-4 py-3">
+                      <span className="text-lg font-bold w-12 text-center text-green-700">+3</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-white">Easy</p>
-                          <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-bold text-green-400">EASY</span>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">Easy</p>
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">EASY</span>
                         </div>
-                        <p className="text-xs text-white/50">&quot;How many rounds are in the NFL Draft?&quot;</p>
+                        <p className="text-xs text-[var(--text-muted)]">&quot;How many rounds are in the NFL Draft?&quot;</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
-                      <span className="text-lg font-bold w-12 text-center text-yellow-400">+5</span>
+                    <div className="flex items-center gap-3 rounded-lg bg-[var(--bg-card)] px-4 py-3">
+                      <span className="text-lg font-bold w-12 text-center text-yellow-700">+5</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-white">Medium</p>
-                          <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-bold text-yellow-400">MEDIUM</span>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">Medium</p>
+                          <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-bold text-yellow-700">MEDIUM</span>
                         </div>
-                        <p className="text-xs text-white/50">&quot;Which team has the most #1 overall picks in draft history?&quot;</p>
+                        <p className="text-xs text-[var(--text-muted)]">&quot;Which team has the most #1 overall picks in draft history?&quot;</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
-                      <span className="text-lg font-bold w-12 text-center text-red-400">+10</span>
+                    <div className="flex items-center gap-3 rounded-lg bg-[var(--bg-card)] px-4 py-3">
+                      <span className="text-lg font-bold w-12 text-center text-red-700">+10</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-white">Hard</p>
-                          <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-400">HARD</span>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">Hard</p>
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">HARD</span>
                         </div>
-                        <p className="text-xs text-white/50">&quot;Who was the last player drafted in the first round from a non-Power 5 school to make the Pro Bowl in their rookie year?&quot;</p>
+                        <p className="text-xs text-[var(--text-muted)]">&quot;Who was the last player drafted in the first round from a non-Power 5 school to make the Pro Bowl in their rookie year?&quot;</p>
                       </div>
                     </div>
                   </div>
@@ -305,7 +305,7 @@ export default async function ScoringPage() {
 
                   <div className="mt-4 space-y-1.5">
                     <ScoreRow color="text-green-600" pts="3-20" label="Correct Prop" desc="Your answer matches the resolved outcome — points match the prop's listed value" />
-                    <ScoreRow color="text-red-400" pts={0} label="Wrong / No Pick" desc="Wrong answer, or you didn't submit a pick before the prop was locked" />
+                    <ScoreRow color="text-red-700" pts={0} label="Wrong / No Pick" desc="Wrong answer, or you didn't submit a pick before the prop was locked" />
                   </div>
 
                   <p>
@@ -320,37 +320,37 @@ export default async function ScoringPage() {
                 {enabledTracks.length === 1 ? (
                   <p>
                     Your pool only scores one track, so your combined score is simply your{" "}
-                    <span className="text-white font-semibold">{enabledTracks[0]}</span> total.
+                    <span className="text-[var(--text-primary)] font-semibold">{enabledTracks[0]}</span> total.
                   </p>
                 ) : (
                   <>
                     <p>Your pool score combines these tracks:</p>
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
                       {mockOn && (
-                        <ScorePill className="border-[var(--steelers-gold)]/30 bg-blue-500/10 text-blue-400">
+                        <ScorePill className="border-[var(--steelers-gold)]/30 bg-blue-50 text-blue-700">
                           Mock Draft Bonus
                         </ScorePill>
                       )}
                       {mockOn && (liveOn || triviaOn || propBetsOn) && <PlusSign />}
                       {liveOn && (
-                        <ScorePill className="border-green-500/30 bg-green-500/10 text-green-400">
+                        <ScorePill className="border-green-200 bg-green-50 text-green-700">
                           Live Predictions
                         </ScorePill>
                       )}
                       {liveOn && (triviaOn || propBetsOn) && <PlusSign />}
                       {triviaOn && (
-                        <ScorePill className="border-purple-500/30 bg-purple-500/10 text-purple-400">
+                        <ScorePill className="border-purple-200 bg-purple-50 text-purple-700">
                           Trivia
                         </ScorePill>
                       )}
                       {triviaOn && propBetsOn && <PlusSign />}
                       {propBetsOn && (
-                        <ScorePill className="border-amber-500/30 bg-amber-500/10 text-amber-400">
+                        <ScorePill className="border-amber-200 bg-amber-50 text-amber-700">
                           Prop Bets
                         </ScorePill>
                       )}
-                      <span className="text-white/40 font-bold text-lg">=</span>
-                      <ScorePill className="border-white/20 bg-white/10 text-white">
+                      <span className="text-[var(--text-muted)] font-bold text-lg">=</span>
+                      <ScorePill className="border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)]">
                         Combined Score
                       </ScorePill>
                     </div>
@@ -376,46 +376,46 @@ export default async function ScoringPage() {
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                      <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                         <th className="pb-2 pr-3">Track</th>
                         <th className="pb-2 pr-3">What Happened</th>
                         <th className="pb-2 text-right">Points</th>
                       </tr>
                     </thead>
-                    <tbody className="text-white/70">
+                    <tbody className="text-[var(--text-secondary)]">
                       {mockOn && (
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3"><span className="text-blue-400 font-semibold">Mock Bonus</span></td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3"><span className="text-blue-700 font-semibold">Mock Bonus</span></td>
                           <td className="py-2 pr-3">2 players called, 1 exact slot, 1 position match</td>
                           <td className="py-2 text-right font-bold">19</td>
                         </tr>
                       )}
                       {liveOn && (
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3"><span className="text-green-400 font-semibold">Live Predictions</span></td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3"><span className="text-green-700 font-semibold">Live Predictions</span></td>
                           <td className="py-2 pr-3">Called pick #1 and #4 correctly (2 × 10)</td>
                           <td className="py-2 text-right font-bold">20</td>
                         </tr>
                       )}
                       {triviaOn && (
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3"><span className="text-purple-400 font-semibold">Trivia</span></td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3"><span className="text-purple-700 font-semibold">Trivia</span></td>
                           <td className="py-2 pr-3">3 correct: 1 easy (3) + 1 medium (5) + 1 hard (10)</td>
                           <td className="py-2 text-right font-bold">18</td>
                         </tr>
                       )}
                       {propBetsOn && (
-                        <tr className="border-t border-white/5">
-                          <td className="py-2 pr-3"><span className="text-amber-400 font-semibold">Prop Bets</span></td>
+                        <tr className="border-t border-[var(--border-light)]">
+                          <td className="py-2 pr-3"><span className="text-amber-700 font-semibold">Prop Bets</span></td>
                           <td className="py-2 pr-3">2 correct props (5 + 10)</td>
                           <td className="py-2 text-right font-bold">15</td>
                         </tr>
                       )}
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-white/20">
-                        <td colSpan={2} className="py-2 pr-3 text-right text-xs text-white/50 uppercase">Combined Score</td>
-                        <td className="py-2 text-right text-lg font-bold text-white">
+                      <tr className="border-t border-[var(--border)]">
+                        <td colSpan={2} className="py-2 pr-3 text-right text-xs text-[var(--text-muted)] uppercase">Combined Score</td>
+                        <td className="py-2 text-right text-lg font-bold text-[var(--text-primary)]">
                           {(mockOn ? 19 : 0) + (liveOn ? 20 : 0) + (triviaOn ? 18 : 0) + (propBetsOn ? 15 : 0)}
                         </td>
                       </tr>
@@ -424,8 +424,8 @@ export default async function ScoringPage() {
                 </div>
 
                 {enabledTracks.length > 1 && (
-                  <div className="mt-4 rounded-lg bg-white/8 border border-white/[0.12] p-4">
-                    <p className="text-sm text-white/60">
+                  <div className="mt-4 rounded-lg bg-[var(--bg-card)] border border-[var(--border)] p-4">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Your rival showed up with strong mock scouting but missed most live opportunities. Showing up on draft night across all enabled tracks is how you win.
                     </p>
                   </div>
@@ -438,40 +438,40 @@ export default async function ScoringPage() {
 
                 <SubHeading>Standard Scoring (Default)</SubHeading>
                 <p>
-                  Most pools use Standard Scoring — the official point values. Standard pools get a <span className="inline-flex items-center rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-blue-400">Standard Scoring</span> badge.
+                  Most pools use Standard Scoring — the official point values. Standard pools get a <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">Standard Scoring</span> badge.
                 </p>
 
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                      <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                         <th className="pb-2 pr-3">Track</th>
                         <th className="pb-2 pr-3">Tier</th>
                         <th className="pb-2 text-right">Points</th>
                       </tr>
                     </thead>
-                    <tbody className="text-white/70">
+                    <tbody className="text-[var(--text-secondary)]">
                       {mockOn && (
                         <>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-blue-400">Mock</td><td className="py-1.5 pr-3">Player Called</td><td className="py-1.5 text-right font-bold">3</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-blue-400">Mock</td><td className="py-1.5 pr-3">Close Range (±3 picks)</td><td className="py-1.5 text-right font-bold">+2</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-blue-400">Mock</td><td className="py-1.5 pr-3">Far Range (±7 picks)</td><td className="py-1.5 text-right font-bold">+1</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-blue-400">Mock</td><td className="py-1.5 pr-3">Exact Slot</td><td className="py-1.5 text-right font-bold">+5</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-blue-400">Mock</td><td className="py-1.5 pr-3">Position Match</td><td className="py-1.5 text-right font-bold">1</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Player Called</td><td className="py-1.5 text-right font-bold">3</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Close Range (±3 picks)</td><td className="py-1.5 text-right font-bold">+2</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Far Range (±7 picks)</td><td className="py-1.5 text-right font-bold">+1</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Exact Slot</td><td className="py-1.5 text-right font-bold">+5</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-blue-700">Mock</td><td className="py-1.5 pr-3">Position Match</td><td className="py-1.5 text-right font-bold">1</td></tr>
                         </>
                       )}
                       {liveOn && (
-                        <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-green-400">Live</td><td className="py-1.5 pr-3">Correct Prediction</td><td className="py-1.5 text-right font-bold">10</td></tr>
+                        <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-green-700">Live</td><td className="py-1.5 pr-3">Correct Prediction</td><td className="py-1.5 text-right font-bold">10</td></tr>
                       )}
                       {triviaOn && (
                         <>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-purple-400">Trivia</td><td className="py-1.5 pr-3">Easy</td><td className="py-1.5 text-right font-bold">3</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-purple-400">Trivia</td><td className="py-1.5 pr-3">Medium</td><td className="py-1.5 text-right font-bold">5</td></tr>
-                          <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-purple-400">Trivia</td><td className="py-1.5 pr-3">Hard</td><td className="py-1.5 text-right font-bold">10</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Easy</td><td className="py-1.5 text-right font-bold">3</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Medium</td><td className="py-1.5 text-right font-bold">5</td></tr>
+                          <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-purple-700">Trivia</td><td className="py-1.5 pr-3">Hard</td><td className="py-1.5 text-right font-bold">10</td></tr>
                         </>
                       )}
                       {propBetsOn && (
-                        <tr className="border-t border-white/5"><td className="py-1.5 pr-3 text-amber-400">Prop</td><td className="py-1.5 pr-3">Correct (per-prop value)</td><td className="py-1.5 text-right font-bold">3-20</td></tr>
+                        <tr className="border-t border-[var(--border-light)]"><td className="py-1.5 pr-3 text-amber-700">Prop</td><td className="py-1.5 pr-3">Correct (per-prop value)</td><td className="py-1.5 text-right font-bold">3-20</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -479,7 +479,7 @@ export default async function ScoringPage() {
 
                 <SubHeading>Custom Scoring</SubHeading>
                 <p>
-                  Commissioners can switch to Custom Scoring to set their own point values. Custom pools show a <span className="inline-flex items-center rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-400">Custom Rules</span> badge and use their own scale — great for experimenting or tailoring the experience to your group.
+                  Commissioners can switch to Custom Scoring to set their own point values. Custom pools show a <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Custom Rules</span> badge and use their own scale — great for experimenting or tailoring the experience to your group.
                 </p>
                 <p>Commissioners can also toggle entire scoring tracks on or off and choose which rounds count.</p>
               </section>
@@ -492,11 +492,11 @@ export default async function ScoringPage() {
                 </p>
 
                 <SubHeading>Worked Example</SubHeading>
-                <p>Team: <strong className="text-white">&apos;The Draft Kings&apos;</strong> (3 members)</p>
+                <p>Team: <strong className="text-[var(--text-primary)]">&apos;The Draft Kings&apos;</strong> (3 members)</p>
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs text-white/50 uppercase tracking-wider">
+                      <tr className="text-left text-xs text-[var(--text-muted)] uppercase tracking-wider">
                         <th className="pb-2 pr-3">Member</th>
                         {mockOn && <th className="pb-2 pr-3">Mock Bonus</th>}
                         {liveOn && <th className="pb-2 pr-3">Live Picks</th>}
@@ -505,19 +505,19 @@ export default async function ScoringPage() {
                         <th className="pb-2 text-right">Combined</th>
                       </tr>
                     </thead>
-                    <tbody className="text-white/70">
+                    <tbody className="text-[var(--text-secondary)]">
                       <TeamRow name="Alex" mock={18} live={40} trivia={21} props={10} mockOn={mockOn} liveOn={liveOn} triviaOn={triviaOn} propBetsOn={propBetsOn} />
                       <TeamRow name="Jordan" mock={12} live={50} trivia={16} props={5} mockOn={mockOn} liveOn={liveOn} triviaOn={triviaOn} propBetsOn={propBetsOn} />
                       <TeamRow name="Sam" mock={24} live={30} trivia={28} props={15} mockOn={mockOn} liveOn={liveOn} triviaOn={triviaOn} propBetsOn={propBetsOn} />
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-white/20">
-                        <td className="py-2 pr-3 font-bold text-white">Team Total</td>
-                        {mockOn && <td className="py-2 pr-3 font-bold text-blue-400">54</td>}
-                        {liveOn && <td className="py-2 pr-3 font-bold text-green-400">120</td>}
-                        {triviaOn && <td className="py-2 pr-3 font-bold text-purple-400">65</td>}
-                        {propBetsOn && <td className="py-2 pr-3 font-bold text-amber-400">30</td>}
-                        <td className="py-2 text-right text-lg font-bold text-white">
+                      <tr className="border-t border-[var(--border)]">
+                        <td className="py-2 pr-3 font-bold text-[var(--text-primary)]">Team Total</td>
+                        {mockOn && <td className="py-2 pr-3 font-bold text-blue-700">54</td>}
+                        {liveOn && <td className="py-2 pr-3 font-bold text-green-700">120</td>}
+                        {triviaOn && <td className="py-2 pr-3 font-bold text-purple-700">65</td>}
+                        {propBetsOn && <td className="py-2 pr-3 font-bold text-amber-700">30</td>}
+                        <td className="py-2 text-right text-lg font-bold text-[var(--text-primary)]">
                           {(mockOn ? 54 : 0) + (liveOn ? 120 : 0) + (triviaOn ? 65 : 0) + (propBetsOn ? 30 : 0)}
                         </td>
                       </tr>
@@ -534,11 +534,11 @@ export default async function ScoringPage() {
         )}
 
         {/* CTA */}
-        <div className="mt-16 rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
-          <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+        <div className="mt-16 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
             READY TO DRAFT?
           </h2>
-          <p className="mt-2 text-sm text-white/50">
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             {mockOn ? "Build your mock draft and compete with friends." : "Head to your pool and get ready for draft night."}
           </p>
           <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -557,7 +557,7 @@ export default async function ScoringPage() {
             {mockOn && (
               <Link
                 href="/picks"
-                className="rounded-lg border border-white/20 px-8 py-3 text-sm font-semibold text-white/70 hover:border-white/40 hover:text-white transition"
+                className="rounded-lg border border-[var(--border)] px-8 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:border-white/40 hover:text-[var(--text-primary)] transition"
               >
                 View Mock Drafts
               </Link>
@@ -574,7 +574,7 @@ export default async function ScoringPage() {
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-xl font-bold text-white tracking-wide sm:text-2xl"
+      className="text-xl font-bold text-[var(--text-primary)] tracking-wide sm:text-2xl"
       style={{ fontFamily: "var(--font-display)" }}
     >
       {children}
@@ -588,13 +588,13 @@ function SubHeading({ children }: { children: React.ReactNode }) {
 
 function ScoreRow({ color, pts, label, desc }: { color: string; pts: number | string; label: string; desc: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-4 py-3">
+    <div className="flex items-center gap-3 rounded-lg bg-[var(--bg-card)] px-4 py-3">
       <span className={`text-lg font-bold w-12 text-center ${color}`}>
         {typeof pts === "number" ? `+${pts}` : pts}
       </span>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white">{label}</p>
-        <p className="text-xs text-white/50">{desc}</p>
+        <p className="text-sm font-semibold text-[var(--text-primary)]">{label}</p>
+        <p className="text-xs text-[var(--text-muted)]">{desc}</p>
       </div>
     </div>
   );
@@ -603,7 +603,7 @@ function ScoreRow({ color, pts, label, desc }: { color: string; pts: number | st
 function Callout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mt-6 rounded-lg border border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 px-4 py-3">
-      <p className="text-sm text-white/70">{children}</p>
+      <p className="text-sm text-[var(--text-secondary)]">{children}</p>
     </div>
   );
 }
@@ -617,7 +617,7 @@ function ScorePill({ className, children }: { className: string; children: React
 }
 
 function PlusSign() {
-  return <span className="text-white/40 font-bold text-lg">+</span>;
+  return <span className="text-[var(--text-muted)] font-bold text-lg">+</span>;
 }
 
 function TeamRow({
@@ -644,12 +644,12 @@ function TeamRow({
   const combined =
     (mockOn ? mock : 0) + (liveOn ? live : 0) + (triviaOn ? trivia : 0) + (propBetsOn ? props : 0);
   return (
-    <tr className="border-t border-white/5">
+    <tr className="border-t border-[var(--border-light)]">
       <td className="py-2 pr-3">{name}</td>
-      {mockOn && <td className="py-2 pr-3 text-blue-400">{mock}</td>}
-      {liveOn && <td className="py-2 pr-3 text-green-400">{live}</td>}
-      {triviaOn && <td className="py-2 pr-3 text-purple-400">{trivia}</td>}
-      {propBetsOn && <td className="py-2 pr-3 text-amber-400">{props}</td>}
+      {mockOn && <td className="py-2 pr-3 text-blue-700">{mock}</td>}
+      {liveOn && <td className="py-2 pr-3 text-green-700">{live}</td>}
+      {triviaOn && <td className="py-2 pr-3 text-purple-700">{trivia}</td>}
+      {propBetsOn && <td className="py-2 pr-3 text-amber-700">{props}</td>}
       <td className="py-2 text-right font-bold">{combined}</td>
     </tr>
   );

@@ -26,13 +26,13 @@ export function PoolLockControl({ poolId, status }: { poolId: string; status: st
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.12] bg-white/8 p-5">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
             Pool Status
           </h3>
-          <p className="text-xs text-white/50 mt-1">
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             {isLocked
               ? "Pool is LOCKED — mock boards are frozen, live predictions and trivia are active."
               : "Pool is OPEN — members can still edit their mock boards."}
@@ -46,9 +46,9 @@ export function PoolLockControl({ poolId, status }: { poolId: string; status: st
           <button
             onClick={handleToggle}
             disabled={loading}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50 ${
+            className={`rounded-lg px-4 py-2 text-sm font-semibold text-[var(--text-primary)] transition disabled:opacity-50 ${
               isLocked
-                ? "border border-white/20 bg-white/5 hover:bg-white/10"
+                ? "border border-[var(--border)] bg-[var(--bg-card)] hover:bg-[var(--bg-card)]"
                 : "bg-red-500 hover:bg-red-600"
             }`}
           >

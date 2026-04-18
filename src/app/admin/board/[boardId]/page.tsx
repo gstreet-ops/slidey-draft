@@ -32,20 +32,20 @@ export default async function BoardPage({ params }: { params: Params }) {
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-3xl font-bold text-white tracking-wide"
+            className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {boardData.board.title.toUpperCase()}
           </h1>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             {boardData.board.season} &middot;{" "}
             {boardData.picks.length}/32 picks made
           </p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-medium ${
           boardData.board.status === "published"
-            ? "bg-green-500/20 text-green-400"
-            : "bg-yellow-500/20 text-yellow-400"
+            ? "bg-green-100 text-green-700"
+            : "bg-yellow-100 text-yellow-700"
         }`}>
           {boardData.board.status}
         </span>
@@ -57,6 +57,7 @@ export default async function BoardPage({ params }: { params: Params }) {
         draftOrder={draftOrder}
         existingPicks={boardData.picks}
         availablePlayers={availablePlayers}
+        favoriteTeamAbbr={session?.user?.favoriteTeam?.abbreviation ?? null}
       />
     </div>
   );

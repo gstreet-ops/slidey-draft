@@ -80,15 +80,15 @@ export function CollapsibleSimControls() {
     : 0;
 
   return (
-    <div className="rounded-xl border border-white/[0.12] bg-white/8">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
       <button
         onClick={handleExpand}
-        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-white/5 transition rounded-xl"
+        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-[var(--bg-card)] transition rounded-xl"
       >
-        <span className="text-sm font-semibold text-white/60 uppercase tracking-wider flex items-center gap-2">
+        <span className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2">
           <span>{"\u{1F3AE}"}</span> Simulation Controls
         </span>
-        <span className="text-xs text-white/40">{expanded ? "\u25BE" : "\u25B8"}</span>
+        <span className="text-xs text-[var(--text-muted)]">{expanded ? "\u25BE" : "\u25B8"}</span>
       </button>
       {expanded && (
         <div className="px-5 pb-5 space-y-4">
@@ -96,28 +96,28 @@ export function CollapsibleSimControls() {
           {state && (
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-white/50">{state.picksAnnounced} / {state.totalPicks} picks</span>
-                <span className="text-xs text-white/40">{progress}%</span>
+                <span className="text-xs text-[var(--text-muted)]">{state.picksAnnounced} / {state.totalPicks} picks</span>
+                <span className="text-xs text-[var(--text-muted)]">{progress}%</span>
               </div>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-2 rounded-full bg-[var(--bg-card)] overflow-hidden">
                 <div className="h-full rounded-full bg-[var(--steelers-gold)] transition-all" style={{ width: `${progress}%` }} />
               </div>
             </div>
           )}
 
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
               {error}
             </div>
           )}
-          {lastPick && <p className="text-xs text-green-400">Last: {lastPick}</p>}
+          {lastPick && <p className="text-xs text-green-700">Last: {lastPick}</p>}
 
           {/* Controls */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleNextPick}
               disabled={running || (state?.picksAnnounced ?? 0) >= (state?.totalPicks ?? 32)}
-              className="rounded-lg bg-green-600 px-4 py-2 text-xs font-bold text-white hover:bg-green-500 transition disabled:opacity-40"
+              className="rounded-lg bg-green-600 px-4 py-2 text-xs font-bold text-[var(--text-primary)] hover:bg-green-500 transition disabled:opacity-40"
             >
               Next Pick
             </button>
@@ -132,7 +132,7 @@ export function CollapsibleSimControls() {
             ) : (
               <button
                 onClick={() => { stopRef.current = true; }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-xs font-bold text-white hover:bg-red-500 transition"
+                className="rounded-lg bg-red-600 px-4 py-2 text-xs font-bold text-[var(--text-primary)] hover:bg-red-500 transition"
               >
                 Stop
               </button>
@@ -140,7 +140,7 @@ export function CollapsibleSimControls() {
             <select
               value={speed}
               onChange={(e) => setSpeed(Number(e.target.value))}
-              className="rounded bg-white/10 border border-white/20 px-2 py-1.5 text-xs text-white"
+              className="rounded bg-[var(--bg-card)] border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--text-primary)]"
             >
               <option value={1}>1s</option>
               <option value={3}>3s</option>
@@ -150,7 +150,7 @@ export function CollapsibleSimControls() {
             <button
               onClick={handleReset}
               disabled={running}
-              className="rounded-lg border border-red-500/30 px-3 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition disabled:opacity-40"
+              className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition disabled:opacity-40"
             >
               Reset
             </button>

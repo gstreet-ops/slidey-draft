@@ -34,10 +34,10 @@ type Props = {
 };
 
 function gradeColor(grade: number): string {
-  if (grade >= 90) return "text-green-400 bg-green-500/20 border-green-500/30";
-  if (grade >= 80) return "text-blue-400 bg-blue-500/20 border-blue-500/30";
-  if (grade >= 70) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30";
-  return "text-white/50 bg-white/8 border-white/[0.12]";
+  if (grade >= 90) return "text-green-700 bg-green-100 border-green-200";
+  if (grade >= 80) return "text-blue-700 bg-blue-100 border-blue-200";
+  if (grade >= 70) return "text-yellow-700 bg-yellow-100 border-yellow-200";
+  return "text-[var(--text-muted)] bg-[var(--bg-card)] border-[var(--border)]";
 }
 
 export function ProspectDetailDrawer({ prospect, onClose }: Props) {
@@ -84,7 +84,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/50 hover:bg-white/20 hover:text-white transition"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -92,11 +92,11 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
         </button>
 
         {/* Header row */}
-        <div className="flex items-start gap-4 border-b border-white/[0.12] bg-white/8 p-5 pt-6">
+        <div className="flex items-start gap-4 border-b border-[var(--border)] bg-[var(--bg-card)] p-5 pt-6">
           <PlayerAvatar player={prospect} size={80} />
           <div className="flex-1 min-w-0 pt-1">
             <h2
-              className="text-xl font-bold text-white tracking-wide leading-tight"
+              className="text-xl font-bold text-[var(--text-primary)] tracking-wide leading-tight"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {prospect.name.toUpperCase()}
@@ -108,11 +108,11 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               {prospect.schoolLogoUrl && (
                 <img src={prospect.schoolLogoUrl} alt="" className="h-5 w-5 object-contain" />
               )}
-              <span className="text-sm text-white/50">{prospect.school}</span>
+              <span className="text-sm text-[var(--text-muted)]">{prospect.school}</span>
             </div>
             {prospect.nflComparison && (
-              <p className="mt-1.5 text-xs text-white/50">
-                NFL Comp: <span className="font-semibold text-white/70">{prospect.nflComparison}</span>
+              <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+                NFL Comp: <span className="font-semibold text-[var(--text-secondary)]">{prospect.nflComparison}</span>
               </p>
             )}
           </div>
@@ -120,17 +120,17 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
 
         {/* Stats bar */}
         {(prospect.positionRank || prospect.rank || prospect.grade) && (
-          <div className="flex border-b border-white/10">
+          <div className="flex border-b border-[var(--border)]">
             {prospect.positionRank && (
-              <div className="flex-1 border-r border-white/10 px-4 py-3 text-center">
-                <p className="text-2xl font-bold text-white">{prospect.positionRank}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50">POS RK</p>
+              <div className="flex-1 border-r border-[var(--border)] px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{prospect.positionRank}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">POS RK</p>
               </div>
             )}
             {prospect.rank && (
-              <div className="flex-1 border-r border-white/10 px-4 py-3 text-center">
-                <p className="text-2xl font-bold text-white">{prospect.rank}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50">OVR RK</p>
+              <div className="flex-1 border-r border-[var(--border)] px-4 py-3 text-center">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{prospect.rank}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">OVR RK</p>
               </div>
             )}
             {prospect.grade && (
@@ -138,7 +138,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                 <p className={`inline-flex items-center justify-center rounded-lg border px-3 py-0.5 text-2xl font-bold ${gradeColor(prospect.grade)}`}>
                   {prospect.grade}
                 </p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50 mt-0.5">GRADE</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">GRADE</p>
               </div>
             )}
           </div>
@@ -148,14 +148,14 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Draft Range */}
           {prospect.consensusLow != null && prospect.consensusHigh != null && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">
                 Draft Range
               </h3>
-              <p className="text-sm text-white/70 mb-2">
+              <p className="text-sm text-[var(--text-secondary)] mb-2">
                 Projected: Pick {prospect.consensusLow}-{prospect.consensusHigh}
                 {prospect.consensusMid != null && ` (most likely: ${prospect.consensusMid})`}
               </p>
-              <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="relative h-2 rounded-full bg-[var(--bg-card)] overflow-hidden">
                 {/* Range bar */}
                 <div
                   className="absolute h-full rounded-full bg-[var(--steelers-gold)]/40"
@@ -172,7 +172,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                   />
                 )}
               </div>
-              <div className="flex justify-between mt-1 text-[9px] text-white/40">
+              <div className="flex justify-between mt-1 text-[9px] text-[var(--text-muted)]">
                 <span>1</span>
                 <span>16</span>
                 <span>32</span>
@@ -183,17 +183,17 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Combine Measurables grid */}
           {measurables.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">
                 Combine Measurables
               </h3>
-              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] sm:grid-cols-4">
                 {measurables.map((m, i) => (
                   <div
                     key={m.label}
-                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-white/5"}`}
+                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-[var(--bg-card)]"}`}
                   >
-                    <p className="text-sm font-bold text-white">{m.value}</p>
-                    <p className="text-[9px] font-semibold uppercase tracking-wider text-white/50">{m.label}</p>
+                    <p className="text-sm font-bold text-[var(--text-primary)]">{m.value}</p>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">{m.label}</p>
                   </div>
                 ))}
               </div>
@@ -203,10 +203,10 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
           {/* Scouting Report */}
           {prospect.notes && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">
                 Scouting Report
               </h3>
-              <p className="text-sm leading-relaxed text-white/60">
+              <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
                 {prospect.notes}
               </p>
             </div>

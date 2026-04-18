@@ -84,20 +84,20 @@ export default async function MyBoardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className="text-2xl font-bold text-white tracking-wide sm:text-3xl"
+                className="text-2xl font-bold text-[var(--text-primary)] tracking-wide sm:text-3xl"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 YOUR MOCK DRAFT
               </h1>
-              <p className="mt-1 text-xs text-white/50 sm:text-sm">
+              <p className="mt-1 text-xs text-[var(--text-muted)] sm:text-sm">
                 {season} &middot; {boardData.picks.length}/32 picks made
               </p>
             </div>
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 boardData.board.status === "published"
-                  ? "bg-green-500/20 text-green-400"
-                  : "bg-yellow-500/20 text-yellow-400"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
               }`}
             >
               {boardData.board.status}
@@ -115,6 +115,7 @@ export default async function MyBoardPage() {
             existingPicks={boardData.picks}
             availablePlayers={availablePlayers}
             readOnly={locked}
+            favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
           />
         </div>
 
@@ -122,7 +123,7 @@ export default async function MyBoardPage() {
         {poolmateBoards.length > 0 && (
           <div className="mt-10 space-y-4">
             <h2
-              className="text-lg font-bold text-white tracking-wide"
+              className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
               style={{ fontFamily: "var(--font-display)" }}
             >
               YOUR POOL&apos;S MOCK DRAFTS
@@ -132,10 +133,10 @@ export default async function MyBoardPage() {
                 <Link
                   key={pb.boardId}
                   href={`/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-white/[0.12] bg-white/8 p-4 hover:border-[var(--slidey)]/40 hover:bg-white/[0.07] transition"
+                  className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 hover:border-[var(--slidey)]/40 hover:bg-[var(--bg-card)] transition"
                 >
-                  <p className="text-sm font-bold text-white group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
-                  <p className="text-xs text-white/50 mt-1">{pb.pickCount}/32 picks &middot; {pb.status}</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition truncate">{pb.userName}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">{pb.pickCount}/32 picks &middot; {pb.status}</p>
                 </Link>
               ))}
             </div>

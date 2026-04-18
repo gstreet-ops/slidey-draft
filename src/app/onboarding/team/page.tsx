@@ -30,12 +30,12 @@ export default async function OnboardingTeamPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--steelers-black)] px-4 py-12">
       <div className="w-full max-w-2xl text-center">
         <h1
-          className="text-4xl font-bold text-white tracking-wider sm:text-5xl"
+          className="text-4xl font-bold text-[var(--text-primary)] tracking-wider sm:text-5xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           PICK YOUR TEAM
         </h1>
-        <p className="mt-3 text-white/50 text-sm">
+        <p className="mt-3 text-[var(--text-muted)] text-sm">
           Choose your favorite NFL team to personalize your experience.
         </p>
 
@@ -55,7 +55,7 @@ export default async function OnboardingTeamPage() {
 
         <Link
           href="/dashboard"
-          className="mt-6 inline-block text-sm text-white/40 hover:text-white/50 transition"
+          className="mt-6 inline-block text-sm text-[var(--text-muted)] hover:text-[var(--text-muted)] transition"
         >
           Skip for now
         </Link>

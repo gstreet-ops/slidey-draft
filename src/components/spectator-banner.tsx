@@ -30,7 +30,7 @@ export function SpectatorBanner() {
 
   if (status === "success") {
     return (
-      <div className="bg-green-500/20 border-b border-green-500/30 px-6 py-3 text-center text-sm text-green-300">
+      <div className="bg-green-100 border-b border-green-200 px-6 py-3 text-center text-sm text-green-700">
         {message}
       </div>
     );
@@ -39,7 +39,7 @@ export function SpectatorBanner() {
   return (
     <div className="bg-[var(--steelers-gold)]/10 border-b border-[var(--steelers-gold)]/20 px-6 py-3">
       <form onSubmit={handleSubmit} className="flex items-center justify-center gap-3 flex-wrap">
-        <span className="text-sm text-white/70">
+        <span className="text-sm text-[var(--text-secondary)]">
           Want to compete? Enter an invite code to unlock full access.
         </span>
         <input
@@ -50,7 +50,7 @@ export function SpectatorBanner() {
             if (status === "error") setStatus("idle");
           }}
           placeholder="INVITE CODE"
-          className="rounded bg-white/10 border border-white/20 px-3 py-1.5 text-sm text-white font-mono w-32 text-center placeholder:text-white/30 focus:outline-none focus:border-[var(--steelers-gold)]"
+          className="rounded bg-[var(--bg-card)] border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text-primary)] font-mono w-32 text-center placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--steelers-gold)]"
         />
         <button
           type="submit"
@@ -60,7 +60,7 @@ export function SpectatorBanner() {
           {status === "loading" ? "..." : "Activate"}
         </button>
         {status === "error" && (
-          <span className="text-xs text-red-400 w-full text-center">{message}</span>
+          <span className="text-xs text-red-700 w-full text-center">{message}</span>
         )}
       </form>
     </div>

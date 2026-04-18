@@ -29,14 +29,14 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-10">
       {/* CREATE YOUR OWN POOL — visible to all logged-in users */}
-      <section className="rounded-xl border border-white/10 bg-[var(--surface-dark)] p-6 sm:p-8">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-6 sm:p-8">
         <h2
-          className="text-2xl font-bold text-white tracking-wide"
+          className="text-2xl font-bold text-[var(--text-primary)] tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
         >
           CREATE YOUR OWN POOL
         </h2>
-        <p className="mt-2 text-sm text-white/60 leading-relaxed max-w-2xl">
+        <p className="mt-2 text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl">
           Want to run your own draft competition? Create a pool and share the
           invite link with friends. Pick which features you want — mock drafts,
           live predictions, trivia, prop bets — and you&apos;re the commissioner.
@@ -44,31 +44,31 @@ export default async function AdminDashboard() {
 
         {myCommissionerPools.length > 0 ? (
           <div className="mt-5 space-y-3">
-            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">
+            <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
               Pools you manage
             </h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {myCommissionerPools.map((p) => (
                 <div
                   key={p.poolId}
-                  className="rounded-lg border border-white/10 bg-[var(--surface-card)] p-4"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--surface-card)] p-4"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className="font-semibold text-white truncate">{p.poolName}</h4>
-                    <span className="text-[10px] uppercase tracking-wider text-white/40">
+                    <h4 className="font-semibold text-[var(--text-primary)] truncate">{p.poolName}</h4>
+                    <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
                       {p.role}
                     </span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Link
                       href={`/pools/${p.poolId}`}
-                      className="rounded-md border border-white/15 px-3 py-1.5 text-xs text-white/70 hover:border-white/30 hover:text-white transition"
+                      className="rounded-md border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:border-white/30 hover:text-[var(--text-primary)] transition"
                     >
                       View
                     </Link>
                     <Link
                       href={`/pools/${p.poolId}/settings`}
-                      className="rounded-md border border-white/15 px-3 py-1.5 text-xs text-white/70 hover:border-white/30 hover:text-white transition"
+                      className="rounded-md border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:border-white/30 hover:text-[var(--text-primary)] transition"
                     >
                       Manage
                     </Link>
@@ -93,8 +93,8 @@ export default async function AdminDashboard() {
             Create Pool
           </Link>
         ) : (
-          <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-4">
-            <p className="text-sm text-white/70">
+          <div className="mt-5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4">
+            <p className="text-sm text-[var(--text-secondary)]">
               Pool creation is currently limited to commissioners. Have a
               friend invite you, or ask an admin for a commissioner code.
             </p>
@@ -145,7 +145,7 @@ async function AdminSections() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1
-            className="text-3xl font-bold text-white tracking-wide"
+            className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
           >
             MOCK DRAFT BOARDS
@@ -159,7 +159,7 @@ async function AdminSections() {
             type="text"
             required
             placeholder="e.g. Mock Draft 1.0"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--accent-primary)] focus:outline-none"
+            className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <button
             type="submit"
@@ -170,8 +170,8 @@ async function AdminSections() {
         </form>
 
         {boards.length === 0 ? (
-          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-12 text-center">
-            <p className="text-white/50 text-lg">No boards yet. Create your first mock draft above.</p>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-12 text-center">
+            <p className="text-[var(--text-muted)] text-lg">No boards yet. Create your first mock draft above.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -179,24 +179,24 @@ async function AdminSections() {
               <Link
                 key={board.id}
                 href={`/admin/board/${board.id}`}
-                className="group rounded-xl border border-white/[0.12] bg-white/8 p-6 hover:border-[var(--accent-primary)]/50 hover:bg-white/10 transition"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 hover:border-[var(--accent-primary)]/50 hover:bg-[var(--bg-card)] transition"
               >
-                <h3 className="text-lg font-bold text-white group-hover:text-[var(--accent-primary)] transition">
+                <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition">
                   {board.title}
                 </h3>
-                <div className="mt-2 flex items-center gap-3 text-sm text-white/50">
+                <div className="mt-2 flex items-center gap-3 text-sm text-[var(--text-muted)]">
                   <span>{board.season}</span>
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                     board.status === "published"
-                      ? "bg-green-500/20 text-green-400"
+                      ? "bg-green-100 text-green-700"
                       : board.status === "draft"
-                      ? "bg-yellow-500/20 text-yellow-400"
-                      : "bg-white/10 text-white/60"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-[var(--bg-card)] text-[var(--text-secondary)]"
                   }`}>
                     {board.status}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
                   Created {board.createdAt.toLocaleDateString()}
                 </p>
               </Link>
@@ -208,7 +208,7 @@ async function AdminSections() {
       {/* Commissioner Invites */}
       <div className="space-y-6">
         <h2
-          className="text-3xl font-bold text-white tracking-wide"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
         >
           COMMISSIONER INVITES
@@ -219,7 +219,7 @@ async function AdminSections() {
       {/* All Pools */}
       <div className="space-y-6">
         <h2
-          className="text-3xl font-bold text-white tracking-wide"
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
         >
           POOLS
@@ -230,8 +230,8 @@ async function AdminSections() {
             name="name"
             type="text"
             required
-            placeholder="e.g. Georgetown Draft Club"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--accent-primary)] focus:outline-none"
+            placeholder="e.g. The Steel City Draft Club"
+            className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <button
             type="submit"
@@ -242,25 +242,25 @@ async function AdminSections() {
         </form>
 
         {poolsWithCounts.length === 0 ? (
-          <div className="rounded-xl border border-white/[0.12] bg-white/8 p-8 text-center">
-            <p className="text-white/50">No pools yet. Create one to share invite links.</p>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
+            <p className="text-[var(--text-muted)]">No pools yet. Create one to share invite links.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {poolsWithCounts.map((pool) => (
               <div
                 key={pool.id}
-                className="rounded-xl border border-white/[0.12] bg-white/8 p-6"
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-white">{pool.name}</h3>
+                    <h3 className="text-lg font-bold text-[var(--text-primary)]">{pool.name}</h3>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                       pool.status === "open"
-                        ? "bg-green-500/20 text-green-400"
+                        ? "bg-green-100 text-green-700"
                         : pool.status === "locked"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-white/10 text-white/50"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-[var(--bg-card)] text-[var(--text-muted)]"
                     }`}>
                       {pool.status}
                     </span>
@@ -268,7 +268,7 @@ async function AdminSections() {
                   <div className="flex items-center gap-3">
                     <Link
                       href={`/pools/${pool.id}/settings`}
-                      className="text-xs text-white/50 hover:text-white/60 transition"
+                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
                     >
                       Settings
                     </Link>
@@ -280,13 +280,13 @@ async function AdminSections() {
                     </Link>
                   </div>
                 </div>
-                <p className="mt-1 text-sm text-white/50">
+                <p className="mt-1 text-sm text-[var(--text-muted)]">
                   {pool.memberCount} member{pool.memberCount !== 1 ? "s" : ""}
                 </p>
                 <div className="mt-3">
                   <CopyInviteLink inviteCode={pool.inviteCode} />
                 </div>
-                <p className="mt-2 text-xs text-white/40">
+                <p className="mt-2 text-xs text-[var(--text-muted)]">
                   Created {pool.createdAt.toLocaleDateString()}
                 </p>
               </div>
@@ -298,7 +298,7 @@ async function AdminSections() {
       {/* External Links */}
       <div className="space-y-4">
         <h2
-          className="text-lg font-semibold text-white/50 tracking-wide uppercase"
+          className="text-lg font-semibold text-[var(--text-muted)] tracking-wide uppercase"
           style={{ fontFamily: "var(--font-display)" }}
         >
           External Links
@@ -308,7 +308,7 @@ async function AdminSections() {
             href="https://slidey-draft-matrix.vercel.app/roadmap"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-white/8 px-4 py-2.5 text-sm text-white/60 hover:border-white/20 hover:text-white transition"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)] transition"
           >
             Feature Roadmap
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>
@@ -317,7 +317,7 @@ async function AdminSections() {
             href="https://slidey-draft-matrix.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-white/8 px-4 py-2.5 text-sm text-white/60 hover:border-white/20 hover:text-white transition"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)] transition"
           >
             Competitive Matrix
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>

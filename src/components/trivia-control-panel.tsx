@@ -17,9 +17,9 @@ type TriviaSettings = {
 };
 
 const diffColor: Record<string, string> = {
-  easy: "bg-green-500/20 text-green-400",
-  medium: "bg-yellow-500/20 text-yellow-400",
-  hard: "bg-red-500/20 text-red-400",
+  easy: "bg-green-100 text-green-700",
+  medium: "bg-yellow-100 text-yellow-700",
+  hard: "bg-red-100 text-red-700",
 };
 
 export function TriviaControlPanel({
@@ -110,36 +110,36 @@ export function TriviaControlPanel({
   return (
     <div className="space-y-4">
       {toast && (
-        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#FFB612] px-5 py-3 text-sm font-semibold text-white shadow-lg">
+        <div className="fixed top-4 right-4 z-50 rounded-lg bg-[#FFB612] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] shadow-lg">
           {toast}
-          <button onClick={() => setToast("")} className="ml-3 text-white/70 hover:text-white">&times;</button>
+          <button onClick={() => setToast("")} className="ml-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">&times;</button>
         </div>
       )}
 
       {/* Current Question Display */}
       {activeItem ? (
-        <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 space-y-1">
+        <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-orange-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-orange-700 uppercase tracking-wider">
               Current Question — Q{currentPosition} of {totalCount}
             </span>
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${diffColor[activeItem.difficulty]}`}>
               {activeItem.difficulty}
             </span>
           </div>
-          <p className="text-sm text-white">{activeItem.question}</p>
+          <p className="text-sm text-[var(--text-primary)]">{activeItem.question}</p>
           <div className="flex items-center gap-2">
             <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-[10px] text-[#FFB612]">
               {activeItem.category.replace(/_/g, " ")}
             </span>
             {activeItem.pickNumber != null && (
-              <span className="text-[10px] text-white/40">Pick #{activeItem.pickNumber}</span>
+              <span className="text-[10px] text-[var(--text-muted)]">Pick #{activeItem.pickNumber}</span>
             )}
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-white/[0.12] bg-white/8 px-4 py-3">
-          <span className="text-xs text-white/50">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
+          <span className="text-xs text-[var(--text-muted)]">
             {pendingItems.length > 0
               ? "No active question — fire the next one below"
               : "Queue exhausted — no more trivia questions"}
@@ -148,19 +148,19 @@ export function TriviaControlPanel({
       )}
 
       {/* Controls Bar */}
-      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-white/[0.12] bg-white/8 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
         {/* Timer */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-white/50">Timer</span>
-          <div className="flex rounded-lg border border-white/10 overflow-hidden">
+          <span className="text-xs text-[var(--text-muted)]">Timer</span>
+          <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
             {[0, 15, 30, 45, 60].map((s) => (
               <button
                 key={s}
                 onClick={() => updateTimer(s)}
                 className={`px-2.5 py-1 text-xs font-semibold transition ${
                   settings.triviaTimerSeconds === s
-                    ? "bg-[#FFB612] text-white"
-                    : "bg-white/5 text-white/50 hover:text-white"
+                    ? "bg-[#FFB612] text-[var(--text-primary)]"
+                    : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {s === 0 ? "Off" : `${s}s`}
@@ -184,8 +184,8 @@ export function TriviaControlPanel({
             }}
             className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
               paused
-                ? "border-yellow-500/30 bg-yellow-500/20 text-yellow-400"
-                : "border-white/10 text-white/50 hover:bg-white/5 hover:text-white"
+                ? "border-yellow-200 bg-yellow-100 text-yellow-700"
+                : "border-[var(--border)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"
             }`}
           >
             {paused ? "Resume" : "Pause"}
@@ -194,7 +194,7 @@ export function TriviaControlPanel({
           <button
             onClick={skipCurrent}
             disabled={skipping || !activeItem}
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/50 hover:bg-white/5 hover:text-white transition disabled:opacity-30"
+            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition disabled:opacity-30"
           >
             {skipping ? "..." : "Skip"}
           </button>
@@ -202,13 +202,13 @@ export function TriviaControlPanel({
           <button
             onClick={fireNext}
             disabled={firing || pendingItems.length === 0}
-            className="rounded-lg bg-orange-500 px-4 py-1.5 text-xs font-bold text-white hover:bg-orange-600 transition disabled:opacity-50"
+            className="rounded-lg bg-orange-500 px-4 py-1.5 text-xs font-bold text-[var(--text-primary)] hover:bg-orange-600 transition disabled:opacity-50"
           >
             {firing ? "Firing..." : "Fire Next"}
           </button>
         </div>
 
-        <div className="text-xs text-white/40 w-full sm:w-auto">
+        <div className="text-xs text-[var(--text-muted)] w-full sm:w-auto">
           {pendingItems.length} pending / {totalCount} total
         </div>
       </div>
@@ -218,7 +218,7 @@ export function TriviaControlPanel({
         <div className="space-y-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center gap-2 text-xs font-bold text-white/50 uppercase tracking-wider hover:text-white/60 transition"
+            className="flex items-center gap-2 text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider hover:text-[var(--text-secondary)] transition"
           >
             <span>{showPreview ? "▾" : "▸"}</span>
             Next {nextThree.length} Questions
@@ -228,13 +228,13 @@ export function TriviaControlPanel({
               {nextThree.map((q) => (
                 <div
                   key={q.questionId}
-                  className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--border-light)] bg-[var(--bg-card)] px-3 py-2"
                 >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[9px] font-bold text-white/50">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-card)] text-[9px] font-bold text-[var(--text-muted)]">
                     {q.sortOrder}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-white/50 truncate">{q.question}</p>
+                    <p className="text-xs text-[var(--text-muted)] truncate">{q.question}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty]}`}>
                     {q.difficulty}

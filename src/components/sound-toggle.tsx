@@ -8,7 +8,7 @@ export function SoundToggle() {
   return (
     <button
       onClick={toggleMute}
-      className="flex items-center gap-1 text-xs text-white/50 hover:text-white/80 transition"
+      className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
       title={enabled ? "Mute sounds" : "Unmute sounds"}
     >
       {enabled ? (
