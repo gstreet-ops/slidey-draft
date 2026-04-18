@@ -60,12 +60,22 @@ export async function TeamInfoBar({ teamCode }: Props) {
 
           {/* Body */}
           <div className="flex-1 min-w-0">
-            <h3
-              className="text-lg sm:text-xl font-bold tracking-wide text-[var(--text-primary)]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {theme.name.toUpperCase()}
-            </h3>
+            {theme.wordmark ? (
+              <Image
+                src={theme.wordmark}
+                alt={theme.name}
+                width={300}
+                height={32}
+                className="h-7 sm:h-8 w-auto object-contain"
+              />
+            ) : (
+              <h3
+                className="text-lg sm:text-xl font-bold tracking-wide text-[var(--text-primary)]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {theme.name.toUpperCase()}
+              </h3>
+            )}
             <p className="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
               {theme.stadium} · {theme.city}
             </p>

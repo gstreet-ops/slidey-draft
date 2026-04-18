@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTeamTheme, type TeamTheme } from "@/lib/team-themes";
 
-type Variant = "logo" | "altLogo" | "heroPlayer" | "legendPlayer" | "historyImage";
+type Variant = "logo" | "altLogo" | "wordmark" | "heroPlayer" | "legendPlayer" | "historyImage" | "actionShot" | "funImage";
 
 type Props = {
   teamCode: string | null | undefined;

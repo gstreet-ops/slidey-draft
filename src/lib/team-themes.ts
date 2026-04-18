@@ -10,23 +10,29 @@ export interface TeamTheme {
   tagline: string;
   /** Optional team logo PNG served from public/team-images. */
   logo?: string;
-  /** Optional alternate logo (wordmark, monogram, helmet variant, etc.). */
+  /** Optional alternate logo (monogram, helmet variant, etc.). */
   altLogo?: string;
+  /** Optional team wordmark — stylized team name as image. */
+  wordmark?: string;
   /** Optional current-roster action shot for the hero banner. */
   heroPlayer?: string;
   /** Optional franchise legend image for the franchise highlights card. */
   legendPlayer?: string;
   /** Optional historic / founding photo. */
   historyImage?: string;
+  /** Optional extra game-day / action photo. */
+  actionShot?: string;
+  /** Optional fan-culture image (mascot, tradition, meme). */
+  funImage?: string;
 }
 
 export const NFL_TEAMS: Record<string, TeamTheme> = {
   ARI: { name: "Arizona Cardinals", city: "Phoenix", abbreviation: "ARI", primary: "#97233F", secondary: "#7A1B32", textOnPrimary: "white", stadium: "State Farm Stadium", division: "NFC West", tagline: "State Farm Stadium · NFC West" },
   ATL: { name: "Atlanta Falcons", city: "Atlanta", abbreviation: "ATL", primary: "#A71930", secondary: "#8B1528", textOnPrimary: "white", stadium: "Mercedes-Benz Stadium", division: "NFC South", tagline: "Mercedes-Benz Stadium · NFC South" },
   BAL: { name: "Baltimore Ravens", city: "Baltimore", abbreviation: "BAL", primary: "#241773", secondary: "#1D1260", textOnPrimary: "white", stadium: "M&T Bank Stadium", division: "AFC North", tagline: "M&T Bank Stadium · AFC North" },
-  BUF: { name: "Buffalo Bills", city: "Buffalo", abbreviation: "BUF", primary: "#00338D", secondary: "#C60C30", textOnPrimary: "white", stadium: "Highmark Stadium", division: "AFC East", tagline: "Highmark Stadium · AFC East", logo: "/team-images/BUF-logo.png", altLogo: "/team-images/BUF-wordmark.png", heroPlayer: "/team-images/BUF-allen.png" },
+  BUF: { name: "Buffalo Bills", city: "Buffalo", abbreviation: "BUF", primary: "#00338D", secondary: "#C60C30", textOnPrimary: "white", stadium: "Highmark Stadium", division: "AFC East", tagline: "Highmark Stadium · AFC East", logo: "/team-images/BUF-logo.png", wordmark: "/team-images/BUF-wordmark.png", heroPlayer: "/team-images/BUF-allen.png" },
   CAR: { name: "Carolina Panthers", city: "Charlotte", abbreviation: "CAR", primary: "#0085CA", secondary: "#006BA1", textOnPrimary: "white", stadium: "Bank of America Stadium", division: "NFC South", tagline: "Bank of America Stadium · NFC South" },
-  CHI: { name: "Chicago Bears", city: "Chicago", abbreviation: "CHI", primary: "#0B162A", secondary: "#C83803", textOnPrimary: "white", stadium: "Soldier Field", division: "NFC North", tagline: "Soldier Field · NFC North", logo: "/team-images/CHI-logo.png", altLogo: "/team-images/CHI-C-logo.png", heroPlayer: "/team-images/CHI-caleb.png", legendPlayer: "/team-images/CHI-urlacher.png", historyImage: "/team-images/CHI-founding.png" },
+  CHI: { name: "Chicago Bears", city: "Chicago", abbreviation: "CHI", primary: "#0B162A", secondary: "#C83803", textOnPrimary: "white", stadium: "Soldier Field", division: "NFC North", tagline: "Soldier Field · NFC North", logo: "/team-images/CHI-logo.png", altLogo: "/team-images/CHI-C-logo.png", wordmark: "/team-images/CHI-wordmark.png", heroPlayer: "/team-images/CHI-caleb.png", legendPlayer: "/team-images/CHI-urlacher.png", historyImage: "/team-images/CHI-founding.png", funImage: "/team-images/CHI-bear-breakfast.png" },
   CIN: { name: "Cincinnati Bengals", city: "Cincinnati", abbreviation: "CIN", primary: "#FB4F14", secondary: "#D44210", textOnPrimary: "white", stadium: "Paycor Stadium", division: "AFC North", tagline: "Paycor Stadium · AFC North" },
   CLE: { name: "Cleveland Browns", city: "Cleveland", abbreviation: "CLE", primary: "#FF3C00", secondary: "#D43300", textOnPrimary: "white", stadium: "Cleveland Browns Stadium", division: "AFC North", tagline: "Cleveland Browns Stadium · AFC North" },
   DAL: { name: "Dallas Cowboys", city: "Dallas", abbreviation: "DAL", primary: "#041E42", secondary: "#869397", textOnPrimary: "white", stadium: "AT&T Stadium", division: "NFC East", tagline: "AT&T Stadium · NFC East" },
@@ -42,7 +48,7 @@ export const NFL_TEAMS: Record<string, TeamTheme> = {
   LAR: { name: "Los Angeles Rams", city: "Los Angeles", abbreviation: "LAR", primary: "#003594", secondary: "#FFA300", textOnPrimary: "white", stadium: "SoFi Stadium", division: "NFC West", tagline: "SoFi Stadium · NFC West" },
   MIA: { name: "Miami Dolphins", city: "Miami", abbreviation: "MIA", primary: "#008E97", secondary: "#FC4C02", textOnPrimary: "white", stadium: "Hard Rock Stadium", division: "AFC East", tagline: "Hard Rock Stadium · AFC East" },
   MIN: { name: "Minnesota Vikings", city: "Minneapolis", abbreviation: "MIN", primary: "#4F2683", secondary: "#FFC62F", textOnPrimary: "white", stadium: "U.S. Bank Stadium", division: "NFC North", tagline: "U.S. Bank Stadium · NFC North" },
-  NE:  { name: "New England Patriots", city: "Boston", abbreviation: "NE", primary: "#002244", secondary: "#C60C30", textOnPrimary: "white", stadium: "Gillette Stadium", division: "AFC East", tagline: "Gillette Stadium · AFC East", logo: "/team-images/NE-logo.png", altLogo: "/team-images/NE-circle-logo.png", heroPlayer: "/team-images/NE-huddle.png", legendPlayer: "/team-images/NE-grogan.png" },
+  NE:  { name: "New England Patriots", city: "Boston", abbreviation: "NE", primary: "#002244", secondary: "#C60C30", textOnPrimary: "white", stadium: "Gillette Stadium", division: "AFC East", tagline: "Gillette Stadium · AFC East", logo: "/team-images/NE-logo.png", altLogo: "/team-images/NE-circle-logo.png", wordmark: "/team-images/NE-logo-blue.png", heroPlayer: "/team-images/NE-huddle.png", legendPlayer: "/team-images/NE-grogan.png", actionShot: "/team-images/NE-snapper-good.png" },
   NO:  { name: "New Orleans Saints", city: "New Orleans", abbreviation: "NO", primary: "#D3BC8D", secondary: "#101820", textOnPrimary: "black", stadium: "Caesars Superdome", division: "NFC South", tagline: "Caesars Superdome · NFC South", logo: "/team-images/NO-logo.png", heroPlayer: "/team-images/NO-kamara-breeze.png", legendPlayer: "/team-images/NO-shaughnessy.png" },
   NYG: { name: "New York Giants", city: "New York", abbreviation: "NYG", primary: "#0B2265", secondary: "#A71930", textOnPrimary: "white", stadium: "MetLife Stadium", division: "NFC East", tagline: "MetLife Stadium · NFC East" },
   NYJ: { name: "New York Jets", city: "New York", abbreviation: "NYJ", primary: "#125740", secondary: "#000000", textOnPrimary: "white", stadium: "MetLife Stadium", division: "AFC East", tagline: "MetLife Stadium · AFC East" },

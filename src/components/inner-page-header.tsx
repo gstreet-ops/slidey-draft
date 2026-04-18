@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTeamTheme } from "@/lib/team-themes";
 import { TeamImage } from "./team-image";
 import { TeamStripe } from "./hero-banner";
@@ -10,8 +11,12 @@ type Props = {
 
 /**
  * Compact team-color page header for interior pages (no full hero banner).
- * 80px solid accent strip + Bebas title + optional subtitle. Team stripe under.
- * Always-white text — team color guarantees a dark-enough background.
+ * Solid team-color strip + Bebas title + optional subtitle. Team stripe under.
+ *
+ * Image-rich treatment when the team has art:
+ *  - logo (always tried, falls back to initials chip)
+ *  - altLogo as a faint right-side watermark
+ *  - heroPlayer as a circular avatar on the right (above the watermark)
  */
 export function InnerPageHeader({ title, subtitle, teamCode }: Props) {
   const theme = getTeamTheme(teamCode);
@@ -19,7 +24,7 @@ export function InnerPageHeader({ title, subtitle, teamCode }: Props) {
   return (
     <>
       <div
-        className="relative h-20 sm:h-24 flex items-center"
+        className="relative h-20 sm:h-24 flex items-center overflow-hidden"
         style={{ backgroundColor: theme.primary }}
       >
         {/* Subtle diagonal stripe texture */}
@@ -31,6 +36,18 @@ export function InnerPageHeader({ title, subtitle, teamCode }: Props) {
           }}
           aria-hidden
         />
+
+        {/* Alt logo watermark — far right, very faded */}
+        {theme.altLogo && (
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden sm:flex items-center pr-32" aria-hidden>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={theme.altLogo}
+              alt=""
+              className="h-[140%] w-auto object-contain opacity-15"
+            />
+          </div>
+        )}
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6">
           <TeamImage
@@ -59,6 +76,23 @@ export function InnerPageHeader({ title, subtitle, teamCode }: Props) {
               </p>
             )}
           </div>
+
+          {/* Hero player avatar — right side, only when present */}
+          {theme.heroPlayer && (
+            <div
+              className="hidden sm:block h-14 w-14 shrink-0 rounded-full overflow-hidden border-2"
+              style={{ borderColor: "rgba(255,255,255,0.6)" }}
+              aria-hidden
+            >
+              <Image
+                src={theme.heroPlayer}
+                alt=""
+                width={56}
+                height={56}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
         </div>
       </div>
       <TeamStripe />

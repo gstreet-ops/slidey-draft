@@ -89,33 +89,13 @@ export default async function SettingsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3 sm:p-6">
-              {/* Hero player preview (if available) */}
-              {theme.heroPlayer && (
-                <div className="sm:col-span-1">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-                    Roster Highlight
-                  </p>
-                  <div
-                    className="mt-2 h-32 rounded-lg overflow-hidden border-2"
-                    style={{ borderColor: theme.primary }}
-                  >
-                    <TeamImage
-                      teamCode={teamCode}
-                      variant="heroPlayer"
-                      size={300}
-                      className="h-full w-full !object-cover"
-                    />
-                  </div>
-                </div>
-              )}
-
+            <div className="space-y-5 p-5 sm:p-6">
               {/* Color swatches + meta */}
-              <div className={theme.heroPlayer ? "sm:col-span-2" : "sm:col-span-3"}>
+              <div>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
                   Your Team Colors
                 </p>
-                <div className="mt-2 flex items-center gap-3">
+                <div className="mt-2 flex flex-wrap items-center gap-3">
                   <div className="flex items-center gap-2">
                     <span
                       className="h-9 w-9 rounded-md border border-gray-200 shrink-0"
@@ -142,6 +122,34 @@ export default async function SettingsPage() {
                   </div>
                 </dl>
               </div>
+
+              {/* Wordmark */}
+              {theme.wordmark && (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Wordmark</p>
+                  <div className="mt-2 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={theme.wordmark} alt={`${theme.name} wordmark`} className="h-8 w-auto object-contain" />
+                  </div>
+                </div>
+              )}
+
+              {/* Alt logo */}
+              {theme.altLogo && (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Alternate Logo</p>
+                  <div className="mt-2 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-4">
+                    <TeamImage teamCode={teamCode} variant="altLogo" size={56} />
+                  </div>
+                </div>
+              )}
+
+              {/* Image gallery — only renders sections that have images */}
+              <ImageTile teamCode={teamCode} variant="heroPlayer" label="Roster Highlight" present={!!theme.heroPlayer} accent={theme.primary} />
+              <ImageTile teamCode={teamCode} variant="legendPlayer" label="Franchise Legend" present={!!theme.legendPlayer} accent={theme.primary} />
+              <ImageTile teamCode={teamCode} variant="historyImage" label="Team History" present={!!theme.historyImage} accent={theme.primary} />
+              <ImageTile teamCode={teamCode} variant="actionShot" label="Game Day" present={!!theme.actionShot} accent={theme.primary} />
+              <ImageTile teamCode={teamCode} variant="funImage" label="Fan Culture" present={!!theme.funImage} accent={theme.primary} />
             </div>
           </section>
         )}
@@ -167,6 +175,35 @@ export default async function SettingsPage() {
             />
           </div>
         </section>
+      </div>
+    </div>
+  );
+}
+
+function ImageTile({
+  teamCode,
+  variant,
+  label,
+  present,
+  accent,
+}: {
+  teamCode: string | null;
+  variant: "heroPlayer" | "legendPlayer" | "historyImage" | "actionShot" | "funImage";
+  label: string;
+  present: boolean;
+  accent: string;
+}) {
+  if (!present) return null;
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+        {label}
+      </p>
+      <div
+        className="mt-2 h-40 sm:h-44 rounded-lg overflow-hidden border-2"
+        style={{ borderColor: accent }}
+      >
+        <TeamImage teamCode={teamCode} variant={variant} size={500} className="!h-full !w-full !object-cover" />
       </div>
     </div>
   );

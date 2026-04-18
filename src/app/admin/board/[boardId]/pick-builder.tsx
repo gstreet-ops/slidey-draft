@@ -645,7 +645,7 @@ export function PickBuilder({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.2fr_1fr] md:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
       {/* Draft board column */}
-      <div className="space-y-1 sm:space-y-1.5 max-h-[50vh] md:max-h-[calc(100vh-100px)] overflow-y-auto pr-1">
+      <div className="space-y-1 sm:space-y-1.5">
         {/* Auto-save indicator */}
         <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-700">
