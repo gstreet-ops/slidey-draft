@@ -35,38 +35,48 @@ export function MobilePicksShell({ filledCount, totalSlots, prospectsCount, grad
 
   return (
     <Ctx.Provider value={{ tab, setTab }}>
-      {/* Mobile tab bar */}
-      <div className="md:hidden sticky top-0 z-30 -mt-2 flex w-full border-b border-gray-200 bg-white shadow-sm">
-        <button
-          type="button"
-          onClick={() => setTab("picks")}
-          className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
-            tab === "picks"
-              ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
-              : "border-transparent text-[var(--text-muted)]"
-          }`}
+      {/* Mobile tab bar — wrapped so space-y on the parent can't apply weird margins to the sticky element */}
+      <div className="md:hidden">
+        <div
+          className="sticky top-0 z-30 flex w-full overflow-visible border-b border-gray-200 bg-white shadow-sm"
+          role="tablist"
+          aria-label="Mock draft view"
         >
-          My Picks <span className="font-medium opacity-80">({filledCount}/{totalSlots})</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab("prospects")}
-          className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
-            tab === "prospects"
-              ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
-              : "border-transparent text-[var(--text-muted)]"
-          }`}
-        >
-          Prospects <span className="font-medium opacity-80">({prospectsCount})</span>
-        </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "picks"}
+            onClick={() => setTab("picks")}
+            className={`block w-1/2 min-h-[48px] px-2 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap text-center transition border-b-2 ${
+              tab === "picks"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
+                : "border-transparent text-[var(--text-muted)]"
+            }`}
+          >
+            My Picks ({filledCount}/{totalSlots})
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "prospects"}
+            onClick={() => setTab("prospects")}
+            className={`block w-1/2 min-h-[48px] px-2 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap text-center transition border-b-2 ${
+              tab === "prospects"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
+                : "border-transparent text-[var(--text-muted)]"
+            }`}
+          >
+            Prospects ({prospectsCount})
+          </button>
+        </div>
       </div>
 
-      {/* Grade card — hidden on mobile when prospects tab is active */}
+      {/* Grade card — hidden on mobile when prospects tab is active, always shown on desktop */}
       {gradeCard && (
-        <div className={tab === "prospects" ? "hidden md:block" : "block"}>{gradeCard}</div>
+        <div className={tab === "prospects" ? "hidden md:block" : ""}>{gradeCard}</div>
       )}
 
-      {/* Pick builder — owns the picks/prospects column visibility internally via the context */}
+      {/* Pick builder — reads the same context to flip picks/prospects column visibility */}
       {builder}
     </Ctx.Provider>
   );
