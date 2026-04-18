@@ -237,7 +237,7 @@ export function LivePredictionWidget({
       {/* Header bar — always visible */}
       <button
         onClick={() => canCollapse && setExpanded((v) => !v)}
-        className={`w-full flex items-center justify-between px-5 py-3 ${canCollapse ? "cursor-pointer hover:bg-[var(--bg-card)]" : "cursor-default"} transition`}
+        className={`w-full flex items-center justify-between px-5 py-3 ${canCollapse ? "cursor-pointer hover:bg-gray-50" : "cursor-default"} transition`}
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider shrink-0">
@@ -315,7 +315,7 @@ export function LivePredictionWidget({
                       className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
                         selectedPlayerId === p.id
                           ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                          : "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)]"
+                          : "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-gray-50"
                       }`}
                     >
                       {p.rank && (
@@ -342,7 +342,7 @@ export function LivePredictionWidget({
                       setSearch("");
                       setPosFilter("ALL");
                     }}
-                    className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition"
+                    className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-gray-50 transition"
                   >
                     Cancel
                   </button>
@@ -405,7 +405,7 @@ export function LivePredictionWidget({
                     teamAbbreviation: team?.teamAbbreviation || "",
                   });
                 }}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-gray-50 transition"
               >
                 Change Pick
               </button>

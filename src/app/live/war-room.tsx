@@ -546,7 +546,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
                 }}
               >
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Live Feed</span>
-                <button onClick={() => setChatOpen(false)} className="rounded p-1 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition">
+                <button onClick={() => setChatOpen(false)} className="rounded p-1 text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l10 10M11 1L1 11" /></svg>
                 </button>
               </div>

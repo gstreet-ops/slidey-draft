@@ -59,10 +59,10 @@ export function TeamPicker({
               onClick={() => persist(team.id)}
               disabled={saving}
               title={team.name}
-              className={`group relative flex flex-col items-center gap-2 rounded-lg bg-[var(--surface-card)] p-3 transition overflow-hidden ${
+              className={`group relative flex flex-col items-center gap-2 rounded-lg bg-white p-3 transition overflow-hidden ${
                 isSelected
                   ? "ring-2 ring-[var(--accent-primary)] scale-[1.02]"
-                  : "border border-[var(--border)] hover:border-[var(--border)] hover:bg-[var(--surface-elevated)]"
+                  : "border border-[var(--border)] hover:border-[var(--border)] hover:bg-gray-50"
               } ${saving ? "opacity-50 cursor-wait" : ""}`}
             >
               <span

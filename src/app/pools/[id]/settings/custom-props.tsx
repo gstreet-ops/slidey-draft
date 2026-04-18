@@ -138,7 +138,7 @@ export function CustomProps({
                 className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--steelers-gold)] focus:outline-none"
               >
                 {TYPE_OPTIONS.map((t) => (
-                  <option key={t.value} value={t.value} className="bg-[var(--surface-dark)]">
+                  <option key={t.value} value={t.value} className="bg-white">
                     {t.label}
                   </option>
                 ))}

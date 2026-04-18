@@ -16,7 +16,7 @@ export function CollapsibleTriviaControls({
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-[var(--bg-card)] transition rounded-xl"
+        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-gray-50 transition rounded-xl"
       >
         <span className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2">
           <span>{"\uD83C\uDFAE"}</span> Trivia Controls

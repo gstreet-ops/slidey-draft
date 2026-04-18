@@ -41,7 +41,7 @@ export default async function SettingsPage() {
         </p>
 
         {/* Profile */}
-        <section className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-5 sm:p-8">
+        <section className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
           <h2
             className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
@@ -54,7 +54,7 @@ export default async function SettingsPage() {
         </section>
 
         {/* Team Theme */}
-        <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-5 sm:p-8">
+        <section className="mt-6 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2
@@ -68,7 +68,7 @@ export default async function SettingsPage() {
               </p>
             </div>
             {currentTeam && (
-              <div className="flex items-center gap-2 rounded-lg bg-[var(--surface-card)] px-3 py-2 shrink-0">
+              <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 shrink-0">
                 {currentTeam.logoUrl ? (
                   <Image
                     src={currentTeam.logoUrl}

@@ -43,7 +43,7 @@ export function MobileNav({ links, logo, trailing }: Props) {
           {/* Hamburger — mobile only */}
           <button
             onClick={() => setOpen(!open)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition md:hidden"
             aria-label="Toggle menu"
           >
             {open ? (
@@ -68,7 +68,7 @@ export function MobileNav({ links, logo, trailing }: Props) {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
+                className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
               >
                 {l.label}
               </Link>

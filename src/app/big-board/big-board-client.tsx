@@ -93,7 +93,7 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
               <button
                 key={p.id}
                 onClick={() => setDrawerProspect(p)}
-                className="flex w-full items-center gap-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3 text-left transition hover:bg-[var(--bg-card)] sm:gap-4 sm:px-5 sm:py-4"
+                className="flex w-full items-center gap-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] px-4 py-3 text-left transition hover:bg-gray-50 sm:gap-4 sm:px-5 sm:py-4"
               >
                 {/* Rank */}
                 <span className="w-8 text-center text-sm font-bold text-[var(--text-muted)] shrink-0 sm:w-10 sm:text-base">

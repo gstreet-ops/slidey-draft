@@ -248,7 +248,7 @@ export function TriviaCard({ poolId }: { poolId: string }) {
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((opt) => {
-          let style = "border-[var(--border)] bg-[var(--bg-card)] hover:bg-[var(--bg-card)] text-[var(--text-primary)]";
+          let style = "border-[var(--border)] bg-[var(--bg-card)] hover:bg-gray-50 text-[var(--text-primary)]";
 
           if (result) {
             if (opt.index === result.correctAnswer) {

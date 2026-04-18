@@ -35,7 +35,7 @@ export function CollapsibleVideoSettings({
       )}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-[var(--bg-card)] transition rounded-xl"
+        className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-gray-50 transition rounded-xl"
       >
         <span className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>

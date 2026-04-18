@@ -343,7 +343,7 @@ export function TriviaQueue() {
                         <button
                           onClick={() => moveInQueue(q.questionId, Math.max(1, q.sortOrder - 1))}
                           disabled={busy || i === 0 || queue[i - 1]?.status !== "pending"}
-                          className="rounded px-1 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-20 transition"
+                          className="rounded px-1 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-gray-50 disabled:opacity-20 transition"
                           title="Move up"
                         >
                           ▲
@@ -351,7 +351,7 @@ export function TriviaQueue() {
                         <button
                           onClick={() => moveInQueue(q.questionId, Math.min(queue.length, q.sortOrder + 1))}
                           disabled={busy || i === queue.length - 1}
-                          className="rounded px-1 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-20 transition"
+                          className="rounded px-1 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-gray-50 disabled:opacity-20 transition"
                           title="Move down"
                         >
                           ▼

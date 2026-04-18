@@ -234,7 +234,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Pool Queue Builder
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-6 space-y-6">
+      <div className="rounded-xl border border-[var(--border)] bg-white p-6 space-y-6">
         <h2 className="text-3xl font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
           POOL QUEUE BUILDER
         </h2>
@@ -247,7 +247,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           Question Bank
           ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-6 space-y-6">
+      <div className="rounded-xl border border-[var(--border)] bg-white p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
             QUESTION BANK
@@ -372,7 +372,7 @@ export default function AdminTriviaPage() {
           {library.map((q) => (
             <div key={q.id} className={`rounded-lg border ${q.active ? "border-[var(--border)] bg-[var(--bg-card)]" : "border-[var(--border-light)] bg-[var(--bg-card)] opacity-60"}`}>
               <div
-                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[var(--bg-card)] transition"
+                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition"
                 onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
               >
                 <div className="flex-1 min-w-0">
@@ -444,7 +444,7 @@ export default function AdminTriviaPage() {
       {/* ═══════════════════════════════════════════════════════
           AI Generator (collapsible)
           ═══════════════════════════════════════════════════════ */}
-      <details className="rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-6 space-y-6">
+      <details className="rounded-xl border border-[var(--border)] bg-white p-6 space-y-6">
         <summary className="text-xl font-bold text-[var(--text-primary)] tracking-wide cursor-pointer" style={{ fontFamily: "var(--font-display)" }}>
           AI TRIVIA GENERATOR
         </summary>

@@ -185,7 +185,7 @@ export function TriviaControlPanel({
             className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
               paused
                 ? "border-yellow-200 bg-yellow-100 text-yellow-700"
-                : "border-[var(--border)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"
+                : "border-[var(--border)] text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)]"
             }`}
           >
             {paused ? "Resume" : "Pause"}
@@ -194,7 +194,7 @@ export function TriviaControlPanel({
           <button
             onClick={skipCurrent}
             disabled={skipping || !activeItem}
-            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition disabled:opacity-30"
+            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition disabled:opacity-30"
           >
             {skipping ? "..." : "Skip"}
           </button>

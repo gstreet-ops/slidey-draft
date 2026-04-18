@@ -131,7 +131,7 @@ export function PublicPickCard({
           </div>
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--text-muted)] sm:text-sm sm:gap-2">
             <span>{pick.playerSchool}</span>
-            <span className="text-white/20">&rarr;</span>
+            <span className="text-[var(--text-muted)]">&rarr;</span>
             <span>{pick.teamName}</span>
             <span className="text-[10px] text-[var(--text-muted)] sm:text-xs">({pick.teamAbbreviation})</span>
             {(() => {
@@ -157,10 +157,10 @@ export function PublicPickCard({
             </div>
           )}
           {pick.analysis && (
-            <div className="mt-2 rounded-md bg-amber-950/40 border border-amber-200 px-3 py-2">
-              <span className="text-lg text-amber-700/30 leading-none font-serif">{"\u201C"}</span>
-              <p className="text-xs text-amber-100/80 italic line-clamp-2">{pick.analysis}</p>
-              <p className="text-[10px] text-amber-700/40 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
+            <div className="mt-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
+              <span className="text-lg text-amber-700/40 leading-none font-serif">{"\u201C"}</span>
+              <p className="text-xs text-amber-900/85 italic line-clamp-2">{pick.analysis}</p>
+              <p className="text-[10px] text-amber-700 uppercase tracking-wider font-semibold mt-1">Author&apos;s Take</p>
             </div>
           )}
           {score && score.matchType !== "exact" && score.actualPlayerName && (
@@ -187,7 +187,7 @@ export function PublicPickCard({
           {hasExpandContent && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
             >
               <svg
                 width="16"

@@ -109,7 +109,7 @@ export default async function ScoringPage() {
               ))}
             </nav>
 
-            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-[var(--surface-dark)] [&_section]:border [&_section]:border-[var(--border)] [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-[var(--text-secondary)]">
+            <div className="mt-8 space-y-6 [&_section]:rounded-xl [&_section]:bg-white [&_section]:border [&_section]:border-[var(--border)] [&_section]:p-5 [&_section]:sm:p-8 [&_section>p]:mt-3 [&_section>p]:text-sm [&_section>p]:leading-relaxed [&_section>p]:text-[var(--text-secondary)]">
 
               {/* ── Mock Draft Scoring ── */}
               {visibleIds.has("mock-draft") && (

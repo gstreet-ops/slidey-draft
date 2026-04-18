@@ -30,7 +30,7 @@ export function HomeNav({ links }: { links: NavLink[] }) {
         {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition md:hidden"
           aria-label="Toggle menu"
         >
           {open ? (
@@ -53,7 +53,7 @@ export function HomeNav({ links }: { links: NavLink[] }) {
                 key={l.href + l.label}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition min-h-[44px] flex items-center"
+                className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition min-h-[44px] flex items-center"
               >
                 {l.label}
               </Link>

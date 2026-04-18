@@ -81,7 +81,7 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
       {!isOpen && (
         <button
           onClick={toggle}
-          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-[var(--border)] bg-[var(--steelers-black)] px-1.5 py-3 hover:bg-[var(--bg-card)] transition"
+          className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-1 rounded-l-lg border border-r-0 border-[var(--border)] bg-[var(--steelers-black)] px-1.5 py-3 hover:bg-gray-50 transition"
         >
           {hasUnread && (
             <span className="absolute -top-1 -left-1 h-3 w-3 rounded-full bg-red-500 border-2 border-[var(--steelers-black)]" />
@@ -104,7 +104,7 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
             </div>
             <button
               onClick={toggle}
-              className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
+              className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M1 1l12 12M13 1L1 13" />
@@ -137,7 +137,7 @@ export function WarRoomChat({ poolId, poolName, currentUserId, commissionerId, i
               </div>
               <button
                 onClick={toggle}
-                className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
+                className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M1 1l12 12M13 1L1 13" />

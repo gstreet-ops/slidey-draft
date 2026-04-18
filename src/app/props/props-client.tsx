@@ -133,7 +133,7 @@ export function PropsClient({
                   ? isCorrect
                     ? "border-green-200 bg-green-500/5"
                     : "border-red-200 bg-red-500/5"
-                  : `${style.cardBorder} ${style.cardBg} ${isOpen ? "hover:border-[var(--border)] hover:bg-[var(--bg-card)]" : ""}`;
+                  : `${style.cardBorder} ${style.cardBg} ${isOpen ? "hover:border-[var(--border)] hover:bg-gray-50" : ""}`;
 
                 return (
                   <div
@@ -348,7 +348,7 @@ function PlayerPickInput({
             className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--steelers-gold)] focus:outline-none"
           />
           {filtered.length > 0 && (
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-dark)] max-h-48 overflow-y-auto">
+            <div className="rounded-lg border border-[var(--border)] bg-white max-h-48 overflow-y-auto">
               {filtered.map((p) => (
                 <button
                   key={p.id}
@@ -357,7 +357,7 @@ function PlayerPickInput({
                     onSearchChange("");
                   }}
                   disabled={saving}
-                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card)] transition flex items-center gap-2"
+                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-gray-50 transition flex items-center gap-2"
                 >
                   <span className="font-semibold text-[var(--text-primary)]">{p.name}</span>
                   <span className="text-xs text-[var(--steelers-gold)]">{p.position}</span>

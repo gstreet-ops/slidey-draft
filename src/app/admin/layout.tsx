@@ -21,8 +21,8 @@ export default async function AdminLayout({
         <div className="border-b border-[var(--border-light)] bg-black/10">
           <div className="mx-auto flex max-w-7xl items-center gap-1 px-6 py-1.5 text-xs">
             <span className="text-[var(--text-muted)] font-semibold uppercase tracking-wider mr-3">Admin</span>
-            <Link href="/admin" className="rounded px-2.5 py-1 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition">Pools</Link>
-            <Link href="/admin/trivia" className="rounded px-2.5 py-1 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition">Trivia</Link>
+            <Link href="/admin" className="rounded px-2.5 py-1 text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition">Pools</Link>
+            <Link href="/admin/trivia" className="rounded px-2.5 py-1 text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition">Trivia</Link>
           </div>
         </div>
       )}

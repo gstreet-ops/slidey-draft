@@ -34,7 +34,7 @@ export default async function SimulatePage() {
 
       {/* Simulation Guide */}
       <details className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-        <summary className="px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:bg-[var(--bg-card)] transition">
+        <summary className="px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:bg-gray-50 transition">
           How to Run a Simulation
         </summary>
         <div className="px-5 pb-4 pt-1 space-y-2 text-sm text-[var(--text-muted)]">

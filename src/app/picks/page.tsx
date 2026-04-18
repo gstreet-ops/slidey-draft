@@ -130,7 +130,7 @@ export default async function PicksPage() {
           {myBoard && myBoardData ? (
             <Link
               href="/my-board"
-              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 hover:border-[var(--slidey)]/40 hover:bg-[var(--bg-card)] transition sm:p-6"
+              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 hover:border-[var(--slidey)]/40 hover:bg-gray-50 transition sm:p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
@@ -174,7 +174,7 @@ export default async function PicksPage() {
           ) : (
             <Link
               href="/my-board"
-              className="group block rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--bg-card)] p-6 text-center hover:border-[var(--slidey)]/50 hover:bg-[var(--bg-card)] transition sm:p-8"
+              className="group block rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--bg-card)] p-6 text-center hover:border-[var(--slidey)]/50 hover:bg-gray-50 transition sm:p-8"
             >
               <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition sm:text-lg">
                 + Start Your Mock Draft
@@ -201,7 +201,7 @@ export default async function PicksPage() {
                 <Link
                   key={pb.boardId}
                   href={`/picks/${pb.boardId}`}
-                  className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 hover:border-[var(--slidey)]/40 hover:bg-[var(--bg-card)] transition"
+                  className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 hover:border-[var(--slidey)]/40 hover:bg-gray-50 transition"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">

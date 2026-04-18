@@ -123,7 +123,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
   if (player.weight) measurables.push({ label: "WEIGHT", value: `${player.weight} lbs` });
 
   return (
-    <div className="border-t border-[var(--border)] bg-[var(--surface-dark)] px-3 py-3">
+    <div className="border-t border-[var(--border)] bg-white px-3 py-3">
       {/* Header: avatar + name + basics */}
       <div className="flex items-start gap-3 mb-3">
         <PlayerAvatar player={player} size={56} />
@@ -153,7 +153,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
         </div>
         <button
           onClick={onClose}
-          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-secondary)] transition"
+          className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-secondary)] transition"
         >
           <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -191,7 +191,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
       {measurables.length > 0 && (
         <div className="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] mb-3">
           {measurables.map((m, i) => (
-            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-[var(--bg-card)]"}`}>
+            <div key={m.label} className={`px-2 py-1.5 text-center ${i % 2 === 0 ? "bg-white" : "bg-[var(--bg-card)]"}`}>
               <p className="text-xs font-bold text-[var(--text-primary)]">{m.value}</p>
               <p className="text-[8px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">{m.label}</p>
             </div>
@@ -559,7 +559,7 @@ export function PickBuilder({
               <div
                 className={`flex items-center gap-1.5 bg-[var(--bg-card)] px-1.5 py-1 text-left transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
                   canPick
-                    ? "hover:bg-[var(--bg-card)] cursor-pointer"
+                    ? "hover:bg-gray-50 cursor-pointer"
                     : "cursor-default"
                 }`}
                 onClick={() => canPick && slot && handleMakePick(player.id, slot)}
@@ -888,7 +888,7 @@ export function PickBuilder({
                   </div>
                 ) : (
                   <div
-                    className="ml-10 mt-2 rounded-md border border-dashed border-[var(--border)] px-3 py-2 cursor-pointer hover:bg-[var(--bg-card)] hover:border-[var(--border)] transition-all"
+                    className="ml-10 mt-2 rounded-md border border-dashed border-[var(--border)] px-3 py-2 cursor-pointer hover:bg-gray-50 hover:border-[var(--border)] transition-all"
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingNotePickId(pick.id);
@@ -971,7 +971,7 @@ export function PickBuilder({
             <button
               onClick={() => handleAutoFill("all")}
               disabled={isPending}
-              className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 text-xs font-semibold text-gray-400 hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition disabled:opacity-50"
+              className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 text-xs font-semibold text-gray-400 hover:text-[var(--text-primary)] hover:bg-gray-50 transition disabled:opacity-50"
             >
               {isPending ? "Filling..." : `Auto-Fill All (${totalEmpty})`}
             </button>

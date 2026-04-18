@@ -42,7 +42,7 @@ export function DraftControl({ isLocked }: { isLocked: boolean }) {
             <button
               onClick={handleUnlock}
               disabled={loading}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition disabled:opacity-50"
+              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-gray-50 transition disabled:opacity-50"
             >
               {loading ? "..." : "Unlock Draft"}
             </button>

@@ -80,11 +80,11 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[var(--surface-dark)] shadow-2xl md:max-w-[420px]">
+      <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white shadow-2xl md:max-w-[420px]">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)] transition"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-muted)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M3 3l10 10M13 3L3 13" />
@@ -190,7 +190,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
                 {measurables.map((m, i) => (
                   <div
                     key={m.label}
-                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-[var(--surface-dark)]" : "bg-[var(--bg-card)]"}`}
+                    className={`px-3 py-2.5 text-center ${i % 2 === 0 ? "bg-white" : "bg-[var(--bg-card)]"}`}
                   >
                     <p className="text-sm font-bold text-[var(--text-primary)]">{m.value}</p>
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">{m.label}</p>

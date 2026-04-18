@@ -46,7 +46,7 @@ export default async function PoolsPage() {
               <Link
                 key={pool.poolId}
                 href={`/pools/${pool.poolId}`}
-                className="rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-6 hover:bg-[var(--bg-card)] transition space-y-3"
+                className="rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-6 hover:bg-gray-50 transition space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">{pool.poolName}</h3>

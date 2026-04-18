@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-10">
       {/* CREATE YOUR OWN POOL — visible to all logged-in users */}
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-dark)] p-6 sm:p-8">
+      <section className="rounded-xl border border-[var(--border)] bg-white p-6 sm:p-8">
         <h2
           className="text-2xl font-bold text-[var(--text-primary)] tracking-wide"
           style={{ fontFamily: "var(--font-display)" }}
@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
               {myCommissionerPools.map((p) => (
                 <div
                   key={p.poolId}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--surface-card)] p-4"
+                  className="rounded-lg border border-[var(--border)] bg-white p-4"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <h4 className="font-semibold text-[var(--text-primary)] truncate">{p.poolName}</h4>
@@ -179,7 +179,7 @@ async function AdminSections() {
               <Link
                 key={board.id}
                 href={`/admin/board/${board.id}`}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 hover:border-[var(--accent-primary)]/50 hover:bg-[var(--bg-card)] transition"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 hover:border-[var(--accent-primary)]/50 hover:bg-gray-50 transition"
               >
                 <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition">
                   {board.title}

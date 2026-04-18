@@ -48,7 +48,7 @@ export function PoolLockControl({ poolId, status }: { poolId: string; status: st
             disabled={loading}
             className={`rounded-lg px-4 py-2 text-sm font-semibold text-[var(--text-primary)] transition disabled:opacity-50 ${
               isLocked
-                ? "border border-[var(--border)] bg-[var(--bg-card)] hover:bg-[var(--bg-card)]"
+                ? "border border-[var(--border)] bg-[var(--bg-card)] hover:bg-gray-50"
                 : "bg-red-500 hover:bg-red-600"
             }`}
           >
