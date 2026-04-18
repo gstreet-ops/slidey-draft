@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { TeamImage } from "@/components/team-image";
+import type { LetterGrade } from "@/lib/mock-grading";
 
 export type ComparePick = {
   pickNumber: number;
@@ -9,6 +11,8 @@ export type ComparePick = {
   playerName: string;
   playerPosition: string;
   playerSchool: string;
+  playerRank: number | null;
+  playerGrade: number | null;
   teamAbbreviation: string;
   teamName: string;
   teamLogoUrl: string | null;
@@ -19,6 +23,10 @@ export type MemberDraft = {
   userId: string;
   userName: string;
   userImage: string | null;
+  /** Member's favorite NFL team (the team they ROOT for, not picks) */
+  teamAbbreviation: string | null;
+  teamName: string | null;
+  teamPrimaryColor: string | null;
   boardId: string | null;
   boardTitle: string | null;
   boardStatus: string | null;
@@ -27,6 +35,17 @@ export type MemberDraft = {
   isMe: boolean;
   overlapCount: number;
   exactSlotMatches: number;
+  grade: {
+    letterGrade: LetterGrade;
+    summary: string;
+    steals: number;
+    solid: number;
+    reaches: number;
+    busts: number;
+  } | null;
+  positionBreakdown: Array<{ position: string; count: number }>;
+  mostPopular: { pickNumber: number; playerName: string; otherCount: number } | null;
+  mostUnique: { pickNumber: number; playerName: string } | null;
 };
 
 type Props = {
@@ -35,6 +54,24 @@ type Props = {
   myPickByNumber: Record<number, ComparePick>;
   totalSlots: number;
 };
+
+function gradeBadgeColors(grade: LetterGrade): string {
+  switch (grade) {
+    case "A+":
+    case "A":
+      return "bg-green-100 text-green-700 border-green-200";
+    case "B+":
+    case "B":
+      return "bg-blue-100 text-blue-700 border-blue-200";
+    case "C+":
+    case "C":
+      return "bg-yellow-100 text-yellow-700 border-yellow-200";
+    case "D":
+      return "bg-orange-100 text-orange-700 border-orange-200";
+    case "F":
+      return "bg-red-100 text-red-700 border-red-200";
+  }
+}
 
 export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -63,27 +100,29 @@ export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
               className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-gray-50 sm:px-5 sm:py-4"
               aria-expanded={isExpanded}
             >
-              {/* Avatar */}
-              {d.userImage ? (
-                <Image
-                  src={d.userImage}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="h-9 w-9 rounded-full object-cover shrink-0"
+              {/* Member's favorite NFL team logo (falls back to initials chip in team color) */}
+              <div className="shrink-0">
+                <TeamImage
+                  teamCode={d.teamAbbreviation}
+                  variant="logo"
+                  size={36}
+                  fallback="initials"
+                  className="h-9 w-9"
+                  alt={d.teamName ?? d.userName}
                 />
-              ) : (
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-primary)] text-xs font-bold text-[var(--accent-text)]">
-                  {(d.userName[0] || "?").toUpperCase()}
-                </div>
-              )}
+              </div>
 
               {/* Name + meta */}
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="truncate text-sm font-bold text-[var(--text-primary)] sm:text-base">
-                    {d.isMe ? "You" : d.userName}
+                    {d.userName}
                   </h3>
+                  {d.isMe && (
+                    <span className="rounded-full bg-[var(--accent-primary)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--accent-text)]">
+                      You
+                    </span>
+                  )}
                   {isPublished && (
                     <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-700">
                       Published
@@ -96,13 +135,25 @@ export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
                   )}
                 </div>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)] truncate">
+                  {d.teamAbbreviation ? `${d.teamAbbreviation} · ` : ""}
                   {d.boardTitle ?? "No mock draft yet"} · {d.pickCount}/{totalSlots} picks
                 </p>
               </div>
 
+              {/* Grade badge */}
+              {d.grade && (
+                <div
+                  className={`hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${gradeBadgeColors(d.grade.letterGrade)}`}
+                  style={{ fontFamily: "var(--font-display)" }}
+                  title={d.grade.summary}
+                >
+                  {d.grade.letterGrade}
+                </div>
+              )}
+
               {/* Comparison stats — hidden for self */}
               {!d.isMe && d.pickCount > 0 && (
-                <div className="hidden sm:block text-right shrink-0">
+                <div className="hidden md:block text-right shrink-0">
                   <p className="text-xs font-semibold text-[var(--text-primary)]">
                     {d.overlapCount}/{totalSlots} <span className="text-[var(--text-muted)] font-normal">match</span>
                   </p>
@@ -131,25 +182,37 @@ export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
               </span>
             </button>
 
-            {/* Mobile-only stats row (hidden on sm+) */}
-            {!d.isMe && d.pickCount > 0 && (
-              <div className="sm:hidden flex items-center justify-between gap-3 border-t border-gray-100 px-4 py-2 text-xs">
-                <span className="font-semibold text-[var(--text-primary)]">
-                  {d.overlapCount}/{totalSlots} <span className="text-[var(--text-muted)] font-normal">match</span>
-                </span>
-                {d.exactSlotMatches > 0 && (
-                  <span className="font-semibold text-amber-700">★ {d.exactSlotMatches} exact-slot</span>
+            {/* Mobile-only stats row (hidden on md+) */}
+            {(d.grade || (!d.isMe && d.pickCount > 0)) && (
+              <div className="md:hidden flex items-center justify-between gap-3 border-t border-gray-100 px-4 py-2 text-xs">
+                {d.grade && (
+                  <span
+                    className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${gradeBadgeColors(d.grade.letterGrade)}`}
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    Grade {d.grade.letterGrade}
+                  </span>
                 )}
-                <div className="h-1 flex-1 overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    className="h-full rounded-full bg-[var(--accent-primary)]"
-                    style={{ width: `${overlapPct}%` }}
-                  />
-                </div>
+                {!d.isMe && d.pickCount > 0 && (
+                  <>
+                    <span className="font-semibold text-[var(--text-primary)]">
+                      {d.overlapCount}/{totalSlots} <span className="text-[var(--text-muted)] font-normal">match</span>
+                    </span>
+                    {d.exactSlotMatches > 0 && (
+                      <span className="font-semibold text-amber-700">★ {d.exactSlotMatches} exact</span>
+                    )}
+                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-gray-200">
+                      <div
+                        className="h-full rounded-full bg-[var(--accent-primary)]"
+                        style={{ width: `${overlapPct}%` }}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
-            {/* Expanded pick list */}
+            {/* Expanded view */}
             {isExpanded && (
               <div className="border-t border-gray-100">
                 {isEmpty ? (
@@ -157,13 +220,82 @@ export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
                     No picks yet.
                   </p>
                 ) : (
-                  <PickGrid picks={d.picks} myPickByNumber={myPickByNumber} totalSlots={totalSlots} isMe={d.isMe} />
+                  <>
+                    <AnalysisBlock draft={d} />
+                    <PickGrid
+                      picks={d.picks}
+                      myPickByNumber={myPickByNumber}
+                      totalSlots={totalSlots}
+                      isMe={d.isMe}
+                    />
+                  </>
                 )}
               </div>
             )}
           </article>
         );
       })}
+    </div>
+  );
+}
+
+function AnalysisBlock({ draft }: { draft: MemberDraft }) {
+  return (
+    <div className="px-4 sm:px-5 pt-4">
+      <div className="rounded-lg bg-gray-50 border border-gray-100 p-3 sm:p-4 space-y-2">
+        {draft.grade && (
+          <p className="text-sm text-[var(--text-secondary)] italic">
+            &ldquo;{draft.grade.summary}&rdquo;
+          </p>
+        )}
+
+        {draft.grade && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-xs">
+            <span className="text-green-700 font-semibold">{draft.grade.steals} <span className="font-normal text-[var(--text-muted)]">steals</span></span>
+            <span className="text-blue-700 font-semibold">{draft.grade.solid} <span className="font-normal text-[var(--text-muted)]">solid</span></span>
+            <span className="text-yellow-700 font-semibold">{draft.grade.reaches} <span className="font-normal text-[var(--text-muted)]">reaches</span></span>
+            <span className="text-red-700 font-semibold">{draft.grade.busts} <span className="font-normal text-[var(--text-muted)]">busts</span></span>
+          </div>
+        )}
+
+        {(draft.mostPopular || draft.mostUnique) && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] sm:text-xs text-[var(--text-secondary)]">
+            {draft.mostPopular && draft.mostPopular.otherCount > 0 && (
+              <span>
+                <span className="text-[var(--text-muted)]">Most popular:</span>{" "}
+                <span className="font-semibold text-[var(--text-primary)]">
+                  {draft.mostPopular.playerName}
+                </span>{" "}
+                <span className="text-[var(--text-muted)]">
+                  at #{draft.mostPopular.pickNumber} (+{draft.mostPopular.otherCount} others)
+                </span>
+              </span>
+            )}
+            {draft.mostUnique && (
+              <span>
+                <span className="text-[var(--text-muted)]">Boldest:</span>{" "}
+                <span className="font-semibold text-[var(--text-primary)]">
+                  {draft.mostUnique.playerName}
+                </span>{" "}
+                <span className="text-[var(--text-muted)]">
+                  at #{draft.mostUnique.pickNumber} (no one else)
+                </span>
+              </span>
+            )}
+          </div>
+        )}
+
+        {draft.positionBreakdown.length > 0 && (
+          <div className="text-[11px] sm:text-xs text-[var(--text-muted)] truncate">
+            {draft.positionBreakdown.map((pb, i) => (
+              <span key={pb.position}>
+                {i > 0 && <span className="mx-1.5">|</span>}
+                <span className="font-semibold text-[var(--text-secondary)]">{pb.position}</span>: {pb.count}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -185,7 +317,7 @@ function PickGrid({
   const rows = Array.from({ length: totalSlots }, (_, i) => i + 1);
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-y divide-gray-100 mt-2">
       {rows.map((n) => {
         const pick = pickByNumber.get(n);
         const mine = myPickByNumber[n];
@@ -199,10 +331,8 @@ function PickGrid({
               n % 2 === 0 ? "bg-gray-50/40" : ""
             } ${exactMatch ? "bg-amber-50/60" : sameAnywhere ? "bg-green-50/60" : ""}`}
           >
-            {/* Pick number */}
             <span className="text-xs font-mono font-bold text-[var(--text-muted)]">#{n}</span>
 
-            {/* Pick content */}
             {pick ? (
               <div className="flex items-center gap-2 min-w-0">
                 {pick.teamLogoUrl ? (
@@ -234,7 +364,6 @@ function PickGrid({
               <span className="italic text-[var(--text-muted)]">Empty — no pick yet</span>
             )}
 
-            {/* Match indicator + your-pick comparison */}
             <div className="flex items-center gap-2 text-xs shrink-0">
               {!isMe && exactMatch && (
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">

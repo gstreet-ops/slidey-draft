@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
-import { getBoards, getPoolsForUser, getPlayers, getBoardWithPicks, getPoolMembers } from "@/lib/queries";
+import { getBoards, getPoolsForUser, getPlayers, getBoardWithPicks, getPoolMembersWithStatus } from "@/lib/queries";
 import { gradeMockDraft } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
 import { GradeCircle } from "@/components/grade-circle";
@@ -57,17 +57,20 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
   const userPools = await getPoolsForUser(userId);
 
   // Fetch every pool member's draft (including in-progress drafts, not just
-  // published) and build comparison stats vs the current user.
+  // published) and build comparison + analysis stats vs the current user.
   let memberDrafts: MemberDraft[] = [];
   let myPickByNumberMap: Record<number, ComparePick> = {};
   if (userPools.length > 0) {
     const pool = userPools[0];
-    const members = await getPoolMembers(pool.poolId);
+    const members = await getPoolMembersWithStatus(pool.poolId, 2026);
 
     type RawDraft = {
       userId: string;
       userName: string;
       userImage: string | null;
+      teamAbbreviation: string | null;
+      teamName: string | null;
+      teamPrimaryColor: string | null;
       boardId: string | null;
       boardTitle: string | null;
       boardStatus: string | null;
@@ -84,11 +87,18 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         .from(draftBoards)
         .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, 2026)));
 
+      const base = {
+        userId: m.userId,
+        userName: m.userName || m.userEmail,
+        userImage: m.userImage,
+        teamAbbreviation: m.teamAbbreviation,
+        teamName: m.teamName,
+        teamPrimaryColor: m.teamPrimaryColor,
+      };
+
       if (!board) {
         rawDrafts.push({
-          userId: m.userId,
-          userName: m.userName || m.userEmail,
-          userImage: m.userImage,
+          ...base,
           boardId: null,
           boardTitle: null,
           boardStatus: null,
@@ -98,9 +108,7 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
       }
       const data = await getBoardWithPicks(board.id);
       rawDrafts.push({
-        userId: m.userId,
-        userName: m.userName || m.userEmail,
-        userImage: m.userImage,
+        ...base,
         boardId: board.id,
         boardTitle: board.title,
         boardStatus: board.status,
@@ -110,6 +118,8 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           playerName: p.playerName,
           playerPosition: p.playerPosition,
           playerSchool: p.playerSchool,
+          playerRank: p.playerRank,
+          playerGrade: p.playerGrade,
           teamAbbreviation: p.teamAbbreviation,
           teamName: p.teamName,
           teamLogoUrl: p.teamLogoUrl,
@@ -124,6 +134,16 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
     const myPickByNumber = new Map(myPicks.map((p) => [p.pickNumber, p]));
     myPickByNumberMap = Object.fromEntries(myPickByNumber);
 
+    // Build a lookup of "how many other members made this exact pick (slot+player)"
+    // for highlighting most-popular and most-unique picks per draft.
+    const slotPlayerCount = new Map<string, number>();
+    for (const d of rawDrafts) {
+      for (const p of d.picks) {
+        const key = `${p.pickNumber}:${p.playerId}`;
+        slotPlayerCount.set(key, (slotPlayerCount.get(key) ?? 0) + 1);
+      }
+    }
+
     memberDrafts = rawDrafts.map((d) => {
       const overlapPlayerIds = new Set(
         d.picks.filter((p) => myPlayerIds.has(p.playerId)).map((p) => p.playerId)
@@ -132,10 +152,55 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         const mine = myPickByNumber.get(p.pickNumber);
         return !!mine && mine.playerId === p.playerId;
       }).length;
+
+      // Grade
+      const grade = d.picks.length > 0
+        ? gradeMockDraft(
+            d.picks.map((p) => ({
+              pickNumber: p.pickNumber,
+              playerGrade: p.playerGrade,
+              playerRank: p.playerRank,
+            }))
+          )
+        : null;
+
+      // Position breakdown
+      const posMap = new Map<string, number>();
+      for (const p of d.picks) {
+        posMap.set(p.playerPosition, (posMap.get(p.playerPosition) ?? 0) + 1);
+      }
+      const positionBreakdown = Array.from(posMap.entries())
+        .sort((a, b) => b[1] - a[1])
+        .map(([position, count]) => ({ position, count }));
+
+      // Most popular = pick this draft made that the most OTHER members also made
+      // Most unique = pick this draft made that NO other member made
+      let mostPopular: { pickNumber: number; playerName: string; otherCount: number } | null = null;
+      let mostUnique: { pickNumber: number; playerName: string } | null = null;
+      let bestPopularCount = 0;
+      for (const p of d.picks) {
+        const totalForKey = slotPlayerCount.get(`${p.pickNumber}:${p.playerId}`) ?? 1;
+        const otherCount = totalForKey - 1;
+        if (otherCount > bestPopularCount) {
+          bestPopularCount = otherCount;
+          mostPopular = { pickNumber: p.pickNumber, playerName: p.playerName, otherCount };
+        }
+        if (otherCount === 0 && !mostUnique) {
+          // first unique pick we encounter — keep highest pick number for visibility
+          mostUnique = { pickNumber: p.pickNumber, playerName: p.playerName };
+        } else if (otherCount === 0 && mostUnique && p.pickNumber < mostUnique.pickNumber) {
+          // prefer earliest-round unique pick (more interesting)
+          mostUnique = { pickNumber: p.pickNumber, playerName: p.playerName };
+        }
+      }
+
       return {
         userId: d.userId,
         userName: d.userName,
         userImage: d.userImage,
+        teamAbbreviation: d.teamAbbreviation,
+        teamName: d.teamName,
+        teamPrimaryColor: d.teamPrimaryColor,
         boardId: d.boardId,
         boardTitle: d.boardTitle,
         boardStatus: d.boardStatus,
@@ -144,6 +209,19 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         isMe: d.userId === userId,
         overlapCount: overlapPlayerIds.size,
         exactSlotMatches,
+        grade: grade
+          ? {
+              letterGrade: grade.letterGrade,
+              summary: grade.summary,
+              steals: grade.steals,
+              solid: grade.solid,
+              reaches: grade.reaches,
+              busts: grade.busts,
+            }
+          : null,
+        positionBreakdown,
+        mostPopular,
+        mostUnique,
       };
     });
 
