@@ -81,7 +81,7 @@ export function SiteNav({ isLoggedIn, userInitial, teamLogoUrl, teamName, enable
 
         <div className="flex items-center gap-2">
           {isLoggedIn && (
-            <Link href="/pools" className="hidden sm:block">
+            <Link href="/settings" className="hidden sm:block" aria-label="Settings">
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (
