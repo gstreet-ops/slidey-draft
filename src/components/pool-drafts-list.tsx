@@ -17,6 +17,14 @@ export type ComparePick = {
   teamName: string;
   teamLogoUrl: string | null;
   teamPrimaryColor: string | null;
+  /** Per-pick AI commentary (always present, computed server-side). */
+  commentary?: string;
+  /** Letter grade (used to color the commentary's left border). */
+  gradeLetter?: LetterGrade;
+  /** Hex color matching the letter grade. */
+  gradeColor?: string;
+  /** User's personal "YOUR TAKE" note — server only includes on the viewer's own picks. */
+  analysisNote?: string | null;
 };
 
 export type MemberDraft = {
@@ -327,60 +335,85 @@ function PickGrid({
         return (
           <div
             key={n}
-            className={`grid grid-cols-[36px_1fr_auto] items-center gap-3 px-4 py-2 text-sm ${
+            className={`px-4 py-2 text-sm ${
               n % 2 === 0 ? "bg-gray-50/40" : ""
             } ${exactMatch ? "bg-amber-50/60" : sameAnywhere ? "bg-green-50/60" : ""}`}
           >
-            <span className="text-xs font-mono font-bold text-[var(--text-muted)]">#{n}</span>
+            <div className="grid grid-cols-[36px_1fr_auto] items-center gap-3">
+              <span className="text-xs font-mono font-bold text-[var(--text-muted)]">#{n}</span>
 
-            {pick ? (
-              <div className="flex items-center gap-2 min-w-0">
-                {pick.teamLogoUrl ? (
-                  <Image
-                    src={pick.teamLogoUrl}
-                    alt={pick.teamAbbreviation}
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 object-contain shrink-0"
-                  />
-                ) : (
-                  <span
-                    className="inline-block h-5 w-5 rounded text-[8px] font-bold text-white flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: pick.teamPrimaryColor ?? "#666" }}
-                  >
+              {pick ? (
+                <div className="flex items-center gap-2 min-w-0">
+                  {pick.teamLogoUrl ? (
+                    <Image
+                      src={pick.teamLogoUrl}
+                      alt={pick.teamAbbreviation}
+                      width={20}
+                      height={20}
+                      className="h-5 w-5 object-contain shrink-0"
+                    />
+                  ) : (
+                    <span
+                      className="inline-block h-5 w-5 rounded text-[8px] font-bold text-white flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: pick.teamPrimaryColor ?? "#666" }}
+                    >
+                      {pick.teamAbbreviation}
+                    </span>
+                  )}
+                  <span className="text-[10px] font-mono font-semibold text-[var(--text-muted)] w-9 shrink-0">
                     {pick.teamAbbreviation}
                   </span>
+                  <span className="font-semibold text-[var(--text-primary)] truncate">{pick.playerName}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] shrink-0">
+                    {pick.playerPosition}
+                  </span>
+                  <span className="hidden sm:inline text-xs text-[var(--text-muted)] truncate">{pick.playerSchool}</span>
+                </div>
+              ) : (
+                <span className="italic text-[var(--text-muted)]">Empty — no pick yet</span>
+              )}
+
+              <div className="flex items-center gap-2 text-xs shrink-0">
+                {!isMe && exactMatch && (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
+                    ★ Exact
+                  </span>
                 )}
-                <span className="text-[10px] font-mono font-semibold text-[var(--text-muted)] w-9 shrink-0">
-                  {pick.teamAbbreviation}
-                </span>
-                <span className="font-semibold text-[var(--text-primary)] truncate">{pick.playerName}</span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] shrink-0">
-                  {pick.playerPosition}
-                </span>
-                <span className="hidden sm:inline text-xs text-[var(--text-muted)] truncate">{pick.playerSchool}</span>
+                {!isMe && !exactMatch && sameAnywhere && (
+                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-700">
+                    ✓ Match
+                  </span>
+                )}
+                {!isMe && !exactMatch && mine && (
+                  <span className="hidden md:inline text-[11px] text-[var(--text-muted)] truncate max-w-[160px]" title={`You: ${mine.playerName}`}>
+                    You: <span className="text-[var(--text-secondary)]">{mine.playerName}</span>
+                  </span>
+                )}
               </div>
-            ) : (
-              <span className="italic text-[var(--text-muted)]">Empty — no pick yet</span>
+            </div>
+
+            {/* YOUR TAKE — only visible on the viewer's own card */}
+            {pick && isMe && pick.analysisNote && (
+              <div className="ml-10 mt-1.5 rounded-md bg-[var(--accent-primary)]/10 border-l-2 border-l-[var(--accent-primary)] px-2.5 py-1.5">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--accent-primary)]">Your Take</p>
+                <p className="mt-0.5 text-[11px] italic text-[var(--text-secondary)] leading-snug">
+                  {pick.analysisNote}
+                </p>
+              </div>
             )}
 
-            <div className="flex items-center gap-2 text-xs shrink-0">
-              {!isMe && exactMatch && (
-                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
-                  ★ Exact
-                </span>
-              )}
-              {!isMe && !exactMatch && sameAnywhere && (
-                <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-700">
-                  ✓ Match
-                </span>
-              )}
-              {!isMe && !exactMatch && mine && (
-                <span className="hidden md:inline text-[11px] text-[var(--text-muted)] truncate max-w-[160px]" title={`You: ${mine.playerName}`}>
-                  You: <span className="text-[var(--text-secondary)]">{mine.playerName}</span>
-                </span>
-              )}
-            </div>
+            {/* AI ANALYSIS — visible on every card, colored by pick grade */}
+            {pick && pick.commentary && (
+              <div className="ml-10 mt-1.5">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]/70">AI Analysis</p>
+                <div
+                  className="mt-0.5 border-l-2 pl-2 text-[11px] italic text-[var(--text-muted)] leading-snug"
+                  style={{ borderColor: pick.gradeColor ?? "var(--border)" }}
+                >
+                  {pick.commentary}
+                </div>
+              </div>
+            )}
           </div>
         );
       })}

@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
 import { getBoards, getPoolsForUser, getPlayers, getBoardWithPicks, getPoolMembersWithStatus } from "@/lib/queries";
-import { gradeMockDraft } from "@/lib/mock-grading";
+import { gradeMockDraft, gradePick } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
+import { generatePickCommentary, gradeColorHex } from "@/lib/pick-commentary";
 import { GradeCircle } from "@/components/grade-circle";
 import { db } from "@/db";
 import { draftBoards } from "@/db/schema";
@@ -107,12 +108,35 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
         continue;
       }
       const data = await getBoardWithPicks(board.id);
-      rawDrafts.push({
-        ...base,
-        boardId: board.id,
-        boardTitle: board.title,
-        boardStatus: board.status,
-        picks: (data?.picks ?? []).map<ComparePick>((p) => ({
+      const allPicks = data?.picks ?? [];
+
+      // Compute per-pick AI commentary in one pass — pure function, no I/O.
+      // Each pick's commentary depends on the picks before it (boardCtx).
+      const ownerIsMe = m.userId === userId;
+      const enrichedPicks: ComparePick[] = allPicks.map((p) => {
+        const pg = gradePick(p.pickNumber, p.playerGrade, p.playerRank);
+        const boardCtx = {
+          picksSoFar: allPicks
+            .filter((ep) => ep.pickNumber < p.pickNumber)
+            .map((ep) => ({ position: ep.playerPosition, pickNumber: ep.pickNumber })),
+          totalPicks: allPicks.filter((ep) => ep.pickNumber <= p.pickNumber).length,
+        };
+        const commentary = generatePickCommentary(
+          {
+            pickNumber: p.pickNumber,
+            playerName: p.playerName,
+            playerPosition: p.playerPosition,
+            playerGrade: p.playerGrade,
+            playerRank: p.playerRank,
+            playerPositionRank: p.playerPositionRank ?? null,
+            playerNflComparison: p.playerNflComparison ?? null,
+            teamName: p.teamName,
+            teamAbbreviation: p.teamAbbreviation,
+          },
+          pg,
+          boardCtx
+        );
+        return {
           pickNumber: p.pickNumber,
           playerId: p.playerId,
           playerName: p.playerName,
@@ -124,7 +148,20 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           teamName: p.teamName,
           teamLogoUrl: p.teamLogoUrl,
           teamPrimaryColor: p.teamPrimaryColor,
-        })),
+          commentary,
+          gradeLetter: pg.letterGrade,
+          gradeColor: gradeColorHex(pg.letterGrade),
+          // Personal note ("YOUR TAKE") — only exposed on the current user's own card
+          analysisNote: ownerIsMe ? p.analysis : null,
+        };
+      });
+
+      rawDrafts.push({
+        ...base,
+        boardId: board.id,
+        boardTitle: board.title,
+        boardStatus: board.status,
+        picks: enrichedPicks,
       });
     }
 
