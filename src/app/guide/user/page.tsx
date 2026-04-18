@@ -164,10 +164,13 @@ export default async function UserGuidePage() {
                 <strong className="text-[var(--text-primary)]">Display Name</strong> — change how you show up on leaderboards, chat, and pick cards. Save once and it updates everywhere.
               </TipCard>
               <TipCard>
-                <strong className="text-[var(--text-primary)]">Team Theme</strong> — pick any of the 32 NFL teams. The app&apos;s accent color (buttons, links, highlights) instantly switches to your team&apos;s primary color. Default is the Pittsburgh Steelers (host city of the 2026 draft).
+                <strong className="text-[var(--text-primary)]">Team Theme</strong> — pick any of the 32 NFL teams. The home page hero, team info bar (with this year&apos;s draft needs), accent buttons, links, and highlights all switch to your team&apos;s colors. Default is the Pittsburgh Steelers (host city of the 2026 draft).
               </TipCard>
               <TipCard>
-                <strong className="text-[var(--text-primary)]">Background stays dark</strong> — only accent colors change with your team pick. The dark surfaces and semantic colors (green for correct, red for miss) stay consistent for readability.
+                <strong className="text-[var(--text-primary)]">Your team is highlighted on the board</strong> — every slot belonging to your favorite team gets a colored left border, a tinted background, and a &quot;YOUR TEAM&quot; badge so you can find your picks at a glance.
+              </TipCard>
+              <TipCard>
+                <strong className="text-[var(--text-primary)]">Surfaces stay neutral</strong> — only accent and team-specific elements recolor. Cards, page backgrounds, and semantic colors (green for correct, red for miss) stay consistent for readability.
               </TipCard>
               <TipCard>
                 <strong className="text-[var(--text-primary)]">Reset anytime</strong> — pick a different team or click &quot;Reset to draft default (Steelers)&quot; to go back. Your team logo also shows next to your name in the nav.

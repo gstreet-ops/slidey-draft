@@ -182,6 +182,10 @@ export default async function GuidePage() {
                   If you want to fill remaining slots quickly, the auto-fill feature assigns the next best available prospect (by consensus rank) to each empty slot. Auto-filled picks are marked with a &quot;BPA&quot; tag.
                 </InfoCard>
 
+                <InfoCard title="Your Team Highlighted">
+                  Slots belonging to your favorite NFL team (set in <InlineLink href="/settings">Settings</InlineLink>) get a colored left border, a tinted background, and a &quot;YOUR TEAM&quot; badge — easy to spot when you scroll the board.
+                </InfoCard>
+
                 <InfoCard title="Publishing">
                   Once you are happy with your picks, publish your board. Published boards are visible to everyone and will be scored when the real draft begins. You can edit picks until the draft locks.
                 </InfoCard>
