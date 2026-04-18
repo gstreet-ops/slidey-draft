@@ -1230,3 +1230,53 @@ export async function resolveCustomProp(propId: string, correctAnswer: string) {
   revalidatePath(`/pools/${prop.poolId}/settings`);
   revalidatePath("/props");
 }
+
+// ── Admin: pre-seed friend account + default mock draft ───────────────
+
+export async function preSeedFriend(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  const email = (formData.get("email") as string)?.trim();
+  const teamAbbreviation = (formData.get("team") as string)?.trim();
+  const nickname = (formData.get("nickname") as string)?.trim() || undefined;
+
+  if (!email || !email.includes("@")) throw new Error("Valid email required");
+  if (!teamAbbreviation) throw new Error("Team is required");
+
+  // Find the admin's first commissioner pool (or any pool they own)
+  const [myPool] = await db
+    .select({ id: pools.id })
+    .from(poolMembers)
+    .innerJoin(pools, eq(poolMembers.poolId, pools.id))
+    .where(
+      and(
+        eq(poolMembers.userId, session.user.id),
+        eq(poolMembers.role, "commissioner")
+      )
+    )
+    .limit(1);
+
+  let poolId = myPool?.id;
+  if (!poolId) {
+    const [adminPool] = await db
+      .select({ id: pools.id })
+      .from(pools)
+      .where(eq(pools.commissionerId, session.user.id))
+      .limit(1);
+    poolId = adminPool?.id;
+  }
+  if (!poolId) throw new Error("No pool found — create a pool first");
+
+  const { preSeedUserCore } = await import("@/lib/seed-helpers");
+  const result = await preSeedUserCore({
+    email,
+    teamAbbreviation,
+    nickname,
+    poolId,
+  });
+  revalidatePath("/admin");
+  return result;
+}

@@ -49,6 +49,9 @@ export const users = pgTable("users", {
   role: userRoleEnum("role").default("user"),
   status: userStatusEnum("status").notNull().default("spectator"),
   favoriteTeamId: uuid("favorite_team_id").references(() => teams.id),
+  /** True when an admin pre-created this account before the user has signed in.
+      Cleared automatically on first Google sign-in via the NextAuth signIn callback. */
+  isPreSeeded: boolean("is_pre_seeded").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

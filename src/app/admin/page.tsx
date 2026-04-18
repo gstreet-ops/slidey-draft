@@ -6,12 +6,17 @@ import {
   getAllPools,
   getPoolMemberCount,
   getPoolsForUser,
+  getPoolMembersWithStatus,
 } from "@/lib/queries";
-import { createBoard, createPool } from "@/lib/actions";
+import { createBoard, createPool, preSeedFriend } from "@/lib/actions";
 import { isDraftLocked } from "@/lib/config";
 import { DraftControl } from "@/components/draft-control";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { AdminCommissionerPanel } from "@/components/admin-commissioner-panel";
+import { NFL_TEAMS } from "@/lib/team-themes";
+import { db } from "@/db";
+import { pools, poolMembers } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -114,9 +119,50 @@ export default async function AdminDashboard() {
 }
 
 async function AdminSections() {
+  const session = await auth();
   const boards = await getBoards(2026);
   const allPools = await getAllPools();
   const locked = await isDraftLocked();
+
+  // Find admin's primary pool (first commissioner pool, or any pool they own)
+  let primaryPoolId: string | null = null;
+  let primaryPoolName: string | null = null;
+  if (session?.user?.id) {
+    const [myPool] = await db
+      .select({ id: pools.id, name: pools.name })
+      .from(poolMembers)
+      .innerJoin(pools, eq(poolMembers.poolId, pools.id))
+      .where(
+        and(
+          eq(poolMembers.userId, session.user.id),
+          eq(poolMembers.role, "commissioner")
+        )
+      )
+      .limit(1);
+    if (myPool) {
+      primaryPoolId = myPool.id;
+      primaryPoolName = myPool.name;
+    } else {
+      const [adminPool] = await db
+        .select({ id: pools.id, name: pools.name })
+        .from(pools)
+        .where(eq(pools.commissionerId, session.user.id))
+        .limit(1);
+      if (adminPool) {
+        primaryPoolId = adminPool.id;
+        primaryPoolName = adminPool.name;
+      }
+    }
+  }
+
+  const roster = primaryPoolId
+    ? await getPoolMembersWithStatus(primaryPoolId)
+    : [];
+
+  // Sorted team list for the dropdown (by city)
+  const sortedTeams = Object.entries(NFL_TEAMS)
+    .map(([abbr, t]) => ({ abbr, ...t }))
+    .sort((a, b) => a.city.localeCompare(b.city));
 
   const poolsWithCounts = await Promise.all(
     allPools.map(async (pool) => ({
@@ -137,9 +183,115 @@ async function AdminSections() {
     redirect(`/pools/${pool.id}`);
   }
 
+  async function handlePreSeed(formData: FormData) {
+    "use server";
+    await preSeedFriend(formData);
+  }
+
   return (
     <>
       <DraftControl isLocked={locked} />
+
+      {/* Invite Friends — pre-seed accounts with team + default draft */}
+      <div className="space-y-4">
+        <h2
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          INVITE FRIENDS
+        </h2>
+        <p className="text-sm text-[var(--text-secondary)]">
+          Pre-seed an account with their team and a default mock draft.
+          They&apos;ll land on My Board ready to go after their first Google sign-in.
+          {primaryPoolName ? (
+            <> Friends will be added to <strong className="text-[var(--text-primary)]">{primaryPoolName}</strong>.</>
+          ) : (
+            <span className="text-yellow-700"> No pool found — create one before pre-seeding.</span>
+          )}
+        </p>
+
+        {primaryPoolId && (
+          <form action={handlePreSeed} className="rounded-xl border border-[var(--border)] bg-white p-5 shadow-sm space-y-3 sm:p-6">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="friend@email.com"
+                  className="w-full rounded-lg border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1">Favorite team</label>
+                <select
+                  name="team"
+                  required
+                  defaultValue=""
+                  className="w-full rounded-lg border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
+                >
+                  <option value="" disabled>Pick a team…</option>
+                  {sortedTeams.map((t) => (
+                    <option key={t.abbr} value={t.abbr}>
+                      {t.city} {t.name.split(" ").slice(-1)[0]} ({t.abbr})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1">Nickname (optional)</label>
+                <input
+                  name="nickname"
+                  type="text"
+                  placeholder="Nickname (they can change later)"
+                  className="w-full rounded-lg border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none"
+                />
+              </div>
+              <div className="flex items-end">
+                <button
+                  type="submit"
+                  className="w-full rounded-lg bg-[var(--accent-primary)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
+                >
+                  + Add Friend
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+
+        {/* Roster */}
+        {roster.length > 0 && (
+          <div className="rounded-xl border border-[var(--border)] bg-white shadow-sm overflow-hidden">
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3 px-4 py-2.5 border-b border-[var(--border-light)] bg-[var(--bg-section)] text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              <span>Member</span>
+              <span>Team</span>
+              <span>Status</span>
+            </div>
+            {roster.map((m) => (
+              <div key={m.id} className="grid grid-cols-[1fr_auto_auto] gap-3 px-4 py-3 border-b border-[var(--border-light)] last:border-b-0 items-center">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{m.userName || m.userEmail}</p>
+                  <p className="text-xs text-[var(--text-muted)] truncate">{m.userEmail}</p>
+                </div>
+                <span className="text-xs font-mono text-[var(--text-secondary)]">{m.teamAbbreviation ?? "—"}</span>
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${
+                    m.isPreSeeded
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {m.isPreSeeded ? "Pending" : "Joined"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
 
       {/* Mock Draft Boards */}
       <div className="space-y-6">

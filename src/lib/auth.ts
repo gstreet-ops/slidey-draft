@@ -35,7 +35,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, profile }) {
+      // First-time sign-in for a pre-seeded account: clear the flag and
+      // backfill the Google profile picture / name if missing. The DrizzleAdapter
+      // already matched the existing user by email, so user.id points at the
+      // pre-seeded record.
+      try {
+        if (user.id) {
+          const [existing] = await db
+            .select({ id: users.id, name: users.name, image: users.image, isPreSeeded: users.isPreSeeded })
+            .from(users)
+            .where(eq(users.id, user.id));
+          if (existing?.isPreSeeded) {
+            await db
+              .update(users)
+              .set({
+                isPreSeeded: false,
+                // Keep the admin-set nickname if there was one; only fill from Google when blank
+                name: existing.name || (profile as { name?: string } | undefined)?.name || user.name || existing.name,
+                image: existing.image || (profile as { picture?: string } | undefined)?.picture || user.image || existing.image,
+                status: "active",
+              })
+              .where(eq(users.id, user.id));
+          }
+        }
+      } catch (error) {
+        console.error("[AUTH] Failed to clear pre-seed flag:", error);
+        // Don't block sign-in
+      }
+
       // Process pending invite cookies after OAuth
       try {
         const cookieStore = await cookies();

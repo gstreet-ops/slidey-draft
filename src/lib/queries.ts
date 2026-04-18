@@ -352,6 +352,29 @@ export async function getPoolMembers(poolId: string) {
     .orderBy(asc(poolMembers.joinedAt));
 }
 
+/** Pool members enriched with pre-seed status + favorite team — for the admin roster view. */
+export async function getPoolMembersWithStatus(poolId: string) {
+  return db
+    .select({
+      id: poolMembers.id,
+      userId: poolMembers.userId,
+      role: poolMembers.role,
+      joinedAt: poolMembers.joinedAt,
+      userName: users.name,
+      userEmail: users.email,
+      userImage: users.image,
+      isPreSeeded: users.isPreSeeded,
+      teamAbbreviation: teams.abbreviation,
+      teamName: teams.name,
+      teamPrimaryColor: teams.primaryColor,
+    })
+    .from(poolMembers)
+    .innerJoin(users, eq(poolMembers.userId, users.id))
+    .leftJoin(teams, eq(users.favoriteTeamId, teams.id))
+    .where(eq(poolMembers.poolId, poolId))
+    .orderBy(asc(poolMembers.joinedAt));
+}
+
 export async function getPoolMemberCount(poolId: string) {
   const rows = await db
     .select({ count: sql<number>`count(*)` })
