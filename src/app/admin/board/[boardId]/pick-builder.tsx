@@ -133,7 +133,7 @@ function InlineProspectDetail({ player, onClose, pickNumber, teamName, teamNeeds
             {player.name}
           </h3>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-black">
+            <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-text)]">
               {player.position}
             </span>
             <span className="text-xs text-white/50">
@@ -487,7 +487,7 @@ export function PickBuilder({
             onClick={() => setPosFilter(pos)}
             className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-semibold transition sm:px-2 sm:py-1 sm:text-xs ${
               posFilter === pos
-                ? "bg-[var(--steelers-gold)] text-black"
+                ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                 : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
@@ -518,7 +518,7 @@ export function PickBuilder({
             onClick={() => setSortBy(s)}
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
               sortBy === s
-                ? "bg-[var(--steelers-gold)] text-black"
+                ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                 : "bg-white/5 text-white/50 hover:text-white/60"
             }`}
           >
@@ -609,7 +609,7 @@ export function PickBuilder({
                   }}
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition sm:h-6 sm:w-6 ${
                     isExpanded
-                      ? "bg-[var(--steelers-gold)] text-black"
+                      ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                       : "text-white/40 hover:text-[var(--steelers-gold)]"
                   }`}
                   title="View scouting report"
@@ -793,7 +793,7 @@ export function PickBuilder({
                       }}
                       className={`flex h-6 w-6 items-center justify-center rounded-full border transition sm:h-7 sm:w-7 ${
                         isExpanded
-                          ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)] text-black"
+                          ? "border-[var(--steelers-gold)] bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                           : "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/10 text-[var(--steelers-gold)] hover:bg-[var(--steelers-gold)]/25"
                       }`}
                       title="View scouting report"
@@ -840,7 +840,7 @@ export function PickBuilder({
                           });
                         }}
                         disabled={isPending}
-                        className="rounded-md bg-[var(--steelers-gold)] px-3 py-1 text-[10px] font-semibold text-black hover:bg-[var(--steelers-gold)]/80 disabled:opacity-50 transition"
+                        className="rounded-md bg-[var(--steelers-gold)] px-3 py-1 text-[10px] font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 disabled:opacity-50 transition"
                       >
                         Save
                       </button>
@@ -982,7 +982,7 @@ export function PickBuilder({
             style={{ fontFamily: "var(--font-display)" }}
           >
             AVAILABLE PROSPECTS
-            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-black">
+            <span className="ml-2 inline-flex items-center justify-center rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-text)]">
               {realAvailable.length}
             </span>
           </h3>

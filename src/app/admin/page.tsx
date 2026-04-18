@@ -1,20 +1,123 @@
 import Link from "next/link";
-import { getBoards, getAllPools, getPoolMemberCount } from "@/lib/queries";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import {
+  getBoards,
+  getAllPools,
+  getPoolMemberCount,
+  getPoolsForUser,
+} from "@/lib/queries";
 import { createBoard, createPool } from "@/lib/actions";
 import { isDraftLocked } from "@/lib/config";
 import { DraftControl } from "@/components/draft-control";
-import { redirect } from "next/navigation";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { AdminCommissionerPanel } from "@/components/admin-commissioner-panel";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
+  const session = await auth();
+  if (!session?.user) redirect("/login?callbackUrl=/admin");
+
+  const isAdmin = session.user.role === "admin";
+  const isCommissioner = session.user.role === "commissioner" || isAdmin;
+  const userPools = await getPoolsForUser(session.user.id);
+  const myCommissionerPools = userPools.filter(
+    (p) => p.role === "commissioner" || p.role === "admin"
+  );
+
+  return (
+    <div className="space-y-10">
+      {/* CREATE YOUR OWN POOL — visible to all logged-in users */}
+      <section className="rounded-xl border border-white/10 bg-[var(--surface-dark)] p-6 sm:p-8">
+        <h2
+          className="text-2xl font-bold text-white tracking-wide"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          CREATE YOUR OWN POOL
+        </h2>
+        <p className="mt-2 text-sm text-white/60 leading-relaxed max-w-2xl">
+          Want to run your own draft competition? Create a pool and share the
+          invite link with friends. Pick which features you want — mock drafts,
+          live predictions, trivia, prop bets — and you&apos;re the commissioner.
+        </p>
+
+        {myCommissionerPools.length > 0 ? (
+          <div className="mt-5 space-y-3">
+            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">
+              Pools you manage
+            </h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {myCommissionerPools.map((p) => (
+                <div
+                  key={p.poolId}
+                  className="rounded-lg border border-white/10 bg-[var(--surface-card)] p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="font-semibold text-white truncate">{p.poolName}</h4>
+                    <span className="text-[10px] uppercase tracking-wider text-white/40">
+                      {p.role}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Link
+                      href={`/pools/${p.poolId}`}
+                      className="rounded-md border border-white/15 px-3 py-1.5 text-xs text-white/70 hover:border-white/30 hover:text-white transition"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      href={`/pools/${p.poolId}/settings`}
+                      className="rounded-md border border-white/15 px-3 py-1.5 text-xs text-white/70 hover:border-white/30 hover:text-white transition"
+                    >
+                      Manage
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {isCommissioner && (
+              <Link
+                href="/pools/create"
+                className="inline-block mt-2 rounded-lg bg-[var(--accent-primary)] px-5 py-2 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
+              >
+                + Create Another Pool
+              </Link>
+            )}
+          </div>
+        ) : isCommissioner ? (
+          <Link
+            href="/pools/create"
+            className="mt-5 inline-block rounded-lg bg-[var(--accent-primary)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
+          >
+            Create Pool
+          </Link>
+        ) : (
+          <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-4">
+            <p className="text-sm text-white/70">
+              Pool creation is currently limited to commissioners. Have a
+              friend invite you, or ask an admin for a commissioner code.
+            </p>
+            <Link
+              href="/commissioner"
+              className="mt-3 inline-block text-sm text-[var(--accent-primary)] hover:underline"
+            >
+              Have a commissioner code? Redeem it →
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {isAdmin && <AdminSections />}
+    </div>
+  );
+}
+
+async function AdminSections() {
   const boards = await getBoards(2026);
   const allPools = await getAllPools();
   const locked = await isDraftLocked();
 
-  // Get member counts for all pools
   const poolsWithCounts = await Promise.all(
     allPools.map(async (pool) => ({
       ...pool,
@@ -35,10 +138,10 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-10">
+    <>
       <DraftControl isLocked={locked} />
 
-      {/* Mock Draft Boards section */}
+      {/* Mock Draft Boards */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1
@@ -56,11 +159,11 @@ export default async function AdminDashboard() {
             type="text"
             required
             placeholder="e.g. Mock Draft 1.0"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+            className="rounded-lg bg-[var(--accent-primary)] px-6 py-2 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
           >
             + New Board
           </button>
@@ -76,9 +179,9 @@ export default async function AdminDashboard() {
               <Link
                 key={board.id}
                 href={`/admin/board/${board.id}`}
-                className="group rounded-xl border border-white/[0.12] bg-white/8 p-6 hover:border-[var(--steelers-gold)]/50 hover:bg-white/10 transition"
+                className="group rounded-xl border border-white/[0.12] bg-white/8 p-6 hover:border-[var(--accent-primary)]/50 hover:bg-white/10 transition"
               >
-                <h3 className="text-lg font-bold text-white group-hover:text-[var(--steelers-gold)] transition">
+                <h3 className="text-lg font-bold text-white group-hover:text-[var(--accent-primary)] transition">
                   {board.title}
                 </h3>
                 <div className="mt-2 flex items-center gap-3 text-sm text-white/50">
@@ -102,7 +205,7 @@ export default async function AdminDashboard() {
         )}
       </div>
 
-      {/* Commissioner Invites section */}
+      {/* Commissioner Invites */}
       <div className="space-y-6">
         <h2
           className="text-3xl font-bold text-white tracking-wide"
@@ -113,7 +216,7 @@ export default async function AdminDashboard() {
         <AdminCommissionerPanel />
       </div>
 
-      {/* Pools section */}
+      {/* All Pools */}
       <div className="space-y-6">
         <h2
           className="text-3xl font-bold text-white tracking-wide"
@@ -128,11 +231,11 @@ export default async function AdminDashboard() {
             type="text"
             required
             placeholder="e.g. Georgetown Draft Club"
-            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--steelers-gold)] focus:outline-none"
+            className="flex-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white placeholder:text-white/40 focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+            className="rounded-lg bg-[var(--accent-primary)] px-6 py-2 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--accent-secondary)] transition"
           >
             + New Pool
           </button>
@@ -171,7 +274,7 @@ export default async function AdminDashboard() {
                     </Link>
                     <Link
                       href={`/pools/${pool.id}`}
-                      className="text-xs text-[var(--steelers-gold)] hover:underline"
+                      className="text-xs text-[var(--accent-primary)] hover:underline"
                     >
                       View
                     </Link>
@@ -191,6 +294,7 @@ export default async function AdminDashboard() {
           </div>
         )}
       </div>
+
       {/* External Links */}
       <div className="space-y-4">
         <h2
@@ -220,6 +324,6 @@ export default async function AdminDashboard() {
           </a>
         </div>
       </div>
-    </div>
+    </>
   );
 }

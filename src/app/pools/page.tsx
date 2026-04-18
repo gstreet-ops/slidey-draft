@@ -24,7 +24,7 @@ export default async function PoolsPage() {
           {(session.user.role === "commissioner" || session.user.role === "admin") && (
             <Link
               href="/pools/create"
-              className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+              className="rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
             >
               Create Pool
             </Link>

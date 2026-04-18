@@ -18,7 +18,7 @@ export function FeatureDisabled({ featureLabel }: { featureLabel: string }) {
           </p>
           <Link
             href="/"
-            className="inline-block rounded-lg bg-[var(--steelers-gold)] px-5 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+            className="inline-block rounded-lg bg-[var(--steelers-gold)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
           >
             Back to Home
           </Link>

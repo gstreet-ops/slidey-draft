@@ -8,20 +8,34 @@ import { useSession } from "next-auth/react";
 
 const mockUseSession = vi.mocked(useSession);
 
+const baseUser = {
+  id: "u1",
+  email: "u@example.com",
+  role: "user" as const,
+  status: "active" as const,
+};
+
 describe("TeamThemeProvider", () => {
   beforeEach(() => {
     document.documentElement.style.removeProperty("--team-primary");
     document.documentElement.style.removeProperty("--team-secondary");
-    document.documentElement.style.removeProperty("--slidey");
+    document.documentElement.style.removeProperty("--accent-primary");
+    document.documentElement.style.removeProperty("--accent-secondary");
+    document.documentElement.style.removeProperty("--accent-text");
   });
 
-  it("sets CSS variables when session has a favoriteTeam", () => {
+  it("sets accent + team CSS variables when session has a favoriteTeam", () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          ...baseUser,
           favoriteTeam: {
-            primaryColor: "#FF0000",
-            secondaryColor: "#0000FF",
+            id: "t1",
+            name: "Pittsburgh Steelers",
+            abbreviation: "PIT",
+            primaryColor: "#FFB612",
+            secondaryColor: "#101820",
+            logoUrl: null,
           },
         },
         expires: "2099-01-01",
@@ -33,19 +47,20 @@ describe("TeamThemeProvider", () => {
     render(<TeamThemeProvider><div>child</div></TeamThemeProvider>);
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue("--team-primary")).toBe("#FF0000");
-    expect(root.style.getPropertyValue("--team-secondary")).toBe("#0000FF");
-    expect(root.style.getPropertyValue("--slidey")).toBe("#FF0000");
+    expect(root.style.getPropertyValue("--team-primary")).toBe("#FFB612");
+    expect(root.style.getPropertyValue("--team-secondary")).toBe("#101820");
+    expect(root.style.getPropertyValue("--accent-primary")).toBe("#FFB612");
+    // PIT has textOnPrimary=black per team-themes lookup
+    expect(root.style.getPropertyValue("--accent-text")).toBe("black");
   });
 
-  it("removes team variables and sets default slidey when no favoriteTeam", () => {
-    // Pre-set some values to ensure they get removed
+  it("removes team variables and falls back to default accent when no favoriteTeam", () => {
     document.documentElement.style.setProperty("--team-primary", "#FF0000");
     document.documentElement.style.setProperty("--team-secondary", "#0000FF");
 
     mockUseSession.mockReturnValue({
       data: {
-        user: { favoriteTeam: null },
+        user: { ...baseUser, favoriteTeam: null },
         expires: "2099-01-01",
       },
       status: "authenticated",
@@ -57,10 +72,10 @@ describe("TeamThemeProvider", () => {
     const root = document.documentElement;
     expect(root.style.getPropertyValue("--team-primary")).toBe("");
     expect(root.style.getPropertyValue("--team-secondary")).toBe("");
-    expect(root.style.getPropertyValue("--slidey")).toBe("#FFB612");
+    expect(root.style.getPropertyValue("--accent-primary")).toBe("#FFB612");
   });
 
-  it("uses default slidey color when session is loading", () => {
+  it("uses default accent when session is loading", () => {
     mockUseSession.mockReturnValue({
       data: null,
       status: "loading",
@@ -70,7 +85,7 @@ describe("TeamThemeProvider", () => {
     render(<TeamThemeProvider><div>child</div></TeamThemeProvider>);
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue("--slidey")).toBe("#FFB612");
+    expect(root.style.getPropertyValue("--accent-primary")).toBe("#FFB612");
   });
 
   it("renders children correctly", () => {

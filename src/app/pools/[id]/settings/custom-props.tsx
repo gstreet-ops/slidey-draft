@@ -103,7 +103,7 @@ export function CustomProps({
         <h3 className="text-lg font-bold text-white">Custom Prop Bets</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="rounded-lg bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+          className="rounded-lg bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
         >
           {showForm ? "Cancel" : "+ Create Prop"}
         </button>
@@ -185,7 +185,7 @@ export function CustomProps({
           <button
             onClick={handleCreate}
             disabled={isPending || !question.trim()}
-            className="w-full rounded-lg bg-[var(--steelers-gold)] py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
+            className="w-full rounded-lg bg-[var(--steelers-gold)] py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
           >
             {isPending ? "Creating..." : "Create Prop"}
           </button>

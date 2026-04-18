@@ -45,7 +45,7 @@ export function LeaderboardTabs({
           onClick={() => setTab("individual")}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "individual"
-              ? "bg-[var(--steelers-gold)] text-black"
+              ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
               : "text-white/50 hover:text-white/60"
           }`}
         >
@@ -55,7 +55,7 @@ export function LeaderboardTabs({
           onClick={() => setTab("teams")}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
             tab === "teams"
-              ? "bg-[var(--steelers-gold)] text-black"
+              ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
               : "text-white/50 hover:text-white/60"
           }`}
         >

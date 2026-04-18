@@ -259,7 +259,7 @@ export function LiveResultsEntry({
                 onClick={() => setPosFilter(pos)}
                 className={`px-2 py-1 rounded text-xs font-semibold transition ${
                   posFilter === pos
-                    ? "bg-[var(--steelers-gold)] text-black"
+                    ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                     : "bg-white/5 text-white/50 hover:text-white/60"
                 }`}
               >

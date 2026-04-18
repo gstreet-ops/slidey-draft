@@ -27,7 +27,7 @@ export function TeamPicker({
   const router = useRouter();
   const { update } = useSession();
 
-  async function handleSelect(teamId: string) {
+  async function persist(teamId: string | null) {
     if (saving) return;
     setSelected(teamId);
     setSaving(true);
@@ -49,42 +49,64 @@ export function TeamPicker({
   }
 
   return (
-    <div className="grid grid-cols-4 gap-3 sm:grid-cols-8 sm:gap-4">
-      {teams.map((team) => {
-        const isSelected = selected === team.id;
-        return (
-          <button
-            key={team.id}
-            onClick={() => handleSelect(team.id)}
-            disabled={saving}
-            className={`flex flex-col items-center gap-1.5 rounded-xl p-3 transition ${
-              isSelected
-                ? "ring-2 ring-white bg-white/15 scale-105"
-                : "bg-white/5 hover:bg-white/10"
-            } ${saving ? "opacity-50 cursor-wait" : ""}`}
-          >
-            {team.logoUrl ? (
-              <Image
-                src={team.logoUrl}
-                alt={team.name}
-                width={48}
-                height={48}
-                className="h-12 w-12 object-contain"
-              />
-            ) : (
-              <div
-                className="flex h-12 w-12 items-center justify-center rounded-full text-xs font-bold text-white"
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+        {teams.map((team) => {
+          const isSelected = selected === team.id;
+          return (
+            <button
+              key={team.id}
+              onClick={() => persist(team.id)}
+              disabled={saving}
+              title={team.name}
+              className={`group relative flex flex-col items-center gap-2 rounded-lg bg-[var(--surface-card)] p-3 transition overflow-hidden ${
+                isSelected
+                  ? "ring-2 ring-[var(--accent-primary)] scale-[1.02]"
+                  : "border border-white/10 hover:border-white/20 hover:bg-[var(--surface-elevated)]"
+              } ${saving ? "opacity-50 cursor-wait" : ""}`}
+            >
+              <span
+                className="absolute inset-x-0 top-0 h-1.5"
                 style={{ backgroundColor: team.primaryColor }}
-              >
+                aria-hidden
+              />
+              {team.logoUrl ? (
+                <Image
+                  src={team.logoUrl}
+                  alt={team.name}
+                  width={44}
+                  height={44}
+                  className="mt-1 h-11 w-11 object-contain"
+                />
+              ) : (
+                <div
+                  className="mt-1 flex h-11 w-11 items-center justify-center rounded-full text-xs font-bold text-white"
+                  style={{ backgroundColor: team.primaryColor }}
+                >
+                  {team.abbreviation}
+                </div>
+              )}
+              <span className="text-[11px] font-semibold text-white/70 leading-tight tracking-wide">
                 {team.abbreviation}
-              </div>
-            )}
-            <span className="text-[10px] text-white/60 text-center leading-tight">
-              {team.abbreviation}
-            </span>
-          </button>
-        );
-      })}
+              </span>
+              <span className="text-[10px] text-white/40 leading-tight text-center line-clamp-1">
+                {team.name.split(" ").slice(0, -1).join(" ")}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {selected && (
+        <button
+          type="button"
+          onClick={() => persist(null)}
+          disabled={saving}
+          className="text-xs text-white/50 underline-offset-2 hover:text-white hover:underline transition"
+        >
+          Reset to draft default (Steelers)
+        </button>
+      )}
     </div>
   );
 }

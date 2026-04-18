@@ -288,7 +288,7 @@ export default async function PoolDashboardPage({
               {settings.mockDraftBonus && !myBoard && (
                 <Link
                   href="/my-board"
-                  className="block w-full text-center rounded-lg bg-[var(--steelers-gold)] px-4 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+                  className="block w-full text-center rounded-lg bg-[var(--steelers-gold)] px-4 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
                 >
                   Create Your Mock Draft
                 </Link>

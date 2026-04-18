@@ -298,7 +298,7 @@ export function LivePredictionWidget({
                       onClick={() => setPosFilter(pos)}
                       className={`px-2 py-1 rounded text-xs font-semibold transition ${
                         posFilter === pos
-                          ? "bg-[var(--steelers-gold)] text-black"
+                          ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                           : "bg-white/5 text-white/50 hover:text-white/60"
                       }`}
                     >
@@ -314,7 +314,7 @@ export function LivePredictionWidget({
                       onClick={() => setSelectedPlayerId(p.id)}
                       className={`w-full text-left px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
                         selectedPlayerId === p.id
-                          ? "bg-[var(--steelers-gold)] text-black"
+                          ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                           : "bg-white/5 text-white/70 hover:bg-white/10"
                       }`}
                     >
@@ -350,7 +350,7 @@ export function LivePredictionWidget({
                 <button
                   onClick={handleSubmit}
                   disabled={!selectedPlayerId || submitting}
-                  className="flex-1 rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
+                  className="flex-1 rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
                 >
                   {submitting ? "Locking In..." : "Lock In Prediction"}
                 </button>

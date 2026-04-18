@@ -91,7 +91,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           {!userBoard && (
-            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition text-center">
+            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition text-center">
               Create Your Mock Draft
             </Link>
           )}
@@ -106,7 +106,7 @@ export default async function DashboardPage() {
                 return (
                   <div key={board.id} className={`w-[260px] shrink-0 rounded-xl border p-4 ${isUser ? "border-[var(--steelers-gold)]/30 bg-[var(--steelers-gold)]/5" : "border-white/[0.12] bg-white/8"}`}>
                     <div className="flex items-center gap-2 mb-3">
-                      {isUser && <span className="rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-black">You</span>}
+                      {isUser && <span className="rounded-full bg-[var(--steelers-gold)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent-text)]">You</span>}
                       <span className="text-sm font-bold text-white truncate">{board.creator?.name || board.creator?.email || "Anonymous"}</span>
                     </div>
                     <h3 className="text-xs text-white/50 truncate mb-3">{board.title}</h3>

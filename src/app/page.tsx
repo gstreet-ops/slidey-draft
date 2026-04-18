@@ -327,15 +327,15 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
           </p>
           <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row sm:gap-4">
             {locked ? (
-              <Link href="/live" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
+              <Link href="/live" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Watch Live
               </Link>
             ) : session?.user ? (
-              <Link href="/my-board" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
+              <Link href="/my-board" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Make Your Picks
               </Link>
             ) : (
-              <Link href="/login" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
+              <Link href="/login" className="w-full rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] shadow-lg shadow-[var(--steelers-gold)]/25 hover:bg-[var(--steelers-gold)]/80 transition sm:w-auto">
                 Sign In &amp; Draft
               </Link>
             )}

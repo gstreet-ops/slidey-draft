@@ -440,7 +440,7 @@ function PickNumberInput({
         <button
           onClick={() => value && onSubmit(value)}
           disabled={saving || !value}
-          className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
+          className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
         >
           {userPick ? "Update" : "Lock In"}
         </button>

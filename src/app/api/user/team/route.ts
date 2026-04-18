@@ -12,6 +12,15 @@ export async function POST(req: NextRequest) {
 
   const { teamId } = await req.json();
 
+  // Allow null to clear (reset to default).
+  if (teamId === null) {
+    await db
+      .update(users)
+      .set({ favoriteTeamId: null })
+      .where(eq(users.id, session.user.id));
+    return NextResponse.json({ favoriteTeam: null });
+  }
+
   if (!teamId || typeof teamId !== "string") {
     return NextResponse.json({ error: "teamId is required" }, { status: 400 });
   }

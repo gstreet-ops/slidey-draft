@@ -102,7 +102,7 @@ export function ProspectDetailDrawer({ prospect, onClose }: Props) {
               {prospect.name.toUpperCase()}
             </h2>
             <div className="mt-1 flex items-center gap-2">
-              <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2.5 py-0.5 text-xs font-bold text-black">
+              <span className="inline-block rounded-full bg-[var(--steelers-gold)] px-2.5 py-0.5 text-xs font-bold text-[var(--accent-text)]">
                 {prospect.position}
               </span>
               {prospect.schoolLogoUrl && (

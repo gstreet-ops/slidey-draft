@@ -3,18 +3,22 @@
 /* ── Draft Day Challenge — Design Tokens ─────────────── */
 
 :root {
-  /* Pittsburgh Steelers theme */
-  --steelers-gold: #FFB612;
-  --steelers-black: #101820;
-  --steelers-dark-gold: #CC9200;
+  /* Personal team accent — overridden by ThemeProvider when user picks a team.
+     Defaults match the Pittsburgh Steelers (host city of the 2026 draft). */
+  --accent-primary: #FFB612;
+  --accent-secondary: #CC9200;
+  --accent-text: black;
 
-  /* Surface hierarchy — darker to lighter */
+  /* Dark surfaces — fixed regardless of team theme */
+  --steelers-black: #101820;
   --surface-dark: #1a2433;
   --surface-card: #243040;
   --surface-elevated: #2d3a4d;
 
-  /* Slidey brand */
-  --slidey: #FFB612;
+  /* Legacy aliases — follow the active accent so existing component styles theme automatically */
+  --steelers-gold: var(--accent-primary);
+  --steelers-dark-gold: var(--accent-secondary);
+  --slidey: var(--accent-primary);
 
   /* Surfaces */
   --background: #ffffff;
@@ -35,6 +39,9 @@
   --color-surface-card: var(--surface-card);
   --color-surface-elevated: var(--surface-elevated);
   --color-slidey: var(--slidey);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-text: var(--accent-text);
 
   --font-sans: "IBM Plex Sans", sans-serif;
   --font-display: "Bebas Neue", sans-serif;

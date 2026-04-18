@@ -128,7 +128,7 @@ export function SimulationControls({ initialState }: { initialState: SimState })
           <button
             onClick={handleAutoRun}
             disabled={state.picksAnnounced >= state.totalPicks}
-            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-40"
+            className="rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-bold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-40"
           >
             Auto-Run All
           </button>

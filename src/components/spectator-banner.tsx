@@ -55,7 +55,7 @@ export function SpectatorBanner() {
         <button
           type="submit"
           disabled={status === "loading" || !code.trim()}
-          className="rounded bg-[var(--steelers-gold)] px-4 py-1.5 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
+          className="rounded bg-[var(--steelers-gold)] px-4 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
         >
           {status === "loading" ? "..." : "Activate"}
         </button>

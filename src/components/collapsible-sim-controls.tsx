@@ -125,7 +125,7 @@ export function CollapsibleSimControls() {
               <button
                 onClick={handleAutoRun}
                 disabled={(state?.picksAnnounced ?? 0) >= (state?.totalPicks ?? 32)}
-                className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-xs font-bold text-black hover:opacity-80 transition disabled:opacity-40"
+                className="rounded-lg bg-[var(--steelers-gold)] px-4 py-2 text-xs font-bold text-[var(--accent-text)] hover:opacity-80 transition disabled:opacity-40"
               >
                 Auto-Run
               </button>

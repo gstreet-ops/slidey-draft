@@ -36,7 +36,9 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
     ...(isLoggedIn && enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
     { href: "/big-board", label: "Prospects" },
     { href: "/scoring", label: "Scoring" },
+    ...(isLoggedIn ? [{ href: "/pools", label: "Pools" }] : []),
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
+    ...(isLoggedIn ? [{ href: "/settings", label: "⚙ Settings" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),
   ];
 
@@ -89,7 +91,7 @@ export function SiteNav({ isLoggedIn, isAdmin, isLocked, userInitial, teamLogoUr
               {teamLogoUrl ? (
                 <Image src={teamLogoUrl} alt={teamName || ""} width={28} height={28} className="object-contain" />
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-black">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-[var(--accent-text)]">
                   {userInitial || "?"}
                 </div>
               )}

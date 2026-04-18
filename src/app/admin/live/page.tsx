@@ -1,9 +1,14 @@
+import { redirect } from "next/navigation";
 import { getDraftOrder, getPlayers, getActualResults } from "@/lib/queries";
+import { auth } from "@/lib/auth";
 import { LiveResultsEntry } from "./live-entry";
 
 export const dynamic = "force-dynamic";
 
 export default async function LivePage() {
+  const session = await auth();
+  if (session?.user?.role !== "admin") redirect("/admin");
+
   const season = 2026;
   const draftOrder = await getDraftOrder(season);
   const allPlayers = await getPlayers();

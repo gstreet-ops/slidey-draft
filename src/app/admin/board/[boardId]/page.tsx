@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getDraftOrder, getPlayers, getBoardWithPicks } from "@/lib/queries";
+import { auth } from "@/lib/auth";
 import { PickBuilder } from "./pick-builder";
 
 export const dynamic = "force-dynamic";
@@ -7,6 +8,9 @@ export const dynamic = "force-dynamic";
 type Params = Promise<{ boardId: string }>;
 
 export default async function BoardPage({ params }: { params: Params }) {
+  const session = await auth();
+  if (session?.user?.role !== "admin") redirect("/admin");
+
   const { boardId } = await params;
 
   const boardData = await getBoardWithPicks(boardId);

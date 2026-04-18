@@ -1,9 +1,14 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { getSimulationState, getTriviaStatus } from "./actions";
 import { SimulationControls } from "./simulation-controls";
 
 export const dynamic = "force-dynamic";
 
 export default async function SimulatePage() {
+  const session = await auth();
+  if (session?.user?.role !== "admin") redirect("/admin");
+
   const [state, triviaStatus] = await Promise.all([
     getSimulationState(),
     getTriviaStatus(),

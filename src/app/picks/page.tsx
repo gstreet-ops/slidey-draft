@@ -160,7 +160,7 @@ export default async function PicksPage() {
                       This is your official pool entry.
                     </p>
                   )}
-                  <span className="mt-4 inline-block rounded-lg bg-[var(--steelers-gold)] px-5 py-2 text-sm font-bold text-black group-hover:bg-[var(--steelers-gold)]/80 transition">
+                  <span className="mt-4 inline-block rounded-lg bg-[var(--steelers-gold)] px-5 py-2 text-sm font-bold text-[var(--accent-text)] group-hover:bg-[var(--steelers-gold)]/80 transition">
                     {isPublished ? "Edit Your Mock \u2192" : "Continue Building \u2192"}
                   </span>
                 </div>

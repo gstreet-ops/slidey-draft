@@ -114,7 +114,7 @@ export function PoolSettingsForm({
               onClick={() => toggleRound(r)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                 rounds.includes(r)
-                  ? "bg-[var(--steelers-gold)] text-black"
+                  ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
                   : "bg-white/5 text-white/50 border border-white/10"
               }`}
             >
@@ -300,7 +300,7 @@ export function PoolSettingsForm({
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
+        className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save Settings"}
       </button>

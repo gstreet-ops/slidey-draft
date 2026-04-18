@@ -30,7 +30,7 @@ export function CopyInviteLink({ inviteCode, poolName }: { inviteCode: string; p
           </code>
           <button
             onClick={handleCopyLink}
-            className="shrink-0 rounded-md bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-black hover:opacity-80 transition"
+            className="shrink-0 rounded-md bg-[var(--steelers-gold)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-text)] hover:opacity-80 transition"
           >
             {copied ? "Copied!" : "Copy Link"}
           </button>

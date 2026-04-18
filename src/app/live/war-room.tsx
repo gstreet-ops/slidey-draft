@@ -511,7 +511,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           {!chatOpen && (
             <button
               onClick={() => setChatOpen(true)}
-              className="hidden lg:flex fixed bottom-6 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-black shadow-lg hover:bg-[var(--steelers-gold)]/80 transition"
+              className="hidden lg:flex fixed bottom-6 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-[var(--accent-text)] shadow-lg hover:bg-[var(--steelers-gold)]/80 transition"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />

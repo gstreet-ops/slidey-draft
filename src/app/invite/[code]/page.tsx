@@ -41,7 +41,7 @@ export default function InviteActivationPage() {
         {status === "idle" && (
           <button
             onClick={handleActivate}
-            className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+            className="w-full rounded-lg bg-[var(--steelers-gold)] px-6 py-3 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
           >
             Activate Full Access
           </button>

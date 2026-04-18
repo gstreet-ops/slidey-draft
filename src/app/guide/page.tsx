@@ -17,7 +17,6 @@ const allSections: SectionDef[] = [
   { id: "prop-bets", label: "Prop Bets", feature: "propBets" },
   { id: "watch-party", label: "Watch Party", feature: "watchParty" },
   { id: "scoring", label: "Scoring", always: true },
-  { id: "pools", label: "Pools", always: true },
   { id: "faq", label: "FAQ", always: true },
 ];
 
@@ -333,53 +332,6 @@ export default async function GuidePage() {
             </div>
           </section>
 
-          {/* ── Pools ── */}
-          <section id="pools">
-            <SectionHeading>Pools &amp; Competitions</SectionHeading>
-            <p>
-              Pools are private competitions between friends. Create a pool and share the invite link — anyone with the link can join.
-            </p>
-
-            <SubHeading>Creating a Pool</SubHeading>
-            <p>
-              Go to <InlineLink href="/pools/create">Pools &rarr; Create</InlineLink>, name your pool, and share the invite code with friends. You are automatically the commissioner.
-            </p>
-
-            <SubHeading>Pool Standings</SubHeading>
-            <p>
-              {enabledScoringTracks.length === 1
-                ? `Pool standings use ${enabledScoringTracks[0]} points:`
-                : "Pool standings combine scores from enabled tracks:"}
-            </p>
-            <ul className="mt-3 space-y-2">
-              {mockDraftOn && (
-                <BulletCard label="Mock Draft Bonus">
-                  — points from your published mock draft (tiered scoring)
-                </BulletCard>
-              )}
-              {liveOn && (
-                <BulletCard label="Live Prediction Total">
-                  — points from correct real-time picks during the draft
-                </BulletCard>
-              )}
-              {triviaOn && (
-                <BulletCard label="Trivia">
-                  — bonus points from answering trivia questions between picks (3-10 pts based on difficulty)
-                </BulletCard>
-              )}
-              {propBetsOn && (
-                <BulletCard label="Prop Bets">
-                  — points from correct side predictions on draft outcomes
-                </BulletCard>
-              )}
-            </ul>
-            <p className="mt-2">
-              {enabledScoringTracks.length === 1
-                ? "Rankings update live as the draft progresses."
-                : "The combined score from enabled tracks determines your pool rank. Rankings update live as the draft progresses."}
-            </p>
-          </section>
-
           {/* ── FAQ ── */}
           <section id="faq">
             <SectionHeading>FAQ</SectionHeading>
@@ -509,7 +461,7 @@ function PrimaryCta({ session, mockDraftOn, propBetsOn }: { session: boolean; mo
   return (
     <Link
       href={href}
-      className="rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-black hover:bg-[var(--steelers-gold)]/80 transition"
+      className="rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
     >
       {label}
     </Link>
@@ -538,10 +490,6 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SubHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="mt-8 mb-2 text-sm font-bold uppercase tracking-wider text-[var(--steelers-gold)]">{children}</h3>;
-}
-
 function StepList({ children }: { children: React.ReactNode }) {
   return <div className="mt-4 space-y-3">{children}</div>;
 }
@@ -549,7 +497,7 @@ function StepList({ children }: { children: React.ReactNode }) {
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-black">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--steelers-gold)] text-xs font-bold text-[var(--accent-text)]">
         {n}
       </span>
       <p className="text-sm text-white/60 pt-0.5">{children}</p>
@@ -589,15 +537,6 @@ function ScoreCard({ icon, title, color, children }: { icon: string; title: stri
         <p className="mt-0.5 text-sm text-white/60">{children}</p>
       </div>
     </div>
-  );
-}
-
-function BulletCard({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <li className="flex gap-3 items-start rounded-lg bg-white/8 border border-white/[0.12] px-4 py-3 text-sm text-white/60">
-      <span className="text-white font-semibold shrink-0">{label}</span>
-      <span>{children}</span>
-    </li>
   );
 }
 
