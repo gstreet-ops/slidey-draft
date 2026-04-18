@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import {
@@ -265,29 +266,77 @@ async function AdminSections() {
         {/* Roster */}
         {roster.length > 0 && (
           <div className="rounded-xl border border-[var(--border)] bg-white shadow-sm overflow-hidden">
-            <div className="grid grid-cols-[1fr_auto_auto] gap-3 px-4 py-2.5 border-b border-[var(--border-light)] bg-[var(--bg-section)] text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              <span>Member</span>
-              <span>Team</span>
-              <span>Status</span>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border-light)] bg-[var(--bg-section)] text-left text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                    <th className="px-4 py-2.5 font-semibold">Member</th>
+                    <th className="px-4 py-2.5 font-semibold">Team</th>
+                    <th className="px-4 py-2.5 font-semibold">Draft</th>
+                    <th className="px-4 py-2.5 font-semibold text-right">Picks</th>
+                    <th className="px-4 py-2.5 font-semibold">Status</th>
+                    <th className="px-4 py-2.5 font-semibold whitespace-nowrap">Added</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {roster.map((m) => (
+                    <tr key={m.id} className="border-b border-[var(--border-light)] last:border-b-0">
+                      <td className="px-4 py-3 align-top">
+                        <p className="font-semibold text-[var(--text-primary)] truncate max-w-[180px]">
+                          {m.userName || m.userEmail}
+                        </p>
+                        <p className="text-xs text-[var(--text-muted)] truncate max-w-[180px]">{m.userEmail}</p>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <div className="flex items-center gap-2">
+                          {m.teamLogoUrl ? (
+                            <Image
+                              src={m.teamLogoUrl}
+                              alt={m.teamAbbreviation ?? ""}
+                              width={20}
+                              height={20}
+                              className="h-5 w-5 object-contain shrink-0"
+                            />
+                          ) : (
+                            <span
+                              className="inline-block h-5 w-5 rounded text-[8px] font-bold text-white flex items-center justify-center shrink-0"
+                              style={{ backgroundColor: m.teamPrimaryColor ?? "#666" }}
+                            >
+                              {m.teamAbbreviation ?? "?"}
+                            </span>
+                          )}
+                          <span className="text-xs font-mono font-semibold text-[var(--text-secondary)]">
+                            {m.teamAbbreviation ?? "—"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-xs text-[var(--text-secondary)] truncate max-w-[200px]">
+                        {m.boardTitle ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-right text-xs font-mono">
+                        <span className={m.pickCount === 32 ? "text-green-700 font-semibold" : "text-[var(--text-secondary)]"}>
+                          {m.pickCount}/32
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <span
+                          className={`text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 whitespace-nowrap ${
+                            m.isPreSeeded
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-green-100 text-green-700"
+                          }`}
+                        >
+                          {m.isPreSeeded ? "Pending" : "Joined"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-xs text-[var(--text-muted)] whitespace-nowrap">
+                        {m.joinedAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            {roster.map((m) => (
-              <div key={m.id} className="grid grid-cols-[1fr_auto_auto] gap-3 px-4 py-3 border-b border-[var(--border-light)] last:border-b-0 items-center">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{m.userName || m.userEmail}</p>
-                  <p className="text-xs text-[var(--text-muted)] truncate">{m.userEmail}</p>
-                </div>
-                <span className="text-xs font-mono text-[var(--text-secondary)]">{m.teamAbbreviation ?? "—"}</span>
-                <span
-                  className={`text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${
-                    m.isPreSeeded
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {m.isPreSeeded ? "Pending" : "Joined"}
-                </span>
-              </div>
-            ))}
           </div>
         )}
       </div>

@@ -352,9 +352,9 @@ export async function getPoolMembers(poolId: string) {
     .orderBy(asc(poolMembers.joinedAt));
 }
 
-/** Pool members enriched with pre-seed status + favorite team — for the admin roster view. */
-export async function getPoolMembersWithStatus(poolId: string) {
-  return db
+/** Pool members enriched with pre-seed status, favorite team, draft title, and pick count — for the admin roster view. */
+export async function getPoolMembersWithStatus(poolId: string, season: number = 2026) {
+  const rows = await db
     .select({
       id: poolMembers.id,
       userId: poolMembers.userId,
@@ -367,12 +367,38 @@ export async function getPoolMembersWithStatus(poolId: string) {
       teamAbbreviation: teams.abbreviation,
       teamName: teams.name,
       teamPrimaryColor: teams.primaryColor,
+      teamLogoUrl: teams.logoUrl,
     })
     .from(poolMembers)
     .innerJoin(users, eq(poolMembers.userId, users.id))
     .leftJoin(teams, eq(users.favoriteTeamId, teams.id))
     .where(eq(poolMembers.poolId, poolId))
     .orderBy(asc(poolMembers.joinedAt));
+
+  // Enrich with board title + pick count for each user
+  return Promise.all(
+    rows.map(async (m) => {
+      const [board] = await db
+        .select({ id: draftBoards.id, title: draftBoards.title })
+        .from(draftBoards)
+        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, season)));
+      const pickCount = board
+        ? Number(
+            (
+              await db
+                .select({ c: sql<number>`count(*)` })
+                .from(picks)
+                .where(eq(picks.boardId, board.id))
+            )[0]?.c ?? 0
+          )
+        : 0;
+      return {
+        ...m,
+        boardTitle: board?.title ?? null,
+        pickCount,
+      };
+    })
+  );
 }
 
 export async function getPoolMemberCount(poolId: string) {
