@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { teams } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { TeamPicker } from "@/components/team-picker";
 import { DisplayNameForm } from "@/components/display-name-form";
+import { TeamImage } from "@/components/team-image";
+import { InnerPageHeader } from "@/components/inner-page-header";
+import { getTeamTheme } from "@/lib/team-themes";
 
 export const dynamic = "force-dynamic";
 
@@ -26,22 +28,15 @@ export default async function SettingsPage() {
 
   const currentTeam = session.user.favoriteTeam;
   const currentName = session.user.name ?? "";
+  const teamCode = currentTeam?.abbreviation ?? null;
+  const theme = getTeamTheme(teamCode);
 
   return (
-    <div className="min-h-screen bg-[var(--steelers-black)]">
+    <div className="min-h-screen bg-[var(--bg-page)]">
+      <InnerPageHeader title="SETTINGS" subtitle="Profile, team theme, and display preferences" teamCode={teamCode} />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-        <h1
-          className="text-3xl font-bold text-[var(--text-primary)] tracking-wider"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          SETTINGS
-        </h1>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">
-          Manage how you appear and which team colors light up the app for you.
-        </p>
-
         {/* Profile */}
-        <section className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
+        <section className="rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
           <h2
             className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
             style={{ fontFamily: "var(--font-display)" }}
@@ -53,42 +48,115 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        {/* Team Theme */}
-        <section className="mt-6 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2
-                className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                TEAM THEME
-              </h2>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
-                Pick your team — accents across the app will switch to its colors. Default is Pittsburgh (this year&apos;s host city).
-              </p>
-            </div>
-            {currentTeam && (
-              <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 shrink-0">
-                {currentTeam.logoUrl ? (
-                  <Image
-                    src={currentTeam.logoUrl}
-                    alt={currentTeam.name}
-                    width={28}
-                    height={28}
-                    className="h-7 w-7 object-contain"
-                  />
-                ) : (
-                  <div
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                    style={{ backgroundColor: currentTeam.primaryColor }}
-                  >
-                    {currentTeam.abbreviation}
-                  </div>
-                )}
-                <span className="text-xs font-semibold text-[var(--text-primary)]">{currentTeam.abbreviation}</span>
+        {/* Team Theme — selected team rich preview */}
+        {currentTeam && (
+          <section className="mt-6 overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm">
+            <div
+              className="flex items-stretch gap-4 p-5 sm:gap-6 sm:p-6"
+              style={{
+                background: `linear-gradient(90deg, ${theme.primary} 0%, ${theme.primary} 35%, transparent 100%)`,
+              }}
+            >
+              <TeamImage
+                teamCode={teamCode}
+                variant="logo"
+                size={80}
+                fallback="initials"
+                className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
+              />
+              <div className="flex-1 min-w-0 self-center">
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/85"
+                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.45)" }}
+                >
+                  Your Team
+                </p>
+                <h3
+                  className="mt-0.5 text-2xl sm:text-3xl leading-none tracking-wide text-white"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    textShadow: "0 1px 8px rgba(0,0,0,0.45)",
+                  }}
+                >
+                  {theme.name.toUpperCase()}
+                </h3>
+                <p
+                  className="mt-1.5 text-xs sm:text-sm text-white/85"
+                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}
+                >
+                  {theme.tagline}
+                </p>
               </div>
-            )}
-          </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3 sm:p-6">
+              {/* Hero player preview (if available) */}
+              {theme.heroPlayer && (
+                <div className="sm:col-span-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                    Roster Highlight
+                  </p>
+                  <div
+                    className="mt-2 h-32 rounded-lg overflow-hidden border-2"
+                    style={{ borderColor: theme.primary }}
+                  >
+                    <TeamImage
+                      teamCode={teamCode}
+                      variant="heroPlayer"
+                      size={300}
+                      className="h-full w-full !object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Color swatches + meta */}
+              <div className={theme.heroPlayer ? "sm:col-span-2" : "sm:col-span-3"}>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                  Your Team Colors
+                </p>
+                <div className="mt-2 flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-9 w-9 rounded-md border border-gray-200 shrink-0"
+                      style={{ backgroundColor: theme.primary }}
+                    />
+                    <span className="text-xs font-mono text-[var(--text-secondary)]">{theme.primary}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-9 w-9 rounded-md border border-gray-200 shrink-0"
+                      style={{ backgroundColor: theme.secondary }}
+                    />
+                    <span className="text-xs font-mono text-[var(--text-secondary)]">{theme.secondary}</span>
+                  </div>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <dt className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Stadium</dt>
+                    <dd className="mt-0.5 text-[var(--text-primary)] font-medium">{theme.stadium}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Division</dt>
+                    <dd className="mt-0.5 text-[var(--text-primary)] font-medium">{theme.division}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Team grid */}
+        <section className="mt-6 rounded-xl border border-[var(--border)] bg-white p-5 sm:p-8">
+          <h2
+            className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {currentTeam ? "CHANGE TEAM" : "PICK YOUR TEAM"}
+          </h2>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
+            All 32 NFL teams. Default is Pittsburgh (this year&apos;s host city).
+          </p>
           <div className="mt-5">
             <TeamPicker
               teams={allTeams.map((t) => ({

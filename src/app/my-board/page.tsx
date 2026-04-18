@@ -8,6 +8,7 @@ import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { MockGradeCard } from "@/components/mock-grade-card";
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { InnerPageHeader } from "@/components/inner-page-header";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { db } from "@/db";
@@ -78,20 +79,15 @@ export default async function MyBoardPage() {
     <div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
       {locked && <DraftLockedBanner />}
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <InnerPageHeader
+        title="YOUR MOCK DRAFT"
+        subtitle={`${season} · ${boardData.picks.length}/32 picks made`}
+        teamCode={session.user.favoriteTeam?.abbreviation ?? null}
+      />
+
+      <main className="mx-auto max-w-7xl w-full px-4 py-6 sm:px-6 sm:py-8">
         <div className="space-y-4 sm:space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1
-                className="text-2xl font-bold text-[var(--text-primary)] tracking-wide sm:text-3xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                YOUR MOCK DRAFT
-              </h1>
-              <p className="mt-1 text-xs text-[var(--text-muted)] sm:text-sm">
-                {season} &middot; {boardData.picks.length}/32 picks made
-              </p>
-            </div>
+          <div className="flex items-center justify-end">
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 boardData.board.status === "published"
@@ -104,7 +100,7 @@ export default async function MyBoardPage() {
           </div>
 
           {boardData.picks.length > 0 && (
-            <MockGradeCard boardId={board.id} />
+            <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
           )}
 
           <PickBuilder

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import type { MockDraftGrade, LetterGrade } from "@/lib/mock-grading";
 import { generateMockSummaryCommentary } from "@/lib/pick-commentary";
+import { TeamImage } from "./team-image";
+import { getTeamTheme } from "@/lib/team-themes";
 
 function gradeCircleColor(grade: LetterGrade): string {
   switch (grade) {
@@ -24,7 +26,9 @@ function gradeSummaryColor(grade: LetterGrade): string {
   }
 }
 
-export function MockGradeCard({ boardId }: { boardId: string }) {
+export function MockGradeCard({ boardId, teamCode }: { boardId: string; teamCode?: string | null }) {
+  const theme = getTeamTheme(teamCode);
+  const legend = theme.legendPlayer;
   const [grade, setGrade] = useState<(MockDraftGrade & { pickPositions?: Array<{ position: string }> }) | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,8 +58,21 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
   if (!grade) return null;
 
   return (
-    <div className="rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-4 shadow-sm">
-      <div className="flex items-center gap-4">
+    <div className="relative overflow-hidden rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-4 shadow-sm">
+      {/* Faded legend watermark */}
+      {legend && (
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 flex items-center justify-end overflow-hidden" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={legend}
+            alt=""
+            className="h-[140%] w-auto object-contain object-right opacity-[0.07]"
+            style={{ marginRight: -20 }}
+          />
+        </div>
+      )}
+
+      <div className="relative flex items-center gap-4">
         {/* Large grade circle */}
         <div
           className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 ring-2 ring-[var(--accent-primary)]/20 ${gradeCircleColor(grade.letterGrade)}`}
@@ -70,9 +87,8 @@ export function MockGradeCard({ boardId }: { boardId: string }) {
 
         {/* Summary */}
         <div className="flex-1 min-w-0">
-          <p
-            className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]"
-          >
+          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+            <TeamImage teamCode={teamCode ?? null} variant="logo" size={20} fallback="initials" />
             Your Mock Draft Grade
           </p>
           <p className={`text-sm mt-0.5 ${gradeSummaryColor(grade.letterGrade)}`}>{grade.summary}</p>

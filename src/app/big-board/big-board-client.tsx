@@ -71,10 +71,10 @@ export function BigBoardClient({ prospects, isLoggedIn }: { prospects: Prospect[
               <button
                 key={pos}
                 onClick={() => setPosFilter(pos)}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition border ${
                   posFilter === pos
-                    ? "bg-[var(--steelers-gold)] text-[var(--accent-text)]"
-                    : "bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    ? "bg-[var(--accent-primary)] text-[var(--accent-text)] border-[var(--accent-primary)]"
+                    : "bg-white text-[var(--text-secondary)] border-gray-200 hover:border-[var(--accent-primary)]/40 hover:text-[var(--text-primary)]"
                 }`}
               >
                 {pos}

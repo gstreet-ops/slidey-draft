@@ -14,6 +14,8 @@ import { draftBoards, picks } from "@/db/schema";
 import { eq, and, desc, isNotNull } from "drizzle-orm";
 import { GradeCircle } from "@/components/grade-circle";
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { InnerPageHeader } from "@/components/inner-page-header";
+import { TeamImage } from "@/components/team-image";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 
@@ -105,19 +107,16 @@ export default async function PicksPage() {
   const myStatus = myBoardData?.board.status;
   const isPublished = myStatus === "published";
 
-  return (
-    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
-      <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-        <h1
-          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          MOCK DRAFTS
-        </h1>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">
-          {poolName ? `${poolName} \u2014 2026 NFL Mock Draft` : "2026 NFL Mock Draft"}
-        </p>
+  const teamCode = session.user.favoriteTeam?.abbreviation ?? null;
 
+  return (
+    <div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
+      <InnerPageHeader
+        title="MOCK DRAFTS"
+        subtitle={poolName ? `${poolName} — 2026 NFL Mock Draft` : "2026 NFL Mock Draft"}
+        teamCode={teamCode}
+      />
+      <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         {/* Your Mock Draft */}
         <section className="mt-8">
           <h2
@@ -130,10 +129,13 @@ export default async function PicksPage() {
           {myBoard && myBoardData ? (
             <Link
               href="/my-board"
-              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 hover:border-[var(--slidey)]/40 hover:bg-gray-50 transition sm:p-6"
+              className="group block rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-5 shadow-sm hover:shadow-md transition sm:p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
+                  <div className="float-right ml-3">
+                    <TeamImage teamCode={teamCode} variant="logo" size={36} fallback="initials" />
+                  </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${

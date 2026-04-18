@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getPoolsForUser } from "@/lib/queries";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { getEnabledFeatures, type FeatureKey } from "@/lib/feature-flags";
+import { InnerPageHeader } from "@/components/inner-page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -66,17 +67,14 @@ export default async function GuidePage() {
       : "Everything you need to know about Draft Day Challenge.";
 
   return (
-    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        <h1
-          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          HOW TO PLAY
-        </h1>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">{subtitle}</p>
-
-        <nav className="mt-6 flex flex-wrap gap-2">
+    <div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
+      <InnerPageHeader
+        title="HOW TO PLAY"
+        subtitle={subtitle}
+        teamCode={session?.user?.favoriteTeam?.abbreviation ?? null}
+      />
+      <div className="mx-auto max-w-3xl w-full px-4 py-8 sm:px-6 sm:py-12">
+        <nav className="mt-2 flex flex-wrap gap-2">
           {sections.map((s) => (
             <a
               key={s.id}

@@ -696,7 +696,7 @@ export function PickBuilder({
                   )}
                   {isUserTeam && (
                     <span
-                      className="hidden sm:inline-block rounded-sm bg-[var(--accent-primary)] px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-[var(--accent-text)]"
+                      className="hidden sm:inline-flex items-center gap-1 rounded-full bg-[var(--accent-primary)]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[var(--accent-primary)]"
                       title="Your team"
                     >
                       Your Team

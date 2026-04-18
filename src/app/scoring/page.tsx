@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getPoolsForUser } from "@/lib/queries";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { getEnabledFeatures, type FeatureKey } from "@/lib/feature-flags";
+import { InnerPageHeader } from "@/components/inner-page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -67,19 +68,16 @@ export default async function ScoringPage() {
   })();
 
   return (
-    <div className="min-h-screen bg-[var(--steelers-black)] flex flex-col">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+    <div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
+      <InnerPageHeader
+        title="HOW SCORING WORKS"
+        subtitle={subtitle}
+        teamCode={session?.user?.favoriteTeam?.abbreviation ?? null}
+      />
+      <div className="mx-auto max-w-3xl w-full px-4 py-8 sm:px-6 sm:py-12">
         <Link href="/guide" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition">
           &larr; Back to How to Play
         </Link>
-
-        <h1
-          className="mt-4 text-3xl font-bold text-[var(--text-primary)] tracking-wide sm:text-4xl"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          HOW SCORING WORKS
-        </h1>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">{subtitle}</p>
 
         {enabledFeatures === null && session?.user && (
           <p className="mt-2 text-xs text-[var(--text-muted)] italic">
