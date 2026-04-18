@@ -6,8 +6,8 @@ import { gradeMockDraft } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
 import { GradeCircle } from "@/components/grade-circle";
 import { db } from "@/db";
-import { draftBoards, picks } from "@/db/schema";
-import { eq, and, sql as dsql, isNotNull, desc } from "drizzle-orm";
+import { draftBoards } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { HeroBanner, TeamStripe } from "@/components/hero-banner";
 import { TeamInfoBar } from "@/components/team-info-bar";
+import { PoolDraftsList, type ComparePick, type MemberDraft } from "@/components/pool-drafts-list";
 import { getPoolSettings, DEFAULT_POOL_SETTINGS } from "@/lib/pool-settings";
 import { FEATURES, getEnabledFeatures } from "@/lib/feature-flags";
 
@@ -55,49 +56,100 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
 
   const userPools = await getPoolsForUser(userId);
 
-  // Fetch pool members' published boards (including current user)
-  type PoolmateBoard = { userId: string; userName: string; boardId: string; pickCount: number; poolName: string; grade: MockDraftGrade | null; noteCount: number; latestNote: string | null };
-  const poolmateBoards: PoolmateBoard[] = [];
+  // Fetch every pool member's draft (including in-progress drafts, not just
+  // published) and build comparison stats vs the current user.
+  let memberDrafts: MemberDraft[] = [];
+  let myPickByNumberMap: Record<number, ComparePick> = {};
   if (userPools.length > 0) {
     const pool = userPools[0];
     const members = await getPoolMembers(pool.poolId);
+
+    type RawDraft = {
+      userId: string;
+      userName: string;
+      userImage: string | null;
+      boardId: string | null;
+      boardTitle: string | null;
+      boardStatus: string | null;
+      picks: ComparePick[];
+    };
+    const rawDrafts: RawDraft[] = [];
     for (const m of members) {
-      const [memberBoard] = await db
-        .select({ id: draftBoards.id, status: draftBoards.status })
+      const [board] = await db
+        .select({
+          id: draftBoards.id,
+          title: draftBoards.title,
+          status: draftBoards.status,
+        })
         .from(draftBoards)
         .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, 2026)));
-      if (memberBoard?.status === "published") {
-        const boardData = await getBoardWithPicks(memberBoard.id);
-        const grade = boardData && boardData.picks.length > 0
-          ? gradeMockDraft(boardData.picks.map(p => ({
-              pickNumber: p.pickNumber,
-              playerGrade: p.playerGrade,
-              playerRank: p.playerRank,
-            })))
-          : null;
-        const noteCount = boardData ? boardData.picks.filter(p => p.analysis).length : 0;
-        const [latestNoteRow] = await db
-          .select({ analysis: picks.analysis })
-          .from(picks)
-          .where(and(eq(picks.boardId, memberBoard.id), isNotNull(picks.analysis)))
-          .orderBy(desc(picks.createdAt))
-          .limit(1);
-        poolmateBoards.push({
+
+      if (!board) {
+        rawDrafts.push({
           userId: m.userId,
           userName: m.userName || m.userEmail,
-          boardId: memberBoard.id,
-          pickCount: boardData?.picks.length ?? 0,
-          poolName: pool.poolName,
-          grade,
-          noteCount,
-          latestNote: latestNoteRow?.analysis ?? null,
+          userImage: m.userImage,
+          boardId: null,
+          boardTitle: null,
+          boardStatus: null,
+          picks: [],
         });
+        continue;
       }
+      const data = await getBoardWithPicks(board.id);
+      rawDrafts.push({
+        userId: m.userId,
+        userName: m.userName || m.userEmail,
+        userImage: m.userImage,
+        boardId: board.id,
+        boardTitle: board.title,
+        boardStatus: board.status,
+        picks: (data?.picks ?? []).map<ComparePick>((p) => ({
+          pickNumber: p.pickNumber,
+          playerId: p.playerId,
+          playerName: p.playerName,
+          playerPosition: p.playerPosition,
+          playerSchool: p.playerSchool,
+          teamAbbreviation: p.teamAbbreviation,
+          teamName: p.teamName,
+          teamLogoUrl: p.teamLogoUrl,
+          teamPrimaryColor: p.teamPrimaryColor,
+        })),
+      });
     }
-    // Sort: current user first, then alphabetically
-    poolmateBoards.sort((a, b) => {
-      if (a.userId === userId) return -1;
-      if (b.userId === userId) return 1;
+
+    const me = rawDrafts.find((d) => d.userId === userId);
+    const myPicks = me?.picks ?? [];
+    const myPlayerIds = new Set(myPicks.map((p) => p.playerId));
+    const myPickByNumber = new Map(myPicks.map((p) => [p.pickNumber, p]));
+    myPickByNumberMap = Object.fromEntries(myPickByNumber);
+
+    memberDrafts = rawDrafts.map((d) => {
+      const overlapPlayerIds = new Set(
+        d.picks.filter((p) => myPlayerIds.has(p.playerId)).map((p) => p.playerId)
+      );
+      const exactSlotMatches = d.picks.filter((p) => {
+        const mine = myPickByNumber.get(p.pickNumber);
+        return !!mine && mine.playerId === p.playerId;
+      }).length;
+      return {
+        userId: d.userId,
+        userName: d.userName,
+        userImage: d.userImage,
+        boardId: d.boardId,
+        boardTitle: d.boardTitle,
+        boardStatus: d.boardStatus,
+        pickCount: d.picks.length,
+        picks: d.picks,
+        isMe: d.userId === userId,
+        overlapCount: overlapPlayerIds.size,
+        exactSlotMatches,
+      };
+    });
+
+    memberDrafts.sort((a, b) => {
+      if (a.isMe) return -1;
+      if (b.isMe) return 1;
       return a.userName.localeCompare(b.userName);
     });
   }
@@ -159,70 +211,21 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
           </div>
         </div>
 
-        {/* Pool Members' Mock Drafts — primary engagement */}
-        {inPool && mockDraftEnabled && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+        {/* Pool Mock Drafts — primary engagement: see how everyone is building their board */}
+        {inPool && mockDraftEnabled && memberDrafts.length > 0 && (
+          <div className="space-y-3">
+            <div>
               <h2
                 className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {userPools[0].poolName.toUpperCase()} MOCK DRAFTS
               </h2>
-              <Link href="/picks" className="text-xs text-[var(--steelers-gold)] hover:underline">View All Mock Drafts &rarr;</Link>
+              <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                See how everyone is building their board — tap to compare picks side by side.
+              </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Show "Start Your Mock" card if user has no published board in pool */}
-              {!poolmateBoards.some(pb => pb.userId === userId) && (
-                <Link
-                  href="/my-board"
-                  className="group rounded-xl border-2 border-dashed border-gray-300 bg-white p-4 hover:border-[var(--accent-primary)] hover:bg-gray-50 transition flex items-center justify-center"
-                >
-                  <div className="text-center">
-                    <p className="text-sm font-bold text-[var(--text-secondary)] group-hover:text-[var(--accent-primary)] transition">Start Your Mock &rarr;</p>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">Build your 32-pick board</p>
-                  </div>
-                </Link>
-              )}
-              {poolmateBoards.map((pb) => (
-                <Link
-                  key={pb.boardId}
-                  href={pb.userId === userId ? "/my-board" : `/picks/${pb.boardId}`}
-                  className={`group rounded-xl border bg-white p-4 shadow-sm hover:shadow-md transition ${
-                    pb.userId === userId
-                      ? "border-l-4 border-l-[var(--accent-primary)] border-y-gray-200 border-r-gray-200"
-                      : "border-gray-200 hover:border-[var(--accent-primary)]/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition truncate">
-                        {pb.userId === userId ? "You" : pb.userName}
-                      </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">{pb.pickCount}/32 picks</p>
-                      {pb.grade && (
-                        <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
-                          {pb.grade.steals} steal{pb.grade.steals !== 1 ? "s" : ""} &middot; {pb.grade.reaches} reach{pb.grade.reaches !== 1 ? "es" : ""}
-                        </p>
-                      )}
-                      {pb.latestNote && (
-                        <p className="mt-1 text-xs italic text-[var(--text-secondary)] truncate">
-                          💬 {pb.latestNote.length > 80 ? pb.latestNote.slice(0, 80) + "..." : pb.latestNote}
-                        </p>
-                      )}
-                      {pb.noteCount > 0 && !pb.latestNote && (
-                        <p className="mt-0.5 text-[10px] text-[var(--text-secondary)]">💬 {pb.noteCount} note{pb.noteCount !== 1 ? "s" : ""}</p>
-                      )}
-                    </div>
-                    {pb.grade && (
-                      <div className="shrink-0">
-                        <GradeCircle grade={pb.grade.letterGrade} size="sm" />
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <PoolDraftsList drafts={memberDrafts} myPickByNumber={myPickByNumberMap} totalSlots={32} />
           </div>
         )}
 
