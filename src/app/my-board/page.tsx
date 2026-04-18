@@ -9,7 +9,6 @@ import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { MockGradeCard } from "@/components/mock-grade-card";
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { InnerPageHeader } from "@/components/inner-page-header";
-import { MobilePicksShell } from "@/components/mobile-picks-shell";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { db } from "@/db";
@@ -18,19 +17,10 @@ import { eq, and, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-type MobileLayout = "tabs" | "drawer";
-
-export default async function MyBoardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ layout?: string }>;
-}) {
+export default async function MyBoardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   if (session.user.status !== "active") redirect("/");
-
-  const params = await searchParams;
-  const mobileLayout: MobileLayout = params.layout === "drawer" ? "drawer" : "tabs";
 
   const season = 2026;
   const locked = await isDraftLocked();
@@ -95,38 +85,11 @@ export default async function MyBoardPage({
         teamCode={session.user.favoriteTeam?.abbreviation ?? null}
       />
 
-      <main className="mx-auto max-w-7xl w-full px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto max-w-7xl w-full px-4 py-6 pb-24 sm:px-6 sm:py-8 md:pb-8">
         <div className="space-y-4 sm:space-y-6">
-          <div className="flex items-center justify-between gap-3">
-            {/* Mobile-only layout toggle (Tabs vs Drawer) */}
-            <div className="md:hidden inline-flex rounded-full border border-gray-200 bg-gray-100 p-0.5 text-[11px] font-semibold">
-              <Link
-                href="/my-board?layout=tabs"
-                replace
-                scroll={false}
-                className={`rounded-full px-3 py-1 transition ${
-                  mobileLayout === "tabs"
-                    ? "bg-[var(--accent-primary)] text-[var(--accent-text)] shadow-sm"
-                    : "text-[var(--text-muted)]"
-                }`}
-              >
-                Tabs
-              </Link>
-              <Link
-                href="/my-board?layout=drawer"
-                replace
-                scroll={false}
-                className={`rounded-full px-3 py-1 transition ${
-                  mobileLayout === "drawer"
-                    ? "bg-[var(--accent-primary)] text-[var(--accent-text)] shadow-sm"
-                    : "text-[var(--text-muted)]"
-                }`}
-              >
-                Drawer
-              </Link>
-            </div>
+          <div className="flex items-center justify-end">
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ml-auto ${
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
                 boardData.board.status === "published"
                   ? "bg-green-100 text-green-700"
                   : "bg-yellow-100 text-yellow-700"
@@ -136,46 +99,18 @@ export default async function MyBoardPage({
             </span>
           </div>
 
-          {mobileLayout === "tabs" ? (
-            <MobilePicksShell
-              filledCount={boardData.picks.length}
-              totalSlots={draftOrder.length}
-              prospectsCount={availablePlayers.length}
-              gradeCard={
-                boardData.picks.length > 0 ? (
-                  <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
-                ) : null
-              }
-              builder={
-                <PickBuilder
-                  boardId={board.id}
-                  boardStatus={boardData.board.status}
-                  draftOrder={draftOrder}
-                  existingPicks={boardData.picks}
-                  availablePlayers={availablePlayers}
-                  readOnly={locked}
-                  favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
-                  mobileLayout={mobileLayout}
-                />
-              }
-            />
-          ) : (
-            <>
-              {boardData.picks.length > 0 && (
-                <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
-              )}
-              <PickBuilder
-                boardId={board.id}
-                boardStatus={boardData.board.status}
-                draftOrder={draftOrder}
-                existingPicks={boardData.picks}
-                availablePlayers={availablePlayers}
-                readOnly={locked}
-                favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
-                mobileLayout={mobileLayout}
-              />
-            </>
+          {boardData.picks.length > 0 && (
+            <MockGradeCard boardId={board.id} teamCode={session.user.favoriteTeam?.abbreviation ?? null} />
           )}
+          <PickBuilder
+            boardId={board.id}
+            boardStatus={boardData.board.status}
+            draftOrder={draftOrder}
+            existingPicks={boardData.picks}
+            availablePlayers={availablePlayers}
+            readOnly={locked}
+            favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
+          />
         </div>
 
         {/* Pool Members' Boards */}

@@ -8,7 +8,6 @@ import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
 import { checkNeedMatch, matchesAnyNeed, generateNeedsAnalysis } from "@/lib/team-needs";
-import { useMobilePicksTab } from "@/components/mobile-picks-shell";
 
 type DraftSlot = {
   id: string;
@@ -88,8 +87,6 @@ type Props = {
   readOnly?: boolean;
   /** User's favorite NFL team abbreviation (e.g. "PIT") — slots for this team get a YOUR TEAM accent. */
   favoriteTeamAbbr?: string | null;
-  /** Mobile-only layout style. "tabs" splits picks/prospects into a tab bar; "drawer" uses a sticky bottom CTA + slide-up drawer. Desktop is unaffected. */
-  mobileLayout?: "tabs" | "drawer";
 };
 
 /* ── 40-time color helper ────────────────────────────────────── */
@@ -319,7 +316,6 @@ export function PickBuilder({
   availablePlayers,
   readOnly = false,
   favoriteTeamAbbr,
-  mobileLayout = "tabs",
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -340,13 +336,7 @@ export function PickBuilder({
   const [needsOnly, setNeedsOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"rank" | "fastest" | "grade">("rank");
 
-  // Mobile-only UI state. When MobilePicksShell wraps us, it owns the tab and
-  // we read it via context; otherwise we fall back to local state + render our
-  // own tab bar (used by /admin/board, where there's no shell).
-  const shell = useMobilePicksTab();
-  const [localMobileTab, setLocalMobileTab] = useState<"picks" | "prospects">("picks");
-  const mobileTab = shell?.tab ?? localMobileTab;
-  const setMobileTab = shell ? shell.setTab : setLocalMobileTab;
+  // Mobile-only UI state — bottom bar + slide-up prospects drawer.
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [flashedSlot, setFlashedSlot] = useState<number | null>(null);
 
@@ -408,10 +398,13 @@ export function PickBuilder({
         setSearch("");
         setAnalysisText("");
         flashSaved();
-        // Mobile UX: bounce back to picks view + flash the slot we just filled
-        setMobileTab("picks");
+        // Mobile UX: close the drawer + flash the slot we just filled, then scroll it into view
         setDrawerOpen(false);
         setFlashedSlot(slot.pickNumber);
+        setTimeout(() => {
+          const el = document.querySelector(`[data-pick-slot="${slot.pickNumber}"]`);
+          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 60);
         setTimeout(() => setFlashedSlot((s) => (s === slot.pickNumber ? null : s)), 1500);
       } catch (err) {
         setLocalPickedIds((prev) => {
@@ -685,46 +678,14 @@ export function PickBuilder({
   const filledCount = existingPicks.length;
   const totalSlots = draftOrder.length;
   const remaining = totalSlots - filledCount;
-  // When the shell is present, the shell renders the tab bar; we just react to its tab.
-  const showTabsBar = mobileLayout === "tabs" && !shell;
-  const tabsModeActive = mobileLayout === "tabs" || !!shell;
-  const showDrawerUI = mobileLayout === "drawer";
-  const picksHiddenOnMobile = tabsModeActive && mobileTab !== "picks";
-  const prospectsHiddenOnMobile = showDrawerUI || (tabsModeActive && mobileTab !== "prospects");
+  const progressPct = totalSlots > 0 ? Math.round((filledCount / totalSlots) * 100) : 0;
+  const isComplete = filledCount >= totalSlots;
 
   return (
-    <div className={showDrawerUI ? "pb-24 md:pb-0" : undefined}>
-      {/* Mobile tab bar (Option A) */}
-      {showTabsBar && (
-        <div className="md:hidden sticky top-0 z-30 mb-3 flex w-full border-b border-gray-200 bg-white shadow-sm">
-          <button
-            type="button"
-            onClick={() => setMobileTab("picks")}
-            className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
-              mobileTab === "picks"
-                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
-                : "border-transparent text-[var(--text-muted)]"
-            }`}
-          >
-            My Picks <span className="font-medium opacity-80">({filledCount}/{totalSlots})</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab("prospects")}
-            className={`w-1/2 min-h-[48px] px-2 text-xs font-bold uppercase tracking-wide whitespace-nowrap transition border-b-2 ${
-              mobileTab === "prospects"
-                ? "border-[var(--accent-primary)] text-[var(--accent-primary)]"
-                : "border-transparent text-[var(--text-muted)]"
-            }`}
-          >
-            Prospects <span className="font-medium opacity-80">({realAvailable.length})</span>
-          </button>
-        </div>
-      )}
-
+    <div>
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.2fr_1fr] md:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
-      {/* Draft board column */}
-      <div className={`space-y-1 sm:space-y-1.5 ${picksHiddenOnMobile ? "hidden md:block" : ""}`}>
+      {/* Draft board column — always visible (drawer-only mobile UX) */}
+      <div className="space-y-1 sm:space-y-1.5">
         {/* Auto-save indicator */}
         <div className={`flex items-center justify-end gap-1.5 text-xs transition-opacity duration-300 ${saveFlash ? "opacity-100" : "opacity-0"}`}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-700">
@@ -744,7 +705,7 @@ export function PickBuilder({
           const isFlashed = flashedSlot === slot.pickNumber;
 
           return (
-            <div key={slot.pickNumber} className="rounded-md overflow-hidden sm:rounded-lg">
+            <div key={slot.pickNumber} data-pick-slot={slot.pickNumber} className="rounded-md overflow-hidden sm:rounded-lg scroll-mt-20">
               {/* Pick row */}
               <div
                 className={`flex items-center gap-1.5 border px-1.5 py-1 transition cursor-pointer shadow-sm sm:gap-2.5 sm:px-3 sm:py-2 ${
@@ -1073,8 +1034,8 @@ export function PickBuilder({
         )}
       </div>
 
-      {/* Prospect pool column (always visible on desktop; mobile visibility depends on layout) */}
-      <div className={`${prospectsHiddenOnMobile ? "hidden md:block" : ""} md:max-h-[calc(100vh-100px)] md:overflow-y-auto`}>
+      {/* Prospect pool column — desktop sidebar only. Mobile uses the slide-up drawer below. */}
+      <div className="hidden md:block md:max-h-[calc(100vh-100px)] md:overflow-y-auto">
         <div className="md:hidden mb-3">
           <h3
             className="text-sm font-bold text-[var(--text-primary)] tracking-wide uppercase"
@@ -1090,25 +1051,38 @@ export function PickBuilder({
       </div>
     </div>
 
-    {/* Mobile sticky bottom bar (Option B) */}
-    {showDrawerUI && (
+    {/* Mobile sticky bottom bar — drawer is the only mobile prospect-browse path */}
+    {!readOnly && (
       <>
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-[var(--text-primary)] truncate">
-              {filledCount}/{totalSlots} picks made
-            </p>
-            <p className="text-[11px] text-[var(--text-muted)]">
-              {remaining > 0 ? `${remaining} ${remaining === 1 ? "slot" : "slots"} open` : "Board complete"}
-            </p>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-4 pt-3 pb-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className={`text-sm font-semibold truncate ${isComplete ? "text-green-700" : "text-[var(--text-primary)]"}`}>
+                {filledCount}/{totalSlots}
+                {isComplete ? (
+                  <span className="ml-2 text-xs font-medium text-green-700">All picks made</span>
+                ) : (
+                  <span className="ml-2 text-xs font-medium text-[var(--text-secondary)]">
+                    — {remaining} {remaining === 1 ? "slot" : "slots"} open
+                  </span>
+                )}
+              </p>
+              {/* Progress bar */}
+              <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-300"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="shrink-0 rounded-full bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] shadow-md hover:bg-[var(--accent-secondary)] transition"
+            >
+              Browse Prospects
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            className="shrink-0 rounded-full bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-text)] shadow-md hover:bg-[var(--accent-secondary)] transition"
-          >
-            Browse Prospects
-          </button>
         </div>
 
         {/* Drawer + backdrop */}
