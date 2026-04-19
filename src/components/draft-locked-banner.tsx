@@ -6,7 +6,7 @@ export function DraftLockedBanner() {
       <p className="text-sm font-medium text-[var(--steelers-gold)]">
         Mock drafts are locked — the draft is live!{" "}
         <Link href="/live" className="underline hover:text-[var(--text-primary)] transition">
-          Go to My Draft →
+          Go to Live →
         </Link>
       </p>
     </div>

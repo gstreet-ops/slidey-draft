@@ -1,14 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Session } from "next-auth";
-import { getBoards, getPoolsForUser, getPlayers, getBoardWithPicks, getPoolMembersWithStatus } from "@/lib/queries";
-import { gradeMockDraft, gradePick } from "@/lib/mock-grading";
+import {
+  getBoards,
+  getPoolsForUser,
+  getPlayers,
+  getBoardWithPicks,
+  getUserBoard,
+  getPoolMemberCount,
+} from "@/lib/queries";
+import { gradeMockDraft } from "@/lib/mock-grading";
 import type { MockDraftGrade } from "@/lib/mock-grading";
-import { generatePickCommentary, gradeColorHex } from "@/lib/pick-commentary";
 import { GradeCircle } from "@/components/grade-circle";
 import { db } from "@/db";
 import { draftBoards } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isDraftLocked } from "@/lib/config";
 import { SpectatorBanner } from "@/components/spectator-banner";
@@ -17,7 +23,6 @@ import { SiteFooter } from "@/components/site-footer";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { HeroBanner, TeamStripe } from "@/components/hero-banner";
 import { TeamInfoBar } from "@/components/team-info-bar";
-import { PoolDraftsList, type ComparePick, type MemberDraft } from "@/components/pool-drafts-list";
 import { getPoolSettings, DEFAULT_POOL_SETTINGS } from "@/lib/pool-settings";
 import { FEATURES, getEnabledFeatures } from "@/lib/feature-flags";
 
@@ -51,230 +56,12 @@ export default async function Home() {
 
 // ── LOGGED-IN DASHBOARD HUB ──
 
-async function LoggedInDashboard({ session, locked }: { session: Session; locked: boolean }) {
+async function LoggedInDashboard({ session, locked: _locked }: { session: Session; locked: boolean }) {
   const user = session.user;
   const userId = user.id;
+  const season = 2026;
 
   const userPools = await getPoolsForUser(userId);
-
-  // Fetch every pool member's draft (including in-progress drafts, not just
-  // published) and build comparison + analysis stats vs the current user.
-  let memberDrafts: MemberDraft[] = [];
-  let myPickByNumberMap: Record<number, ComparePick> = {};
-  if (userPools.length > 0) {
-    const pool = userPools[0];
-    const members = await getPoolMembersWithStatus(pool.poolId, 2026);
-
-    type RawDraft = {
-      userId: string;
-      userName: string;
-      userImage: string | null;
-      teamAbbreviation: string | null;
-      teamName: string | null;
-      teamPrimaryColor: string | null;
-      boardId: string | null;
-      boardTitle: string | null;
-      boardStatus: string | null;
-      picks: ComparePick[];
-    };
-    const rawDrafts: RawDraft[] = [];
-    for (const m of members) {
-      const [board] = await db
-        .select({
-          id: draftBoards.id,
-          title: draftBoards.title,
-          status: draftBoards.status,
-        })
-        .from(draftBoards)
-        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, 2026)));
-
-      const base = {
-        userId: m.userId,
-        userName: m.userName || m.userEmail,
-        userImage: m.userImage,
-        teamAbbreviation: m.teamAbbreviation,
-        teamName: m.teamName,
-        teamPrimaryColor: m.teamPrimaryColor,
-      };
-
-      if (!board) {
-        rawDrafts.push({
-          ...base,
-          boardId: null,
-          boardTitle: null,
-          boardStatus: null,
-          picks: [],
-        });
-        continue;
-      }
-      const data = await getBoardWithPicks(board.id);
-      const allPicks = data?.picks ?? [];
-
-      // Compute per-pick AI commentary in one pass — pure function, no I/O.
-      // Each pick's commentary depends on the picks before it (boardCtx).
-      const ownerIsMe = m.userId === userId;
-      const enrichedPicks: ComparePick[] = allPicks.map((p) => {
-        const pg = gradePick(p.pickNumber, p.playerGrade, p.playerRank);
-        const boardCtx = {
-          picksSoFar: allPicks
-            .filter((ep) => ep.pickNumber < p.pickNumber)
-            .map((ep) => ({ position: ep.playerPosition, pickNumber: ep.pickNumber })),
-          totalPicks: allPicks.filter((ep) => ep.pickNumber <= p.pickNumber).length,
-        };
-        const commentary = generatePickCommentary(
-          {
-            pickNumber: p.pickNumber,
-            playerName: p.playerName,
-            playerPosition: p.playerPosition,
-            playerGrade: p.playerGrade,
-            playerRank: p.playerRank,
-            playerPositionRank: p.playerPositionRank ?? null,
-            playerNflComparison: p.playerNflComparison ?? null,
-            teamName: p.teamName,
-            teamAbbreviation: p.teamAbbreviation,
-          },
-          pg,
-          boardCtx
-        );
-        return {
-          pickNumber: p.pickNumber,
-          playerId: p.playerId,
-          playerName: p.playerName,
-          playerPosition: p.playerPosition,
-          playerSchool: p.playerSchool,
-          playerRank: p.playerRank,
-          playerGrade: p.playerGrade,
-          teamAbbreviation: p.teamAbbreviation,
-          teamName: p.teamName,
-          teamLogoUrl: p.teamLogoUrl,
-          teamPrimaryColor: p.teamPrimaryColor,
-          commentary,
-          gradeLetter: pg.letterGrade,
-          gradeColor: gradeColorHex(pg.letterGrade),
-          // Personal note ("YOUR TAKE") — only exposed on the current user's own card
-          analysisNote: ownerIsMe ? p.analysis : null,
-        };
-      });
-
-      rawDrafts.push({
-        ...base,
-        boardId: board.id,
-        boardTitle: board.title,
-        boardStatus: board.status,
-        picks: enrichedPicks,
-      });
-    }
-
-    const me = rawDrafts.find((d) => d.userId === userId);
-    const myPicks = me?.picks ?? [];
-    const myPlayerIds = new Set(myPicks.map((p) => p.playerId));
-    const myPickByNumber = new Map(myPicks.map((p) => [p.pickNumber, p]));
-    myPickByNumberMap = Object.fromEntries(myPickByNumber);
-
-    // Build a lookup of "how many other members made this exact pick (slot+player)"
-    // for highlighting most-popular and most-unique picks per draft.
-    const slotPlayerCount = new Map<string, number>();
-    for (const d of rawDrafts) {
-      for (const p of d.picks) {
-        const key = `${p.pickNumber}:${p.playerId}`;
-        slotPlayerCount.set(key, (slotPlayerCount.get(key) ?? 0) + 1);
-      }
-    }
-
-    memberDrafts = rawDrafts.map((d) => {
-      const overlapPlayerIds = new Set(
-        d.picks.filter((p) => myPlayerIds.has(p.playerId)).map((p) => p.playerId)
-      );
-      const exactSlotMatches = d.picks.filter((p) => {
-        const mine = myPickByNumber.get(p.pickNumber);
-        return !!mine && mine.playerId === p.playerId;
-      }).length;
-
-      // Grade
-      const grade = d.picks.length > 0
-        ? gradeMockDraft(
-            d.picks.map((p) => ({
-              pickNumber: p.pickNumber,
-              playerGrade: p.playerGrade,
-              playerRank: p.playerRank,
-            }))
-          )
-        : null;
-
-      // Position breakdown
-      const posMap = new Map<string, number>();
-      for (const p of d.picks) {
-        posMap.set(p.playerPosition, (posMap.get(p.playerPosition) ?? 0) + 1);
-      }
-      const positionBreakdown = Array.from(posMap.entries())
-        .sort((a, b) => b[1] - a[1])
-        .map(([position, count]) => ({ position, count }));
-
-      // Most popular = pick this draft made that the most OTHER members also made
-      // Most unique = pick this draft made that NO other member made
-      let mostPopular: { pickNumber: number; playerName: string; otherCount: number } | null = null;
-      let mostUnique: { pickNumber: number; playerName: string } | null = null;
-      let bestPopularCount = 0;
-      for (const p of d.picks) {
-        const totalForKey = slotPlayerCount.get(`${p.pickNumber}:${p.playerId}`) ?? 1;
-        const otherCount = totalForKey - 1;
-        if (otherCount > bestPopularCount) {
-          bestPopularCount = otherCount;
-          mostPopular = { pickNumber: p.pickNumber, playerName: p.playerName, otherCount };
-        }
-        if (otherCount === 0 && !mostUnique) {
-          // first unique pick we encounter — keep highest pick number for visibility
-          mostUnique = { pickNumber: p.pickNumber, playerName: p.playerName };
-        } else if (otherCount === 0 && mostUnique && p.pickNumber < mostUnique.pickNumber) {
-          // prefer earliest-round unique pick (more interesting)
-          mostUnique = { pickNumber: p.pickNumber, playerName: p.playerName };
-        }
-      }
-
-      return {
-        userId: d.userId,
-        userName: d.userName,
-        userImage: d.userImage,
-        teamAbbreviation: d.teamAbbreviation,
-        teamName: d.teamName,
-        teamPrimaryColor: d.teamPrimaryColor,
-        boardId: d.boardId,
-        boardTitle: d.boardTitle,
-        boardStatus: d.boardStatus,
-        pickCount: d.picks.length,
-        picks: d.picks,
-        isMe: d.userId === userId,
-        overlapCount: overlapPlayerIds.size,
-        exactSlotMatches,
-        grade: grade
-          ? {
-              letterGrade: grade.letterGrade,
-              summary: grade.summary,
-              steals: grade.steals,
-              solid: grade.solid,
-              reaches: grade.reaches,
-              busts: grade.busts,
-            }
-          : null,
-        positionBreakdown,
-        mostPopular,
-        mostUnique,
-      };
-    });
-
-    memberDrafts.sort((a, b) => {
-      if (a.isMe) return -1;
-      if (b.isMe) return 1;
-      return a.userName.localeCompare(b.userName);
-    });
-  }
-
-  const draftDate = new Date("2026-04-23T20:00:00-04:00");
-  const now = new Date();
-  const daysUntilDraft = Math.max(0, Math.ceil((draftDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  const isDraftHere = now >= draftDate;
-
-  const firstName = user.name?.split(" ")[0] || user.email?.split("@")[0] || "there";
   const inPool = userPools.length > 0;
 
   const poolSettings = inPool ? getPoolSettings(userPools[0].settings) : { ...DEFAULT_POOL_SETTINGS };
@@ -292,10 +79,59 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
     ? "JOIN WATCH PARTY"
     : null;
 
+  // Entry-draft summary for the dashboard card.
+  type EntryBoard = NonNullable<Awaited<ReturnType<typeof getUserBoard>>>;
+  let entryBoard: EntryBoard | null = null;
+  let entryPickCount = 0;
+  let entryGrade: MockDraftGrade | null = null;
+  if (mockDraftEnabled) {
+    entryBoard = await getUserBoard(userId, season);
+    if (entryBoard) {
+      const data = await getBoardWithPicks(entryBoard.id);
+      entryPickCount = data?.picks.length ?? 0;
+      if (data && entryPickCount > 0) {
+        entryGrade = gradeMockDraft(
+          data.picks.map((p) => ({
+            pickNumber: p.pickNumber,
+            playerGrade: p.playerGrade,
+            playerRank: p.playerRank,
+          }))
+        );
+      }
+    }
+  }
+
+  // Pool snapshot counts — member + published-board totals for the first pool.
+  let poolMemberTotal = 0;
+  let publishedBoardsInPool = 0;
+  if (inPool) {
+    poolMemberTotal = await getPoolMemberCount(userPools[0].poolId);
+    const [row] = await db
+      .select({ c: count() })
+      .from(draftBoards)
+      .where(
+        and(
+          eq(draftBoards.season, season),
+          eq(draftBoards.status, "published"),
+          eq(draftBoards.isEntryDraft, true)
+        )
+      );
+    publishedBoardsInPool = Number(row?.c ?? 0);
+  }
+
+  // Draft countdown — Round 1 opening kickoff
+  const draftDate = new Date("2026-04-23T20:00:00-04:00");
+  const now = new Date();
+  const msUntil = draftDate.getTime() - now.getTime();
+  const daysUntilDraft = Math.max(0, Math.ceil(msUntil / (1000 * 60 * 60 * 24)));
+  const hoursUntilDraft = Math.max(0, Math.floor(msUntil / (1000 * 60 * 60)));
+  const isDraftHere = msUntil <= 0;
+
+  const firstName = user.name?.split(" ")[0] || user.email?.split("@")[0] || "there";
+  const entryGradeLetter = entryGrade?.letterGrade ?? null;
+
   return (
-    <main
-      className="flex-1 px-4 py-8 sm:px-6 sm:py-12"
-    >
+    <main className="flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Welcome */}
         <div className="flex items-center gap-4">
@@ -314,65 +150,112 @@ async function LoggedInDashboard({ session, locked }: { session: Session; locked
                 {user.favoriteTeam.name}
               </p>
             )}
-            <div className="mt-1 flex items-center gap-3 text-sm">
-              {isDraftHere ? (
-                <span className="text-green-700 font-semibold">Draft Night is HERE!</span>
-              ) : (
-                <span className="text-[var(--accent-primary)]">
-                  {daysUntilDraft} day{daysUntilDraft !== 1 ? "s" : ""} until Draft Night
-                </span>
-              )}
-            </div>
           </div>
         </div>
 
-        {/* Pool Mock Drafts — primary engagement: see how everyone is building their board */}
-        {inPool && mockDraftEnabled && memberDrafts.length > 0 && (
-          <div className="space-y-3">
-            <div>
-              <h2
-                className="text-lg font-bold text-[var(--text-primary)] tracking-wide"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {userPools[0].poolName.toUpperCase()} MOCK DRAFTS
-              </h2>
-              <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                See how everyone is building their board — tap to compare picks side by side.
-              </p>
-            </div>
-            <PoolDraftsList drafts={memberDrafts} myPickByNumber={myPickByNumberMap} totalSlots={32} />
+        {/* Countdown card */}
+        <div className="rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-5 shadow-sm sm:p-6">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--accent-primary)]">
+            Round 1 · April 23 · 8:00 PM ET
+          </p>
+          <div className="mt-2 flex items-baseline gap-3">
+            {isDraftHere ? (
+              <span className="text-2xl font-bold text-green-700 sm:text-3xl" style={{ fontFamily: "var(--font-display)" }}>
+                Draft Night is HERE!
+              </span>
+            ) : (
+              <>
+                <span
+                  className="text-4xl font-bold text-[var(--text-primary)] sm:text-5xl"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {daysUntilDraft}
+                </span>
+                <span className="text-sm text-[var(--text-muted)]">
+                  day{daysUntilDraft !== 1 ? "s" : ""} to go
+                  {daysUntilDraft <= 2 && hoursUntilDraft > 0 ? ` · ${hoursUntilDraft}h remaining` : ""}
+                </span>
+              </>
+            )}
           </div>
+        </div>
+
+        {/* Mock Drafts primary CTA — the hub for building + browsing */}
+        {mockDraftEnabled && (
+          <Link
+            href="/mock-drafts"
+            className="group block rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-5 shadow-sm hover:shadow-md transition sm:p-6"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--accent-primary)]">
+                  Your Entry
+                </p>
+                {entryBoard ? (
+                  <>
+                    <p className="mt-1 text-base font-bold text-[var(--text-primary)] sm:text-lg">
+                      {entryBoard.title}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                      {entryGradeLetter ? `Grade ${entryGradeLetter} · ` : ""}
+                      {entryPickCount}/32 picks
+                      {entryBoard.status === "published" ? " · Published" : ""}
+                    </p>
+                  </>
+                ) : (
+                  <p className="mt-1 text-base font-bold text-[var(--text-primary)] sm:text-lg">
+                    Build your mock draft
+                  </p>
+                )}
+                <span className="mt-4 inline-block rounded-lg bg-[var(--accent-primary)] px-5 py-2 text-sm font-bold text-[var(--accent-text)] group-hover:bg-[var(--accent-secondary)] transition">
+                  {entryBoard ? "Edit & browse the pool →" : "Start drafting →"}
+                </span>
+              </div>
+              {entryGrade && <GradeCircle grade={entryGrade.letterGrade} size="md" />}
+            </div>
+          </Link>
         )}
 
-        {/* Primary CTA */}
+        {/* Pool snapshot */}
+        {inPool && (
+          <p className="text-xs text-[var(--text-muted)] text-center">
+            {userPools[0].poolName} · {poolMemberTotal} member{poolMemberTotal !== 1 ? "s" : ""} ·{" "}
+            {publishedBoardsInPool} draft{publishedBoardsInPool !== 1 ? "s" : ""} published
+          </p>
+        )}
+
+        {/* Live CTA (when draft night is on) */}
         {inPool && liveCtaLabel ? (
           <Link
             href="/live"
             className="block rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-6 text-center shadow-sm hover:border-l-[var(--accent-secondary)] hover:shadow-md transition"
           >
-            <p className="text-lg font-bold text-[var(--accent-primary)]" style={{ fontFamily: "var(--font-display)" }}>{liveCtaLabel}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-1">Playing in: {userPools[0].poolName}{userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}</p>
+            <p className="text-lg font-bold text-[var(--accent-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+              {liveCtaLabel}
+            </p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Playing in: {userPools[0].poolName}
+              {userPools.length > 1 ? ` + ${userPools.length - 1} more` : ""}
+            </p>
           </Link>
-        ) : inPool && !hasDraftNight ? null : (
+        ) : !inPool ? (
           <div className="rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-8 text-center space-y-4 shadow-sm">
-            <p className="text-lg font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>JOIN A POOL TO GET STARTED</p>
-            <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">Ask your commissioner for an invite link to join a pool and compete on draft night.</p>
+            <p className="text-lg font-bold text-[var(--text-primary)]" style={{ fontFamily: "var(--font-display)" }}>
+              JOIN A POOL TO GET STARTED
+            </p>
+            <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
+              Ask your commissioner for an invite link to join a pool and compete on draft night.
+            </p>
             <InviteCodeInput />
           </div>
-        )}
+        ) : !hasDraftNight ? null : null}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.filter((f) => f.quickAction && f.key !== "mockDraft" && enabled.has(f.key)).map((f) => {
             const qa = f.quickAction!;
             return (
-              <QuickAction
-                key={f.key}
-                href={qa.href}
-                title={qa.title}
-                desc={qa.desc}
-                icon={qa.icon}
-              />
+              <QuickAction key={f.key} href={qa.href} title={qa.title} desc={qa.desc} icon={qa.icon} />
             );
           })}
           <QuickAction href="/guide" title="How to Play" desc="Rules & tips" icon={"\uD83D\uDCD6"} />

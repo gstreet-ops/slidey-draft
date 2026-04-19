@@ -127,8 +127,26 @@ export async function getBoardWithPicks(boardId: string) {
 }
 
 // ── User Boards ────────────────────────────────────
+/** Returns the user's designated entry board for the season. Falls back to
+ *  the most recently created mock board if no entry has been marked yet
+ *  (legacy safety — every real board should have isEntryDraft set by the
+ *  create path or the 0002 backfill). */
 export async function getUserBoard(userId: string, season: number) {
-  const [board] = await db
+  const [entry] = await db
+    .select()
+    .from(draftBoards)
+    .where(
+      and(
+        eq(draftBoards.createdBy, userId),
+        eq(draftBoards.season, season),
+        eq(draftBoards.type, "mock"),
+        eq(draftBoards.isEntryDraft, true)
+      )
+    )
+    .limit(1);
+  if (entry) return entry;
+
+  const [fallback] = await db
     .select()
     .from(draftBoards)
     .where(
@@ -140,7 +158,23 @@ export async function getUserBoard(userId: string, season: number) {
     )
     .orderBy(desc(draftBoards.createdAt))
     .limit(1);
-  return board || null;
+  return fallback || null;
+}
+
+/** Returns all mock boards the user owns for the season, entry board first
+ *  then newest-to-oldest. */
+export async function getUserBoards(userId: string, season: number) {
+  return db
+    .select()
+    .from(draftBoards)
+    .where(
+      and(
+        eq(draftBoards.createdBy, userId),
+        eq(draftBoards.season, season),
+        eq(draftBoards.type, "mock")
+      )
+    )
+    .orderBy(desc(draftBoards.isEntryDraft), desc(draftBoards.createdAt));
 }
 
 export async function getUserById(userId: string) {
@@ -381,7 +415,13 @@ export async function getPoolMembersWithStatus(poolId: string, season: number = 
       const [board] = await db
         .select({ id: draftBoards.id, title: draftBoards.title })
         .from(draftBoards)
-        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, season)));
+        .where(
+          and(
+            eq(draftBoards.createdBy, m.userId),
+            eq(draftBoards.season, season),
+            eq(draftBoards.isEntryDraft, true)
+          )
+        );
       const pickCount = board
         ? Number(
             (

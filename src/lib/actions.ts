@@ -62,6 +62,8 @@ export async function createBoard(formData: FormData) {
 }
 
 // ── Create a personal user board ───────────────────
+/** Creates the user's first mock draft for the season. Always marked as
+ *  the entry draft. For additional boards, use {@link createAdditionalUserBoard}. */
 export async function createUserBoard(season: number) {
   const session = await requireActiveUser();
   if (!session?.user?.id) throw new Error("Active account required to create a mock draft");
@@ -76,10 +78,87 @@ export async function createUserBoard(season: number) {
       type: "mock",
       status: "draft",
       createdBy: session.user.id,
+      isEntryDraft: true,
     })
     .returning();
 
   return board;
+}
+
+/** Creates an additional non-entry mock draft board for the user. Titled
+ *  "<Nickname>'s Mock Draft N" where N is the next available ordinal.
+ *  Returns the new board's id. */
+export async function createAdditionalUserBoard(season: number) {
+  const session = await requireActiveUser();
+  if (!session?.user?.id) throw new Error("Active account required to create a mock draft");
+
+  const userName = session.user.name || session.user.email?.split("@")[0] || "Player";
+
+  const existing = await db
+    .select({ id: draftBoards.id, title: draftBoards.title })
+    .from(draftBoards)
+    .where(
+      and(
+        eq(draftBoards.createdBy, session.user.id),
+        eq(draftBoards.season, season),
+        eq(draftBoards.type, "mock")
+      )
+    );
+  const nextOrdinal = existing.length + 1;
+  const title = `${userName}'s Mock Draft ${nextOrdinal}`;
+
+  const [board] = await db
+    .insert(draftBoards)
+    .values({
+      title,
+      season,
+      type: "mock",
+      status: "draft",
+      createdBy: session.user.id,
+      isEntryDraft: false,
+    })
+    .returning();
+
+  revalidatePath("/mock-drafts");
+  return board;
+}
+
+/** Atomically swap the entry-draft flag to a different board owned by the
+ *  current user. All the user's other season boards are cleared. */
+export async function setEntryBoard(boardId: string) {
+  const session = await requireActiveUser();
+  if (!session?.user?.id) throw new Error("Active account required");
+
+  const [board] = await db
+    .select({
+      id: draftBoards.id,
+      createdBy: draftBoards.createdBy,
+      season: draftBoards.season,
+    })
+    .from(draftBoards)
+    .where(eq(draftBoards.id, boardId));
+
+  if (!board) throw new Error("Board not found");
+  if (board.createdBy !== session.user.id) throw new Error("Not your board");
+
+  await db
+    .update(draftBoards)
+    .set({ isEntryDraft: false })
+    .where(
+      and(
+        eq(draftBoards.createdBy, session.user.id),
+        eq(draftBoards.season, board.season)
+      )
+    );
+
+  await db
+    .update(draftBoards)
+    .set({ isEntryDraft: true })
+    .where(eq(draftBoards.id, boardId));
+
+  revalidatePath("/mock-drafts");
+  revalidatePath("/");
+  return { ok: true };
 }
 
 // ── Make a pick on a board ─────────────────────────
@@ -126,7 +205,7 @@ export async function makePick(
     .returning();
 
   revalidatePath(`/admin/board/${boardId}`);
-  revalidatePath(`/my-board`);
+  revalidatePath(`/mock-drafts`);
   revalidatePath(`/picks/${boardId}`);
   return pick;
 }
@@ -147,7 +226,7 @@ export async function removePick(pickId: string, boardId: string) {
 
   await db.delete(picks).where(eq(picks.id, pickId));
   revalidatePath(`/admin/board/${boardId}`);
-  revalidatePath(`/my-board`);
+  revalidatePath(`/mock-drafts`);
   revalidatePath(`/picks/${boardId}`);
 }
 
@@ -171,7 +250,7 @@ export async function publishBoard(boardId: string) {
     .where(eq(draftBoards.id, boardId));
 
   revalidatePath(`/admin/board/${boardId}`);
-  revalidatePath(`/my-board`);
+  revalidatePath(`/mock-drafts`);
   revalidatePath(`/picks/${boardId}`);
   revalidatePath("/picks");
 }
@@ -809,7 +888,7 @@ export async function autoFillByRank(
   }
 
   revalidatePath(`/admin/board/${boardId}`);
-  revalidatePath(`/my-board`);
+  revalidatePath(`/mock-drafts`);
   return filledCount;
 }
 // ── Update pick analysis note ─────────────────────
@@ -834,7 +913,7 @@ export async function updatePickAnalysis(pickId: string, analysis: string) {
     .set({ analysis: analysis.trim() || null })
     .where(eq(picks.id, pickId));
 
-  revalidatePath("/my-board");
+  revalidatePath("/mock-drafts");
   revalidatePath(`/picks/${pick.boardId}`);
 }
 

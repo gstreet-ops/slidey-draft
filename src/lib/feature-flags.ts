@@ -19,8 +19,8 @@ export const FEATURES: FeatureConfig[] = [
     description: "Members build pre-draft mock boards and get graded on accuracy",
     icon: "\uD83D\uDCCB",
     settingsKey: "mockDraftBonus",
-    navItem: { href: "/my-board", label: "My Draft" },
-    quickAction: { href: "/my-board", title: "My Mock Draft", desc: "Build your 32-pick board", icon: "\uD83D\uDCCB" },
+    navItem: { href: "/mock-drafts", label: "Mock Drafts" },
+    quickAction: { href: "/mock-drafts", title: "Mock Drafts", desc: "Build your board, browse the pool", icon: "\uD83D\uDCCB" },
   },
   {
     key: "livePredictions",

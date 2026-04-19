@@ -27,7 +27,7 @@ export function SiteNav({ isLoggedIn, userInitial, teamLogoUrl, teamName, enable
   const primaryLinks = isLoggedIn
     ? [
         ...(liveLabel ? [{ href: "/live", label: liveLabel }] : []),
-        ...(enabled.has("mockDraft") ? [{ href: "/my-board", label: "My Draft" }] : []),
+        ...(enabled.has("mockDraft") ? [{ href: "/mock-drafts", label: "Mock Drafts" }] : []),
         { href: "/guide", label: "How to Play" },
       ]
     : [];

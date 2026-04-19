@@ -91,7 +91,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           {!userBoard && (
-            <Link href="/my-board" className="w-full sm:w-auto rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition text-center">
+            <Link href="/mock-drafts" className="w-full sm:w-auto rounded-lg bg-[var(--steelers-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition text-center">
               Create Your Mock Draft
             </Link>
           )}

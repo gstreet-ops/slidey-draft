@@ -490,12 +490,12 @@ export default async function ScoringPage() {
           </p>
           <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
-              href={session?.user ? (mockOn ? "/my-board" : propBetsOn ? "/props" : "/live") : "/login"}
+              href={session?.user ? (mockOn ? "/mock-drafts" : propBetsOn ? "/props" : "/live") : "/login"}
               className="rounded-lg bg-[var(--steelers-gold)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] hover:bg-[var(--steelers-gold)]/80 transition"
             >
               {session?.user
                 ? mockOn
-                  ? "Go to My Draft"
+                  ? "Go to Mock Drafts"
                   : propBetsOn
                   ? "Make Your Prop Bets"
                   : "See You on Draft Night"

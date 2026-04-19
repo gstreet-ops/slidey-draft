@@ -146,6 +146,9 @@ export const draftBoards = pgTable("draft_boards", {
   type: boardTypeEnum("type").notNull(),
   status: boardStatusEnum("status").notNull().default("draft"),
   createdBy: uuid("created_by").references(() => users.id),
+  /** User's scoring entry draft for the season. Exactly one board per
+      (createdBy, season) is marked true once the user has at least one board. */
+  isEntryDraft: boolean("is_entry_draft").notNull().default(false),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

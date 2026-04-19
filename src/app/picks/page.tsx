@@ -70,7 +70,13 @@ export default async function PicksPage() {
       const [memberBoard] = await db
         .select({ id: draftBoards.id, status: draftBoards.status })
         .from(draftBoards)
-        .where(and(eq(draftBoards.createdBy, m.userId), eq(draftBoards.season, season)));
+        .where(
+          and(
+            eq(draftBoards.createdBy, m.userId),
+            eq(draftBoards.season, season),
+            eq(draftBoards.isEntryDraft, true)
+          )
+        );
       if (memberBoard?.status !== "published") continue;
 
       const data = await getBoardWithPicks(memberBoard.id);
@@ -128,7 +134,7 @@ export default async function PicksPage() {
 
           {myBoard && myBoardData ? (
             <Link
-              href="/my-board"
+              href="/mock-drafts"
               className="group block rounded-xl border border-gray-200 border-l-4 border-l-[var(--accent-primary)] bg-white p-5 shadow-sm hover:shadow-md transition sm:p-6"
             >
               <div className="flex items-start gap-4">
@@ -175,7 +181,7 @@ export default async function PicksPage() {
             </Link>
           ) : (
             <Link
-              href="/my-board"
+              href="/mock-drafts"
               className="group block rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--bg-card)] p-6 text-center hover:border-[var(--slidey)]/50 hover:bg-gray-50 transition sm:p-8"
             >
               <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--slidey)] transition sm:text-lg">

@@ -393,17 +393,17 @@ export async function scorePoolMockDrafts(poolId: string) {
     .where(eq(poolMembers.poolId, poolId));
 
   for (const member of members) {
-    // Find user's published board
+    // Score only the user's designated entry board (if published).
     const [board] = await db
       .select({ id: draftBoards.id })
       .from(draftBoards)
       .where(
         and(
           eq(draftBoards.createdBy, member.userId),
-          eq(draftBoards.status, "published")
+          eq(draftBoards.status, "published"),
+          eq(draftBoards.isEntryDraft, true)
         )
       )
-      .orderBy(desc(draftBoards.publishedAt))
       .limit(1);
 
     if (!board) continue;

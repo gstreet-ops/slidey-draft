@@ -172,6 +172,7 @@ export async function preSeedUserCore(input: PreSeedInput): Promise<PreSeedResul
         type: "mock",
         status: "draft",
         createdBy: userId,
+        isEntryDraft: true,
       })
       .returning({ id: draftBoards.id });
     boardId = board.id;
