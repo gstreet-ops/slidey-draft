@@ -28,6 +28,7 @@ const FRIENDS: Array<{ nickname: string; email: string; team: string }> = [
   { nickname: "Huey",     email: "mblewis5@gmail.com",    team: "LAR" },
   { nickname: "Glets",    email: "tjghoya@gmail.com",     team: "WAS" },
   { nickname: "Pipes",    email: "pdmann34@gmail.com",    team: "CHI" },
+  { nickname: "Drew",     email: "mattheca1@gmail.com",   team: "NE"  },
 ];
 
 async function findAdminPool(): Promise<string | null> {
