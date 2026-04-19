@@ -12,7 +12,7 @@
  *   - a default 32-pick mock draft auto-filled via consensus rankings
  *
  * On their first Google sign-in, the auth signIn callback flips isPreSeeded=false
- * and backfills the Google profile picture if missing — they land on /my-board
+ * and backfills the Google profile picture if missing — they land on /mock-drafts
  * with their picks already there.
  */
 

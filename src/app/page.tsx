@@ -334,7 +334,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                 Watch Live
               </Link>
             ) : session?.user ? (
-              <Link href="/my-board" className="w-full rounded-lg bg-[var(--accent-primary)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] shadow-md hover:bg-[var(--accent-secondary)] transition sm:w-auto">
+              <Link href="/mock-drafts" className="w-full rounded-lg bg-[var(--accent-primary)] px-8 py-3 text-sm font-bold text-[var(--accent-text)] shadow-md hover:bg-[var(--accent-secondary)] transition sm:w-auto">
                 Make Your Picks
               </Link>
             ) : (
@@ -476,7 +476,7 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
                 <h2 className="text-lg font-bold text-[var(--text-primary)] tracking-wide sm:text-xl" style={{ fontFamily: "var(--font-display)" }}>
                   TOP PROSPECTS
                 </h2>
-                <Link href="/my-board" className="text-xs text-[var(--steelers-gold)] hover:underline sm:text-sm">View All &rarr;</Link>
+                <Link href="/big-board" className="text-xs text-[var(--steelers-gold)] hover:underline sm:text-sm">View All &rarr;</Link>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 {topProspects.map((p) => (

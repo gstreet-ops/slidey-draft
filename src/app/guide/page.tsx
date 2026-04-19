@@ -158,7 +158,7 @@ export default async function GuidePage() {
             <section id="mock-draft">
               <SectionHeading>Your Mock Draft</SectionHeading>
               <p>
-                Head to <InlineLink href="/my-board">My Draft</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
+                Head to <InlineLink href="/mock-drafts">Mock Drafts</InlineLink> to start building your mock draft. You have 32 picks to fill — one for each first-round selection.
               </p>
 
               <Callout>
@@ -286,7 +286,7 @@ export default async function GuidePage() {
 
               <SubHeading>YOUR TAKE Notes</SubHeading>
               <p>
-                When you write a personal note on a pick (the &quot;Your Take&quot; box on My Draft), it appears as an accent-colored callout under that pick — but <strong className="text-gray-900">only on your own card</strong>. Other members see the AI analysis on your picks, never your private notes.
+                When you write a personal note on a pick (the &quot;Your Take&quot; box on your mock draft), it appears as an accent-colored callout under that pick — but <strong className="text-gray-900">only on your own card</strong>. Other members see the AI analysis on your picks, never your private notes.
               </p>
             </section>
           )}
@@ -440,7 +440,7 @@ export default async function GuidePage() {
 
             {mockDraftOn && (
               <Faq q="When does my draft lock?">
-                Your draft locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on My Draft indicating the draft is locked.
+                Your draft locks when the admin enables draft mode, typically right before the first pick is announced. You will see a banner on Mock Drafts indicating the draft is locked.
               </Faq>
             )}
 
@@ -558,8 +558,8 @@ function PrimaryCta({ session, mockDraftOn, propBetsOn }: { session: boolean; mo
   let label = "Sign In & Draft";
   if (session) {
     if (mockDraftOn) {
-      href = "/my-board";
-      label = "Go to My Draft";
+      href = "/mock-drafts";
+      label = "Go to Mock Drafts";
     } else if (propBetsOn) {
       href = "/props";
       label = "Make Your Prop Bets";

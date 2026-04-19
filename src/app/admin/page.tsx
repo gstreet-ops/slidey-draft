@@ -288,7 +288,7 @@ async function AdminSections() {
         </h2>
         <p className="text-sm text-[var(--text-secondary)]">
           Pre-seed an account with their team and a default mock draft.
-          They&apos;ll land on My Board ready to go after their first Google sign-in.
+          They&apos;ll land on Mock Drafts ready to go after their first Google sign-in.
           {primaryPoolName ? (
             <> Friends will be added to <strong className="text-[var(--text-primary)]">{primaryPoolName}</strong>.</>
           ) : (

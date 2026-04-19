@@ -144,7 +144,7 @@
 
 ### IMPORTANT
 
-- **E-I4.** Stale `/my-board` links in guide and home (same as dead-code IMPORTANTs).
+- **E-I4.** ✅ RESOLVED — Stale `/my-board` links in guide and home fixed alongside D-I1..D-I4.
 - **E-I6.** `/admin` page renders "Create Your Own Pool" section for any signed-in non-admin. Confusing but gated properly below.
 - **E-I7.** Home CTA labels say "Edit & browse the pool →" for users without a pool.
 - **E-I8.** Home page re-computes countdown twice with slightly different code paths.
@@ -176,18 +176,18 @@ _None._
 
 ### IMPORTANT (all stale `/my-board` / "My Draft" references from the rename)
 
-- **D-I1.** Home page primary CTA `href="/my-board"`. `src/app/page.tsx:335`.
-- **D-I2.** "Top Prospects → View All" href `/my-board` (should be `/big-board`). `src/app/page.tsx:477`.
-- **D-I3.** Guide page primary CTA `href="/my-board"` label "Go to My Draft". `src/app/guide/page.tsx:561-562`.
-- **D-I4.** Guide body copy says "My Draft" in 3 places. `src/app/guide/page.tsx:161, 289, 443`.
-- **D-I5.** Admin invite-friends copy says "My Board". `src/app/admin/page.tsx:291`.
+- **D-I1.** ✅ RESOLVED — Home page primary CTA now `href="/mock-drafts"`. `src/app/page.tsx:337`.
+- **D-I2.** ✅ RESOLVED — "Top Prospects → View All" href now `/big-board`. `src/app/page.tsx:479`.
+- **D-I3.** ✅ RESOLVED — Guide page primary CTA now `href="/mock-drafts"`, label "Go to Mock Drafts". `src/app/guide/page.tsx:561-562`.
+- **D-I4.** ✅ RESOLVED — Guide body copy updated in all 3 places. `src/app/guide/page.tsx:161, 289, 443`.
+- **D-I5.** ✅ RESOLVED — Admin invite-friends copy now says "Mock Drafts". `src/app/admin/page.tsx:291`.
 
 ### MINOR
 
 - **D-M1.** `is_entry_draft` backfill is correct but there's no partial unique index. See **edge-case C2** for the combined fix.
-- **D-M2.** `src/app/my-board/error.tsx` is dead (`page.tsx` is pure `redirect()`).
-- **D-M3.** Stale `/my-board` comment in `src/db/seed-friends.ts:15`.
-- **D-M4.** Stale `/my-board` comment in `src/app/dashboard/page.tsx:4`.
+- **D-M2.** ✅ RESOLVED — Deleted `src/app/my-board/error.tsx` (redirect-only page can't error).
+- **D-M3.** ✅ RESOLVED — `src/db/seed-friends.ts:15` comment now points to `/mock-drafts`.
+- **D-M4.** ✅ RESOLVED — `src/app/dashboard/page.tsx:4` comment now points to `/mock-drafts`.
 - **D-M5.** Orphan components: `home-nav.tsx`, `mobile-nav.tsx`, `war-room-chat.tsx` (zero importers). Note: `war-room-chat.tsx` may be a half-wired feature (see `war-room-chat-panel-prompt.md` at repo root).
 - **D-M6.** Orphan lib: `src/lib/prop-resolver.ts` (entire module unused).
 - **D-M7.** Empty directories `src/components/layout/` and `src/components/ui/`.
