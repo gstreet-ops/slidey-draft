@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { livePredictions, players, actualResults } from "@/db/schema";
 import { eq, and, notInArray, asc, isNotNull } from "drizzle-orm";
+import { isPoolMember } from "@/lib/queries";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ poolId: string }> }) {
   const session = await auth();
@@ -11,6 +12,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ poo
   }
 
   const { poolId } = await params;
+
+  if (!(await isPoolMember(poolId, session.user.id))) {
+    return NextResponse.json({ error: "Not a pool member" }, { status: 403 });
+  }
+
   const { pickNumber } = await req.json();
 
   // Check if prediction already exists

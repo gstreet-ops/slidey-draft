@@ -139,20 +139,31 @@ export const players = pgTable("players", {
 });
 
 // ── Draft Boards ───────────────────────────────────
-export const draftBoards = pgTable("draft_boards", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  season: integer("season").notNull(),
-  title: text("title").notNull(),
-  type: boardTypeEnum("type").notNull(),
-  status: boardStatusEnum("status").notNull().default("draft"),
-  createdBy: uuid("created_by").references(() => users.id),
-  /** User's scoring entry draft for the season. Exactly one board per
-      (createdBy, season) is marked true once the user has at least one board. */
-  isEntryDraft: boolean("is_entry_draft").notNull().default(false),
-  publishedAt: timestamp("published_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const draftBoards = pgTable(
+  "draft_boards",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    season: integer("season").notNull(),
+    title: text("title").notNull(),
+    type: boardTypeEnum("type").notNull(),
+    status: boardStatusEnum("status").notNull().default("draft"),
+    createdBy: uuid("created_by").references(() => users.id),
+    /** User's scoring entry draft for the season. Exactly one board per
+        (createdBy, season) is marked true once the user has at least one board. */
+    isEntryDraft: boolean("is_entry_draft").notNull().default(false),
+    publishedAt: timestamp("published_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("draft_boards_creator_season_entry_idx").on(
+      table.createdBy,
+      table.season,
+      table.isEntryDraft
+    ),
+    index("draft_boards_season_status_idx").on(table.season, table.status),
+  ]
+);
 
 // ── Draft Order (per-season slot assignments) ──────
 export const draftOrder = pgTable(
@@ -178,21 +189,28 @@ export const draftOrder = pgTable(
 
 // ── Trades (audit log of draft-slot ownership changes) ──
 export const tradeSourceEnum = pgEnum("trade_source", ["espn_sync", "manual"]);
-export const trades = pgTable("trades", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  season: integer("season").notNull(),
-  pickNumber: integer("pick_number").notNull(),
-  previousTeamId: uuid("previous_team_id")
-    .notNull()
-    .references(() => teams.id),
-  newTeamId: uuid("new_team_id")
-    .notNull()
-    .references(() => teams.id),
-  tradeNote: text("trade_note"),
-  source: tradeSourceEnum("source").notNull(),
-  detectedAt: timestamp("detected_at").defaultNow().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const trades = pgTable(
+  "trades",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    season: integer("season").notNull(),
+    pickNumber: integer("pick_number").notNull(),
+    previousTeamId: uuid("previous_team_id")
+      .notNull()
+      .references(() => teams.id),
+    newTeamId: uuid("new_team_id")
+      .notNull()
+      .references(() => teams.id),
+    tradeNote: text("trade_note"),
+    source: tradeSourceEnum("source").notNull(),
+    detectedAt: timestamp("detected_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("trades_season_detected_idx").on(table.season, table.detectedAt),
+    index("trades_season_pick_idx").on(table.season, table.pickNumber),
+  ]
+);
 
 // ── Picks (a player picked at a slot on a board) ──
 export const picks = pgTable(

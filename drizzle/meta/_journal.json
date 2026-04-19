@@ -29,6 +29,13 @@
       "when": 1776579960070,
       "tag": "0003_trades_and_draft_order_trades",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776608753253,
+      "tag": "0004_0004_indexes_and_entry_unique",
+      "breakpoints": true
     }
   ]
 }

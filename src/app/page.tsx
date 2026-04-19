@@ -296,8 +296,10 @@ async function LandingPage({ session, locked, isSpectator }: { session: Session 
 
   let featuredPicks: NonNullable<Awaited<ReturnType<typeof getBoardWithPicks>>>["picks"] = [];
   const publishedGrades: Array<{ boardId: string; createdBy: string | null; title: string; grade: MockDraftGrade }> = [];
-  for (const b of published) {
-    const boardData = await getBoardWithPicks(b.id);
+  const boardDatas = await Promise.all(published.map((b) => getBoardWithPicks(b.id)));
+  for (let i = 0; i < published.length; i++) {
+    const b = published[i];
+    const boardData = boardDatas[i];
     if (boardData && boardData.picks.length > 0) {
       if (featuredPicks.length === 0) featuredPicks = boardData.picks.slice(0, 6);
       const grade = gradeMockDraft(boardData.picks.map(p => ({

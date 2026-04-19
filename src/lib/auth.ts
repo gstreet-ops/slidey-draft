@@ -25,6 +25,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // Pre-seeded friends land with a users row (created by admin tooling) but
+      // no linked accounts row. Without this flag, Auth.js v5 refuses first sign-in
+      // with OAuthAccountNotLinked. Google verifies email ownership, so linking
+      // by verified email is acceptable for our use case.
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: {

@@ -1,20 +1,102 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, asc } from "drizzle-orm";
 import { db } from "@/db";
-import { draftBoards } from "@/db/schema";
-import { getBoardWithPicks, getPoolMembersWithStatus } from "@/lib/queries";
+import {
+  draftBoards,
+  picks,
+  players,
+  teams,
+  poolMembers,
+  users,
+} from "@/db/schema";
 import { gradeMockDraft, gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex } from "@/lib/pick-commentary";
 import type { ComparePick, MemberDraft } from "@/components/pool-drafts-list";
 
 /** Fetches every pool member's entry-draft board, enriches with per-pick AI
  *  commentary, grade, position breakdown, and comparison-to-viewer stats.
- *  Shared between the home-page summary (pre-removal) and /mock-drafts. */
+ *  Shared between the home-page summary (pre-removal) and /mock-drafts.
+ *
+ *  Batched 3-query pipeline: members → entry boards by inArray → picks by
+ *  inArray. Replaces the old N+1 fan-out (42+ queries for a 7-member pool). */
 export async function getPoolMemberDrafts(
   poolId: string,
   season: number,
   viewerUserId: string
 ): Promise<{ memberDrafts: MemberDraft[]; myPickByNumberMap: Record<number, ComparePick> }> {
-  const members = await getPoolMembersWithStatus(poolId, season);
+  // Q1: all members + user info + favorite team, one query.
+  const members = await db
+    .select({
+      userId: poolMembers.userId,
+      userName: users.name,
+      userEmail: users.email,
+      userImage: users.image,
+      teamAbbreviation: teams.abbreviation,
+      teamName: teams.name,
+      teamPrimaryColor: teams.primaryColor,
+    })
+    .from(poolMembers)
+    .innerJoin(users, eq(poolMembers.userId, users.id))
+    .leftJoin(teams, eq(users.favoriteTeamId, teams.id))
+    .where(eq(poolMembers.poolId, poolId))
+    .orderBy(asc(poolMembers.joinedAt));
+
+  const memberIds = members.map((m) => m.userId);
+
+  // Q2: every member's entry board, one query via inArray.
+  const memberBoards = memberIds.length
+    ? await db
+        .select({
+          id: draftBoards.id,
+          title: draftBoards.title,
+          status: draftBoards.status,
+          createdBy: draftBoards.createdBy,
+        })
+        .from(draftBoards)
+        .where(
+          and(
+            inArray(draftBoards.createdBy, memberIds),
+            eq(draftBoards.season, season),
+            eq(draftBoards.isEntryDraft, true)
+          )
+        )
+    : [];
+
+  const boardByUserId = new Map(memberBoards.map((b) => [b.createdBy!, b]));
+  const boardIds = memberBoards.map((b) => b.id);
+
+  // Q3: every pick across every member board, one query via inArray.
+  const allBoardPicks = boardIds.length
+    ? await db
+        .select({
+          boardId: picks.boardId,
+          pickNumber: picks.pickNumber,
+          playerId: picks.playerId,
+          analysis: picks.analysis,
+          playerName: players.name,
+          playerPosition: players.position,
+          playerSchool: players.school,
+          playerRank: players.rank,
+          playerGrade: players.grade,
+          playerPositionRank: players.positionRank,
+          playerNflComparison: players.nflComparison,
+          teamName: teams.name,
+          teamAbbreviation: teams.abbreviation,
+          teamLogoUrl: teams.logoUrl,
+          teamPrimaryColor: teams.primaryColor,
+        })
+        .from(picks)
+        .innerJoin(players, eq(picks.playerId, players.id))
+        .innerJoin(teams, eq(picks.teamId, teams.id))
+        .where(inArray(picks.boardId, boardIds))
+        .orderBy(asc(picks.pickNumber))
+    : [];
+
+  const picksByBoardId = new Map<string, typeof allBoardPicks>();
+  for (const p of allBoardPicks) {
+    const list = picksByBoardId.get(p.boardId) ?? [];
+    list.push(p);
+    picksByBoardId.set(p.boardId, list);
+  }
 
   type RawDraft = {
     userId: string;
@@ -31,21 +113,6 @@ export async function getPoolMemberDrafts(
 
   const rawDrafts: RawDraft[] = [];
   for (const m of members) {
-    const [board] = await db
-      .select({
-        id: draftBoards.id,
-        title: draftBoards.title,
-        status: draftBoards.status,
-      })
-      .from(draftBoards)
-      .where(
-        and(
-          eq(draftBoards.createdBy, m.userId),
-          eq(draftBoards.season, season),
-          eq(draftBoards.isEntryDraft, true)
-        )
-      );
-
     const base = {
       userId: m.userId,
       userName: m.userName || m.userEmail,
@@ -55,6 +122,7 @@ export async function getPoolMemberDrafts(
       teamPrimaryColor: m.teamPrimaryColor,
     };
 
+    const board = boardByUserId.get(m.userId);
     if (!board) {
       rawDrafts.push({
         ...base,
@@ -66,8 +134,7 @@ export async function getPoolMemberDrafts(
       continue;
     }
 
-    const data = await getBoardWithPicks(board.id);
-    const allPicks = data?.picks ?? [];
+    const allPicks = picksByBoardId.get(board.id) ?? [];
     const ownerIsMe = m.userId === viewerUserId;
 
     const enrichedPicks: ComparePick[] = allPicks.map((p) => {

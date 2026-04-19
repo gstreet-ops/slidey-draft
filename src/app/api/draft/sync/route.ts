@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { actualResults, players, draftOrder } from "@/db/schema";
@@ -8,11 +9,31 @@ import { recalculateAllPools } from "@/lib/pool-scoring";
 import { getConfig, setConfig, isDraftLocked } from "@/lib/config";
 import { autoFillAllBoards } from "@/lib/bpa";
 import { invalidateCache } from "@/lib/cache";
+import { auth } from "@/lib/auth";
 
 const SEASON = 2026;
 const RATE_LIMIT_MS = 10_000;
 
-export async function POST() {
+function safeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
+}
+
+export async function POST(req: NextRequest) {
+  // This endpoint is driven by the client-side /live polling loop (every 30s
+  // across every viewer), which is why we don't require admin. Allow any
+  // authenticated user OR a shared-secret header (for cron-style triggers).
+  // Blocks anonymous callers from locking the draft or triggering auto-fill.
+  const session = await auth();
+  const expected = process.env.SYNC_SECRET;
+  const provided = req.headers.get("x-sync-secret");
+  const hasValidSecret = !!expected && !!provided && safeEqual(provided, expected);
+  if (!session?.user?.id && !hasValidSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     // Rate limit
     const lastSync = await getConfig("last_sync_at");

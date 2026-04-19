@@ -12,3 +12,11 @@ export async function requireActiveUser() {
   if (session.user.status !== "active") return null;
   return session;
 }
+
+export async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+  return session;
+}

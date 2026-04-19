@@ -143,20 +143,21 @@ export async function setEntryBoard(boardId: string) {
   if (!board) throw new Error("Board not found");
   if (board.createdBy !== session.user.id) throw new Error("Not your board");
 
-  await db
-    .update(draftBoards)
-    .set({ isEntryDraft: false })
-    .where(
-      and(
-        eq(draftBoards.createdBy, session.user.id),
-        eq(draftBoards.season, board.season)
-      )
-    );
-
-  await db
-    .update(draftBoards)
-    .set({ isEntryDraft: true })
-    .where(eq(draftBoards.id, boardId));
+  // Neon HTTP can't use transactions, so fold both updates into a single CTE
+  // so we never leave a window where the user has zero or two entry boards.
+  // A partial unique index in the DB enforces the invariant as defense in depth.
+  await db.execute(sql`
+    WITH cleared AS (
+      UPDATE draft_boards
+         SET is_entry_draft = false
+       WHERE created_by = ${session.user.id}
+         AND season = ${board.season}
+         AND id <> ${boardId}
+    )
+    UPDATE draft_boards
+       SET is_entry_draft = true
+     WHERE id = ${boardId}
+  `);
 
   revalidatePath("/mock-drafts");
   revalidatePath("/");

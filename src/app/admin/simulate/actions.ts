@@ -7,6 +7,7 @@ import {
   poolStandings, mockScores, poolTriviaQueue,
 } from "@/db/schema";
 import { getPoolSettings } from "@/lib/pool-helpers";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { eq, asc, and, sql, isNotNull, inArray, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { ACTUAL_DRAFT_ORDER } from "@/db/simulation-config";
@@ -223,6 +224,7 @@ async function scoreSimLivePrediction(pickNumber: number, actualPlayerId: string
 
 export async function simulateNextPick(): Promise<{ done: boolean; pickNumber: number; playerName: string; error?: string }> {
   try {
+    await requireAdmin();
     const slots = await db.select().from(draftOrder)
       .where(eq(draftOrder.season, SEASON)).orderBy(asc(draftOrder.pickNumber));
     const prospects = await db.select({ id: players.id, name: players.name })
@@ -344,8 +346,20 @@ export async function getTriviaStatus() {
 }
 
 export async function resetSimulation() {
-  // Clear actual results
-  await db.delete(actualResults).where(eq(actualResults.season, SEASON));
+  await requireAdmin();
+
+  // Clear actual results — scoped to sim picks only. Real ESPN picks are
+  // distinguished by a non-null `espnAthleteId`; sim picks inserted by
+  // `simulateNextPick` leave it null. Prevents Reset from nuking live draft
+  // results if this is ever clicked after April 23.
+  await db
+    .delete(actualResults)
+    .where(
+      and(
+        eq(actualResults.season, SEASON),
+        sql`${actualResults.espnAthleteId} IS NULL`
+      )
+    );
 
   // Clear sim board scores
   const simBoards = await db.select({ id: draftBoards.id }).from(draftBoards).where(simBoardsWhere());

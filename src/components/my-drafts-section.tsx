@@ -44,27 +44,47 @@ export function MyDraftsSection({ boards, favoriteTeamCode, favoriteTeamName }: 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [busyBoardId, setBusyBoardId] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   function handleSetEntry(boardId: string) {
+    setErr(null);
     setBusyBoardId(boardId);
     startTransition(async () => {
-      await setEntryBoard(boardId);
-      setBusyBoardId(null);
-      router.refresh();
+      try {
+        await setEntryBoard(boardId);
+        router.refresh();
+      } catch (e) {
+        setErr(e instanceof Error ? e.message : "Failed to set entry draft");
+      } finally {
+        setBusyBoardId(null);
+      }
     });
   }
 
   function handleCreateNew() {
+    setErr(null);
     setBusyBoardId("__new__");
     startTransition(async () => {
-      const board = await createAdditionalUserBoard(2026);
-      setBusyBoardId(null);
-      router.push(`/mock-drafts/${board.id}`);
+      try {
+        const board = await createAdditionalUserBoard(2026);
+        router.push(`/mock-drafts/${board.id}`);
+      } catch (e) {
+        setErr(e instanceof Error ? e.message : "Failed to create new draft");
+        setBusyBoardId(null);
+      }
     });
   }
 
   return (
     <div className="space-y-3">
+      {err && (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+        >
+          {err}
+        </div>
+      )}
       {boards.map((b) => (
         <article
           key={b.boardId}
