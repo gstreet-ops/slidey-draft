@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { recordManualTrade, revertTrade } from "@/lib/actions";
+import { forceSyncDraftOrder } from "@/lib/draft-order-sync";
 import { TradeIndicator } from "@/components/trade-indicator";
 
 export type AdminDraftSlot = {
@@ -39,9 +40,11 @@ type Props = {
   teams: AdminTeamOption[];
   /** Keyed by pickNumber — the most recent trade (matches TradeIndicator surface) */
   tradesByPick: Record<number, { tradeId: string; previousTeamAbbreviation: string; newTeamAbbreviation: string }>;
+  /** ISO string of the last successful ESPN sync, or null if never synced. */
+  lastEspnSyncAt: string | null;
 };
 
-export function AdminDraftOrder({ season, slots, trades, teams, tradesByPick }: Props) {
+export function AdminDraftOrder({ season, slots, trades, teams, tradesByPick, lastEspnSyncAt }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [pickNumber, setPickNumber] = useState<number>(1);
@@ -49,6 +52,43 @@ export function AdminDraftOrder({ season, slots, trades, teams, tradesByPick }: 
   const [tradeNote, setTradeNote] = useState<string>("");
   const [err, setErr] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
+
+  function onSyncNow() {
+    setErr(null);
+    setFlash(null);
+    setSyncResult(null);
+    startTransition(async () => {
+      try {
+        const res = await forceSyncDraftOrder(season);
+        if (!res.ok) {
+          setSyncResult(`Sync failed: ${res.error}`);
+        } else if (res.tradesDetected === 0) {
+          setSyncResult("No changes detected — draft order matches ESPN.");
+        } else {
+          setSyncResult(
+            `${res.tradesDetected} trade${res.tradesDetected === 1 ? "" : "s"} detected on pick${
+              res.updatedPicks.length === 1 ? "" : "s"
+            } ${res.updatedPicks.map((p) => `#${p}`).join(", ")}.`
+          );
+        }
+        router.refresh();
+      } catch (e) {
+        setSyncResult(`Sync failed: ${(e as Error).message}`);
+      }
+    });
+  }
+
+  const lastSyncLabel = lastEspnSyncAt
+    ? new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }).format(new Date(lastEspnSyncAt)) + " ET"
+    : "never";
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -163,14 +203,32 @@ export function AdminDraftOrder({ season, slots, trades, teams, tradesByPick }: 
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-base font-bold text-[var(--text-primary)] sm:text-lg">
-            Round 1 order — {season}
-          </h3>
-          <Link href="/trades" className="text-xs font-semibold text-[var(--accent-primary)] hover:underline">
-            View trade log →
-          </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-base font-bold text-[var(--text-primary)] sm:text-lg">
+              Round 1 order — {season}
+            </h3>
+            <p className="mt-0.5 text-[11px] text-[var(--text-muted)]">
+              Last ESPN sync: {lastSyncLabel}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onSyncNow}
+              disabled={isPending}
+              className="rounded-lg border border-[var(--accent-primary)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--accent-text)] transition disabled:opacity-50"
+            >
+              {isPending ? "Syncing…" : "Sync Now"}
+            </button>
+            <Link href="/trades" className="text-xs font-semibold text-[var(--accent-primary)] hover:underline">
+              View trade log →
+            </Link>
+          </div>
         </div>
+        {syncResult && (
+          <p className="mt-2 text-xs text-[var(--text-secondary)]">{syncResult}</p>
+        )}
         <ol className="mt-3 divide-y divide-gray-100">
           {slots.map((s) => (
             <li key={s.pickNumber} className="flex items-center gap-3 py-2">

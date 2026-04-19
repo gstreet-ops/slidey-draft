@@ -22,6 +22,7 @@ import {
   type AdminDraftSlot,
   type AdminTradeRow,
 } from "@/components/admin-draft-order";
+import { getLastEspnSyncAt } from "@/lib/draft-order-sync";
 import { NFL_TEAMS } from "@/lib/team-themes";
 import { db } from "@/db";
 import { pools, poolMembers } from "@/db/schema";
@@ -182,10 +183,11 @@ async function AdminSections() {
 
   // Draft Order admin data
   const draftSeason = 2026;
-  const [draftOrderRows, allTeams, tradeRows] = await Promise.all([
+  const [draftOrderRows, allTeams, tradeRows, lastEspnSyncAt] = await Promise.all([
     getDraftOrder(draftSeason),
     getTeams(),
     getTrades(draftSeason),
+    getLastEspnSyncAt(draftSeason),
   ]);
   const adminSlots: AdminDraftSlot[] = draftOrderRows.map((r) => ({
     pickNumber: r.pickNumber,
@@ -272,6 +274,7 @@ async function AdminSections() {
           trades={adminTrades}
           teams={teamOptions}
           tradesByPick={adminTradesByPick}
+          lastEspnSyncAt={lastEspnSyncAt}
         />
       </div>
 
