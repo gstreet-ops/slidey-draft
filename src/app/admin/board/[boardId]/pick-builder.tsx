@@ -8,6 +8,7 @@ import { PickGradeBadge } from "@/components/pick-grade-badge";
 import { gradePick } from "@/lib/mock-grading";
 import { generatePickCommentary, gradeColorHex, valueExplanation, consensusExplanation } from "@/lib/pick-commentary";
 import { checkNeedMatch, matchesAnyNeed, generateNeedsAnalysis } from "@/lib/team-needs";
+import { TradeIndicator } from "@/components/trade-indicator";
 
 type DraftSlot = {
   id: string;
@@ -78,6 +79,13 @@ type Player = {
   consensusMid: number | null;
 };
 
+/** Minimal trade info — most recent trade per pick, for the ↔ indicator. */
+export type SlotTradeInfo = {
+  tradeId: string;
+  previousTeamAbbreviation: string;
+  newTeamAbbreviation: string;
+};
+
 type Props = {
   boardId: string;
   boardStatus: string;
@@ -87,6 +95,8 @@ type Props = {
   readOnly?: boolean;
   /** User's favorite NFL team abbreviation (e.g. "PIT") — slots for this team get a YOUR TEAM accent. */
   favoriteTeamAbbr?: string | null;
+  /** Trade indicators keyed by pick number. */
+  tradesByPick?: Record<number, SlotTradeInfo>;
 };
 
 /* ── 40-time color helper ────────────────────────────────────── */
@@ -316,6 +326,7 @@ export function PickBuilder({
   availablePlayers,
   readOnly = false,
   favoriteTeamAbbr,
+  tradesByPick,
 }: Props) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -768,6 +779,15 @@ export function PickBuilder({
                     <span className="text-[10px] font-semibold text-[var(--text-muted)] sm:text-xs">
                       {slot.teamAbbreviation}
                     </span>
+                    {tradesByPick?.[slot.pickNumber] && (
+                      <TradeIndicator
+                        tradeId={tradesByPick[slot.pickNumber].tradeId}
+                        previousTeamAbbreviation={tradesByPick[slot.pickNumber].previousTeamAbbreviation}
+                        newTeamAbbreviation={tradesByPick[slot.pickNumber].newTeamAbbreviation}
+                        size={11}
+                        className="shrink-0"
+                      />
+                    )}
                     <span className="text-[10px] text-[var(--text-muted)] hidden sm:inline sm:text-xs">{slot.teamName}</span>
                     {slot.note && (
                       <span className="text-[9px] text-amber-600/70 sm:text-[10px]">({slot.note})</span>

@@ -18,6 +18,8 @@ import {
   poolInviteCodes,
   props,
   propPicks,
+  trades,
+  teams,
 } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -1358,4 +1360,139 @@ export async function preSeedFriend(formData: FormData) {
   });
   revalidatePath("/admin");
   return result;
+}
+
+// ═══════════════════════════════════════════════════
+// Draft Order Trades — manual commissioner/admin entry
+// ═══════════════════════════════════════════════════
+
+/** Records a trade: updates draft_order.teamId to newTeamId, sets
+ *  originalTeamId if null (first trade for this slot preserves the original
+ *  owner), writes a trades row with source='manual', and revalidates.
+ *  Returns the new trade row. Caller must have admin or commissioner role. */
+export async function recordManualTrade(input: {
+  season: number;
+  pickNumber: number;
+  newTeamAbbreviation: string;
+  tradeNote?: string | null;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Not authenticated");
+  if (session.user.role !== "admin" && session.user.role !== "commissioner") {
+    throw new Error("Admin or commissioner only");
+  }
+
+  const season = input.season;
+  const pickNumber = input.pickNumber;
+  if (!Number.isInteger(pickNumber) || pickNumber < 1 || pickNumber > 32) {
+    throw new Error("pickNumber must be 1–32");
+  }
+
+  const newAbbr = input.newTeamAbbreviation.trim().toUpperCase();
+  const [newTeam] = await db
+    .select({ id: teams.id })
+    .from(teams)
+    .where(eq(teams.abbreviation, newAbbr));
+  if (!newTeam) throw new Error(`Team not found: ${newAbbr}`);
+
+  const [slot] = await db
+    .select({
+      id: draftOrder.id,
+      teamId: draftOrder.teamId,
+      originalTeamId: draftOrder.originalTeamId,
+    })
+    .from(draftOrder)
+    .where(
+      and(eq(draftOrder.season, season), eq(draftOrder.pickNumber, pickNumber))
+    );
+  if (!slot) throw new Error(`No draft_order row for #${pickNumber} in ${season}`);
+
+  if (slot.teamId === newTeam.id) {
+    throw new Error(`Pick #${pickNumber} is already owned by ${newAbbr}`);
+  }
+
+  const previousTeamId = slot.teamId;
+  const trimmedNote = input.tradeNote?.trim() || null;
+
+  await db
+    .update(draftOrder)
+    .set({
+      teamId: newTeam.id,
+      originalTeamId: slot.originalTeamId ?? previousTeamId,
+      tradeNote: trimmedNote,
+      updatedAt: new Date(),
+    })
+    .where(eq(draftOrder.id, slot.id));
+
+  const [tradeRow] = await db
+    .insert(trades)
+    .values({
+      season,
+      pickNumber,
+      previousTeamId,
+      newTeamId: newTeam.id,
+      tradeNote: trimmedNote,
+      source: "manual",
+    })
+    .returning();
+
+  revalidatePath("/admin");
+  revalidatePath("/trades");
+  revalidatePath("/mock-drafts");
+  return tradeRow;
+}
+
+/** Reverses the most recent trade for a given slot: restores the previous
+ *  team, and if this was the only trade, clears originalTeamId. Removes the
+ *  trade row from the log. Admin only. */
+export async function revertTrade(tradeId: string) {
+  const session = await auth();
+  if (!session?.user?.id || session.user.role !== "admin") {
+    throw new Error("Admin only");
+  }
+
+  const [t] = await db
+    .select({
+      id: trades.id,
+      season: trades.season,
+      pickNumber: trades.pickNumber,
+      previousTeamId: trades.previousTeamId,
+      newTeamId: trades.newTeamId,
+    })
+    .from(trades)
+    .where(eq(trades.id, tradeId));
+  if (!t) throw new Error("Trade not found");
+
+  const remaining = await db
+    .select({ id: trades.id })
+    .from(trades)
+    .where(
+      and(
+        eq(trades.season, t.season),
+        eq(trades.pickNumber, t.pickNumber)
+      )
+    );
+  const isOnlyTrade = remaining.length === 1;
+
+  await db
+    .update(draftOrder)
+    .set({
+      teamId: t.previousTeamId,
+      originalTeamId: isOnlyTrade ? null : sql`${draftOrder.originalTeamId}`,
+      tradeNote: null,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(draftOrder.season, t.season),
+        eq(draftOrder.pickNumber, t.pickNumber)
+      )
+    );
+
+  await db.delete(trades).where(eq(trades.id, tradeId));
+
+  revalidatePath("/admin");
+  revalidatePath("/trades");
+  revalidatePath("/mock-drafts");
+  return { ok: true };
 }

@@ -8,12 +8,20 @@ import {
   getPoolMemberCount,
   getPoolsForUser,
   getPoolMembersWithStatus,
+  getDraftOrder,
+  getTrades,
+  getTeams,
 } from "@/lib/queries";
 import { createBoard, createPool, preSeedFriend } from "@/lib/actions";
 import { isDraftLocked } from "@/lib/config";
 import { DraftControl } from "@/components/draft-control";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { AdminCommissionerPanel } from "@/components/admin-commissioner-panel";
+import {
+  AdminDraftOrder,
+  type AdminDraftSlot,
+  type AdminTradeRow,
+} from "@/components/admin-draft-order";
 import { NFL_TEAMS } from "@/lib/team-themes";
 import { db } from "@/db";
 import { pools, poolMembers } from "@/db/schema";
@@ -172,6 +180,55 @@ async function AdminSections() {
     }))
   );
 
+  // Draft Order admin data
+  const draftSeason = 2026;
+  const [draftOrderRows, allTeams, tradeRows] = await Promise.all([
+    getDraftOrder(draftSeason),
+    getTeams(),
+    getTrades(draftSeason),
+  ]);
+  const adminSlots: AdminDraftSlot[] = draftOrderRows.map((r) => ({
+    pickNumber: r.pickNumber,
+    teamId: r.teamId,
+    teamName: r.teamName,
+    teamAbbreviation: r.teamAbbreviation,
+    teamLogoUrl: r.teamLogoUrl,
+    originalTeamId: r.originalTeamId,
+  }));
+  const tradeDateFmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  const adminTrades: AdminTradeRow[] = tradeRows.map((t) => ({
+    id: t.id,
+    pickNumber: t.pickNumber,
+    previousTeamAbbreviation: t.previousTeamAbbreviation,
+    newTeamAbbreviation: t.newTeamAbbreviation,
+    tradeNote: t.tradeNote,
+    source: t.source,
+    detectedAt: tradeDateFmt.format(t.detectedAt as Date),
+  }));
+  const adminTradesByPick: Record<
+    number,
+    { tradeId: string; previousTeamAbbreviation: string; newTeamAbbreviation: string }
+  > = {};
+  for (const t of tradeRows) {
+    if (!adminTradesByPick[t.pickNumber]) {
+      adminTradesByPick[t.pickNumber] = {
+        tradeId: t.id,
+        previousTeamAbbreviation: t.previousTeamAbbreviation,
+        newTeamAbbreviation: t.newTeamAbbreviation,
+      };
+    }
+  }
+  const teamOptions = allTeams
+    .map((t) => ({ id: t.id, abbreviation: t.abbreviation, name: t.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   async function handleCreateBoard(formData: FormData) {
     "use server";
     const board = await createBoard(formData);
@@ -192,6 +249,31 @@ async function AdminSections() {
   return (
     <>
       <DraftControl isLocked={locked} />
+
+      {/* Draft Order — live source of truth + manual trade entry */}
+      <div className="space-y-4">
+        <h2
+          className="text-3xl font-bold text-[var(--text-primary)] tracking-wide"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          DRAFT ORDER
+        </h2>
+        <p className="text-sm text-[var(--text-secondary)]">
+          Round 1 slot assignments for {draftSeason}. Record trades as they happen so the
+          pick builder, mock drafts, and the{" "}
+          <Link href="/trades" className="text-[var(--accent-primary)] hover:underline">
+            trade log
+          </Link>
+          {" "}stay current.
+        </p>
+        <AdminDraftOrder
+          season={draftSeason}
+          slots={adminSlots}
+          trades={adminTrades}
+          teams={teamOptions}
+          tradesByPick={adminTradesByPick}
+        />
+      </div>
 
       {/* Invite Friends — pre-seed accounts with team + default draft */}
       <div className="space-y-4">

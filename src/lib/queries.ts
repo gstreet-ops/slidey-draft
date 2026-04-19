@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { eq, asc, desc, and, gt } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import {
   teams,
   players,
@@ -22,6 +23,7 @@ import {
   poolInviteCodes,
   props,
   propPicks,
+  trades,
 } from "@/db/schema";
 import { sql } from "drizzle-orm";
 
@@ -51,7 +53,10 @@ export async function getDraftOrder(season: number) {
       season: draftOrder.season,
       pickNumber: draftOrder.pickNumber,
       teamId: draftOrder.teamId,
+      originalTeamId: draftOrder.originalTeamId,
+      tradeNote: draftOrder.tradeNote,
       note: draftOrder.note,
+      updatedAt: draftOrder.updatedAt,
       teamName: teams.name,
       teamAbbreviation: teams.abbreviation,
       teamPrimaryColor: teams.primaryColor,
@@ -62,6 +67,53 @@ export async function getDraftOrder(season: number) {
     .innerJoin(teams, eq(draftOrder.teamId, teams.id))
     .where(eq(draftOrder.season, season))
     .orderBy(asc(draftOrder.pickNumber));
+}
+
+/** All trades for a season, newest first, enriched with team names/abbrs so
+ *  the UI can render logos without extra joins. */
+export async function getTrades(season: number) {
+  const prev = alias(teams, "prev_teams");
+  const next = alias(teams, "new_teams");
+  return db
+    .select({
+      id: trades.id,
+      season: trades.season,
+      pickNumber: trades.pickNumber,
+      previousTeamId: trades.previousTeamId,
+      newTeamId: trades.newTeamId,
+      tradeNote: trades.tradeNote,
+      source: trades.source,
+      detectedAt: trades.detectedAt,
+      createdAt: trades.createdAt,
+      previousTeamName: prev.name,
+      previousTeamAbbreviation: prev.abbreviation,
+      previousTeamLogoUrl: prev.logoUrl,
+      previousTeamPrimaryColor: prev.primaryColor,
+      newTeamName: next.name,
+      newTeamAbbreviation: next.abbreviation,
+      newTeamLogoUrl: next.logoUrl,
+      newTeamPrimaryColor: next.primaryColor,
+    })
+    .from(trades)
+    .innerJoin(prev, eq(trades.previousTeamId, prev.id))
+    .innerJoin(next, eq(trades.newTeamId, next.id))
+    .where(eq(trades.season, season))
+    .orderBy(desc(trades.detectedAt));
+}
+
+export type TradeRow = Awaited<ReturnType<typeof getTrades>>[number];
+
+/** Returns a map of pickNumber → trades[] (newest first) for fast per-slot
+ *  indicator lookup from components. */
+export async function getTradesByPick(season: number): Promise<Map<number, TradeRow[]>> {
+  const rows = await getTrades(season);
+  const map = new Map<number, TradeRow[]>();
+  for (const t of rows) {
+    const list = map.get(t.pickNumber);
+    if (list) list.push(t);
+    else map.set(t.pickNumber, [t]);
+  }
+  return map;
 }
 
 // ── Draft Boards ───────────────────────────────────

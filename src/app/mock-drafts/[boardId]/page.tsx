@@ -6,8 +6,9 @@ import {
   getPlayers,
   getBoardWithPicks,
   getPoolsForUser,
+  getTradesByPick,
 } from "@/lib/queries";
-import { PickBuilder } from "@/app/admin/board/[boardId]/pick-builder";
+import { PickBuilder, type SlotTradeInfo } from "@/app/admin/board/[boardId]/pick-builder";
 import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { MockGradeCard } from "@/components/mock-grade-card";
@@ -48,6 +49,17 @@ export default async function EditMockDraftPage({ params }: { params: Params }) 
   const allPlayers = await getPlayers();
   const pickedPlayerIds = new Set(boardData.picks.map((p) => p.playerId));
   const availablePlayers = allPlayers.filter((p) => !pickedPlayerIds.has(p.id));
+
+  const tradesMap = await getTradesByPick(season);
+  const tradesByPick: Record<number, SlotTradeInfo> = {};
+  for (const [pickNumber, list] of tradesMap.entries()) {
+    const t = list[0];
+    tradesByPick[pickNumber] = {
+      tradeId: t.id,
+      previousTeamAbbreviation: t.previousTeamAbbreviation,
+      newTeamAbbreviation: t.newTeamAbbreviation,
+    };
+  }
 
   const isEntry = boardData.board.isEntryDraft;
 
@@ -102,6 +114,7 @@ export default async function EditMockDraftPage({ params }: { params: Params }) 
             availablePlayers={availablePlayers}
             readOnly={locked}
             favoriteTeamAbbr={session.user.favoriteTeam?.abbreviation ?? null}
+            tradesByPick={tradesByPick}
           />
         </div>
       </main>

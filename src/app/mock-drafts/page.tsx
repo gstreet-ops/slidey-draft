@@ -5,10 +5,10 @@ import { isDraftLocked } from "@/lib/config";
 import { DraftLockedBanner } from "@/components/draft-locked-banner";
 import { InnerPageHeader } from "@/components/inner-page-header";
 import { FeatureDisabled } from "@/components/feature-disabled";
-import { PoolDraftsList } from "@/components/pool-drafts-list";
+import { PoolDraftsList, type PickTradeInfo } from "@/components/pool-drafts-list";
 import { MyDraftsSection, type MyBoardCard } from "@/components/my-drafts-section";
 import { createUserBoard } from "@/lib/actions";
-import { getUserBoards, getBoardWithPicks, getPoolsForUser } from "@/lib/queries";
+import { getUserBoards, getBoardWithPicks, getPoolsForUser, getTradesByPick } from "@/lib/queries";
 import { getPoolMemberDrafts } from "@/lib/mock-drafts-data";
 import { getPoolSettings } from "@/lib/pool-settings";
 import { isFeatureEnabled } from "@/lib/feature-flags";
@@ -79,6 +79,18 @@ export default async function MockDraftsPage() {
     myPickByNumberMap = enriched.myPickByNumberMap;
   }
 
+  // 3. Most-recent trade per pick — powers the ↔ indicator on slot rows.
+  const tradesMap = await getTradesByPick(season);
+  const tradesByPick: Record<number, PickTradeInfo> = {};
+  for (const [pickNumber, list] of tradesMap.entries()) {
+    const t = list[0];
+    tradesByPick[pickNumber] = {
+      tradeId: t.id,
+      previousTeamAbbreviation: t.previousTeamAbbreviation,
+      newTeamAbbreviation: t.newTeamAbbreviation,
+    };
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-page)] flex flex-col">
       {locked && <DraftLockedBanner />}
@@ -90,6 +102,15 @@ export default async function MockDraftsPage() {
       />
 
       <main className="mx-auto max-w-4xl w-full px-4 py-6 pb-24 sm:px-6 sm:py-8 md:pb-8 space-y-10">
+        {Object.keys(tradesByPick).length > 0 && (
+          <div className="rounded-lg border border-amber-100 bg-amber-50 px-4 py-2 text-xs text-amber-800">
+            <Link href="/trades" className="font-semibold hover:underline">
+              {Object.keys(tradesByPick).length} trade
+              {Object.keys(tradesByPick).length === 1 ? "" : "s"} detected — see the trade log →
+            </Link>
+          </div>
+        )}
+
         {/* YOUR DRAFTS */}
         <section className="space-y-3">
           <div>
@@ -128,6 +149,7 @@ export default async function MockDraftsPage() {
               drafts={poolMemberDrafts}
               myPickByNumber={myPickByNumberMap}
               totalSlots={32}
+              tradesByPick={tradesByPick}
             />
           </section>
         ) : userPools.length === 0 ? (

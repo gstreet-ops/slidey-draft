@@ -3,7 +3,16 @@
 import { useState } from "react";
 import Image from "next/image";
 import { TeamImage } from "@/components/team-image";
+import { TradeIndicator } from "@/components/trade-indicator";
 import type { LetterGrade } from "@/lib/mock-grading";
+
+/** Minimal trade shape needed by PickGrid to render indicators. Lifted out
+ *  so the home/mock-drafts servers can produce plain JSON-safe objects. */
+export type PickTradeInfo = {
+  tradeId: string;
+  previousTeamAbbreviation: string;
+  newTeamAbbreviation: string;
+};
 
 export type ComparePick = {
   pickNumber: number;
@@ -61,6 +70,8 @@ type Props = {
   /** Current user's pick keyed by pick number — used for side-by-side compare on each row */
   myPickByNumber: Record<number, ComparePick>;
   totalSlots: number;
+  /** Trade indicators keyed by pick number — most recent trade per slot. */
+  tradesByPick?: Record<number, PickTradeInfo>;
 };
 
 function gradeBadgeColors(grade: LetterGrade): string {
@@ -81,7 +92,7 @@ function gradeBadgeColors(grade: LetterGrade): string {
   }
 }
 
-export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
+export function PoolDraftsList({ drafts, myPickByNumber, totalSlots, tradesByPick }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
@@ -235,6 +246,7 @@ export function PoolDraftsList({ drafts, myPickByNumber, totalSlots }: Props) {
                       myPickByNumber={myPickByNumber}
                       totalSlots={totalSlots}
                       isMe={d.isMe}
+                      tradesByPick={tradesByPick}
                     />
                   </>
                 )}
@@ -313,11 +325,13 @@ function PickGrid({
   myPickByNumber,
   totalSlots,
   isMe,
+  tradesByPick,
 }: {
   picks: ComparePick[];
   myPickByNumber: Record<number, ComparePick>;
   totalSlots: number;
   isMe: boolean;
+  tradesByPick?: Record<number, PickTradeInfo>;
 }) {
   const myPlayerIds = new Set(Object.values(myPickByNumber).map((p) => p.playerId));
   const pickByNumber = new Map(picks.map((p) => [p.pickNumber, p]));
@@ -363,6 +377,15 @@ function PickGrid({
                   <span className="text-[10px] font-mono font-semibold text-[var(--text-muted)] w-9 shrink-0">
                     {pick.teamAbbreviation}
                   </span>
+                  {tradesByPick?.[n] && (
+                    <TradeIndicator
+                      tradeId={tradesByPick[n].tradeId}
+                      previousTeamAbbreviation={tradesByPick[n].previousTeamAbbreviation}
+                      newTeamAbbreviation={tradesByPick[n].newTeamAbbreviation}
+                      size={10}
+                      className="shrink-0"
+                    />
+                  )}
                   <span className="font-semibold text-[var(--text-primary)] truncate">{pick.playerName}</span>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] shrink-0">
                     {pick.playerPosition}

@@ -35,6 +35,7 @@ export function SiteNav({ isLoggedIn, userInitial, teamLogoUrl, teamName, enable
   const secondaryLinks = [
     ...(isLoggedIn && enabled.has("propBets") ? [{ href: "/props", label: "Props" }] : []),
     { href: "/big-board", label: "Prospects" },
+    { href: "/trades", label: "Trades" },
     { href: "/scoring", label: "Scoring" },
     ...(isLoggedIn ? [{ href: "/settings", label: "⚙ Settings" }] : []),
     ...(!isLoggedIn ? [{ href: "/login", label: "Sign In" }] : []),

@@ -164,10 +164,35 @@ export const draftOrder = pgTable(
     teamId: uuid("team_id")
       .notNull()
       .references(() => teams.id),
+    /** Team that originally held this pick before any trades. Stays null
+        for slots that have never been traded. Set on first trade only; not
+        overwritten on subsequent trades so we preserve the ORIGINAL owner. */
+    originalTeamId: uuid("original_team_id").references(() => teams.id),
+    /** Short summary of the most recent trade that affected this slot. */
+    tradeNote: text("trade_note"),
     note: text("note"),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [uniqueIndex("season_pick_idx").on(table.season, table.pickNumber)]
 );
+
+// ── Trades (audit log of draft-slot ownership changes) ──
+export const tradeSourceEnum = pgEnum("trade_source", ["espn_sync", "manual"]);
+export const trades = pgTable("trades", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  season: integer("season").notNull(),
+  pickNumber: integer("pick_number").notNull(),
+  previousTeamId: uuid("previous_team_id")
+    .notNull()
+    .references(() => teams.id),
+  newTeamId: uuid("new_team_id")
+    .notNull()
+    .references(() => teams.id),
+  tradeNote: text("trade_note"),
+  source: tradeSourceEnum("source").notNull(),
+  detectedAt: timestamp("detected_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 // ── Picks (a player picked at a slot on a board) ──
 export const picks = pgTable(
