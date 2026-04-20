@@ -758,7 +758,7 @@ export function PickBuilder({
 
   return (
     <div>
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.2fr_1fr] md:gap-4 lg:grid-cols-[1fr_360px] lg:gap-6">
+    <div className="md:pr-[380px]">
       {/* Draft board column — always visible (drawer-only mobile UX) */}
       <div className="space-y-1 sm:space-y-1.5">
         {/* Auto-save indicator */}
@@ -1120,8 +1120,16 @@ export function PickBuilder({
 
       {/* Prospect pool column — desktop sidebar only. Mobile uses the slide-up drawer below. */}
       <div
-        className="hidden md:block self-start max-h-[calc(100vh-100px)] overflow-y-auto"
-        style={{ position: "sticky", top: "1rem" }}
+        className="hidden md:block"
+        style={{
+          position: "fixed",
+          top: "5rem",
+          right: "1.5rem",
+          width: "360px",
+          maxHeight: "calc(100vh - 6rem)",
+          overflowY: "auto",
+          zIndex: 30,
+        }}
       >
         <div className="md:hidden mb-3">
           <h3
