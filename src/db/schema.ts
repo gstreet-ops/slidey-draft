@@ -296,23 +296,6 @@ export const pickScores = pgTable(
   ]
 );
 
-// ── BPA Rankings ──────────────────────────────────
-export const bpaRankings = pgTable(
-  "bpa_rankings",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    playerId: uuid("player_id")
-      .notNull()
-      .references(() => players.id),
-    espnAthleteId: text("espn_athlete_id"),
-    rank: integer("rank").notNull(),
-    fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
-  },
-  (table) => [
-    index("bpa_rankings_player_idx").on(table.playerId),
-  ]
-);
-
 // ── App Config ────────────────────────────────────
 export const appConfig = pgTable("app_config", {
   key: text("key").primaryKey(),

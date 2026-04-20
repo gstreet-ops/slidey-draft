@@ -36,6 +36,13 @@
       "when": 1776608753253,
       "tag": "0004_0004_indexes_and_entry_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1776685480372,
+      "tag": "0005_drop_bpa_rankings",
+      "breakpoints": true
     }
   ]
 }

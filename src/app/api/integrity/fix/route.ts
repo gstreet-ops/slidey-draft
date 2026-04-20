@@ -15,7 +15,7 @@ export async function POST() {
   try {
     // ── Fix 1: Deduplicate players ─────────────────────
     // For each duplicate name, keep the row with the highest grade, delete the rest
-    // Only delete rows not referenced in picks, actual_results, pick_scores, or bpa_rankings
+    // Only delete rows not referenced in picks, actual_results, pick_scores, or live_predictions
     const deleteResult = await db.execute(sql`
       WITH dupes AS (
         SELECT id, name, grade,
@@ -28,7 +28,6 @@ export async function POST() {
           AND d.id NOT IN (SELECT player_id FROM picks WHERE player_id IS NOT NULL)
           AND d.id NOT IN (SELECT player_id FROM actual_results WHERE player_id IS NOT NULL)
           AND d.id NOT IN (SELECT actual_player_id FROM pick_scores WHERE actual_player_id IS NOT NULL)
-          AND d.id NOT IN (SELECT player_id FROM bpa_rankings)
           AND d.id NOT IN (SELECT predicted_player_id FROM live_predictions WHERE predicted_player_id IS NOT NULL)
       )
       DELETE FROM players WHERE id IN (SELECT id FROM to_delete)
@@ -63,10 +62,9 @@ export async function POST() {
         await db.execute(sql`
           UPDATE picks SET player_id = ${keep_id}::uuid WHERE player_id = ${delete_id}::uuid
         `);
-        // Also update actual_results, pick_scores, bpa_rankings
+        // Also update actual_results, pick_scores
         await db.execute(sql`UPDATE actual_results SET player_id = ${keep_id}::uuid WHERE player_id = ${delete_id}::uuid`);
         await db.execute(sql`UPDATE pick_scores SET actual_player_id = ${keep_id}::uuid WHERE actual_player_id = ${delete_id}::uuid`);
-        await db.execute(sql`UPDATE bpa_rankings SET player_id = ${keep_id}::uuid WHERE player_id = ${delete_id}::uuid`);
         await db.execute(sql`
           DELETE FROM live_predictions
           WHERE predicted_player_id = ${delete_id}::uuid

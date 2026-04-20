@@ -1,47 +1,10 @@
 import { db } from "@/db";
-import { eq, asc } from "drizzle-orm";
-import { bpaRankings, picks, players, draftBoards, draftOrder } from "@/db/schema";
-import { fetchDraftAthletes, normalizePlayerName, positionMatches } from "@/lib/espn-api";
+import { eq, asc, isNotNull } from "drizzle-orm";
+import { picks, players, draftBoards, draftOrder } from "@/db/schema";
 
 /**
- * Fetch ESPN BPA rankings and store in bpa_rankings table.
- * Matches ESPN athletes to our players table by normalized name + position.
- */
-export async function fetchAndStoreBpaRankings(season: number): Promise<number> {
-  const athletes = await fetchDraftAthletes(season);
-  if (athletes.length === 0) return 0;
-
-  const ourPlayers = await db.select().from(players);
-
-  // Clear existing rankings
-  await db.delete(bpaRankings);
-
-  let matched = 0;
-  for (const athlete of athletes) {
-    const player = ourPlayers.find(p =>
-      normalizePlayerName(p.name) === normalizePlayerName(athlete.fullName) &&
-      positionMatches(athlete.position, p.position)
-    );
-
-    if (player) {
-      await db.insert(bpaRankings).values({
-        playerId: player.id,
-        espnAthleteId: athlete.id,
-        rank: athlete.rank,
-      });
-      matched++;
-    } else {
-      console.warn(
-        `[BPA] No match for ESPN athlete: ${athlete.fullName} (${athlete.position}, ${athlete.school})`
-      );
-    }
-  }
-
-  return matched;
-}
-
-/**
- * Auto-fill empty slots on a board with Best Player Available.
+ * Auto-fill empty slots on a board with Best Player Available, ordered by
+ * `players.rank` (the admin-maintained ESPN-synced ranking).
  */
 export async function autoFillBPA(boardId: string): Promise<number> {
   const existingPicks = await db
@@ -67,33 +30,34 @@ export async function autoFillBPA(boardId: string): Promise<number> {
   const teamByPick = new Map(order.map((o) => [o.pickNumber, o.teamId]));
 
   const rankings = await db
-    .select({ playerId: bpaRankings.playerId, rank: bpaRankings.rank })
-    .from(bpaRankings)
-    .orderBy(asc(bpaRankings.rank));
+    .select({ id: players.id, rank: players.rank })
+    .from(players)
+    .where(isNotNull(players.rank))
+    .orderBy(asc(players.rank));
 
   if (rankings.length === 0) return 0;
 
   let filled = 0;
-
   const maxPick = order.length > 0 ? Math.max(...order.map((o) => o.pickNumber)) : 32;
+
   for (let pickNumber = 1; pickNumber <= maxPick; pickNumber++) {
     if (pickedNumbers.has(pickNumber)) continue;
 
     const teamId = teamByPick.get(pickNumber);
     if (!teamId) continue;
 
-    const bpaPlayer = rankings.find((r) => !pickedPlayerIds.has(r.playerId));
+    const bpaPlayer = rankings.find((r) => !pickedPlayerIds.has(r.id));
     if (!bpaPlayer) break;
 
     await db.insert(picks).values({
       boardId,
       pickNumber,
-      playerId: bpaPlayer.playerId,
+      playerId: bpaPlayer.id,
       teamId,
       autoFilled: true,
     });
 
-    pickedPlayerIds.add(bpaPlayer.playerId);
+    pickedPlayerIds.add(bpaPlayer.id);
     filled++;
   }
 
