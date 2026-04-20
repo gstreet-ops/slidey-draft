@@ -51,3 +51,16 @@ next-env.d.ts
 fix-*.md
 test-*.md
 war-room-*.md
+
+# scratch / one-off scripts (root-level only)
+/apply-migration-*.ts
+/check-*.ts
+/diagnose-*.ts
+/fix-*.ts
+/inspect-*.ts
+/merge-*.ts
+/null-*.ts
+/revert-*.ts
+/seed-*.ts
+/smoke-*.ts
+/thurston-*.ts
