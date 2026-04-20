@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { makePick, removePick, publishBoard, autoFillByRank, updatePickAnalysis } from "@/lib/actions";
 import { PlayerAvatar } from "@/components/player-avatar";
@@ -333,6 +333,13 @@ export function PickBuilder({
   const [posFilter, setPosFilter] = useState<string>("ALL");
   const [isPending, startTransition] = useTransition();
   const [localPickedIds, setLocalPickedIds] = useState<Set<string>>(new Set());
+  const [localRemovedIds, setLocalRemovedIds] = useState<Set<string>>(new Set());
+
+  // Clear optimistic sets once server revalidation lands (existingPicks length changes on every add/remove).
+  useEffect(() => {
+    setLocalPickedIds(new Set());
+    setLocalRemovedIds(new Set());
+  }, [existingPicks.length]);
   const [analysisText, setAnalysisText] = useState("");
   const [saveFlash, setSaveFlash] = useState(false);
   const [pickError, setPickError] = useState<string | null>(null);
@@ -346,6 +353,7 @@ export function PickBuilder({
   const [editingNoteText, setEditingNoteText] = useState("");
   const [needsOnly, setNeedsOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"rank" | "fastest" | "grade">("rank");
+  const [othersExpanded, setOthersExpanded] = useState(false);
 
   // Mobile-only UI state — bottom bar + slide-up prospects drawer.
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -354,7 +362,7 @@ export function PickBuilder({
   const pickMap = new Map(existingPicks.map((p) => [p.pickNumber, p]));
 
   const allPickedIds = new Set([
-    ...existingPicks.map((p) => p.playerId),
+    ...existingPicks.map((p) => p.playerId).filter((id) => !localRemovedIds.has(id)),
     ...localPickedIds,
   ]);
 
@@ -399,7 +407,15 @@ export function PickBuilder({
   }
 
   function handleMakePick(playerId: string, slot: DraftSlot) {
+    const wasRemoved = localRemovedIds.has(playerId);
     setLocalPickedIds((prev) => new Set([...prev, playerId]));
+    if (wasRemoved) {
+      setLocalRemovedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(playerId);
+        return next;
+      });
+    }
     setPickError(null);
     const analysis = analysisText.trim() || undefined;
     startTransition(async () => {
@@ -423,6 +439,9 @@ export function PickBuilder({
           next.delete(playerId);
           return next;
         });
+        if (wasRemoved) {
+          setLocalRemovedIds((prev) => new Set([...prev, playerId]));
+        }
         setPickError(err instanceof Error ? err.message : "Failed to make pick");
         setTimeout(() => setPickError(null), 4000);
       }
@@ -447,6 +466,7 @@ export function PickBuilder({
       next.delete(playerId);
       return next;
     });
+    setLocalRemovedIds((prev) => new Set([...prev, playerId]));
     startTransition(async () => {
       await removePick(pickId, boardId);
       flashSaved();
@@ -580,19 +600,24 @@ export function PickBuilder({
         </div>
       )}
 
-      <div className="space-y-1">
-        {filteredPlayers.map((player) => {
-          const slot = activeSlot
-            ? draftOrder.find((s) => s.pickNumber === activeSlot)
-            : null;
-          const isExpanded = expandedProspectId === player.id;
-          // Tap-to-pick is always available off the active-slot path; the smart
-          // handler picks first-empty when no slot is explicitly active.
-          const canPick = !readOnly;
+      {(() => {
+        const isInOthers = (p: Player) => {
+          if (sortBy === "rank") return p.rank == null;
+          if (sortBy === "fastest") return p.rank == null && p.fortyTime == null;
+          if (sortBy === "grade") return p.rank == null && p.grade == null;
+          return false;
+        };
+        const mainPlayers = filteredPlayers.filter((p) => !isInOthers(p));
+        const otherPlayers = filteredPlayers.filter(isInOthers);
+        const slot = activeSlot
+          ? draftOrder.find((s) => s.pickNumber === activeSlot)
+          : null;
+        const canPick = !readOnly;
 
+        const renderRow = (player: Player, opts: { unrankedSection?: boolean } = {}) => {
+          const isExpanded = expandedProspectId === player.id;
           return (
             <div key={player.id} className="rounded-md overflow-hidden sm:rounded-lg">
-              {/* Row */}
               <div
                 className={`flex items-center gap-1.5 bg-[var(--bg-card)] px-1.5 py-1 text-left transition min-h-[30px] sm:gap-2 sm:px-2.5 sm:py-1.5 sm:min-h-[36px] ${
                   canPick
@@ -608,11 +633,15 @@ export function PickBuilder({
                   }
                 }}
               >
-                {player.rank && (
+                {opts.unrankedSection ? (
+                  <span className="text-[9px] font-semibold uppercase tracking-wide text-[var(--text-muted)] w-10 text-right shrink-0">
+                    Unranked
+                  </span>
+                ) : player.rank ? (
                   <span className="text-xs font-bold text-[var(--text-muted)] w-5 text-right shrink-0">
                     #{player.rank}
                   </span>
-                )}
+                ) : null}
                 <PlayerAvatar player={player} size={28} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
@@ -646,7 +675,6 @@ export function PickBuilder({
                     )}
                   </div>
                 </div>
-                {/* Info button — always visible */}
                 <span
                   role="button"
                   onClick={(e) => {
@@ -667,7 +695,6 @@ export function PickBuilder({
                 </span>
               </div>
 
-              {/* Inline expansion */}
               {isExpanded && (
                 <InlineProspectDetail
                   player={player}
@@ -676,13 +703,50 @@ export function PickBuilder({
               )}
             </div>
           );
-        })}
-        {filteredPlayers.length === 0 && (
-          <p className="py-4 text-center text-sm text-[var(--text-muted)]">
-            No players match your search
-          </p>
-        )}
-      </div>
+        };
+
+        return (
+          <>
+            <div className="space-y-1">
+              {mainPlayers.map((p) => renderRow(p))}
+              {filteredPlayers.length === 0 && (
+                <p className="py-4 text-center text-sm text-[var(--text-muted)]">
+                  No players match your search
+                </p>
+              )}
+            </div>
+
+            {otherPlayers.length > 0 && (
+              <div className="mt-3 border-t border-[var(--border)] pt-2">
+                <button
+                  type="button"
+                  onClick={() => setOthersExpanded((v) => !v)}
+                  className="flex w-full items-center justify-between rounded-md px-1.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition"
+                  aria-expanded={othersExpanded}
+                >
+                  <span>Unranked Prospects ({otherPlayers.length})</span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className={`transition-transform ${othersExpanded ? "rotate-180" : ""}`}
+                  >
+                    <path d="M3.5 5.5l3.5 3.5 3.5-3.5" />
+                  </svg>
+                </button>
+                {othersExpanded && (
+                  <div className="mt-1 space-y-1">
+                    {otherPlayers.map((p) => renderRow(p, { unrankedSection: true }))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        );
+      })()}
     </>
   );
 
@@ -1055,7 +1119,10 @@ export function PickBuilder({
       </div>
 
       {/* Prospect pool column — desktop sidebar only. Mobile uses the slide-up drawer below. */}
-      <div className="hidden md:block md:max-h-[calc(100vh-100px)] md:overflow-y-auto">
+      <div
+        className="hidden md:block self-start max-h-[calc(100vh-100px)] overflow-y-auto"
+        style={{ position: "sticky", top: "1rem" }}
+      >
         <div className="md:hidden mb-3">
           <h3
             className="text-sm font-bold text-[var(--text-primary)] tracking-wide uppercase"
