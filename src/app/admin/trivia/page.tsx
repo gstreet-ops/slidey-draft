@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Download } from "lucide-react";
 import { TriviaQueue } from "@/components/trivia-queue";
+import { TriviaExportModal } from "@/components/trivia-export-modal";
 
 interface Question {
   id: string;
@@ -51,6 +53,7 @@ const diffColor: Record<string, string> = {
 export default function AdminTriviaPage() {
   // ── Create Question state ──
   const [showCreate, setShowCreate] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [createForm, setCreateForm] = useState({
     question: "",
     options: ["", "", "", ""],
@@ -254,6 +257,13 @@ export default function AdminTriviaPage() {
           </h1>
           <div className="flex gap-2">
             <button
+              onClick={() => setShowExport(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
+            >
+              <Download size={14} />
+              Export Questions
+            </button>
+            <button
               onClick={() => setShowCreate(!showCreate)}
               className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-700 transition"
             >
@@ -261,6 +271,12 @@ export default function AdminTriviaPage() {
             </button>
           </div>
         </div>
+
+        <TriviaExportModal
+          open={showExport}
+          onClose={() => setShowExport(false)}
+          onToast={(msg) => showToast(msg)}
+        />
 
         {/* Create Question Form */}
         {showCreate && (
