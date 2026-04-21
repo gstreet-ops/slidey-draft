@@ -1,90 +1,68 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const KICKOFF_MS = new Date("2026-04-23T23:00:00.000Z").getTime();
+const KICKOFF_MS = new Date("2026-04-24T00:00:00.000Z").getTime(); // Apr 23 2026 8:00 PM ET
 
-type Remaining = { days: number; hours: number; minutes: number; seconds: number; past: boolean };
-
-function diff(now: number): Remaining {
+function formatRemaining(now: number): string {
   const delta = KICKOFF_MS - now;
-  if (delta <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, past: true };
+  if (delta <= 0) return "LIVE NOW";
   const days = Math.floor(delta / 86_400_000);
   const hours = Math.floor((delta % 86_400_000) / 3_600_000);
   const minutes = Math.floor((delta % 3_600_000) / 60_000);
-  const seconds = Math.floor((delta % 60_000) / 1000);
-  return { days, hours, minutes, seconds, past: false };
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 export function DraftCountdown() {
-  const [remaining, setRemaining] = useState<Remaining | null>(null);
+  const [remaining, setRemaining] = useState<string>("—");
 
   useEffect(() => {
-    setRemaining(diff(Date.now()));
-    const id = setInterval(() => setRemaining(diff(Date.now())), 1000);
+    setRemaining(formatRemaining(Date.now()));
+    const id = setInterval(() => setRemaining(formatRemaining(Date.now())), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const boxes: { label: string; value: number | string }[] = remaining
-    ? remaining.past
-      ? [{ label: "Status", value: "Live" }]
-      : [
-          { label: "Days", value: remaining.days },
-          { label: "Hours", value: remaining.hours },
-          { label: "Minutes", value: remaining.minutes },
-          { label: "Seconds", value: remaining.seconds },
-        ]
-    : [
-        { label: "Days", value: "—" },
-        { label: "Hours", value: "—" },
-        { label: "Minutes", value: "—" },
-        { label: "Seconds", value: "—" },
-      ];
-
   return (
-    <section className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--bg-nav)] via-[#1a2530] to-[var(--bg-nav)] px-4 py-5 sm:px-6 sm:py-6 text-white shadow-sm">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(135deg, transparent, transparent 14px, rgba(255,255,255,0.25) 14px, rgba(255,255,255,0.25) 28px)",
-        }}
-        aria-hidden
-      />
-      <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-primary)]">
-            Draft Countdown
-          </p>
-          <h2
-            className="mt-1 text-2xl sm:text-3xl font-bold leading-none tracking-wide"
-            style={{ fontFamily: "var(--font-display)" }}
+    <div
+      className="w-full"
+      style={{ backgroundColor: "#CC0000" }}
+      role="status"
+      aria-label="Draft countdown"
+    >
+      <div className="mx-auto flex max-w-7xl flex-col items-stretch gap-1 px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2">
+        {/* Left: pulsing dot + label + countdown */}
+        <div className="flex items-center gap-2 text-white">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">
+            Live Countdown
+          </span>
+          <span
+            className="text-sm font-bold tabular-nums sm:text-base"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
+            aria-live="polite"
           >
-            2026 NFL Draft
-          </h2>
-          <p className="mt-1 text-xs sm:text-sm text-white/80">
-            Round 1 &middot; Thursday, April 23 &middot; Pittsburgh &middot; ESPN, ABC
-          </p>
+            {remaining}
+          </span>
         </div>
-        <div className="flex gap-2 sm:gap-3" aria-live="polite">
-          {boxes.map((b) => (
-            <div
-              key={b.label}
-              className="flex min-w-[60px] sm:min-w-[72px] flex-col items-center rounded-lg border border-white/10 bg-white/5 px-2 py-2 backdrop-blur-sm"
-            >
-              <span
-                className="font-mono text-xl sm:text-2xl font-bold leading-none text-[var(--accent-primary)] tabular-nums"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {b.value}
-              </span>
-              <span className="mt-1 text-[9px] font-semibold uppercase tracking-widest text-white/60">
-                {b.label}
-              </span>
-            </div>
-          ))}
-        </div>
+
+        {/* Center: draft info */}
+        <p className="truncate text-center text-[11px] font-medium text-white/90 sm:text-xs">
+          Round 1 &middot; Thu Apr 23, 8:00 PM ET &middot; Pittsburgh &middot; ESPN, ABC
+        </p>
+
+        {/* Right: CTA */}
+        <Link
+          href="/live"
+          className="flex shrink-0 items-center justify-center gap-1 self-end rounded bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-white/25 sm:self-auto"
+        >
+          Go Live
+          <span aria-hidden>→</span>
+        </Link>
       </div>
-    </section>
+    </div>
   );
 }
