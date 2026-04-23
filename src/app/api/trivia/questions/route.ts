@@ -37,9 +37,12 @@ export async function GET(req: NextRequest) {
         difficulty: triviaQuestions.difficulty,
         active: triviaQuestions.active,
         createdBy: triviaQuestions.createdBy,
+        createdByName: users.name,
+        createdByEmail: users.email,
         createdAt: triviaQuestions.createdAt,
       })
       .from(triviaQuestions)
+      .leftJoin(users, eq(triviaQuestions.createdBy, users.id))
       .where(where)
       .orderBy(desc(triviaQuestions.createdAt))
       .limit(limit)

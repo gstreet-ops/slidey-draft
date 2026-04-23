@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Download } from "lucide-react";
+import { Download, Pencil, X } from "lucide-react";
 import { TriviaQueue } from "@/components/trivia-queue";
 import { TriviaExportModal } from "@/components/trivia-export-modal";
 
@@ -14,6 +14,8 @@ interface Question {
   difficulty: string;
   active: boolean;
   createdBy: string | null;
+  createdByName?: string | null;
+  createdByEmail?: string | null;
   createdAt: string;
 }
 
@@ -50,18 +52,32 @@ const diffColor: Record<string, string> = {
   hard: "bg-red-100 text-red-700",
 };
 
+type QuestionForm = {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  category: string;
+  difficulty: "easy" | "medium" | "hard";
+  active: boolean;
+};
+
+const EMPTY_FORM: QuestionForm = {
+  question: "",
+  options: ["", "", "", ""],
+  correctAnswer: 0,
+  category: "",
+  difficulty: "medium",
+  active: true,
+};
+
 export default function AdminTriviaPage() {
-  // ── Create Question state ──
-  const [showCreate, setShowCreate] = useState(false);
+  // ── Question modal state (shared between create and edit) ──
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [questionForm, setQuestionForm] = useState<QuestionForm>(EMPTY_FORM);
+  const [savingQuestion, setSavingQuestion] = useState(false);
+
   const [showExport, setShowExport] = useState(false);
-  const [createForm, setCreateForm] = useState({
-    question: "",
-    options: ["", "", "", ""],
-    correctAnswer: 0,
-    category: "",
-    difficulty: "medium" as "easy" | "medium" | "hard",
-  });
-  const [creatingQuestion, setCreatingQuestion] = useState(false);
 
   // ── AI Generator state ──
   const [topicMode, setTopicMode] = useState<"topic_football" | "topic_only">("topic_football");
@@ -112,32 +128,78 @@ export default function AdminTriviaPage() {
     if (!persist) setTimeout(() => setToast(""), 3000);
   }
 
-  // ── Create Question ──
-  async function handleCreateQuestion() {
-    if (!createForm.question || createForm.options.some((o) => !o) || !createForm.category) {
+  // ── Create / Edit Question ──
+  function openCreateModal() {
+    setEditingQuestion(null);
+    setQuestionForm(EMPTY_FORM);
+    setModalOpen(true);
+  }
+
+  function openEditModal(q: Question) {
+    setEditingQuestion(q);
+    const opts = Array.isArray(q.options) && q.options.length === 4
+      ? [...q.options]
+      : ["", "", "", ""];
+    setQuestionForm({
+      question: q.question,
+      options: opts,
+      correctAnswer: q.correctAnswer,
+      category: q.category,
+      difficulty: (q.difficulty as "easy" | "medium" | "hard") || "medium",
+      active: q.active,
+    });
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+    setEditingQuestion(null);
+    setQuestionForm(EMPTY_FORM);
+  }
+
+  async function handleSubmitQuestion() {
+    if (
+      !questionForm.question.trim() ||
+      questionForm.options.some((o) => !o.trim()) ||
+      !questionForm.category.trim()
+    ) {
       showToast("Fill in all fields");
       return;
     }
-    setCreatingQuestion(true);
+    setSavingQuestion(true);
     try {
-      const res = await fetch("/api/trivia/questions", {
-        method: "POST",
+      const isEdit = !!editingQuestion;
+      const url = isEdit
+        ? `/api/trivia/questions/${editingQuestion!.id}`
+        : "/api/trivia/questions";
+      const method = isEdit ? "PUT" : "POST";
+      const body = isEdit
+        ? JSON.stringify(questionForm)
+        : JSON.stringify({
+            question: questionForm.question,
+            options: questionForm.options,
+            correctAnswer: questionForm.correctAnswer,
+            category: questionForm.category,
+            difficulty: questionForm.difficulty,
+          });
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(createForm),
+        body,
       });
       if (res.ok) {
-        showToast("Question created!");
-        setShowCreate(false);
-        setCreateForm({ question: "", options: ["", "", "", ""], correctAnswer: 0, category: "", difficulty: "medium" });
+        showToast(isEdit ? "Question updated" : "Question created!");
+        closeModal();
         fetchLibrary();
       } else {
-        const data = await res.json();
-        showToast(data.error || "Failed to create");
+        const data = await res.json().catch(() => ({}));
+        showToast(data.error || (isEdit ? "Failed to update" : "Failed to create"));
       }
     } catch {
-      showToast("Failed to create question");
+      showToast(editingQuestion ? "Failed to update question" : "Failed to create question");
     } finally {
-      setCreatingQuestion(false);
+      setSavingQuestion(false);
     }
   }
 
@@ -201,6 +263,12 @@ export default function AdminTriviaPage() {
 
   // ── Library actions ──
   async function handleToggleActive(q: Question) {
+    if (q.active) {
+      const ok = confirm(
+        "Deactivate this question?\n\nIf it's currently queued in any pool, it will remain in that queue but won't be eligible for new pools."
+      );
+      if (!ok) return;
+    }
     await fetch(`/api/trivia/questions/${q.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -222,6 +290,11 @@ export default function AdminTriviaPage() {
   function formatCost(dollars: number) {
     if (dollars < 0.01) return `~$${(dollars * 100).toFixed(2)}c`;
     return `~$${dollars.toFixed(3)}`;
+  }
+
+  function creatorLabel(q: Question): string {
+    if (!q.createdBy) return "System";
+    return q.createdByName || q.createdByEmail || "Commissioner";
   }
 
   return (
@@ -264,10 +337,10 @@ export default function AdminTriviaPage() {
               Export Questions
             </button>
             <button
-              onClick={() => setShowCreate(!showCreate)}
+              onClick={openCreateModal}
               className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-700 transition"
             >
-              {showCreate ? "Cancel" : "Create Question"}
+              Create Question
             </button>
           </div>
         </div>
@@ -277,80 +350,6 @@ export default function AdminTriviaPage() {
           onClose={() => setShowExport(false)}
           onToast={(msg) => showToast(msg)}
         />
-
-        {/* Create Question Form */}
-        {showCreate && (
-          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-5 space-y-4">
-            <h3 className="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">New Question</h3>
-            <textarea
-              value={createForm.question}
-              onChange={(e) => setCreateForm((f) => ({ ...f, question: e.target.value }))}
-              placeholder="Question text..."
-              rows={2}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none resize-none"
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {["A", "B", "C", "D"].map((letter, i) => (
-                <div key={letter} className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="correct-create"
-                    checked={createForm.correctAnswer === i}
-                    onChange={() => setCreateForm((f) => ({ ...f, correctAnswer: i }))}
-                    className="accent-green-500"
-                  />
-                  <span className="text-xs text-[var(--text-muted)] w-4">{letter}.</span>
-                  <input
-                    value={createForm.options[i]}
-                    onChange={(e) => {
-                      const opts = [...createForm.options];
-                      opts[i] = e.target.value;
-                      setCreateForm((f) => ({ ...f, options: opts }));
-                    }}
-                    placeholder={`Option ${letter}`}
-                    className="flex-1 rounded border border-[var(--border)] bg-[var(--bg-card)] px-2 py-1.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <div className="flex-1 min-w-[200px]">
-                <label className="block text-xs text-[var(--text-muted)] mb-1">Category (freetext)</label>
-                <input
-                  value={createForm.category}
-                  onChange={(e) => setCreateForm((f) => ({ ...f, category: e.target.value }))}
-                  list="category-list"
-                  placeholder="e.g. nfl_history, pop_culture, inside_jokes..."
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none"
-                />
-                <datalist id="category-list">
-                  {categories.map((c) => <option key={c} value={c} />)}
-                </datalist>
-              </div>
-              <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-1">Difficulty</label>
-                <select
-                  value={createForm.difficulty}
-                  onChange={(e) => setCreateForm((f) => ({ ...f, difficulty: e.target.value as "easy" | "medium" | "hard" }))}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[#FFB612] focus:outline-none"
-                >
-                  {DIFFICULTIES.map((d) => (
-                    <option key={d.value} value={d.value} className="bg-[var(--bg-card)]">{d.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-end">
-                <button
-                  onClick={handleCreateQuestion}
-                  disabled={creatingQuestion}
-                  className="rounded-lg bg-[#FFB612] px-6 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[#FFB612]/80 transition disabled:opacity-50"
-                >
-                  {creatingQuestion ? "Creating..." : "Create"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Filters + Search */}
         <div className="flex flex-wrap gap-3">
@@ -400,9 +399,23 @@ export default function AdminTriviaPage() {
                 <span className={`rounded-full px-2 py-0.5 text-xs shrink-0 ${diffColor[q.difficulty] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>
                   {q.difficulty}
                 </span>
-                <span className="text-[10px] text-[var(--text-muted)] shrink-0">
-                  {q.createdBy ? "Commissioner" : "System"}
-                </span>
+                {q.createdBy === null ? (
+                  <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                    System
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-[10px] text-[var(--text-muted)] max-w-[120px] truncate" title={creatorLabel(q)}>
+                    {creatorLabel(q)}
+                  </span>
+                )}
+                <button
+                  onClick={(e) => { e.stopPropagation(); openEditModal(q); }}
+                  className="shrink-0 rounded p-1 text-[var(--text-muted)] hover:bg-gray-100 hover:text-[var(--text-primary)] transition"
+                  title="Edit question"
+                  aria-label="Edit question"
+                >
+                  <Pencil size={14} />
+                </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleToggleActive(q); }}
                   className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold transition ${q.active ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-red-100 text-red-700 hover:bg-red-100"}`}
@@ -655,6 +668,138 @@ export default function AdminTriviaPage() {
           )}
         </div>
       </details>
+
+      {/* ═══════════════════════════════════════════════════════
+          Create / Edit Question Modal
+          ═══════════════════════════════════════════════════════ */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:items-center"
+          onClick={closeModal}
+        >
+          <div
+            className="w-full max-w-2xl rounded-xl border border-[var(--border)] bg-white p-6 shadow-2xl space-y-4 my-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3
+                className="text-2xl font-bold text-[var(--text-primary)] tracking-wide"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {editingQuestion ? "EDIT QUESTION" : "NEW QUESTION"}
+              </h3>
+              <button
+                onClick={closeModal}
+                className="rounded-full p-1 text-[var(--text-muted)] hover:bg-gray-100 hover:text-[var(--text-primary)] transition"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {editingQuestion && editingQuestion.createdBy === null && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                You&apos;re editing a <span className="font-semibold">system-seeded</span> question. Your changes will overwrite the original content.
+              </div>
+            )}
+
+            <textarea
+              value={questionForm.question}
+              onChange={(e) => setQuestionForm((f) => ({ ...f, question: e.target.value }))}
+              placeholder="Question text..."
+              rows={3}
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none resize-none"
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {["A", "B", "C", "D"].map((letter, i) => (
+                <div key={letter} className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="correct-question-modal"
+                    checked={questionForm.correctAnswer === i}
+                    onChange={() => setQuestionForm((f) => ({ ...f, correctAnswer: i }))}
+                    className="accent-green-500"
+                  />
+                  <span className="text-xs text-[var(--text-muted)] w-4">{letter}.</span>
+                  <input
+                    value={questionForm.options[i]}
+                    onChange={(e) => {
+                      const opts = [...questionForm.options];
+                      opts[i] = e.target.value;
+                      setQuestionForm((f) => ({ ...f, options: opts }));
+                    }}
+                    placeholder={`Option ${letter}`}
+                    className="flex-1 rounded border border-[var(--border)] bg-[var(--bg-card)] px-2 py-1.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-xs text-[var(--text-muted)] mb-1">Category (freetext)</label>
+                <input
+                  value={questionForm.category}
+                  onChange={(e) => setQuestionForm((f) => ({ ...f, category: e.target.value }))}
+                  list="category-list-modal"
+                  placeholder="e.g. nfl_history, pop_culture, inside_jokes..."
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#FFB612] focus:outline-none"
+                />
+                <datalist id="category-list-modal">
+                  {categories.map((c) => <option key={c} value={c} />)}
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-xs text-[var(--text-muted)] mb-1">Difficulty</label>
+                <select
+                  value={questionForm.difficulty}
+                  onChange={(e) =>
+                    setQuestionForm((f) => ({ ...f, difficulty: e.target.value as "easy" | "medium" | "hard" }))
+                  }
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[#FFB612] focus:outline-none"
+                >
+                  {DIFFICULTIES.map((d) => (
+                    <option key={d.value} value={d.value} className="bg-[var(--bg-card)]">{d.label}</option>
+                  ))}
+                </select>
+              </div>
+              {editingQuestion && (
+                <div className="flex flex-col justify-end">
+                  <label className="block text-xs text-[var(--text-muted)] mb-1">Status</label>
+                  <label className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={questionForm.active}
+                      onChange={(e) => setQuestionForm((f) => ({ ...f, active: e.target.checked }))}
+                      className="accent-green-600"
+                    />
+                    <span>{questionForm.active ? "Active" : "Inactive"}</span>
+                  </label>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={closeModal}
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text-primary)] transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitQuestion}
+                disabled={savingQuestion}
+                className="rounded-lg bg-green-600 px-6 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-700 transition disabled:opacity-50"
+              >
+                {savingQuestion
+                  ? (editingQuestion ? "Saving..." : "Creating...")
+                  : (editingQuestion ? "Save Changes" : "Create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

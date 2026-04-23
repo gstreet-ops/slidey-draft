@@ -4,13 +4,19 @@ import { db } from "@/db";
 import { triviaQuestions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-// PUT /api/trivia/questions/[questionId] — edit a question (only if created_by = current user)
+// PUT /api/trivia/questions/[questionId] — edit a question (admin or commissioner).
+// Commissioners may now edit ANY question in the bank, including system-seeded ones.
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ questionId: string }> }
 ) {
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (session.user.role !== "admin" && session.user.role !== "commissioner") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const { questionId } = await params;
 
@@ -23,28 +29,51 @@ export async function PUT(
     return NextResponse.json({ error: "Question not found" }, { status: 404 });
   }
 
-  // System-seeded questions (createdBy = null) can only be deactivated, not edited
-  // Commissioner-created questions can only be edited by their creator (or site admin)
-  if (existing.createdBy && existing.createdBy !== session.user.id && session.user.role !== "admin") {
-    return NextResponse.json({ error: "Cannot edit another user's question" }, { status: 403 });
-  }
-
   const body = await req.json();
   const updates: Record<string, unknown> = {};
 
-  // System-seeded questions: only allow toggling active
-  if (!existing.createdBy) {
-    if (body.active !== undefined) updates.active = !!body.active;
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "System questions can only be activated/deactivated" }, { status: 400 });
+  if (body.question !== undefined) {
+    if (typeof body.question !== "string" || !body.question.trim()) {
+      return NextResponse.json({ error: "Question text is required" }, { status: 400 });
     }
-  } else {
-    if (body.question !== undefined) updates.question = body.question;
-    if (body.options !== undefined) updates.options = body.options;
-    if (body.correctAnswer !== undefined) updates.correctAnswer = body.correctAnswer;
-    if (body.category !== undefined) updates.category = body.category;
-    if (body.difficulty !== undefined) updates.difficulty = body.difficulty;
-    if (body.active !== undefined) updates.active = body.active;
+    updates.question = body.question;
+  }
+
+  if (body.options !== undefined) {
+    if (
+      !Array.isArray(body.options) ||
+      body.options.length !== 4 ||
+      body.options.some((o: unknown) => typeof o !== "string" || !o.trim())
+    ) {
+      return NextResponse.json({ error: "options must be 4 non-empty strings" }, { status: 400 });
+    }
+    updates.options = body.options;
+  }
+
+  if (body.correctAnswer !== undefined) {
+    const idx = Number(body.correctAnswer);
+    if (!Number.isInteger(idx) || idx < 0 || idx > 3) {
+      return NextResponse.json({ error: "correctAnswer must be 0-3" }, { status: 400 });
+    }
+    updates.correctAnswer = idx;
+  }
+
+  if (body.category !== undefined) {
+    if (typeof body.category !== "string" || !body.category.trim()) {
+      return NextResponse.json({ error: "Category is required" }, { status: 400 });
+    }
+    updates.category = body.category;
+  }
+
+  if (body.difficulty !== undefined) {
+    if (!["easy", "medium", "hard"].includes(body.difficulty)) {
+      return NextResponse.json({ error: "Invalid difficulty" }, { status: 400 });
+    }
+    updates.difficulty = body.difficulty;
+  }
+
+  if (body.active !== undefined) {
+    updates.active = !!body.active;
   }
 
   if (Object.keys(updates).length === 0) {
