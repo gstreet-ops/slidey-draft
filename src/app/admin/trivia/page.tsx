@@ -61,6 +61,15 @@ type QuestionForm = {
   active: boolean;
 };
 
+interface GeneratedQuestion {
+  localId: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  category: string;
+  difficulty: string;
+}
+
 const EMPTY_FORM: QuestionForm = {
   question: "",
   options: ["", "", "", ""],
@@ -87,8 +96,8 @@ export default function AdminTriviaPage() {
   const [aiDifficulty, setAiDifficulty] = useState("medium");
   const [aiCount, setAiCount] = useState(10);
   const [generating, setGenerating] = useState(false);
-  const [generated, setGenerated] = useState<Question[]>([]);
-  const [selectedGen, setSelectedGen] = useState<Set<number>>(new Set());
+  const [generated, setGenerated] = useState<GeneratedQuestion[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [lastUsage, setLastUsage] = useState<{ inputTokens: number; outputTokens: number } | null>(null);
   const [sessionCost, setSessionCost] = useState(0);
@@ -225,8 +234,17 @@ export default function AdminTriviaPage() {
       if (data.error) {
         showToast(`Error: ${data.error}`, true);
       } else {
-        setGenerated(data.questions);
-        setSelectedGen(new Set(data.questions.map((_: unknown, i: number) => i)));
+        const stamp = Date.now();
+        const withIds: GeneratedQuestion[] = (data.questions as Question[]).map((q, i) => ({
+          localId: `${stamp}-${i}`,
+          question: q.question,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          category: q.category,
+          difficulty: q.difficulty,
+        }));
+        setGenerated(withIds);
+        setSelectedIds(new Set(withIds.map((q) => q.localId)));
         if (data.usage) {
           setLastUsage(data.usage);
           const cost = data.usage.inputTokens * COST_PER_INPUT_TOKEN + data.usage.outputTokens * COST_PER_OUTPUT_TOKEN;
@@ -240,9 +258,18 @@ export default function AdminTriviaPage() {
     }
   }
 
-  async function handleSaveGenerated(indices: number[]) {
+  async function handleSaveGenerated() {
+    const questions = generated
+      .filter((q) => selectedIds.has(q.localId))
+      .map((q) => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        category: q.category,
+        difficulty: q.difficulty,
+      }));
+    if (questions.length === 0) return;
     setSaving(true);
-    const questions = indices.map((i) => generated[i]);
     try {
       const res = await fetch("/api/admin/trivia/save", {
         method: "POST",
@@ -250,9 +277,9 @@ export default function AdminTriviaPage() {
         body: JSON.stringify({ questions }),
       });
       const data = await res.json();
-      showToast(`Saved ${data.saved} questions!`);
+      showToast(`Saved ${data.saved ?? questions.length} questions to the bank`);
       setGenerated([]);
-      setSelectedGen(new Set());
+      setSelectedIds(new Set());
       fetchLibrary();
     } catch {
       showToast("Failed to save questions");
@@ -592,80 +619,119 @@ export default function AdminTriviaPage() {
           </div>
 
           {/* Generated Questions */}
-          {generated.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-[var(--text-primary)]">{generated.length} Questions Generated</h3>
-                <div className="flex gap-2">
+          {generated.length > 0 && (() => {
+            const checkedCount = generated.reduce(
+              (n, q) => (selectedIds.has(q.localId) ? n + 1 : n),
+              0
+            );
+            const allChecked = checkedCount === generated.length && generated.length > 0;
+            const noneChecked = checkedCount === 0;
+            const saveLabel = saving
+              ? "Saving..."
+              : noneChecked
+                ? "No questions selected"
+                : allChecked
+                  ? `Save All (${checkedCount})`
+                  : `Save Selected (${checkedCount})`;
+
+            return (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    {generated.length} Questions Generated
+                  </h3>
                   <button
-                    onClick={() => handleSaveGenerated(Array.from(selectedGen))}
-                    disabled={saving || selectedGen.size === 0}
-                    className="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-700 transition disabled:opacity-50"
+                    onClick={handleSaveGenerated}
+                    disabled={saving || noneChecked}
+                    className="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {saving ? "Saving..." : `Save Selected (${selectedGen.size})`}
-                  </button>
-                  <button
-                    onClick={() => handleSaveGenerated(generated.map((_, i) => i))}
-                    disabled={saving}
-                    className="rounded-lg bg-[#FFB612] px-4 py-1.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[#FFB612]/80 transition disabled:opacity-50"
-                  >
-                    Save All
+                    {saveLabel}
                   </button>
                 </div>
-              </div>
 
-              {/* Cost info */}
-              {lastUsage && (
-                <p className="text-[10px] text-[var(--text-muted)]">
-                  Estimated cost: {formatCost(lastUsage.inputTokens * COST_PER_INPUT_TOKEN + lastUsage.outputTokens * COST_PER_OUTPUT_TOKEN)} ({lastUsage.inputTokens.toLocaleString()} input + {lastUsage.outputTokens.toLocaleString()} output tokens)
+                {/* Select All / Deselect All toggle */}
+                <div className="flex items-center gap-3 text-xs">
+                  <button
+                    onClick={() => {
+                      if (allChecked) {
+                        setSelectedIds(new Set());
+                      } else {
+                        setSelectedIds(new Set(generated.map((q) => q.localId)));
+                      }
+                    }}
+                    className="font-semibold text-[#FFB612] hover:underline"
+                  >
+                    {allChecked ? "Deselect All" : "Select All"}
+                  </button>
+                  <span className="text-[var(--text-muted)]">
+                    {checkedCount} of {generated.length} selected
+                  </span>
+                </div>
+
+                {/* Cost info */}
+                {lastUsage && (
+                  <p className="text-[10px] text-[var(--text-muted)]">
+                    Estimated cost: {formatCost(lastUsage.inputTokens * COST_PER_INPUT_TOKEN + lastUsage.outputTokens * COST_PER_OUTPUT_TOKEN)} ({lastUsage.inputTokens.toLocaleString()} input + {lastUsage.outputTokens.toLocaleString()} output tokens)
+                  </p>
+                )}
+
+                {/* Accuracy warning */}
+                <p className="text-xs text-yellow-700/70 flex items-center gap-1.5">
+                  <span>&#x26A0;</span> AI-generated questions may contain errors. Please verify facts before adding to the queue.
                 </p>
-              )}
 
-              {/* Accuracy warning */}
-              <p className="text-xs text-yellow-700/70 flex items-center gap-1.5">
-                <span>&#x26A0;</span> AI-generated questions may contain errors. Please verify facts before adding to the queue.
-              </p>
-
-              <div className="grid gap-4">
-                {generated.map((q, i) => (
-                  <div key={i} className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4 space-y-2">
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedGen.has(i)}
-                        onChange={(e) => {
-                          const next = new Set(selectedGen);
-                          e.target.checked ? next.add(i) : next.delete(i);
-                          setSelectedGen(next);
-                        }}
-                        className="mt-1 h-4 w-4 accent-[#FFB612]"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
-                        <div className="grid grid-cols-2 gap-1 mt-2 text-sm">
-                          {(q.options as string[]).map((opt, j) => (
-                            <p key={j} className={j === q.correctAnswer ? "text-green-700" : "text-[var(--text-muted)]"}>
-                              {String.fromCharCode(65 + j)}. {opt}
-                            </p>
-                          ))}
+                <div className="grid gap-4">
+                  {generated.map((q) => (
+                    <div key={q.localId} className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4 space-y-2">
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(q.localId)}
+                          onChange={(e) => {
+                            setSelectedIds((prev) => {
+                              const next = new Set(prev);
+                              if (e.target.checked) next.add(q.localId);
+                              else next.delete(q.localId);
+                              return next;
+                            });
+                          }}
+                          className="mt-1 h-4 w-4 accent-[#FFB612]"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
+                          <div className="grid grid-cols-2 gap-1 mt-2 text-sm">
+                            {q.options.map((opt, j) => (
+                              <p key={j} className={j === q.correctAnswer ? "text-green-700" : "text-[var(--text-muted)]"}>
+                                {String.fromCharCode(65 + j)}. {opt}
+                              </p>
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-xs text-[#FFB612]">{q.category}</span>
+                            <span className={`rounded-full px-2 py-0.5 text-xs ${diffColor[q.difficulty] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>{q.difficulty}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="rounded-full bg-[#FFB612]/20 px-2 py-0.5 text-xs text-[#FFB612]">{q.category}</span>
-                          <span className={`rounded-full px-2 py-0.5 text-xs ${diffColor[q.difficulty] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>{q.difficulty}</span>
-                        </div>
+                        <button
+                          onClick={() => {
+                            setGenerated((prev) => prev.filter((g) => g.localId !== q.localId));
+                            setSelectedIds((prev) => {
+                              if (!prev.has(q.localId)) return prev;
+                              const next = new Set(prev);
+                              next.delete(q.localId);
+                              return next;
+                            });
+                          }}
+                          className="text-red-700/60 hover:text-red-700 text-sm"
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        onClick={() => setGenerated((prev) => prev.filter((_, j) => j !== i))}
-                        className="text-red-700/60 hover:text-red-700 text-sm"
-                      >
-                        Remove
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </details>
 
