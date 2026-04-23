@@ -83,6 +83,7 @@ type PoolContext = {
   isCommissioner: boolean;
   triviaTimerSeconds: number;
   watchPartyEnabled: boolean;
+  teamsEnabled: boolean;
   videoCallUrl: string | null;
   scoringConfig: {
     scoringMode: "standard" | "custom";
@@ -347,7 +348,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   // ── Column 3: Leaderboard ──
   const leaderboardColumn = (
     <div>
-      {poolId && (
+      {poolId && pool?.teamsEnabled && (
         <div className="mb-4">
           <TeamLeaderboard
             poolId={poolId}
