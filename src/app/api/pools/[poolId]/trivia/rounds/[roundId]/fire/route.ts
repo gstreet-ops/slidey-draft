@@ -67,6 +67,14 @@ export async function POST(
     .limit(1);
   const currentPick = latestPick?.pickNumber ?? 0;
 
+  // Complete any currently active queue entry for this pool (legacy flat-queue
+  // or leftover from an abandoned round) so GET /trivia returns the new round's
+  // first question, not a stale active entry. Mirrors the legacy /trivia/fire handler.
+  await db
+    .update(poolTriviaQueue)
+    .set({ status: "completed", completedAt: new Date() })
+    .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.status, "active")));
+
   // Mark round active
   await db
     .update(triviaRounds)
