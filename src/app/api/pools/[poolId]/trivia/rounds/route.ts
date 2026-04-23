@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { triviaRounds, triviaQuestions, poolTriviaQueue } from "@/db/schema";
-import { and, asc, eq, notInArray, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { getPoolRole } from "@/lib/pool-helpers";
 
 // GET /api/pools/[poolId]/trivia/rounds — list rounds with progress
@@ -42,7 +42,9 @@ export async function GET(
 }
 
 // POST /api/pools/[poolId]/trivia/rounds — create a round
-// Body: { label?, category?, questionCount, timerSeconds, isLightning }
+// Body: { label?, category?, categories?, questionCount, timerSeconds, isLightning }
+// - categories: string[] (preferred, multi-category). If provided and non-empty, overrides `category`.
+// - category: string (back-compat, single category). Ignored when `categories` is present.
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ poolId: string }> }
@@ -58,7 +60,16 @@ export async function POST(
 
   const body = await req.json();
   const label: string | null = body.label?.trim() || null;
-  const category: string | null = body.category?.trim() || null; // null = mixed
+  const legacyCategory: string | null = body.category?.trim() || null;
+  const rawCategories: unknown = body.categories;
+  const categoriesArr: string[] = Array.isArray(rawCategories)
+    ? rawCategories.map((c) => String(c).trim()).filter(Boolean)
+    : [];
+  // Effective category list: prefer `categories`, fall back to single `category`, else null = mixed.
+  const effectiveCategories: string[] | null =
+    categoriesArr.length > 0 ? categoriesArr : legacyCategory ? [legacyCategory] : null;
+  // Stored display value: comma-joined if multi, raw if single, null if mixed.
+  const storedCategory: string | null = effectiveCategories ? effectiveCategories.join(",") : null;
   const questionCount: number = Number(body.questionCount);
   const timerSeconds: number = Number(body.timerSeconds);
   const isLightning: boolean = !!body.isLightning;
@@ -79,7 +90,11 @@ export async function POST(
 
   // Pull eligible questions
   const whereParts = [eq(triviaQuestions.active, true)];
-  if (category) whereParts.push(eq(triviaQuestions.category, category));
+  if (effectiveCategories && effectiveCategories.length === 1) {
+    whereParts.push(eq(triviaQuestions.category, effectiveCategories[0]));
+  } else if (effectiveCategories && effectiveCategories.length > 1) {
+    whereParts.push(inArray(triviaQuestions.category, effectiveCategories));
+  }
   if (usedIds.length > 0) whereParts.push(notInArray(triviaQuestions.id, usedIds));
 
   const available = await db
@@ -113,7 +128,7 @@ export async function POST(
     .values({
       poolId,
       label,
-      category,
+      category: storedCategory,
       questionCount,
       timerSeconds,
       isLightning,

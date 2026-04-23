@@ -43,6 +43,25 @@ const ROUND_STATUS_PILL: Record<string, string> = {
   completed: "bg-blue-100 text-blue-700",
 };
 
+/** Renders a round's stored category field: null → "Mixed", single → plain text, comma-list → chips. */
+function RoundCategoryDisplay({ category }: { category: string | null }) {
+  if (!category) return <span>Mixed</span>;
+  const parts = category.split(",").map((c) => c.trim()).filter(Boolean);
+  if (parts.length <= 1) return <span>{parts[0] ?? "Mixed"}</span>;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1 align-middle">
+      {parts.map((p) => (
+        <span
+          key={p}
+          className="rounded-full bg-[#FFB612]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[#FFB612]"
+        >
+          {p}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function TriviaControlPanel({
   poolId,
   initialSettings,
@@ -65,7 +84,7 @@ export function TriviaControlPanel({
   const [showCreate, setShowCreate] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [createLabel, setCreateLabel] = useState("");
-  const [createCategory, setCreateCategory] = useState<string>("");
+  const [createCategories, setCreateCategories] = useState<string[]>([]);
   const [createQCount, setCreateQCount] = useState<number>(10);
   const [createTimer, setCreateTimer] = useState<number>(20);
   const [createLightning, setCreateLightning] = useState(false);
@@ -157,7 +176,7 @@ export function TriviaControlPanel({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         label: createLabel.trim() || undefined,
-        category: createCategory || undefined,
+        categories: createCategories.length > 0 ? createCategories : undefined,
         questionCount: createQCount,
         timerSeconds: createTimer,
         isLightning: createLightning,
@@ -167,6 +186,7 @@ export function TriviaControlPanel({
     if (res.ok) {
       showToastMsg(`Round "${data.round?.label || "Round"}" created`);
       setCreateLabel("");
+      setCreateCategories([]);
       setShowCreate(false);
       fetchRounds();
     } else {
@@ -279,8 +299,9 @@ export function TriviaControlPanel({
               </div>
               <span className="text-xs text-[var(--text-muted)]">{activeRound.progress}</span>
             </div>
-            <div className="text-xs text-[var(--text-muted)]">
-              {activeRound.category || "Mixed"} · {activeRound.questionCount} Qs · {activeRound.timerSeconds}s
+            <div className="text-xs text-[var(--text-muted)] flex items-center gap-1 flex-wrap">
+              <RoundCategoryDisplay category={activeRound.category} />
+              <span>· {activeRound.questionCount} Qs · {activeRound.timerSeconds}s</span>
             </div>
             <div className="flex items-center gap-2">
               {activeRound.status === "active" && (
@@ -320,8 +341,9 @@ export function TriviaControlPanel({
                   <span className="ml-2 rounded-full bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">⚡ {nextPendingRound.pointMultiplier}×</span>
                 )}
               </div>
-              <div className="text-xs text-[var(--text-muted)]">
-                {nextPendingRound.category || "Mixed"} · {nextPendingRound.questionCount} Qs · {nextPendingRound.timerSeconds}s
+              <div className="text-xs text-[var(--text-muted)] flex items-center gap-1 flex-wrap">
+                <RoundCategoryDisplay category={nextPendingRound.category} />
+                <span>· {nextPendingRound.questionCount} Qs · {nextPendingRound.timerSeconds}s</span>
               </div>
             </div>
             <button
@@ -360,17 +382,33 @@ export function TriviaControlPanel({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Category</label>
-              <select
-                value={createCategory}
-                onChange={(e) => setCreateCategory(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-[var(--steelers-gold)] focus:outline-none"
-              >
-                <option value="">Mixed (all)</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Categories</label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c) => {
+                  const selected = createCategories.includes(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() =>
+                        setCreateCategories((prev) =>
+                          prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
+                        )
+                      }
+                      className={`rounded-full px-3 py-1 text-xs font-semibold cursor-pointer transition ${
+                        selected
+                          ? "bg-[#FFB612] text-[var(--text-primary)] border border-[#FFB612]"
+                          : "bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] hover:text-[var(--text-primary)]"
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+              {createCategories.length === 0 && (
+                <p className="mt-1 text-[10px] text-[var(--text-muted)]">No filter = mixed from all categories</p>
+              )}
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
