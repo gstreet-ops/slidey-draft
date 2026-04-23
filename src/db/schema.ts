@@ -491,6 +491,16 @@ export const triviaQueueStatusEnum = pgEnum("trivia_queue_status", [
   "completed",
 ]);
 
+// ── Trivia Categories ────────────────────────────
+export const triviaCategories = pgTable("trivia_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(), // display name, e.g. "NFL History"
+  slug: text("slug").notNull().unique(), // kebab-case key, e.g. "nfl-history"
+  color: text("color").notNull(), // hex color for the badge pill, e.g. "#3B82F6"
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ── Trivia Questions ─────────────────────────────
 export const triviaQuestions = pgTable("trivia_questions", {
   id: uuid("id").primaryKey().defaultRandom(),

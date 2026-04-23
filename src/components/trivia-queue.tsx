@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { CategoryBadge, type CategoryLike } from "@/components/category-badge";
 
 interface Pool {
   id: string;
@@ -38,7 +39,15 @@ const statusColor: Record<string, string> = {
   completed: "bg-green-100 text-green-700/60",
 };
 
-export function TriviaQueue() {
+interface TriviaQueueProps {
+  /**
+   * Master category list (name, color, sortOrder) for coloring badges and populating the filter.
+   * Passed from the admin page so both components share the same cached fetch.
+   */
+  categories?: Array<CategoryLike & { sortOrder?: number }>;
+}
+
+export function TriviaQueue({ categories: categoriesProp }: TriviaQueueProps = {}) {
   const [pools, setPools] = useState<Pool[]>([]);
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
   const [queue, setQueue] = useState<QueueItem[]>([]);
@@ -46,10 +55,18 @@ export function TriviaQueue() {
   const [filterCat, setFilterCat] = useState("");
   const [filterDiff, setFilterDiff] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [categories, setCategories] = useState<string[]>([]);
+  const [fallbackCategoryNames, setFallbackCategoryNames] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
+
+  // If the parent didn't pass a category list, derive one from the question feed
+  // so the filter dropdown still works (with fallback grey swatches).
+  const categoryOptions = (categoriesProp && categoriesProp.length > 0
+    ? [...categoriesProp].sort(
+        (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.name.localeCompare(b.name)
+      )
+    : fallbackCategoryNames.map((name) => ({ name, color: "#6B7280" }))) as CategoryLike[];
 
   // Fetch pools the user can manage
   useEffect(() => {
@@ -84,7 +101,7 @@ export function TriviaQueue() {
     if (searchText) params.set("search", searchText);
     const res = await fetch(`/api/trivia/questions?${params}`);
     const data = await res.json();
-    if (data.categories) setCategories(data.categories);
+    if (data.categories) setFallbackCategoryNames(data.categories);
     // Filter out questions already in queue
     const queueIds = new Set(queue.map((q) => q.questionId));
     setAvailable(
@@ -222,8 +239,10 @@ export function TriviaQueue() {
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2 py-1.5 text-xs text-[var(--text-primary)] focus:border-[#FFB612] focus:outline-none"
             >
               <option value="" className="bg-[var(--bg-card)]">All Categories</option>
-              {categories.map((c) => (
-                <option key={c} value={c} className="bg-[var(--bg-card)]">{c.replace(/_/g, " ")}</option>
+              {categoryOptions.map((c) => (
+                <option key={c.name} value={c.name} className="bg-[var(--bg-card)]">
+                  ● {c.name}
+                </option>
               ))}
             </select>
             <select
@@ -262,9 +281,7 @@ export function TriviaQueue() {
                   <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>
                     {q.difficulty}
                   </span>
-                  <span className="shrink-0 rounded-full bg-[#FFB612]/20 px-1.5 py-0.5 text-[9px] text-[#FFB612]">
-                    {q.category.replace(/_/g, " ")}
-                  </span>
+                  <CategoryBadge name={q.category} categories={categoryOptions} size="xs" className="shrink-0" />
                   <button
                     onClick={() => addToQueue(q.id)}
                     disabled={busy}
@@ -331,9 +348,7 @@ export function TriviaQueue() {
                     <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${diffColor[q.difficulty] || "bg-[var(--bg-card)] text-[var(--text-muted)]"}`}>
                       {q.difficulty}
                     </span>
-                    <span className="shrink-0 rounded-full bg-[#FFB612]/20 px-1.5 py-0.5 text-[9px] text-[#FFB612]">
-                      {q.category.replace(/_/g, " ")}
-                    </span>
+                    <CategoryBadge name={q.category} categories={categoryOptions} size="xs" className="shrink-0" />
                     <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${statusColor[q.status]}`}>
                       {q.status}
                     </span>
