@@ -468,8 +468,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         </div>
       )}
 
+      {/* OnTheClock on mobile only — above the tab bar. Desktop renders its own copy below trivia. */}
       {!announcement && (
-        <div className="mb-4">
+        <div className="mb-4 lg:hidden">
           <OnTheClock
             draftOrder={draftOrder}
             results={results.map(r => ({
@@ -505,6 +506,20 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
           {triviaColumn}
           {leaderboardColumn}
         </div>
+        {!announcement && (
+          <div className="mt-6">
+            <OnTheClock
+              draftOrder={draftOrder}
+              results={results.map(r => ({
+                pickNumber: r.pickNumber,
+                playerName: r.playerName,
+                playerPosition: r.playerPosition,
+                teamAbbreviation: r.teamAbbreviation,
+              }))}
+              previousPickContext={previousPickContext}
+            />
+          </div>
+        )}
         <div className="mt-6">
           <div
             onClick={() => setPicksExpanded((v) => !v)}

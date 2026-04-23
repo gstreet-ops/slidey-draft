@@ -86,7 +86,7 @@ export default async function PoolSettingsPage({
           </section>
         )}
 
-        {myRole === "commissioner" && (
+        {myRole === "commissioner" && settings.teams && (
           <section>
             <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Teams</h2>
             <PoolTeamManager
