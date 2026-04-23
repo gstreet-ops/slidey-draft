@@ -136,6 +136,11 @@ body {
   to { transform: translateY(-100%); opacity: 0; }
 }
 
+@keyframes lightning-border {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(252, 211, 77, 0.55), 0 0 12px 2px rgba(252, 211, 77, 0.3); }
+  50%       { box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.9),  0 0 24px 6px rgba(252, 211, 77, 0.55); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

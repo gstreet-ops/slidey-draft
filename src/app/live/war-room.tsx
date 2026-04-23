@@ -129,6 +129,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   const [glowingRows, setGlowingRows] = useState<Map<string, "up" | "down" | "first">>(new Map());
   const [chatOpen, setChatOpen] = useState(false);
   const [chatPos, setChatPos] = useState({ x: 0, y: 0 });
+  const [picksExpanded, setPicksExpanded] = useState(false);
   const [systemEvents, setSystemEvents] = useState<{ id: string; type: "system"; content: string; createdAt: string }[]>([]); // offset from default bottom-right
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const prevResultCountRef = useRef(initialResults.length);
@@ -404,9 +405,9 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
   );
 
   const mobileTabs = [
-    { id: "picks", label: "Picks" },
     { id: "trivia", label: "Trivia" },
     { id: "leaderboard", label: "Leaderboard" },
+    { id: "picks", label: "Picks" },
     ...(showChat ? [{ id: "chat", label: "Live Feed" }] : []),
   ];
 
@@ -483,7 +484,7 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
       )}
 
       {/* Mobile tabs — MobileTabBar is lg:hidden internally */}
-      <MobileTabBar key={`mobile-${poolId}`} tabs={mobileTabs} defaultTab="picks">
+      <MobileTabBar key={`mobile-${poolId}`} tabs={mobileTabs} defaultTab="trivia">
         {(activeTab) => (
           <>
             {activeTab === "picks" && picksColumn}
@@ -498,11 +499,34 @@ export function WarRoom({ userId, userBoardId, initialResults, draftOrder, seaso
         )}
       </MobileTabBar>
 
-      {/* Desktop 3-column layout — hidden below lg */}
-      <div className="hidden lg:grid lg:grid-cols-[1fr_340px_320px] gap-6" key={`desktop-${poolId}`}>
-        {picksColumn}
-        {triviaColumn}
-        {leaderboardColumn}
+      {/* Desktop 2-row layout — hidden below lg */}
+      <div className="hidden lg:block" key={`desktop-${poolId}`}>
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-6">
+          {triviaColumn}
+          {leaderboardColumn}
+        </div>
+        <div className="mt-6">
+          <div
+            onClick={() => setPicksExpanded((v) => !v)}
+            className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-5 py-3 cursor-pointer"
+          >
+            <span className="text-sm font-bold text-[var(--text-primary)] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
+              YOUR PICKS · {results.length} of 32 scored · {runningTotal} pts
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className={`text-[var(--text-muted)] transition-transform ${picksExpanded ? "rotate-180" : ""}`}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          {picksExpanded && <div className="mt-4">{picksColumn}</div>}
+        </div>
       </div>
 
       {/* Floating chat button + draggable panel (desktop only) */}

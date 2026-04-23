@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { timingSafeEqual } from "crypto";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { actualResults, players, draftOrder } from "@/db/schema";
+import { actualResults, players, draftOrder, triviaRounds } from "@/db/schema";
 import { fetchDraftPicks, normalizePlayerName, positionMatches } from "@/lib/espn-api";
 import { scoreAllBoards } from "@/lib/scoring";
 import { recalculateAllPools } from "@/lib/pool-scoring";
@@ -123,6 +123,17 @@ export async function POST(req: NextRequest) {
       await recalculateAllPools();
       invalidateCache("leaderboard:");
       invalidateCache("draft-results:");
+
+      // Auto-pause any active trivia rounds so commissioners can resume after the pick is announced
+      const paused = await db
+        .update(triviaRounds)
+        .set({ status: "paused", pausedAt: new Date() })
+        .where(eq(triviaRounds.status, "active"))
+        .returning({ id: triviaRounds.id });
+      if (paused.length > 0) {
+        console.log(`[Sync] Auto-paused ${paused.length} active trivia round(s) on new pick`);
+      }
+
       console.log(`[Sync] ${new Date().toISOString()} — Scoring and standings recalculated for all pools`);
     } else {
       console.log(`[Sync] ${new Date().toISOString()} — Poll complete, no new picks (ESPN total: ${espnPicks.length})`);

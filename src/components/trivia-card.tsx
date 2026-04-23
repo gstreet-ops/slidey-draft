@@ -2,6 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+type RoundInfo = {
+  id: string;
+  label: string | null;
+  progress: string;
+  currentQuestionIndex: number;
+  questionCount: number;
+  isLightning: boolean;
+  pointMultiplier: number;
+  status: "pending" | "active" | "paused" | "completed";
+};
+
 type Question = {
   id: string;
   question: string;
@@ -14,12 +25,17 @@ type Question = {
   expiresAt?: number;
   paused?: boolean;
   live?: boolean;
+  basePoints?: number;
+  pointMultiplier?: number;
+  displayPoints?: number;
+  round?: RoundInfo | null;
 };
 
 type Result = {
   correct: boolean;
   correctAnswer: number;
   pointsAwarded: number;
+  pointMultiplier?: number;
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -194,9 +210,42 @@ export function TriviaCard({ poolId }: { poolId: string }) {
   const timerPct = (timeLeft / timerTotal) * 100;
   const timerColor = timeLeft <= 5 ? "bg-red-500" : timeLeft <= 10 ? "bg-yellow-500" : "bg-[var(--slidey)]";
   const isTimedOut = result && selected === null;
+  const round = question!.round || null;
+  const isLightning = !!round?.isLightning;
+  const multiplier = round?.pointMultiplier ?? question!.pointMultiplier ?? 1;
+  const basePoints = question!.basePoints ?? 0;
+  const displayPoints = question!.displayPoints ?? basePoints * multiplier;
+  const roundProgress = round?.progress
+    || (question!.sortOrder && question!.totalQueued ? `Q${question!.sortOrder} of ${question!.totalQueued}` : null);
+
+  const cardBase = "relative rounded-xl border p-4 space-y-3 transition";
+  const cardSkin = isLightning
+    ? "border-amber-300 bg-amber-50/60"
+    : "border-[var(--border)] bg-[var(--bg-card)]";
+  const lightningStyle: React.CSSProperties | undefined =
+    isLightning && !paused && !result
+      ? { animation: "lightning-border 1.2s ease-in-out infinite" }
+      : undefined;
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 space-y-3">
+    <div className={`${cardBase} ${cardSkin}`} style={lightningStyle}>
+      {/* Round label header */}
+      {round?.label && (
+        <div className="flex items-center justify-between">
+          <span
+            className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isLightning ? "text-amber-700" : "text-[var(--slidey)]"}`}
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {isLightning ? `⚡ ${round.label}` : round.label}
+          </span>
+          {isLightning && (
+            <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+              {multiplier}× POINTS
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-[var(--bg-card)] px-2 py-0.5 text-[10px] text-[var(--text-secondary)]">
@@ -209,19 +258,22 @@ export function TriviaCard({ poolId }: { poolId: string }) {
           }`}>
             {question!.difficulty}
           </span>
-          {question!.live && (
+          {question!.live && !paused && (
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700 animate-pulse">LIVE</span>
+          )}
+          {isLightning && !round?.label && (
+            <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-800">⚡ {multiplier}×</span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          {question!.sortOrder && question!.totalQueued && (
-            <span className="text-[10px] text-[var(--text-muted)]">Q{question!.sortOrder} of {question!.totalQueued}</span>
+          {roundProgress && (
+            <span className="text-[10px] text-[var(--text-muted)]">{roundProgress}</span>
           )}
           {triviaScore > 0 && (
             <span className="text-xs text-[var(--slidey)] font-bold">{triviaScore}pts</span>
           )}
           {!result && timerTotal > 0 && !paused && (
-            <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-700" : "text-[var(--text-secondary)]"}`}>
+            <span className={`text-sm font-bold tabular-nums ${timeLeft <= 5 ? "text-red-700" : isLightning ? "text-amber-700" : "text-[var(--text-secondary)]"}`}>
               {timeLeft}s
             </span>
           )}
@@ -246,6 +298,15 @@ export function TriviaCard({ poolId }: { poolId: string }) {
 
       <p className="text-sm font-semibold text-[var(--text-primary)]">{question!.question}</p>
 
+      {displayPoints > 0 && !result && (
+        <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+          Answer correctly:{" "}
+          <span className={isLightning ? "text-amber-700" : "text-[var(--slidey)]"}>
+            {isLightning ? `⚡ +${displayPoints} pts` : `+${displayPoints} pts`}
+          </span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((opt) => {
           let style = "border-[var(--border)] bg-[var(--bg-card)] hover:bg-gray-50 text-[var(--text-primary)]";
@@ -266,8 +327,8 @@ export function TriviaCard({ poolId }: { poolId: string }) {
             <button
               key={opt.index}
               onClick={() => submitAnswer(opt.index)}
-              disabled={!!result || submitting}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition ${style}`}
+              disabled={!!result || submitting || paused}
+              className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition ${style} ${paused ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <span className="text-xs font-bold opacity-60 w-4">{opt.label}</span>
               <span>{opt.text}</span>
@@ -279,10 +340,24 @@ export function TriviaCard({ poolId }: { poolId: string }) {
       {result && (
         <div className="pt-1">
           <span
-            className={`text-sm font-bold ${result.correct ? "text-green-700" : "text-red-700"}`}
+            className={`text-sm font-bold ${result.correct ? (isLightning ? "text-amber-700" : "text-green-700") : "text-red-700"}`}
           >
-            {isTimedOut ? "Time's up!" : result.correct ? `Correct! +${result.pointsAwarded}pts` : "Wrong!"}
+            {isTimedOut
+              ? "Time's up!"
+              : result.correct
+                ? isLightning && (result.pointMultiplier ?? multiplier) > 1
+                  ? `⚡ Correct! +${result.pointsAwarded}pts`
+                  : `Correct! +${result.pointsAwarded}pts`
+                : "Wrong!"}
           </span>
+        </div>
+      )}
+
+      {/* Paused overlay */}
+      {paused && !result && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-black/70 backdrop-blur-sm">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-yellow-300 animate-pulse">Paused</span>
+          <span className="mt-1 text-xs text-white/80">Waiting for commissioner to resume...</span>
         </div>
       )}
     </div>

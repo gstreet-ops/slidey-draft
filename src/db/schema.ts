@@ -490,6 +490,12 @@ export const triviaQueueStatusEnum = pgEnum("trivia_queue_status", [
   "active",
   "completed",
 ]);
+export const triviaRoundStatusEnum = pgEnum("trivia_round_status", [
+  "pending",
+  "active",
+  "paused",
+  "completed",
+]);
 
 // ── Trivia Categories ────────────────────────────
 export const triviaCategories = pgTable("trivia_categories", {
@@ -514,6 +520,27 @@ export const triviaQuestions = pgTable("trivia_questions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ── Trivia Rounds ────────────────────────────────
+export const triviaRounds = pgTable("trivia_rounds", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  poolId: uuid("pool_id")
+    .notNull()
+    .references(() => pools.id, { onDelete: "cascade" }),
+  label: text("label"),
+  category: text("category"), // null = mixed
+  questionCount: integer("question_count").notNull().default(10),
+  timerSeconds: integer("timer_seconds").notNull().default(20),
+  isLightning: boolean("is_lightning").notNull().default(false),
+  pointMultiplier: integer("point_multiplier").notNull().default(1),
+  sortOrder: integer("sort_order").notNull().default(0),
+  status: triviaRoundStatusEnum("status").notNull().default("pending"),
+  currentQuestionIndex: integer("current_question_index").notNull().default(0),
+  startedAt: timestamp("started_at"),
+  pausedAt: timestamp("paused_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ── Pool Trivia Queue ────────────────────────────
 export const poolTriviaQueue = pgTable(
   "pool_trivia_queue",
@@ -530,6 +557,7 @@ export const poolTriviaQueue = pgTable(
     activatedAt: timestamp("activated_at"),
     completedAt: timestamp("completed_at"),
     pickNumber: integer("pick_number"),
+    roundId: uuid("round_id").references(() => triviaRounds.id, { onDelete: "cascade" }),
   },
   (table) => [
     uniqueIndex("pool_trivia_queue_question_idx").on(
@@ -561,6 +589,7 @@ export const triviaResponses = pgTable(
     selectedAnswer: integer("selected_answer").notNull(), // 0-indexed into options
     isCorrect: boolean("is_correct").notNull(),
     pointsAwarded: integer("points_awarded").notNull().default(0),
+    pointMultiplier: integer("point_multiplier").notNull().default(1),
     submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   },
   (table) => [

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { triviaQuestions, triviaResponses, poolTriviaQueue, pools } from "@/db/schema";
+import { triviaQuestions, triviaResponses, poolTriviaQueue, pools, triviaRounds } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { recalculatePoolStandings } from "@/lib/pool-scoring";
 import { getPoolSettings, getEffectiveScoring } from "@/lib/pool-helpers";
@@ -31,13 +31,23 @@ export async function POST(
     return NextResponse.json({ error: "Question not found" }, { status: 404 });
   }
 
-  // Get queue entry for pick number
+  // Get queue entry for pick number + round linkage
   const [queueItem] = await db
-    .select({ pickNumber: poolTriviaQueue.pickNumber })
+    .select({ pickNumber: poolTriviaQueue.pickNumber, roundId: poolTriviaQueue.roundId })
     .from(poolTriviaQueue)
     .where(and(eq(poolTriviaQueue.poolId, poolId), eq(poolTriviaQueue.questionId, questionId)));
 
   const pickNumber = queueItem?.pickNumber ?? 0;
+
+  // Look up round multiplier if this question is part of a round
+  let pointMultiplier = 1;
+  if (queueItem?.roundId) {
+    const [round] = await db
+      .select({ pointMultiplier: triviaRounds.pointMultiplier })
+      .from(triviaRounds)
+      .where(eq(triviaRounds.id, queueItem.roundId));
+    if (round?.pointMultiplier) pointMultiplier = round.pointMultiplier;
+  }
 
   // Get pool settings for tiered trivia scoring
   const [pool] = await db.select().from(pools).where(eq(pools.id, poolId));
@@ -47,7 +57,8 @@ export async function POST(
   const tierPoints = scoring.triviaPointValues[difficulty] ?? scoring.triviaPointValues.medium;
 
   const isCorrect = selectedAnswer === question.correctAnswer;
-  const pointsAwarded = isCorrect ? tierPoints : 0;
+  const basePoints = isCorrect ? tierPoints : 0;
+  const pointsAwarded = basePoints * pointMultiplier;
 
   await db
     .insert(triviaResponses)
@@ -59,6 +70,7 @@ export async function POST(
       selectedAnswer,
       isCorrect,
       pointsAwarded,
+      pointMultiplier,
     })
     .onConflictDoNothing();
 
@@ -69,5 +81,6 @@ export async function POST(
     correct: isCorrect,
     correctAnswer: question.correctAnswer,
     pointsAwarded,
+    pointMultiplier,
   });
 }
